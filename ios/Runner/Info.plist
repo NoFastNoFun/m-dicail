@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Medicail utilise le microphone pour la dictée vocale pendant les séances.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Medicail convertit votre voix en texte localement sur l'appareil.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

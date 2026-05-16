@@ -92,25 +92,22 @@ flutter build web
 flutter build windows
 ```
 
-## Structure recommandee
-
-La structure suivante est recommandee au fur et a mesure de la croissance du projet:
+## Structure du projet
 
 ```text
 lib/
-  app/
-    app.dart
-    router/
-    theme/
-  features/
-    notes/
-    exercises/
-    evidence/
-  shared/
-    widgets/
-    services/
-    models/
+  app/                 # MaterialApp, bootstrap
+  core/                # DI, reseau, router, i18n, audio, utils
+  features/            # voice_capture, consultation (BLoC + domain/data)
+  pages/               # Ecrans routes (home, record)
+  widget/              # Design system (AppButton, AppTextField, ...)
 test/
+```
+
+Regenerer le code DI apres modification des injections:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Roadmap technique (court terme)

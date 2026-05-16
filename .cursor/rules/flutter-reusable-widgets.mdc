@@ -1,0 +1,16 @@
+---
+description: Reusable widgets required in pages and features
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Reusable widgets
+
+In `lib/pages/` and `lib/features/`:
+
+- Forbidden: raw Material `ElevatedButton`, `TextButton`, `OutlinedButton`, `TextField`, `Checkbox`
+- Required: `AppButton`, `AppTextField`, `AppCheckbox` from `lib/widget/`
+
+If the component does not exist, create it in `lib/widget/` then use it.
+
+Custom widgets must not import BLoC: callbacks and parameters only.

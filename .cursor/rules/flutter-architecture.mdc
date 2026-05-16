@@ -1,0 +1,18 @@
+---
+description: Clean Architecture and Medicail conventions
+alwaysApply: true
+---
+
+# Medicail Flutter architecture
+
+- `lib/core/`: infrastructure (DI, network, router, i18n, utils, abstract services)
+- `lib/features/`: business logic (`domain/`, `data/`, `presentation/` with BLoC)
+- `lib/pages/`: route-bound screens (thin, no network/STT logic)
+- `lib/widget/`: reusable design system
+
+## Rules
+
+- Business state via `flutter_bloc` only in `features/*/presentation/`
+- DI via `get_it` + `@injectable`; never `Dio()` or `SpeechToText()` in the UI
+- Navigation via `go_router` and `AppRoutes` constants
+- UI strings via `AppLocalizations`; no hardcoded strings in pages

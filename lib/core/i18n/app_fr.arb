@@ -1,0 +1,17 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Medicail",
+  "homeTitle": "Accueil",
+  "recordTitle": "Enregistrement",
+  "buttonStart": "Demarrer",
+  "buttonStop": "Arreter",
+  "buttonSave": "Enregistrer",
+  "errorGeneric": "Une erreur est survenue",
+  "errorNetwork": "Probleme de connexion",
+  "errorServer": "Erreur serveur",
+  "errorAudio": "Microphone indisponible",
+  "labelHistory": "Historique",
+  "navigateToRecord": "Nouvel enregistrement",
+  "transcriptLabel": "Transcription",
+  "historyEmpty": "Aucune note pour le moment"
+}

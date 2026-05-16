@@ -1,0 +1,12 @@
+---
+description: Network, auth, and anonymization
+globs: lib/core/network/**,lib/features/**
+alwaysApply: false
+---
+
+# Network and security
+
+- Tokens via `AuthTokenStorage` / `flutter_secure_storage` only
+- STT text: `AnonymizationHelper.anonymize()` before any `ApiClient` call
+- Features: domain exceptions (`ServerException`, etc.); never `DioException` in presentation
+- HTTP calls via `ApiClient`, not `Dio` directly
