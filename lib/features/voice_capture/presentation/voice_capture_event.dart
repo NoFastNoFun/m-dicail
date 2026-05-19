@@ -19,6 +19,10 @@ final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
   const VoiceCaptureStopRecording();
 }
 
+final class VoiceCaptureClearTranscript extends VoiceCaptureEvent {
+  const VoiceCaptureClearTranscript();
+}
+
 final class VoiceCaptureListeningSessionEnded extends VoiceCaptureEvent {
   const VoiceCaptureListeningSessionEnded();
 }
