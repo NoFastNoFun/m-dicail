@@ -7,6 +7,8 @@ import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
+import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
+import 'package:medicail/features/voice_capture/presentation/widgets/session_status_banner.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -35,6 +37,13 @@ class _RecordView extends StatefulWidget {
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
 
+  static const _statusReady = 'Pret a ecouter';
+  static const _statusInitializing = 'Initialisation du micro';
+  static const _statusListening = 'Ecoute en cours';
+  static const _statusEnded = 'Session terminee';
+  static const _clearLabel = 'Effacer';
+  static const _emptyTranscriptHint = 'Aucune parole captee pour le moment';
+
   @override
   void initState() {
     super.initState();
@@ -53,30 +62,29 @@ class _RecordViewState extends State<_RecordView> {
 
     return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
       listener: (context, state) {
-        final transcript = switch (state) {
-          VoiceCaptureReady(:final transcript) => transcript,
-          RecordingInProgress(:final transcript) => transcript,
-          VoiceCaptureFailure() => _transcriptController.text,
-          _ => null,
-        };
-        if (transcript != null && _transcriptController.text != transcript) {
+        final transcript = VoiceCaptureViewModel.fromState(state).transcript;
+        if (_transcriptController.text != transcript) {
           _transcriptController.text = transcript;
         }
       },
       builder: (context, state) {
-        final isRecording = state is RecordingInProgress;
-        final isLoading = state is VoiceCaptureInitial;
-        final errorMessage =
-            state is VoiceCaptureFailure ? state.message : null;
+        final viewModel = VoiceCaptureViewModel.fromState(state);
 
         return AppScaffold(
           title: l10n.recordTitle,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (errorMessage != null) ...[
+              SessionStatusBanner(
+                label: viewModel.errorMessage != null
+                    ? l10n.errorAudio
+                    : _statusLabel(viewModel.status),
+                color: _statusColor(viewModel.status),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (viewModel.errorMessage != null) ...[
                 AppText(
-                  errorMessage,
+                  viewModel.errorMessage!,
                   variant: AppTextVariant.body,
                   color: AppColors.error,
                 ),
@@ -85,33 +93,67 @@ class _RecordViewState extends State<_RecordView> {
               AppInput(
                 variant: AppInputVariant.textarea,
                 label: l10n.transcriptLabel,
+                hint: _emptyTranscriptHint,
                 controller: _transcriptController,
                 readOnly: true,
-                maxLines: 8,
+                maxLines: 12,
               ),
               const SizedBox(height: AppSpacing.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      label: l10n.buttonStart,
+                      onPressed: () => context
+                          .read<VoiceCaptureBloc>()
+                          .add(const VoiceCaptureStartRecording()),
+                      isLoading: viewModel.isInitializing,
+                      enabled: viewModel.canStart,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: AppButton(
+                      label: l10n.buttonStop,
+                      style: AppButtonStyle.warning,
+                      onPressed: () => context
+                          .read<VoiceCaptureBloc>()
+                          .add(const VoiceCaptureStopRecording()),
+                      enabled: viewModel.canStop,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
               AppButton(
-                label: isRecording ? l10n.buttonStop : l10n.buttonStart,
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        if (isRecording) {
-                          context
-                              .read<VoiceCaptureBloc>()
-                              .add(const VoiceCaptureStopRecording());
-                        } else {
-                          context
-                              .read<VoiceCaptureBloc>()
-                              .add(const VoiceCaptureStartRecording());
-                        }
-                      },
-                isLoading: isLoading,
-                enabled: !isLoading,
+                label: _clearLabel,
+                style: AppButtonStyle.secondary,
+                onPressed: () => context
+                    .read<VoiceCaptureBloc>()
+                    .add(const VoiceCaptureClearTranscript()),
+                enabled: viewModel.canClear,
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  String _statusLabel(VoiceCaptureSessionStatus status) {
+    return switch (status) {
+      VoiceCaptureSessionStatus.initializing => _statusInitializing,
+      VoiceCaptureSessionStatus.listening => _statusListening,
+      VoiceCaptureSessionStatus.ended => _statusEnded,
+      _ => _statusReady,
+    };
+  }
+
+  Color _statusColor(VoiceCaptureSessionStatus status) {
+    return switch (status) {
+      VoiceCaptureSessionStatus.listening => AppColors.info,
+      VoiceCaptureSessionStatus.failure => AppColors.error,
+      _ => AppColors.textSecondary,
+    };
   }
 }

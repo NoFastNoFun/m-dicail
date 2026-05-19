@@ -13,6 +13,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
     on<VoiceCaptureStopRecording>(_onStopRecording);
+    on<VoiceCaptureClearTranscript>(_onClearTranscript);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
   }
@@ -28,7 +29,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _audioCaptureService.initialize();
       emit(const VoiceCaptureReady());
     } catch (error) {
-      emit(VoiceCaptureFailure(Failure.fromException(error).message));
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: _currentTranscript,
+        ),
+      );
     }
   }
 
@@ -42,7 +48,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _startListeningSession();
       emit(RecordingInProgress(transcript: currentTranscript));
     } catch (error) {
-      emit(VoiceCaptureFailure(Failure.fromException(error).message));
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: currentTranscript,
+        ),
+      );
     }
   }
 
@@ -55,8 +66,24 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       _segmentBase = '';
       emit(VoiceCaptureReady(transcript: _currentTranscript));
     } catch (error) {
-      emit(VoiceCaptureFailure(Failure.fromException(error).message));
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: _currentTranscript,
+        ),
+      );
     }
+  }
+
+  void _onClearTranscript(
+    VoiceCaptureClearTranscript event,
+    Emitter<VoiceCaptureState> emit,
+  ) {
+    if (state is RecordingInProgress) {
+      return;
+    }
+    _segmentBase = '';
+    emit(const VoiceCaptureReady());
   }
 
   Future<void> _onListeningSessionEnded(
@@ -73,7 +100,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _startListeningSession();
       emit(RecordingInProgress(transcript: transcript));
     } catch (error) {
-      emit(VoiceCaptureFailure(Failure.fromException(error).message));
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: transcript,
+        ),
+      );
     }
   }
 
