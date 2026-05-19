@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
+import 'package:medicail/widget/app_text.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,16 +18,13 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            l10n.labelHistory,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
+          AppText(l10n.labelHistory, variant: AppTextVariant.title),
+          const SizedBox(height: AppSpacing.sm),
           Expanded(
             child: Center(
-              child: Text(
+              child: AppText(
                 l10n.historyEmpty,
-                style: Theme.of(context).textTheme.bodyLarge,
+                variant: AppTextVariant.body,
               ),
             ),
           ),
