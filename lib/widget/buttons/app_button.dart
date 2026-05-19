@@ -5,7 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/app_typography.dart';
 import 'package:medicail/widget/app_text.dart';
 
-enum AppButtonStyle { primary, secondary, warning, error }
+enum AppButtonStyle { primary, secondary, warning, error, info }
 
 enum AppButtonLayout { text, icon, textWithIcon }
 
@@ -45,8 +45,12 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveOnPressed =
-        enabled && !isLoading ? onPressed : null;
+    final effectiveOnPressed = enabled && !isLoading && onPressed != null
+        ? () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            onPressed!();
+          }
+        : null;
 
     final child = isLoading
         ? SizedBox(
@@ -162,7 +166,8 @@ class AppButton extends StatelessWidget {
   bool get _isFilledStyle =>
       style == AppButtonStyle.primary ||
       style == AppButtonStyle.warning ||
-      style == AppButtonStyle.error;
+      style == AppButtonStyle.error ||
+      style == AppButtonStyle.info;
 
   ButtonStyle _buttonStyle({required bool expanded}) {
     const minimumSize = Size(0, AppSpacing.minTouchTarget);
@@ -190,6 +195,11 @@ class AppButton extends StatelessWidget {
           AppColors.error,
           AppColors.onError,
           AppColors.error,
+        ),
+      AppButtonStyle.info => (
+          AppColors.info,
+          AppColors.onInfo,
+          AppColors.info,
         ),
     };
 
@@ -228,6 +238,7 @@ class AppButton extends StatelessWidget {
       AppButtonStyle.secondary => AppColors.primary,
       AppButtonStyle.warning => AppColors.onWarning,
       AppButtonStyle.error => AppColors.onError,
+      AppButtonStyle.info => AppColors.onInfo,
     };
   }
 
@@ -236,6 +247,7 @@ class AppButton extends StatelessWidget {
       AppButtonStyle.primary => AppColors.onPrimary,
       AppButtonStyle.warning => AppColors.onWarning,
       AppButtonStyle.error => AppColors.onError,
+      AppButtonStyle.info => AppColors.onInfo,
       AppButtonStyle.secondary => AppColors.primary,
     };
   }
