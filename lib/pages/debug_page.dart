@@ -50,6 +50,7 @@ class _DebugPageState extends State<DebugPage> {
         key: _formKey,
         autovalidateMode: AutovalidateMode.always,
         child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             _sectionTitle(l10n.debugSectionButtons),
             const SizedBox(height: AppSpacing.sm),
@@ -203,6 +204,7 @@ class _DebugPageState extends State<DebugPage> {
             const SizedBox(height: AppSpacing.sm),
             AppButton(
               label: l10n.debugShowToastSuccess,
+              style: AppButtonStyle.secondary,
               onPressed: () => AppToast.show(
                 context,
                 message: l10n.debugToastSuccess,
@@ -212,7 +214,7 @@ class _DebugPageState extends State<DebugPage> {
             const SizedBox(height: AppSpacing.sm),
             AppButton(
               label: l10n.debugShowToastWarning,
-              style: AppButtonStyle.secondary,
+              style: AppButtonStyle.warning,
               onPressed: () => AppToast.show(
                 context,
                 message: l10n.debugToastWarning,
@@ -232,7 +234,7 @@ class _DebugPageState extends State<DebugPage> {
             const SizedBox(height: AppSpacing.sm),
             AppButton(
               label: l10n.debugShowToastInfo,
-              style: AppButtonStyle.warning,
+              style: AppButtonStyle.info,
               onPressed: () => AppToast.show(
                 context,
                 message: l10n.debugToastInfo,
