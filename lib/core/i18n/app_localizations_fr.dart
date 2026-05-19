@@ -18,10 +18,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recordTitle => 'Enregistrement';
 
   @override
-  String get buttonStart => 'Demarrer';
+  String get buttonStart => 'Démarrer';
 
   @override
-  String get buttonStop => 'Arreter';
+  String get buttonStop => 'Arrêter';
 
   @override
   String get buttonSave => 'Enregistrer';
@@ -30,7 +30,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorGeneric => 'Une erreur est survenue';
 
   @override
-  String get errorNetwork => 'Probleme de connexion';
+  String get errorNetwork => 'Problème de connexion';
 
   @override
   String get errorServer => 'Erreur serveur';
@@ -49,4 +49,148 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get historyEmpty => 'Aucune note pour le moment';
+
+  @override
+  String get inputErrorRequired => 'Ce champ est obligatoire';
+
+  @override
+  String get inputErrorEmail => 'Adresse e-mail invalide';
+
+  @override
+  String get inputErrorNumber => 'Nombre invalide';
+
+  @override
+  String get inputErrorPassword =>
+      'Le mot de passe doit contenir au moins 8 caractères';
+
+  @override
+  String get inputPasswordToggle => 'Afficher le mot de passe';
+
+  @override
+  String get debugShakeTitle => 'Mode développeur';
+
+  @override
+  String get debugShakeMessage =>
+      'Ouvrir la page de démonstration des composants ?';
+
+  @override
+  String get debugShakeConfirm => 'Oui';
+
+  @override
+  String get debugShakeCancel => 'Non';
+
+  @override
+  String get debugPageTitle => 'Composants UI';
+
+  @override
+  String get debugSectionButtons => 'Boutons';
+
+  @override
+  String get debugSectionInputs => 'Champs';
+
+  @override
+  String get debugSectionBottomSheet => 'Bottom sheet';
+
+  @override
+  String get debugSectionDialog => 'Dialogues';
+
+  @override
+  String get debugSectionToast => 'Toasts';
+
+  @override
+  String get debugButtonPrimary => 'Primaire';
+
+  @override
+  String get debugButtonSecondary => 'Secondaire';
+
+  @override
+  String get debugButtonWarning => 'Avertissement';
+
+  @override
+  String get debugButtonError => 'Erreur';
+
+  @override
+  String get debugButtonLoading => 'Chargement';
+
+  @override
+  String get debugButtonDisabled => 'Désactivé';
+
+  @override
+  String get debugButtonIcon => 'Icône';
+
+  @override
+  String get debugButtonTextIcon => 'Texte + icône';
+
+  @override
+  String get debugInputText => 'Texte';
+
+  @override
+  String get debugInputNumber => 'Nombre';
+
+  @override
+  String get debugInputEmail => 'E-mail';
+
+  @override
+  String get debugInputPassword => 'Mot de passe';
+
+  @override
+  String get debugInputTextarea => 'Zone de texte';
+
+  @override
+  String get debugOpenBottomSheet => 'Ouvrir bottom sheet';
+
+  @override
+  String get debugBottomSheetTitle => 'Bottom sheet personnalisé';
+
+  @override
+  String get debugBottomSheetBody => 'Contenu personnalisable du bottom sheet.';
+
+  @override
+  String get debugOpenFullscreenDialog => 'Dialogue plein écran';
+
+  @override
+  String get debugOpenLockDialog => 'Dialogue verrouillé';
+
+  @override
+  String get debugFullscreenTitle => 'Plein écran';
+
+  @override
+  String get debugFullscreenBody => 'Exemple de dialogue plein écran.';
+
+  @override
+  String get debugLockTitle => 'Écran verrouillé';
+
+  @override
+  String get debugLockBody =>
+      'Ce dialogue ne peut pas être fermé par un tap extérieur.';
+
+  @override
+  String get debugLockDismiss => 'Déverrouiller';
+
+  @override
+  String get debugToastSuccess => 'Opération réussie';
+
+  @override
+  String get debugToastWarning => 'Attention requise';
+
+  @override
+  String get debugToastError => 'Une erreur est survenue';
+
+  @override
+  String get debugToastInfo => 'Information';
+
+  @override
+  String get debugShowToastSuccess => 'Toast succès';
+
+  @override
+  String get debugShowToastWarning => 'Toast avertissement';
+
+  @override
+  String get debugShowToastError => 'Toast erreur';
+
+  @override
+  String get debugShowToastInfo => 'Toast info';
+
+  @override
+  String get debugClose => 'Fermer';
 }
