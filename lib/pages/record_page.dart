@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/core/design_system/app_colors.dart';
+import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
@@ -7,7 +9,8 @@ import 'package:medicail/features/voice_capture/presentation/voice_capture_event
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
-import 'package:medicail/widget/app_text_field.dart';
+import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/inputs/app_input.dart';
 
 class RecordPage extends StatelessWidget {
   const RecordPage({super.key});
@@ -72,19 +75,21 @@ class _RecordViewState extends State<_RecordView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (errorMessage != null) ...[
-                Text(
+                AppText(
                   errorMessage,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  variant: AppTextVariant.body,
+                  color: AppColors.error,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
               ],
-              AppTextField(
+              AppInput(
+                variant: AppInputVariant.textarea,
                 label: l10n.transcriptLabel,
                 controller: _transcriptController,
                 readOnly: true,
                 maxLines: 8,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               AppButton(
                 label: isRecording ? l10n.buttonStop : l10n.buttonStart,
                 onPressed: isLoading
@@ -101,6 +106,7 @@ class _RecordViewState extends State<_RecordView> {
                         }
                       },
                 isLoading: isLoading,
+                enabled: !isLoading,
               ),
             ],
           ),

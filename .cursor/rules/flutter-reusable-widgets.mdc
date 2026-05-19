@@ -9,8 +9,14 @@ alwaysApply: false
 In `lib/pages/` and `lib/features/`:
 
 - Forbidden: raw Material `ElevatedButton`, `TextButton`, `OutlinedButton`, `TextField`, `Checkbox`
-- Required: `AppButton`, `AppTextField`, `AppCheckbox` from `lib/widget/`
+- Forbidden: raw `Text` with custom inline `TextStyle` for user-visible copy
+- Required: `AppButton`, `AppInput`, `AppCheckbox`, `AppText` from `lib/widget/`
+- Required: `AppDialog`, `AppBottomSheet`, `AppToast` for overlays (not raw `showDialog` / `SnackBar`)
 
 If the component does not exist, create it in `lib/widget/` then use it.
 
 Custom widgets must not import BLoC: callbacks and parameters only.
+
+All user-visible strings must be passed from callers using `AppLocalizations` (i18n).
+
+Colors and typography must come from `lib/core/design_system/` tokens, not hardcoded values in pages.
