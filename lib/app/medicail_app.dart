@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/i18n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicail/core/config/app_theme.dart';
 import 'package:medicail/core/di/injection.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/widget/feedback/app_toast_host.dart';
+import 'package:go_router/go_router.dart';
 
 class MedicailApp extends StatelessWidget {
   const MedicailApp({super.key});
@@ -16,6 +17,9 @@ class MedicailApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: getIt<GoRouter>(),
+      builder: (context, child) {
+        return AppToastHost(child: child ?? const SizedBox.shrink());
+      },
     );
   }
 }

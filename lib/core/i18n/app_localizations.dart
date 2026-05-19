@@ -115,13 +115,13 @@ abstract class AppLocalizations {
   /// No description provided for @buttonStart.
   ///
   /// In fr, this message translates to:
-  /// **'Demarrer'**
+  /// **'Démarrer'**
   String get buttonStart;
 
   /// No description provided for @buttonStop.
   ///
   /// In fr, this message translates to:
-  /// **'Arreter'**
+  /// **'Arrêter'**
   String get buttonStop;
 
   /// No description provided for @buttonSave.
@@ -139,7 +139,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorNetwork.
   ///
   /// In fr, this message translates to:
-  /// **'Probleme de connexion'**
+  /// **'Problème de connexion'**
   String get errorNetwork;
 
   /// No description provided for @errorServer.
@@ -177,6 +177,288 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune note pour le moment'**
   String get historyEmpty;
+
+  /// No description provided for @inputErrorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce champ est obligatoire'**
+  String get inputErrorRequired;
+
+  /// No description provided for @inputErrorEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail invalide'**
+  String get inputErrorEmail;
+
+  /// No description provided for @inputErrorNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre invalide'**
+  String get inputErrorNumber;
+
+  /// No description provided for @inputErrorPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe doit contenir au moins 8 caractères'**
+  String get inputErrorPassword;
+
+  /// No description provided for @inputPasswordToggle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le mot de passe'**
+  String get inputPasswordToggle;
+
+  /// No description provided for @debugShakeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode développeur'**
+  String get debugShakeTitle;
+
+  /// No description provided for @debugShakeMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la page de démonstration des composants ?'**
+  String get debugShakeMessage;
+
+  /// No description provided for @debugShakeConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get debugShakeConfirm;
+
+  /// No description provided for @debugShakeCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get debugShakeCancel;
+
+  /// No description provided for @debugPageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Composants UI'**
+  String get debugPageTitle;
+
+  /// No description provided for @debugSectionButtons.
+  ///
+  /// In fr, this message translates to:
+  /// **'Boutons'**
+  String get debugSectionButtons;
+
+  /// No description provided for @debugSectionInputs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Champs'**
+  String get debugSectionInputs;
+
+  /// No description provided for @debugSectionBottomSheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bottom sheet'**
+  String get debugSectionBottomSheet;
+
+  /// No description provided for @debugSectionDialog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dialogues'**
+  String get debugSectionDialog;
+
+  /// No description provided for @debugSectionToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toasts'**
+  String get debugSectionToast;
+
+  /// No description provided for @debugButtonPrimary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Primaire'**
+  String get debugButtonPrimary;
+
+  /// No description provided for @debugButtonSecondary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Secondaire'**
+  String get debugButtonSecondary;
+
+  /// No description provided for @debugButtonWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avertissement'**
+  String get debugButtonWarning;
+
+  /// No description provided for @debugButtonError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur'**
+  String get debugButtonError;
+
+  /// No description provided for @debugButtonLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement'**
+  String get debugButtonLoading;
+
+  /// No description provided for @debugButtonDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactivé'**
+  String get debugButtonDisabled;
+
+  /// No description provided for @debugButtonIcon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Icône'**
+  String get debugButtonIcon;
+
+  /// No description provided for @debugButtonTextIcon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte + icône'**
+  String get debugButtonTextIcon;
+
+  /// No description provided for @debugInputText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte'**
+  String get debugInputText;
+
+  /// No description provided for @debugInputNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre'**
+  String get debugInputNumber;
+
+  /// No description provided for @debugInputEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail'**
+  String get debugInputEmail;
+
+  /// No description provided for @debugInputPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get debugInputPassword;
+
+  /// No description provided for @debugInputTextarea.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zone de texte'**
+  String get debugInputTextarea;
+
+  /// No description provided for @debugOpenBottomSheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir bottom sheet'**
+  String get debugOpenBottomSheet;
+
+  /// No description provided for @debugBottomSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bottom sheet personnalisé'**
+  String get debugBottomSheetTitle;
+
+  /// No description provided for @debugBottomSheetBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu personnalisable du bottom sheet.'**
+  String get debugBottomSheetBody;
+
+  /// No description provided for @debugOpenFullscreenDialog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dialogue plein écran'**
+  String get debugOpenFullscreenDialog;
+
+  /// No description provided for @debugOpenLockDialog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dialogue verrouillé'**
+  String get debugOpenLockDialog;
+
+  /// No description provided for @debugFullscreenTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plein écran'**
+  String get debugFullscreenTitle;
+
+  /// No description provided for @debugFullscreenBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exemple de dialogue plein écran.'**
+  String get debugFullscreenBody;
+
+  /// No description provided for @debugLockTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écran verrouillé'**
+  String get debugLockTitle;
+
+  /// No description provided for @debugLockBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce dialogue ne peut pas être fermé par un tap extérieur.'**
+  String get debugLockBody;
+
+  /// No description provided for @debugLockDismiss.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déverrouiller'**
+  String get debugLockDismiss;
+
+  /// No description provided for @debugToastSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opération réussie'**
+  String get debugToastSuccess;
+
+  /// No description provided for @debugToastWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention requise'**
+  String get debugToastWarning;
+
+  /// No description provided for @debugToastError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue'**
+  String get debugToastError;
+
+  /// No description provided for @debugToastInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Information'**
+  String get debugToastInfo;
+
+  /// No description provided for @debugShowToastSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toast succès'**
+  String get debugShowToastSuccess;
+
+  /// No description provided for @debugShowToastWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toast avertissement'**
+  String get debugShowToastWarning;
+
+  /// No description provided for @debugShowToastError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toast erreur'**
+  String get debugShowToastError;
+
+  /// No description provided for @debugShowToastInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toast info'**
+  String get debugShowToastInfo;
+
+  /// No description provided for @debugClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get debugClose;
 }
 
 class _AppLocalizationsDelegate
