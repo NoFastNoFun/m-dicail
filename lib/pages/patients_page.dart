@@ -105,7 +105,7 @@ class _PatientsViewState extends State<_PatientsView> {
                       )
                     : ListView.separated(
                         itemCount: patients.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: AppSpacing.md),
                         itemBuilder: (context, index) {
                           return _PatientListItem(patient: patients[index]);
