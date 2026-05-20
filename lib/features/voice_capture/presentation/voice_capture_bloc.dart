@@ -35,17 +35,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureInitializeRequested event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    try {
-      await _audioCaptureService.initialize();
-      emit(const VoiceCaptureReady());
-    } catch (error) {
-      emit(
-        VoiceCaptureFailure(
-          Failure.fromException(error).message,
-          transcript: _currentTranscript,
-        ),
-      );
-    }
+    emit(const VoiceCaptureReady());
   }
 
   Future<void> _onStartRecording(
@@ -55,6 +45,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final currentTranscript = _currentTranscript;
     _segmentBase = currentTranscript;
     try {
+      await _audioCaptureService.initialize();
       await _ensureActiveSessionStarted(currentTranscript);
       await _startListeningSession();
       emit(RecordingInProgress(transcript: currentTranscript));
