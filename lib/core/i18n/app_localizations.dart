@@ -172,6 +172,42 @@ abstract class AppLocalizations {
   /// **'Transcription'**
   String get transcriptLabel;
 
+  /// No description provided for @transcriptEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune parole captee pour le moment'**
+  String get transcriptEmptyHint;
+
+  /// No description provided for @buttonClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get buttonClear;
+
+  /// No description provided for @recordStatusReady.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pret a ecouter'**
+  String get recordStatusReady;
+
+  /// No description provided for @recordStatusInitializing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Initialisation du micro'**
+  String get recordStatusInitializing;
+
+  /// No description provided for @recordStatusListening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en cours'**
+  String get recordStatusListening;
+
+  /// No description provided for @recordStatusEnded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Session terminee'**
+  String get recordStatusEnded;
+
   /// No description provided for @historyEmpty.
   ///
   /// In fr, this message translates to:
