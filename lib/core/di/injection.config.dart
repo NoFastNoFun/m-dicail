@@ -15,6 +15,9 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
+import 'package:medicail/core/audio/raw_audio_recorder_service.dart' as _i811;
+import 'package:medicail/core/audio/record_raw_audio_recorder_service.dart'
+    as _i639;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/di/register_module.dart' as _i91;
@@ -55,8 +58,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
     );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(gh<_i21.AudioCaptureService>()),
+    gh.lazySingleton<_i811.RawAudioRecorderService>(
+      () => _i639.RecordRawAudioRecorderService(),
     );
     gh.lazySingleton<_i760.AuthTokenStorage>(
       () => _i249.SecureStorageAuthToken(gh<_i558.FlutterSecureStorage>()),
@@ -64,6 +67,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i302.RecordingSessionRepository>(
       () => _i988.SecureStorageRecordingSessionRepository(
         gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i811.RawAudioRecorderService>(),
+        gh<_i302.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i583.GoRouter>(
