@@ -15,6 +15,8 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
+import 'package:medicail/core/audio/audio_playback_service.dart' as _i405;
+import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i506;
 import 'package:medicail/core/audio/raw_audio_recorder_service.dart' as _i811;
 import 'package:medicail/core/audio/record_raw_audio_recorder_service.dart'
     as _i639;
@@ -63,6 +65,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1038.AppRouter>(() => _i1038.AppRouter());
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
+    );
+    gh.lazySingleton<_i405.AudioPlaybackService>(
+      () => _i506.JustAudioPlaybackService(),
     );
     gh.lazySingleton<_i811.RawAudioRecorderService>(
       () => _i639.RecordRawAudioRecorderService(),
