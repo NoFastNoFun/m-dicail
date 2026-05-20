@@ -7,7 +7,7 @@ enum RecordingSessionStatus {
   failed,
 }
 
-final class RecordingSession extends Equatable {
+class RecordingSession extends Equatable {
   const RecordingSession({
     required this.id,
     required this.startedAt,

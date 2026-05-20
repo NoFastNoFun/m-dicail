@@ -10,9 +10,9 @@ import 'package:medicail/features/voice_capture/presentation/voice_capture_state
 import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
+import 'package:medicail/widget/app_session_status_banner.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'package:medicail/widget/session_status_banner.dart';
 
 class RecordPage extends StatelessWidget {
   const RecordPage({super.key});
@@ -68,7 +68,7 @@ class _RecordViewState extends State<_RecordView> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SessionStatusBanner(
+              AppSessionStatusBanner(
                 label: viewModel.errorMessage != null
                     ? l10n.errorAudio
                     : _statusLabel(l10n, viewModel.status),

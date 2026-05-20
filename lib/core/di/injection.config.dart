@@ -28,6 +28,10 @@ import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
     as _i945;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
+import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
+    as _i988;
+import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
+    as _i302;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 
@@ -56,6 +60,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i760.AuthTokenStorage>(
       () => _i249.SecureStorageAuthToken(gh<_i558.FlutterSecureStorage>()),
+    );
+    gh.lazySingleton<_i302.RecordingSessionRepository>(
+      () => _i988.SecureStorageRecordingSessionRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
     );
     gh.lazySingleton<_i583.GoRouter>(
       () => registerModule.goRouter(gh<_i1038.AppRouter>()),
