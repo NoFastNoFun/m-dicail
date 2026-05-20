@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:injectable/injectable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:medicail/core/audio/audio_playback_service.dart';
@@ -23,7 +25,9 @@ class JustAudioPlaybackService implements AudioPlaybackService {
       _currentSource = source;
     }
 
-    await _player.play();
+    // Do not await _player.play() because it completes only when playback finishes,
+    // which would block the UI in a "loading" state.
+    unawaited(_player.play());
   }
 
   @override
