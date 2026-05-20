@@ -27,6 +27,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buttonSave => 'Enregistrer';
 
   @override
+  String get buttonFinishConsultation => 'Terminer consultation';
+
+  @override
   String get errorGeneric => 'Une erreur est survenue';
 
   @override
@@ -61,6 +64,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordStatusListening => 'Ecoute en cours';
+
+  @override
+  String get recordStatusPaused => 'Ecoute en pause';
 
   @override
   String get recordStatusEnded => 'Session terminee';

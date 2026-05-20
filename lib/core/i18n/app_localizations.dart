@@ -130,6 +130,12 @@ abstract class AppLocalizations {
   /// **'Enregistrer'**
   String get buttonSave;
 
+  /// No description provided for @buttonFinishConsultation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer consultation'**
+  String get buttonFinishConsultation;
+
   /// No description provided for @errorGeneric.
   ///
   /// In fr, this message translates to:
@@ -201,6 +207,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ecoute en cours'**
   String get recordStatusListening;
+
+  /// No description provided for @recordStatusPaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en pause'**
+  String get recordStatusPaused;
 
   /// No description provided for @recordStatusEnded.
   ///
