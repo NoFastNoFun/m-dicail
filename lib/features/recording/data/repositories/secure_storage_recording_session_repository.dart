@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
@@ -55,15 +56,41 @@ class SecureStorageRecordingSessionRepository
   @override
   Future<void> delete(String id) async {
     final sessions = await _readSessions();
-    final nextSessions = [
-      for (final session in sessions)
-        if (session.id != id) session,
-    ];
+    final nextSessions = <RecordingSession>[];
+
+    for (final session in sessions) {
+      if (session.id == id) {
+        if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty) {
+          try {
+            final file = File(session.rawAudioPath!);
+            if (await file.exists()) {
+              await file.delete();
+            }
+          } catch (_) {}
+        }
+      } else {
+        nextSessions.add(session);
+      }
+    }
+
     await _writeSessions(nextSessions);
   }
 
   @override
-  Future<void> clear() => _storage.delete(key: _sessionsKey);
+  Future<void> clear() async {
+    final sessions = await _readSessions();
+    for (final session in sessions) {
+      if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty) {
+        try {
+          final file = File(session.rawAudioPath!);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (_) {}
+      }
+    }
+    return _storage.delete(key: _sessionsKey);
+  }
 
   Future<List<RecordingSession>> _readSessions() async {
     final raw = await _storage.read(key: _sessionsKey);
