@@ -12,7 +12,12 @@ final class VoiceCaptureInitializeRequested extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureStartRecording extends VoiceCaptureEvent {
-  const VoiceCaptureStartRecording();
+  const VoiceCaptureStartRecording({this.patientId});
+
+  final String? patientId;
+
+  @override
+  List<Object?> get props => [patientId];
 }
 
 final class VoiceCaptureStopRecording extends VoiceCaptureEvent {

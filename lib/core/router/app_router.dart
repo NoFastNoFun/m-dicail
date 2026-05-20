@@ -23,7 +23,9 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.record,
         name: 'record',
-        builder: (context, state) => const RecordPage(),
+        builder: (context, state) => RecordPage(
+          patientId: state.uri.queryParameters['patientId'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.patients,
@@ -58,7 +60,15 @@ class AppRouter {
 extension AppRouterNavigation on BuildContext {
   void goHome() => go(AppRoutes.home);
 
-  void goRecord() => push(AppRoutes.record);
+  void goRecord({String? patientId}) {
+    if (patientId == null || patientId.isEmpty) {
+      push(AppRoutes.record);
+      return;
+    }
+    push(Uri(path: AppRoutes.record, queryParameters: {
+      'patientId': patientId,
+    }).toString());
+  }
 
   void goPatients() => push(AppRoutes.patients);
 

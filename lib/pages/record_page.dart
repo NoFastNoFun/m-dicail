@@ -15,20 +15,27 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class RecordPage extends StatelessWidget {
-  const RecordPage({super.key});
+  const RecordPage({
+    super.key,
+    this.patientId,
+  });
+
+  final String? patientId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<VoiceCaptureBloc>()
         ..add(const VoiceCaptureInitializeRequested()),
-      child: const _RecordView(),
+      child: _RecordView(patientId: patientId),
     );
   }
 }
 
 class _RecordView extends StatefulWidget {
-  const _RecordView();
+  const _RecordView({this.patientId});
+
+  final String? patientId;
 
   @override
   State<_RecordView> createState() => _RecordViewState();
@@ -99,7 +106,11 @@ class _RecordViewState extends State<_RecordView> {
                       label: l10n.buttonStart,
                       onPressed: () => context
                           .read<VoiceCaptureBloc>()
-                          .add(const VoiceCaptureStartRecording()),
+                          .add(
+                            VoiceCaptureStartRecording(
+                              patientId: widget.patientId,
+                            ),
+                          ),
                       isLoading: viewModel.isInitializing,
                       enabled: viewModel.canStart,
                     ),
