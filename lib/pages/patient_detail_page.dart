@@ -121,7 +121,7 @@ class _PatientDetailView extends StatelessWidget {
                 )
               : ListView.separated(
                   itemCount: sessions.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     return _RecordingSessionListItem(session: sessions[index]);
