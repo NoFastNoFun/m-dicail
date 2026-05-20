@@ -8,11 +8,11 @@ import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
-import 'package:medicail/features/voice_capture/presentation/widgets/session_status_banner.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/widget/session_status_banner.dart';
 
 class RecordPage extends StatelessWidget {
   const RecordPage({super.key});
@@ -36,13 +36,6 @@ class _RecordView extends StatefulWidget {
 
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
-
-  static const _statusReady = 'Pret a ecouter';
-  static const _statusInitializing = 'Initialisation du micro';
-  static const _statusListening = 'Ecoute en cours';
-  static const _statusEnded = 'Session terminee';
-  static const _clearLabel = 'Effacer';
-  static const _emptyTranscriptHint = 'Aucune parole captee pour le moment';
 
   @override
   void initState() {
@@ -78,7 +71,7 @@ class _RecordViewState extends State<_RecordView> {
               SessionStatusBanner(
                 label: viewModel.errorMessage != null
                     ? l10n.errorAudio
-                    : _statusLabel(viewModel.status),
+                    : _statusLabel(l10n, viewModel.status),
                 color: _statusColor(viewModel.status),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -93,7 +86,7 @@ class _RecordViewState extends State<_RecordView> {
               AppInput(
                 variant: AppInputVariant.textarea,
                 label: l10n.transcriptLabel,
-                hint: _emptyTranscriptHint,
+                hint: l10n.transcriptEmptyHint,
                 controller: _transcriptController,
                 readOnly: true,
                 maxLines: 12,
@@ -126,7 +119,7 @@ class _RecordViewState extends State<_RecordView> {
               ),
               const SizedBox(height: AppSpacing.md),
               AppButton(
-                label: _clearLabel,
+                label: l10n.buttonClear,
                 style: AppButtonStyle.secondary,
                 onPressed: () => context
                     .read<VoiceCaptureBloc>()
@@ -140,12 +133,15 @@ class _RecordViewState extends State<_RecordView> {
     );
   }
 
-  String _statusLabel(VoiceCaptureSessionStatus status) {
+  String _statusLabel(
+    AppLocalizations l10n,
+    VoiceCaptureSessionStatus status,
+  ) {
     return switch (status) {
-      VoiceCaptureSessionStatus.initializing => _statusInitializing,
-      VoiceCaptureSessionStatus.listening => _statusListening,
-      VoiceCaptureSessionStatus.ended => _statusEnded,
-      _ => _statusReady,
+      VoiceCaptureSessionStatus.initializing => l10n.recordStatusInitializing,
+      VoiceCaptureSessionStatus.listening => l10n.recordStatusListening,
+      VoiceCaptureSessionStatus.ended => l10n.recordStatusEnded,
+      _ => l10n.recordStatusReady,
     };
   }
 

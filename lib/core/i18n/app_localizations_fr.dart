@@ -48,6 +48,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transcriptLabel => 'Transcription';
 
   @override
+  String get transcriptEmptyHint => 'Aucune parole captee pour le moment';
+
+  @override
+  String get buttonClear => 'Effacer';
+
+  @override
+  String get recordStatusReady => 'Pret a ecouter';
+
+  @override
+  String get recordStatusInitializing => 'Initialisation du micro';
+
+  @override
+  String get recordStatusListening => 'Ecoute en cours';
+
+  @override
+  String get recordStatusEnded => 'Session terminee';
+
+  @override
   String get historyEmpty => 'Aucune note pour le moment';
 
   @override
