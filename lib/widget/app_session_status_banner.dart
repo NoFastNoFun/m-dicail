@@ -4,8 +4,8 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/widget/app_text.dart';
 
-class SessionStatusBanner extends StatelessWidget {
-  const SessionStatusBanner({
+class AppSessionStatusBanner extends StatelessWidget {
+  const AppSessionStatusBanner({
     super.key,
     required this.label,
     required this.color,
