@@ -5,6 +5,7 @@ import 'package:medicail/core/audio/raw_audio_recorder_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -238,6 +239,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       rawAudioPath: rawAudioPath,
       clearRawAudioPath: rawAudioPath == null,
       transcript: transcript,
+      soapNote: session.soapNote ?? _generateMockSoapNote(transcript),
       status: RecordingSessionStatus.completed,
     );
     _activeSession = completed;
@@ -273,5 +275,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final updated = session.copyWith(transcript: transcript);
     _activeSession = updated;
     await _recordingSessionRepository.save(updated);
+  }
+
+  SoapNote _generateMockSoapNote(String transcript) {
+    final cleanTranscript = transcript.trim();
+    return SoapNote(
+      subjective: cleanTranscript.isEmpty
+          ? '- Motif de consultation :\n- Symptômes décrits :'
+          : cleanTranscript,
+      objective: '- Constantes :\n- Examen clinique :',
+      assessment: '- Diagnostics suspectés :',
+      plan: '- Traitement :\n- Examens complémentaires :\n- Suivi :',
+    );
   }
 }
