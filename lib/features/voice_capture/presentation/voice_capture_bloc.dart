@@ -19,6 +19,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
     on<VoiceCaptureStopRecording>(_onStopRecording);
+    on<VoiceCaptureFinishConsultation>(_onFinishConsultation);
     on<VoiceCaptureClearTranscript>(_onClearTranscript);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
@@ -53,19 +54,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     final currentTranscript = _currentTranscript;
     _segmentBase = currentTranscript;
-    final startedAt = DateTime.now();
-    final session = RecordingSession(
-      id: _generateSessionId(startedAt),
-      startedAt: startedAt,
-      transcript: currentTranscript,
-      status: RecordingSessionStatus.recording,
-    );
     try {
-      final rawAudioPath = await _rawAudioRecorderService.startRecording(
-        sessionId: session.id,
-      );
-      _activeSession = session.copyWith(rawAudioPath: rawAudioPath);
-      await _recordingSessionRepository.save(_activeSession!);
+      await _ensureActiveSessionStarted(currentTranscript);
       await _startListeningSession();
       emit(RecordingInProgress(transcript: currentTranscript));
     } catch (error) {
@@ -85,16 +75,40 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     try {
       await _audioCaptureService.stopListening();
-      final rawAudioPath = await _rawAudioRecorderService.stopRecording();
-      await _completeActiveSession(rawAudioPath: rawAudioPath);
+      await _saveActiveSessionTranscript(_currentTranscript);
       _segmentBase = '';
-      emit(VoiceCaptureReady(transcript: _currentTranscript));
+      emit(ListeningPaused(transcript: _currentTranscript));
     } catch (error) {
       await _failActiveSession(_currentTranscript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: _currentTranscript,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onFinishConsultation(
+    VoiceCaptureFinishConsultation event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    final transcript = _currentTranscript;
+    try {
+      await _audioCaptureService.stopListening();
+      final rawAudioPath = await _rawAudioRecorderService.stopRecording();
+      await _completeActiveSession(
+        transcript: transcript,
+        rawAudioPath: rawAudioPath,
+      );
+      _segmentBase = '';
+      emit(VoiceCaptureReady(transcript: transcript));
+    } catch (error) {
+      await _failActiveSession(transcript);
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: transcript,
         ),
       );
     }
@@ -178,6 +192,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     return switch (state) {
       VoiceCaptureReady(:final transcript) => transcript,
       RecordingInProgress(:final transcript) => transcript,
+      ListeningPaused(:final transcript) => transcript,
+      VoiceCaptureFailure(:final transcript) => transcript,
       _ => '',
     };
   }
@@ -186,7 +202,34 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     return 'recording_${startedAt.toUtc().microsecondsSinceEpoch}';
   }
 
-  Future<void> _completeActiveSession({String? rawAudioPath}) async {
+  Future<void> _ensureActiveSessionStarted(String transcript) async {
+    final existingSession = _activeSession;
+    if (existingSession != null &&
+        existingSession.status == RecordingSessionStatus.recording) {
+      final updated = existingSession.copyWith(transcript: transcript);
+      _activeSession = updated;
+      await _recordingSessionRepository.save(updated);
+      return;
+    }
+
+    final startedAt = DateTime.now();
+    final session = RecordingSession(
+      id: _generateSessionId(startedAt),
+      startedAt: startedAt,
+      transcript: transcript,
+      status: RecordingSessionStatus.recording,
+    );
+    final rawAudioPath = await _rawAudioRecorderService.startRecording(
+      sessionId: session.id,
+    );
+    _activeSession = session.copyWith(rawAudioPath: rawAudioPath);
+    await _recordingSessionRepository.save(_activeSession!);
+  }
+
+  Future<void> _completeActiveSession({
+    required String transcript,
+    String? rawAudioPath,
+  }) async {
     final session = _activeSession;
     if (session == null) {
       return;
@@ -195,7 +238,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       rawAudioPath: rawAudioPath,
-      transcript: _currentTranscript,
+      transcript: transcript,
       status: RecordingSessionStatus.completed,
     );
     _activeSession = completed;

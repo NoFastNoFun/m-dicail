@@ -29,6 +29,15 @@ final class RecordingInProgress extends VoiceCaptureState {
   List<Object?> get props => [transcript];
 }
 
+final class ListeningPaused extends VoiceCaptureState {
+  const ListeningPaused({required this.transcript});
+
+  final String transcript;
+
+  @override
+  List<Object?> get props => [transcript];
+}
+
 final class VoiceCaptureFailure extends VoiceCaptureState {
   const VoiceCaptureFailure(this.message, {this.transcript = ''});
 

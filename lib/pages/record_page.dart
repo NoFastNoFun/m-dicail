@@ -108,7 +108,7 @@ class _RecordViewState extends State<_RecordView> {
                   Expanded(
                     child: AppButton(
                       label: l10n.buttonStop,
-                      style: AppButtonStyle.warning,
+                      style: AppButtonStyle.secondary,
                       onPressed: () => context
                           .read<VoiceCaptureBloc>()
                           .add(const VoiceCaptureStopRecording()),
@@ -116,6 +116,15 @@ class _RecordViewState extends State<_RecordView> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppButton(
+                label: l10n.buttonFinishConsultation,
+                style: AppButtonStyle.warning,
+                onPressed: () => context
+                    .read<VoiceCaptureBloc>()
+                    .add(const VoiceCaptureFinishConsultation()),
+                enabled: viewModel.canFinishConsultation,
               ),
               const SizedBox(height: AppSpacing.md),
               AppButton(
@@ -140,6 +149,7 @@ class _RecordViewState extends State<_RecordView> {
     return switch (status) {
       VoiceCaptureSessionStatus.initializing => l10n.recordStatusInitializing,
       VoiceCaptureSessionStatus.listening => l10n.recordStatusListening,
+      VoiceCaptureSessionStatus.paused => l10n.recordStatusPaused,
       VoiceCaptureSessionStatus.ended => l10n.recordStatusEnded,
       _ => l10n.recordStatusReady,
     };
@@ -148,6 +158,7 @@ class _RecordViewState extends State<_RecordView> {
   Color _statusColor(VoiceCaptureSessionStatus status) {
     return switch (status) {
       VoiceCaptureSessionStatus.listening => AppColors.info,
+      VoiceCaptureSessionStatus.paused => AppColors.textSecondary,
       VoiceCaptureSessionStatus.failure => AppColors.error,
       _ => AppColors.textSecondary,
     };
