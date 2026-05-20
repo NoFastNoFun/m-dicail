@@ -96,7 +96,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         rawAudioPath: rawAudioPath,
       );
       _segmentBase = '';
-      emit(VoiceCaptureReady(transcript: transcript));
+      emit(VoiceCaptureConsultationFinished(transcript: transcript));
     } catch (error) {
       await _failActiveSession(transcript);
       emit(
@@ -236,6 +236,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       rawAudioPath: rawAudioPath,
+      clearRawAudioPath: rawAudioPath == null,
       transcript: transcript,
       status: RecordingSessionStatus.completed,
     );

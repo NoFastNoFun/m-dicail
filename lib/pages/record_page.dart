@@ -4,6 +4,8 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
+import 'package:go_router/go_router.dart';
+import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -62,6 +64,17 @@ class _RecordViewState extends State<_RecordView> {
 
     return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
       listener: (context, state) {
+        if (state is VoiceCaptureConsultationFinished) {
+          if (context.canPop()) {
+            context.pop();
+          } else if (widget.patientId != null) {
+            context.goPatientDetail(widget.patientId!);
+          } else {
+            context.goHome();
+          }
+          return;
+        }
+
         final transcript = VoiceCaptureViewModel.fromState(state).transcript;
         if (_transcriptController.text != transcript) {
           _transcriptController.text = transcript;

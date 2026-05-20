@@ -33,7 +33,13 @@ class _PatientDetailPageState extends State<PatientDetailPage> {
   @override
   void initState() {
     super.initState();
-    _detailFuture = _loadDetail();
+    _refresh();
+  }
+
+  void _refresh() {
+    setState(() {
+      _detailFuture = _loadDetail();
+    });
   }
 
   Future<_PatientDetailData> _loadDetail() async {
@@ -69,6 +75,7 @@ class _PatientDetailPageState extends State<PatientDetailPage> {
                   : _PatientDetailView(
                       patient: patient,
                       sessions: data?.sessions ?? const [],
+                      onRefresh: _refresh,
                     ),
         );
       },
@@ -80,10 +87,12 @@ class _PatientDetailView extends StatelessWidget {
   const _PatientDetailView({
     required this.patient,
     required this.sessions,
+    required this.onRefresh,
   });
 
   final Patient patient;
   final List<RecordingSession> sessions;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +113,10 @@ class _PatientDetailView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         AppButton(
           label: l10n.patientNewConsultationButton,
-          onPressed: () => context.goRecord(patientId: patient.id),
+          onPressed: () async {
+            await context.goRecord(patientId: patient.id);
+            onRefresh();
+          },
         ),
         const SizedBox(height: AppSpacing.xl),
         AppText(
