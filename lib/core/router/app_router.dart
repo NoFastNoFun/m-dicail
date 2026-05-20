@@ -5,6 +5,8 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
+import 'package:medicail/pages/patient_detail_page.dart';
+import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/widget/app_text.dart';
 
@@ -22,6 +24,18 @@ class AppRouter {
         path: AppRoutes.record,
         name: 'record',
         builder: (context, state) => const RecordPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.patients,
+        name: 'patients',
+        builder: (context, state) => const PatientsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.patientDetail,
+        name: 'patient-detail',
+        builder: (context, state) => PatientDetailPage(
+          patientId: state.pathParameters['patientId'] ?? '',
+        ),
       ),
       if (kDebugMode)
         GoRoute(
@@ -45,6 +59,10 @@ extension AppRouterNavigation on BuildContext {
   void goHome() => go(AppRoutes.home);
 
   void goRecord() => push(AppRoutes.record);
+
+  void goPatients() => push(AppRoutes.patients);
+
+  void goPatientDetail(String patientId) => push('/patients/$patientId');
 
   void goDebug() => push(AppRoutes.debug);
 }

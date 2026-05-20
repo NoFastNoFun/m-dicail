@@ -166,6 +166,12 @@ abstract class AppLocalizations {
   /// **'Historique'**
   String get labelHistory;
 
+  /// No description provided for @navigateToPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get navigateToPatients;
+
   /// No description provided for @navigateToRecord.
   ///
   /// In fr, this message translates to:
@@ -183,6 +189,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune parole captee pour le moment'**
   String get transcriptEmptyHint;
+
+  /// No description provided for @transcriptEmptyFallback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription vide'**
+  String get transcriptEmptyFallback;
 
   /// No description provided for @buttonClear.
   ///
@@ -225,6 +237,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune note pour le moment'**
   String get historyEmpty;
+
+  /// No description provided for @patientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get patientsTitle;
+
+  /// No description provided for @patientsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get patientsSectionTitle;
+
+  /// No description provided for @patientsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun patient pour le moment'**
+  String get patientsEmpty;
+
+  /// No description provided for @patientFirstNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenom'**
+  String get patientFirstNameLabel;
+
+  /// No description provided for @patientLastNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get patientLastNameLabel;
+
+  /// No description provided for @patientCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le patient'**
+  String get patientCreateButton;
+
+  /// No description provided for @patientOpenButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir le dossier'**
+  String get patientOpenButton;
+
+  /// No description provided for @patientDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier patient'**
+  String get patientDetailTitle;
+
+  /// No description provided for @patientNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient introuvable'**
+  String get patientNotFound;
+
+  /// No description provided for @patientNewConsultationButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle consultation'**
+  String get patientNewConsultationButton;
+
+  /// No description provided for @patientSessionsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations'**
+  String get patientSessionsTitle;
+
+  /// No description provided for @patientSessionsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune consultation pour ce patient'**
+  String get patientSessionsEmpty;
+
+  /// No description provided for @recordingStatusLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get recordingStatusLabel;
+
+  /// No description provided for @recordingAudioLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio'**
+  String get recordingAudioLabel;
 
   /// No description provided for @inputErrorRequired.
   ///

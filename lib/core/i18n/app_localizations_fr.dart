@@ -45,6 +45,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelHistory => 'Historique';
 
   @override
+  String get navigateToPatients => 'Dossiers patients';
+
+  @override
   String get navigateToRecord => 'Nouvel enregistrement';
 
   @override
@@ -52,6 +55,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get transcriptEmptyHint => 'Aucune parole captee pour le moment';
+
+  @override
+  String get transcriptEmptyFallback => 'Transcription vide';
 
   @override
   String get buttonClear => 'Effacer';
@@ -73,6 +79,48 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get historyEmpty => 'Aucune note pour le moment';
+
+  @override
+  String get patientsTitle => 'Patients';
+
+  @override
+  String get patientsSectionTitle => 'Dossiers patients';
+
+  @override
+  String get patientsEmpty => 'Aucun patient pour le moment';
+
+  @override
+  String get patientFirstNameLabel => 'Prenom';
+
+  @override
+  String get patientLastNameLabel => 'Nom';
+
+  @override
+  String get patientCreateButton => 'Creer le patient';
+
+  @override
+  String get patientOpenButton => 'Ouvrir le dossier';
+
+  @override
+  String get patientDetailTitle => 'Dossier patient';
+
+  @override
+  String get patientNotFound => 'Patient introuvable';
+
+  @override
+  String get patientNewConsultationButton => 'Nouvelle consultation';
+
+  @override
+  String get patientSessionsTitle => 'Consultations';
+
+  @override
+  String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
+
+  @override
+  String get recordingStatusLabel => 'Statut';
+
+  @override
+  String get recordingAudioLabel => 'Audio';
 
   @override
   String get inputErrorRequired => 'Ce champ est obligatoire';
