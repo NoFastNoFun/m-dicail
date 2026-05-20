@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/recording/presentation/recording_sessions_debug_panel.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
@@ -240,6 +243,12 @@ class _DebugPageState extends State<DebugPage> {
                 message: l10n.debugToastInfo,
                 type: AppToastType.info,
               ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            _sectionTitle('Sessions persistees'),
+            const SizedBox(height: AppSpacing.sm),
+            RecordingSessionsDebugPanel(
+              repository: getIt<RecordingSessionRepository>(),
             ),
             const SizedBox(height: AppSpacing.xxl),
           ],
