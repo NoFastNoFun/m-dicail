@@ -28,8 +28,8 @@ class RecordRawAudioRecorderService implements RawAudioRecorderService {
 
     final path = await _buildRecordingPath(sessionId);
     await _recorder.start(
-      const RecordConfig(
-        encoder: AudioEncoder.aacLc,
+      RecordConfig(
+        encoder: kIsWeb ? AudioEncoder.opus : AudioEncoder.aacLc,
         bitRate: 128000,
         sampleRate: 44100,
       ),

@@ -60,12 +60,12 @@ class AppRouter {
 extension AppRouterNavigation on BuildContext {
   void goHome() => go(AppRoutes.home);
 
-  void goRecord({String? patientId}) {
+  Future<void> goRecord({String? patientId}) async {
     if (patientId == null || patientId.isEmpty) {
-      push(AppRoutes.record);
+      await push(AppRoutes.record);
       return;
     }
-    push(Uri(path: AppRoutes.record, queryParameters: {
+    await push(Uri(path: AppRoutes.record, queryParameters: {
       'patientId': patientId,
     }).toString());
   }

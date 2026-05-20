@@ -27,6 +27,10 @@ final class VoiceCaptureViewModel {
               : VoiceCaptureSessionStatus.ended,
           transcript: transcript,
         ),
+      VoiceCaptureConsultationFinished(:final transcript) => VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.ended,
+          transcript: transcript,
+        ),
       RecordingInProgress(:final transcript) => VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           transcript: transcript,
