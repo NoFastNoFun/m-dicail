@@ -29,7 +29,13 @@ class HomePage extends StatelessWidget {
             ),
           ),
           AppButton(
+            label: l10n.navigateToPatients,
+            onPressed: () => context.goPatients(),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
             label: l10n.navigateToRecord,
+            style: AppButtonStyle.secondary,
             onPressed: () => context.goRecord(),
           ),
         ],
