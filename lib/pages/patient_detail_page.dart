@@ -9,6 +9,8 @@ import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/core/audio/audio_playback_service.dart';
+import 'package:medicail/widget/app_audio_player.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -121,7 +123,7 @@ class _PatientDetailView extends StatelessWidget {
                 )
               : ListView.separated(
                   itemCount: sessions.length,
-                  separatorBuilder: (_, _) =>
+                  separatorBuilder: (context, index) =>
                       const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     return _RecordingSessionListItem(session: sessions[index]);
@@ -163,13 +165,18 @@ class _RecordingSessionListItem extends StatelessWidget {
               variant: AppTextVariant.caption,
               color: AppColors.textSecondary,
             ),
-            AppText(
-              '${l10n.recordingAudioLabel}: ${session.rawAudioPath ?? '-'}',
-              variant: AppTextVariant.caption,
-              color: AppColors.textSecondary,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+            if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty)
+              AppAudioPlayer(
+                playbackService: getIt<AudioPlaybackService>(),
+                source: session.rawAudioPath,
+                title: l10n.recordingAudioLabel,
+              )
+            else
+              AppText(
+                'Audio indisponible',
+                variant: AppTextVariant.caption,
+                color: AppColors.textSecondary,
+              ),
             const SizedBox(height: AppSpacing.sm),
             AppText(
               session.transcript.isEmpty
