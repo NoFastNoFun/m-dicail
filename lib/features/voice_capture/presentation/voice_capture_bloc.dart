@@ -46,7 +46,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _segmentBase = currentTranscript;
     try {
       await _audioCaptureService.initialize();
-      await _ensureActiveSessionStarted(currentTranscript);
+      await _ensureActiveSessionStarted(
+        currentTranscript,
+        patientId: event.patientId,
+      );
       await _startListeningSession();
       emit(RecordingInProgress(transcript: currentTranscript));
     } catch (error) {
@@ -193,7 +196,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     return 'recording_${startedAt.toUtc().microsecondsSinceEpoch}';
   }
 
-  Future<void> _ensureActiveSessionStarted(String transcript) async {
+  Future<void> _ensureActiveSessionStarted(
+    String transcript, {
+    String? patientId,
+  }) async {
     final existingSession = _activeSession;
     if (existingSession != null &&
         existingSession.status == RecordingSessionStatus.recording) {
@@ -206,6 +212,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final startedAt = DateTime.now();
     final session = RecordingSession(
       id: _generateSessionId(startedAt),
+      patientId: patientId,
       startedAt: startedAt,
       transcript: transcript,
       status: RecordingSessionStatus.recording,

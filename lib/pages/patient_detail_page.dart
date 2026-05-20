@@ -102,7 +102,7 @@ class _PatientDetailView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         AppButton(
           label: l10n.patientNewConsultationButton,
-          onPressed: () => context.goRecord(),
+          onPressed: () => context.goRecord(patientId: patient.id),
         ),
         const SizedBox(height: AppSpacing.xl),
         AppText(
