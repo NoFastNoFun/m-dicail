@@ -6,7 +6,7 @@ import 'package:medicail/features/patient/data/models/patient_model.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 
-@LazySingleton(as: PatientRepository)
+@injectable
 class SecureStoragePatientRepository implements PatientRepository {
   const SecureStoragePatientRepository(this._storage);
 

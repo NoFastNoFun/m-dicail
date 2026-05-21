@@ -1,19 +1,30 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/patient/domain/entities/contact.dart';
 
 class Patient extends Equatable {
   const Patient({
     required this.id,
+    required this.mrn,
     required this.firstName,
     required this.lastName,
     required this.createdAt,
     required this.updatedAt,
     this.birthDate,
+    this.sex,
+    this.contact,
+    this.notes,
+    this.metadata,
   });
 
   final String id;
+  final String mrn;
   final String firstName;
   final String lastName;
   final DateTime? birthDate;
+  final String? sex;
+  final Contact? contact;
+  final String? notes;
+  final Map<String, dynamic>? metadata;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -21,18 +32,32 @@ class Patient extends Equatable {
 
   Patient copyWith({
     String? id,
+    String? mrn,
     String? firstName,
     String? lastName,
     DateTime? birthDate,
+    String? sex,
+    Contact? contact,
+    String? notes,
+    Map<String, dynamic>? metadata,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool clearBirthDate = false,
+    bool clearSex = false,
+    bool clearContact = false,
+    bool clearNotes = false,
+    bool clearMetadata = false,
   }) {
     return Patient(
       id: id ?? this.id,
+      mrn: mrn ?? this.mrn,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       birthDate: clearBirthDate ? null : birthDate ?? this.birthDate,
+      sex: clearSex ? null : sex ?? this.sex,
+      contact: clearContact ? null : contact ?? this.contact,
+      notes: clearNotes ? null : notes ?? this.notes,
+      metadata: clearMetadata ? null : metadata ?? this.metadata,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -41,9 +66,14 @@ class Patient extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        mrn,
         firstName,
         lastName,
         birthDate,
+        sex,
+        contact,
+        notes,
+        metadata,
         createdAt,
         updatedAt,
       ];
