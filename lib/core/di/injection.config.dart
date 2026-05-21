@@ -41,6 +41,10 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
     as _i250;
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
     as _i541;
+import 'package:medicail/features/patient/data/repositories/api_patient_repository.dart'
+    as _i545;
+import 'package:medicail/features/patient/data/repositories/dynamic_patient_repository.dart'
+    as _i238;
 import 'package:medicail/features/patient/data/repositories/secure_storage_patient_repository.dart'
     as _i830;
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart'
@@ -74,13 +78,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i67.RawAudioRecorderService>(
       () => _i594.RecordRawAudioRecorderService(),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i913.SecureStorageRecordingSessionRepository(
+    gh.factory<_i830.SecureStoragePatientRepository>(
+      () => _i830.SecureStoragePatientRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.lazySingleton<_i390.PatientRepository>(
-      () => _i830.SecureStoragePatientRepository(
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i913.SecureStorageRecordingSessionRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
@@ -98,9 +102,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i583.GoRouter>(
       () => registerModule.goRouter(gh<_i1038.AppRouter>()),
-    );
-    gh.factory<_i301.PatientBloc>(
-      () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
@@ -121,11 +122,24 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i545.ApiPatientRepository>(
+      () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
+    );
     gh.lazySingleton<_i790.AuthRepository>(
       () => _i985.AuthRepositoryImpl(
         gh<_i1005.ApiClient>(),
         gh<_i760.AuthTokenStorage>(),
       ),
+    );
+    gh.lazySingleton<_i390.PatientRepository>(
+      () => _i238.DynamicPatientRepository(
+        gh<_i545.ApiPatientRepository>(),
+        gh<_i830.SecureStoragePatientRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i301.PatientBloc>(
+      () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
     );
     gh.factory<_i250.AuthBloc>(
       () =>

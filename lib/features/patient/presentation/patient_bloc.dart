@@ -32,6 +32,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
       final now = DateTime.now();
       final patient = Patient(
         id: _generatePatientId(now),
+        mrn: 'TEMP-MRN-${now.millisecondsSinceEpoch}',
         firstName: event.firstName.trim(),
         lastName: event.lastName.trim(),
         birthDate: event.birthDate,
