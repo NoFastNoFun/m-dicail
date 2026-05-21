@@ -286,4 +286,58 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get soapNoteViewAction => 'Voir la note SOAP';
+
+  @override
+  String get patientSearchPlaceholder => 'Rechercher un patient';
+
+  @override
+  String get patientCreateErrorRequired => 'MRN, Prénom et Nom sont requis.';
+
+  @override
+  String get patientCreateSuccess => 'Dossier patient créé avec succès.';
+
+  @override
+  String get patientCreateTitle => 'Nouveau Patient';
+
+  @override
+  String get patientMrnLabel => 'MRN (Numéro de dossier) *';
+
+  @override
+  String get patientFirstNameRequiredLabel => 'Prénom *';
+
+  @override
+  String get patientLastNameRequiredLabel => 'Nom *';
+
+  @override
+  String get patientBirthDateLabel => 'Date de naissance';
+
+  @override
+  String get patientBirthDateSelect => 'Sélectionner';
+
+  @override
+  String get patientSexLabel => 'Sexe';
+
+  @override
+  String get patientSexMale => 'Homme';
+
+  @override
+  String get patientSexFemale => 'Femme';
+
+  @override
+  String get patientSexOther => 'Autre';
+
+  @override
+  String get patientEmailLabel => 'Email';
+
+  @override
+  String get patientPhoneLabel => 'Téléphone';
+
+  @override
+  String get patientAddressLabel => 'Adresse';
+
+  @override
+  String get patientNotesLabel => 'Notes';
+
+  @override
+  String get patientCreateSubmit => 'Créer le dossier';
 }

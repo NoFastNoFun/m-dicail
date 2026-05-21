@@ -645,6 +645,114 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voir la note SOAP'**
   String get soapNoteViewAction;
+
+  /// No description provided for @patientSearchPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un patient'**
+  String get patientSearchPlaceholder;
+
+  /// No description provided for @patientCreateErrorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'MRN, Prénom et Nom sont requis.'**
+  String get patientCreateErrorRequired;
+
+  /// No description provided for @patientCreateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier patient créé avec succès.'**
+  String get patientCreateSuccess;
+
+  /// No description provided for @patientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau Patient'**
+  String get patientCreateTitle;
+
+  /// No description provided for @patientMrnLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'MRN (Numéro de dossier) *'**
+  String get patientMrnLabel;
+
+  /// No description provided for @patientFirstNameRequiredLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom *'**
+  String get patientFirstNameRequiredLabel;
+
+  /// No description provided for @patientLastNameRequiredLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom *'**
+  String get patientLastNameRequiredLabel;
+
+  /// No description provided for @patientBirthDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de naissance'**
+  String get patientBirthDateLabel;
+
+  /// No description provided for @patientBirthDateSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner'**
+  String get patientBirthDateSelect;
+
+  /// No description provided for @patientSexLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sexe'**
+  String get patientSexLabel;
+
+  /// No description provided for @patientSexMale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Homme'**
+  String get patientSexMale;
+
+  /// No description provided for @patientSexFemale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Femme'**
+  String get patientSexFemale;
+
+  /// No description provided for @patientSexOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get patientSexOther;
+
+  /// No description provided for @patientEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get patientEmailLabel;
+
+  /// No description provided for @patientPhoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get patientPhoneLabel;
+
+  /// No description provided for @patientAddressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse'**
+  String get patientAddressLabel;
+
+  /// No description provided for @patientNotesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get patientNotesLabel;
+
+  /// No description provided for @patientCreateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le dossier'**
+  String get patientCreateSubmit;
 }
 
 class _AppLocalizationsDelegate
