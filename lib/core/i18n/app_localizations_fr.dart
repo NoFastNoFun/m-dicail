@@ -265,4 +265,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debugClose => 'Fermer';
+
+  @override
+  String get soapNoteTitle => 'Note SOAP';
+
+  @override
+  String get soapNoteSubjective => 'Subjectif';
+
+  @override
+  String get soapNoteObjective => 'Objectif';
+
+  @override
+  String get soapNoteAssessment => 'Évaluation';
+
+  @override
+  String get soapNotePlan => 'Plan';
+
+  @override
+  String get soapNoteSave => 'Enregistrer la note';
+
+  @override
+  String get soapNoteViewAction => 'Voir la note SOAP';
 }

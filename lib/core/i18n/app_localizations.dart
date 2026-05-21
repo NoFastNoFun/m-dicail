@@ -603,6 +603,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Fermer'**
   String get debugClose;
+
+  /// No description provided for @soapNoteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note SOAP'**
+  String get soapNoteTitle;
+
+  /// No description provided for @soapNoteSubjective.
+  ///
+  /// In fr, this message translates to:
+  /// **'Subjectif'**
+  String get soapNoteSubjective;
+
+  /// No description provided for @soapNoteObjective.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif'**
+  String get soapNoteObjective;
+
+  /// No description provided for @soapNoteAssessment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Évaluation'**
+  String get soapNoteAssessment;
+
+  /// No description provided for @soapNotePlan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plan'**
+  String get soapNotePlan;
+
+  /// No description provided for @soapNoteSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer la note'**
+  String get soapNoteSave;
+
+  /// No description provided for @soapNoteViewAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la note SOAP'**
+  String get soapNoteViewAction;
 }
 
 class _AppLocalizationsDelegate

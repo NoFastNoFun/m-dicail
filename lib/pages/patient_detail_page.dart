@@ -14,6 +14,7 @@ import 'package:medicail/widget/app_audio_player.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 
 class PatientDetailPage extends StatefulWidget {
   const PatientDetailPage({
@@ -138,7 +139,10 @@ class _PatientDetailView extends StatelessWidget {
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
-                    return _RecordingSessionListItem(session: sessions[index]);
+                    return _RecordingSessionListItem(
+                      session: sessions[index],
+                      onRefresh: onRefresh,
+                    );
                   },
                 ),
         ),
@@ -148,13 +152,18 @@ class _PatientDetailView extends StatelessWidget {
 }
 
 class _RecordingSessionListItem extends StatelessWidget {
-  const _RecordingSessionListItem({required this.session});
+  const _RecordingSessionListItem({
+    required this.session,
+    required this.onRefresh,
+  });
 
   final RecordingSession session;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final hasSoap = session.soapNote != null;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -167,16 +176,46 @@ class _RecordingSessionListItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppText(
-              session.startedAt.toLocal().toString(),
-              variant: AppTextVariant.label,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        session.startedAt.toLocal().toString(),
+                        variant: AppTextVariant.label,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        '${l10n.recordingStatusLabel}: ${session.status.name}',
+                        variant: AppTextVariant.caption,
+                        color: AppColors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+                if (hasSoap)
+                  IconButton(
+                    icon: const Icon(Icons.edit_document, color: AppColors.primary),
+                    tooltip: l10n.soapNoteViewAction,
+                    onPressed: () {
+                      SoapNoteBottomSheet.show(
+                        context,
+                        initialNote: session.soapNote!,
+                        onSave: (updatedNote) async {
+                          final repo = getIt<RecordingSessionRepository>();
+                          await repo.save(session.copyWith(soapNote: updatedNote));
+                          onRefresh();
+                        },
+                      );
+                    },
+                  ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.sm),
-            AppText(
-              '${l10n.recordingStatusLabel}: ${session.status.name}',
-              variant: AppTextVariant.caption,
-              color: AppColors.textSecondary,
-            ),
+            const SizedBox(height: AppSpacing.md),
             if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty)
               AppAudioPlayer(
                 playbackService: getIt<AudioPlaybackService>(),
