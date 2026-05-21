@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
