@@ -12,8 +12,11 @@ class ApiPatientRepository implements PatientRepository {
   final ApiClient _apiClient;
 
   @override
-  Future<List<Patient>> getAll() async {
-    final response = await _apiClient.get<List<dynamic>>('/patients');
+  Future<List<Patient>> getAll({String? query}) async {
+    final response = await _apiClient.get<List<dynamic>>(
+      '/patients',
+      queryParameters: query != null && query.isNotEmpty ? {'query': query} : null,
+    );
     final data = response.data;
     if (data == null) {
       return [];

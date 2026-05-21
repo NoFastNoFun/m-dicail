@@ -8,22 +8,49 @@ sealed class PatientEvent extends Equatable {
 }
 
 final class PatientsRequested extends PatientEvent {
-  const PatientsRequested();
+  const PatientsRequested({this.query});
+
+  final String? query;
+
+  @override
+  List<Object?> get props => [query];
 }
 
 final class PatientCreated extends PatientEvent {
   const PatientCreated({
+    required this.mrn,
     required this.firstName,
     required this.lastName,
     this.birthDate,
+    this.sex,
+    this.email,
+    this.phone,
+    this.address,
+    this.notes,
   });
 
+  final String mrn;
   final String firstName;
   final String lastName;
   final DateTime? birthDate;
+  final String? sex;
+  final String? email;
+  final String? phone;
+  final String? address;
+  final String? notes;
 
   @override
-  List<Object?> get props => [firstName, lastName, birthDate];
+  List<Object?> get props => [
+        mrn,
+        firstName,
+        lastName,
+        birthDate,
+        sex,
+        email,
+        phone,
+        address,
+        notes,
+      ];
 }
 
 final class PatientDeleted extends PatientEvent {

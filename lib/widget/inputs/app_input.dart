@@ -23,6 +23,7 @@ class AppInput extends StatefulWidget {
     this.messageResolver,
     this.maxLength,
     this.maxLines,
+    this.prefixIcon,
   });
 
   final AppInputVariant variant;
@@ -38,6 +39,7 @@ class AppInput extends StatefulWidget {
   final String? Function(String validationKey)? messageResolver;
   final int? maxLength;
   final int? maxLines;
+  final IconData? prefixIcon;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -97,6 +99,7 @@ class _AppInputState extends State<AppInput> {
         errorStyle: AppTypography.caption.copyWith(color: AppColors.error),
         errorBorder: _errorBorder,
         focusedErrorBorder: _focusedErrorBorder,
+        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon, color: AppColors.textSecondary) : null,
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(

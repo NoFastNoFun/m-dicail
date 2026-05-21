@@ -1,7 +1,7 @@
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 
 abstract class PatientRepository {
-  Future<List<Patient>> getAll();
+  Future<List<Patient>> getAll({String? query});
 
   Future<Patient?> getById(String id);
 

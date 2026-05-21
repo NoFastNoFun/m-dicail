@@ -15,8 +15,17 @@ class SecureStoragePatientRepository implements PatientRepository {
   final FlutterSecureStorage _storage;
 
   @override
-  Future<List<Patient>> getAll() async {
-    return _readPatients();
+  Future<List<Patient>> getAll({String? query}) async {
+    final patients = await _readPatients();
+    if (query == null || query.isEmpty) {
+      return patients;
+    }
+    final q = query.toLowerCase();
+    return patients.where((p) {
+      return p.firstName.toLowerCase().contains(q) ||
+          p.lastName.toLowerCase().contains(q) ||
+          (p.mrn.toLowerCase().contains(q));
+    }).toList();
   }
 
   @override
