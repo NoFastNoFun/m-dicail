@@ -15,11 +15,11 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
-import 'package:medicail/core/audio/audio_playback_service.dart' as _i405;
-import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i506;
-import 'package:medicail/core/audio/raw_audio_recorder_service.dart' as _i811;
+import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
+import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
+import 'package:medicail/core/audio/raw_audio_recorder_service.dart' as _i67;
 import 'package:medicail/core/audio/record_raw_audio_recorder_service.dart'
-    as _i639;
+    as _i594;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/di/register_module.dart' as _i91;
@@ -33,16 +33,24 @@ import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
     as _i945;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
+import 'package:medicail/features/auth/data/repositories/auth_repository_impl.dart'
+    as _i985;
+import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
+    as _i790;
+import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
+    as _i250;
+import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
+    as _i541;
 import 'package:medicail/features/patient/data/repositories/secure_storage_patient_repository.dart'
-    as _i646;
+    as _i830;
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart'
-    as _i913;
+    as _i390;
 import 'package:medicail/features/patient/presentation/patient_bloc.dart'
-    as _i214;
+    as _i301;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
-    as _i988;
+    as _i913;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
-    as _i302;
+    as _i814;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 
@@ -62,44 +70,47 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i945.LoggingInterceptor>(
       () => _i945.LoggingInterceptor(),
     );
-    gh.lazySingleton<_i1038.AppRouter>(() => _i1038.AppRouter());
+    gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
+    gh.lazySingleton<_i67.RawAudioRecorderService>(
+      () => _i594.RecordRawAudioRecorderService(),
+    );
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i913.SecureStorageRecordingSessionRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i390.PatientRepository>(
+      () => _i830.SecureStoragePatientRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
     );
-    gh.lazySingleton<_i405.AudioPlaybackService>(
-      () => _i506.JustAudioPlaybackService(),
-    );
-    gh.lazySingleton<_i811.RawAudioRecorderService>(
-      () => _i639.RecordRawAudioRecorderService(),
+    gh.lazySingleton<_i366.AudioPlaybackService>(
+      () => _i475.JustAudioPlaybackService(),
     );
     gh.lazySingleton<_i760.AuthTokenStorage>(
       () => _i249.SecureStorageAuthToken(gh<_i558.FlutterSecureStorage>()),
     );
-    gh.lazySingleton<_i913.PatientRepository>(
-      () => _i646.SecureStoragePatientRepository(
-        gh<_i558.FlutterSecureStorage>(),
-      ),
-    );
-    gh.lazySingleton<_i302.RecordingSessionRepository>(
-      () => _i988.SecureStorageRecordingSessionRepository(
-        gh<_i558.FlutterSecureStorage>(),
-      ),
-    );
-    gh.factory<_i214.PatientBloc>(
-      () => _i214.PatientBloc(gh<_i913.PatientRepository>()),
-    );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i811.RawAudioRecorderService>(),
-        gh<_i302.RecordingSessionRepository>(),
-      ),
+    gh.lazySingleton<_i1038.AppRouter>(
+      () => _i1038.AppRouter(gh<_i541.AuthNotifier>()),
     );
     gh.lazySingleton<_i583.GoRouter>(
       () => registerModule.goRouter(gh<_i1038.AppRouter>()),
     );
+    gh.factory<_i301.PatientBloc>(
+      () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
+    );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
+    );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i67.RawAudioRecorderService>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(
@@ -110,6 +121,16 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
+    gh.lazySingleton<_i790.AuthRepository>(
+      () => _i985.AuthRepositoryImpl(
+        gh<_i1005.ApiClient>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i250.AuthBloc>(
+      () =>
+          _i250.AuthBloc(gh<_i790.AuthRepository>(), gh<_i541.AuthNotifier>()),
+    );
     return this;
   }
 }

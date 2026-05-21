@@ -23,6 +23,22 @@ class AppToast {
       duration: duration,
     );
   }
+
+  static void showError(
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    show(context, message: message, type: AppToastType.error, duration: duration);
+  }
+
+  static void showSuccess(
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    show(context, message: message, type: AppToastType.success, duration: duration);
+  }
 }
 
 class AppToastWidget extends StatelessWidget {
