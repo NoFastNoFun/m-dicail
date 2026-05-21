@@ -28,9 +28,9 @@ class DynamicPatientRepository implements PatientRepository {
   }
 
   @override
-  Future<List<Patient>> getAll() async {
+  Future<List<Patient>> getAll({String? query}) async {
     final repo = await _getRepository();
-    return repo.getAll();
+    return repo.getAll(query: query);
   }
 
   @override

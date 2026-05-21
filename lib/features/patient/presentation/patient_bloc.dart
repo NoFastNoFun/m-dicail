@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/error/failure.dart';
+import 'package:medicail/features/patient/domain/entities/contact.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
+import 'package:dio/dio.dart';
 
 @injectable
 class PatientBloc extends Bloc<PatientEvent, PatientState> {
@@ -21,7 +23,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     Emitter<PatientState> emit,
   ) async {
     emit(const PatientLoading());
-    await _loadPatients(emit);
+    await _loadPatients(emit, query: event.query);
   }
 
   Future<void> _onPatientCreated(
@@ -32,15 +34,28 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
       final now = DateTime.now();
       final patient = Patient(
         id: _generatePatientId(now),
-        mrn: 'TEMP-MRN-${now.millisecondsSinceEpoch}',
+        mrn: event.mrn.trim(),
         firstName: event.firstName.trim(),
         lastName: event.lastName.trim(),
         birthDate: event.birthDate,
+        sex: event.sex,
+        contact: Contact(
+          email: event.email,
+          phone: event.phone,
+          address: event.address,
+        ),
+        notes: event.notes,
         createdAt: now,
         updatedAt: now,
       );
       await _patientRepository.save(patient);
       await _loadPatients(emit);
+    } on DioException catch (error) {
+      if (error.response?.statusCode == 409) {
+        emit(const PatientFailure('Le numéro de dossier (MRN) existe déjà.'));
+      } else {
+        emit(PatientFailure(Failure.fromException(error).message));
+      }
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));
     }
@@ -58,9 +73,9 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     }
   }
 
-  Future<void> _loadPatients(Emitter<PatientState> emit) async {
+  Future<void> _loadPatients(Emitter<PatientState> emit, {String? query}) async {
     try {
-      final patients = await _patientRepository.getAll();
+      final patients = await _patientRepository.getAll(query: query);
       emit(PatientLoaded(patients));
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));
