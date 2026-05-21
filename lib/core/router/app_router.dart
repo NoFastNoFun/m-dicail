@@ -10,11 +10,45 @@ import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/widget/app_text.dart';
 
+import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:medicail/pages/login_page.dart';
+import 'package:medicail/pages/register_page.dart';
+
 @lazySingleton
 class AppRouter {
+  AppRouter(this._authNotifier);
+
+  final AuthNotifier _authNotifier;
+
   late final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.login,
+    refreshListenable: _authNotifier,
+    redirect: (context, state) {
+      final isAuth = _authNotifier.isAuthenticated;
+      final isLoggingIn = state.uri.toString() == AppRoutes.login || 
+                          state.uri.toString() == AppRoutes.register;
+
+      if (!isAuth && !isLoggingIn) {
+        return AppRoutes.login;
+      }
+
+      if (isAuth && isLoggingIn) {
+        return AppRoutes.home;
+      }
+
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: AppRoutes.login,
+        name: 'login',
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        name: 'register',
+        builder: (context, state) => const RegisterPage(),
+      ),
       GoRoute(
         path: AppRoutes.home,
         name: 'home',

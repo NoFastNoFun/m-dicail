@@ -9,12 +9,12 @@ import 'package:medicail/widget/app_text.dart';
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
     super.key,
-    required this.title,
+    this.title,
     required this.body,
     this.actions,
   });
 
-  final String title;
+  final String? title;
   final Widget body;
   final List<Widget>? actions;
 
@@ -27,7 +27,7 @@ class AppScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
-        title: _AppBarTitle(title: title),
+        title: title != null ? _AppBarTitle(title: title!) : null,
         automaticallyImplyLeading: false,
         leading: canPop
             ? IconButton(
