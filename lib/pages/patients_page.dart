@@ -15,7 +15,6 @@ import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'dart:async';
 
 class PatientsPage extends StatelessWidget {
   const PatientsPage({super.key});
@@ -38,7 +37,6 @@ class _PatientsView extends StatefulWidget {
 
 class _PatientsViewState extends State<_PatientsView> {
   final _searchController = TextEditingController();
-  Timer? _debounce;
 
   @override
   void initState() {
@@ -49,17 +47,13 @@ class _PatientsViewState extends State<_PatientsView> {
   @override
   void dispose() {
     _searchController.dispose();
-    _debounce?.cancel();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      context
-          .read<PatientBloc>()
-          .add(PatientsRequested(query: _searchController.text.trim()));
-    });
+    context
+        .read<PatientBloc>()
+        .add(PatientsRequested(query: _searchController.text.trim()));
   }
 
   void _showCreatePatientSheet(BuildContext context) {
@@ -103,7 +97,7 @@ class _PatientsViewState extends State<_PatientsView> {
             children: [
               AppInput(
                 variant: AppInputVariant.text,
-                label: 'Rechercher un patient',
+                label: l10n.patientSearchPlaceholder,
                 controller: _searchController,
                 prefixIcon: Icons.search,
               ),
@@ -224,7 +218,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
     final lastName = _lastNameController.text.trim();
 
     if (mrn.isEmpty || firstName.isEmpty || lastName.isEmpty) {
-      AppToast.showError(context, 'MRN, Prénom et Nom sont requis.');
+      AppToast.showError(context, AppLocalizations.of(context).patientCreateErrorRequired);
       return;
     }
 
@@ -259,11 +253,13 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return BlocListener<PatientBloc, PatientState>(
       listener: (context, state) {
         if (state is PatientLoaded) {
           Navigator.of(context).pop();
-          AppToast.showSuccess(context, 'Dossier patient créé avec succès.');
+          AppToast.showSuccess(context, l10n.patientCreateSuccess);
         }
       },
       child: Container(
@@ -282,11 +278,11 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppText('Nouveau Patient', variant: AppTextVariant.title),
+              AppText(l10n.patientCreateTitle, variant: AppTextVariant.title),
               const SizedBox(height: AppSpacing.lg),
               AppInput(
                 variant: AppInputVariant.text,
-                label: 'MRN (Numéro de dossier) *',
+                label: l10n.patientMrnLabel,
                 controller: _mrnController,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -295,7 +291,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                   Expanded(
                     child: AppInput(
                       variant: AppInputVariant.text,
-                      label: 'Prénom *',
+                      label: l10n.patientFirstNameRequiredLabel,
                       controller: _firstNameController,
                     ),
                   ),
@@ -303,7 +299,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                   Expanded(
                     child: AppInput(
                       variant: AppInputVariant.text,
-                      label: 'Nom *',
+                      label: l10n.patientLastNameRequiredLabel,
                       controller: _lastNameController,
                     ),
                   ),
@@ -317,7 +313,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                       onTap: _pickDate,
                       child: InputDecorator(
                         decoration: InputDecoration(
-                          labelText: 'Date de naissance',
+                          labelText: l10n.patientBirthDateLabel,
                           border: OutlineInputBorder(
                             borderRadius: AppRadius.mdBorder,
                           ),
@@ -325,7 +321,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                         child: Text(
                           _selectedBirthDate != null
                               ? '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}'
-                              : 'Sélectionner',
+                              : l10n.patientBirthDateSelect,
                         ),
                       ),
                     ),
@@ -334,7 +330,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                   Expanded(
                     child: InputDecorator(
                       decoration: InputDecoration(
-                        labelText: 'Sexe',
+                        labelText: l10n.patientSexLabel,
                         border: OutlineInputBorder(
                           borderRadius: AppRadius.mdBorder,
                         ),
@@ -343,10 +339,10 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
                         child: DropdownButton<String>(
                           value: _selectedSex,
                           isDense: true,
-                          items: const [
-                            DropdownMenuItem(value: 'M', child: Text('Homme')),
-                            DropdownMenuItem(value: 'F', child: Text('Femme')),
-                            DropdownMenuItem(value: 'Other', child: Text('Autre')),
+                          items: [
+                            DropdownMenuItem(value: 'M', child: Text(l10n.patientSexMale)),
+                            DropdownMenuItem(value: 'F', child: Text(l10n.patientSexFemale)),
+                            DropdownMenuItem(value: 'Other', child: Text(l10n.patientSexOther)),
                           ],
                           onChanged: (val) => setState(() => _selectedSex = val),
                         ),
@@ -358,25 +354,25 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
               const SizedBox(height: AppSpacing.md),
               AppInput(
                 variant: AppInputVariant.email,
-                label: 'Email',
+                label: l10n.patientEmailLabel,
                 controller: _emailController,
               ),
               const SizedBox(height: AppSpacing.md),
               AppInput(
                 variant: AppInputVariant.text,
-                label: 'Téléphone',
+                label: l10n.patientPhoneLabel,
                 controller: _phoneController,
               ),
               const SizedBox(height: AppSpacing.md),
               AppInput(
                 variant: AppInputVariant.text,
-                label: 'Adresse',
+                label: l10n.patientAddressLabel,
                 controller: _addressController,
               ),
               const SizedBox(height: AppSpacing.md),
               AppInput(
                 variant: AppInputVariant.text,
-                label: 'Notes',
+                label: l10n.patientNotesLabel,
                 controller: _notesController,
                 maxLines: 3,
               ),
@@ -384,7 +380,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
               BlocBuilder<PatientBloc, PatientState>(
                 builder: (context, state) {
                   return AppButton(
-                    label: 'Créer le dossier',
+                    label: l10n.patientCreateSubmit,
                     isLoading: state is PatientLoading,
                     onPressed: _submit,
                   );

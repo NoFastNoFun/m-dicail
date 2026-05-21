@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/features/patient/domain/entities/contact.dart';
@@ -11,7 +12,12 @@ import 'package:dio/dio.dart';
 @injectable
 class PatientBloc extends Bloc<PatientEvent, PatientState> {
   PatientBloc(this._patientRepository) : super(const PatientInitial()) {
-    on<PatientsRequested>(_onPatientsRequested);
+    on<PatientsRequested>(
+      _onPatientsRequested,
+      transformer: (events, mapper) => events
+          .debounceTime(const Duration(milliseconds: 500))
+          .switchMap(mapper),
+    );
     on<PatientCreated>(_onPatientCreated);
     on<PatientDeleted>(_onPatientDeleted);
   }
