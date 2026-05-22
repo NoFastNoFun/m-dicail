@@ -16,6 +16,10 @@ import 'package:medicail/widget/app_session_status_banner.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class RecordPage extends StatelessWidget {
   const RecordPage({
@@ -46,16 +50,19 @@ class _RecordView extends StatefulWidget {
 
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
+  final GlobalKey _startRecordKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    ShowcaseView.register();
     _transcriptController = TextEditingController();
   }
 
   @override
   void dispose() {
     _transcriptController.dispose();
+    ShowcaseView.get().unregister();
     super.dispose();
   }
 
@@ -85,11 +92,19 @@ class _RecordViewState extends State<_RecordView> {
       builder: (context, state) {
         final viewModel = VoiceCaptureViewModel.fromState(state);
 
-        return AppScaffold(
-          title: l10n.recordTitle,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+        return BlocListener<TutorialBloc, TutorialState>(
+          listener: (context, tutState) {
+            if (tutState is TutorialInProgress && tutState.currentStep == 4) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ShowcaseView.get().startShowCase([_startRecordKey]);
+              });
+            }
+          },
+          child: AppScaffold(
+            title: l10n.recordTitle,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               AppSessionStatusBanner(
                 label: viewModel.errorMessage != null
                     ? l10n.errorAudio
@@ -117,17 +132,34 @@ class _RecordViewState extends State<_RecordView> {
               Row(
                 children: [
                   Expanded(
-                    child: AppButton(
-                      label: l10n.buttonStart,
-                      onPressed: () => context
-                          .read<VoiceCaptureBloc>()
-                          .add(
-                            VoiceCaptureStartRecording(
-                              patientId: widget.patientId,
-                            ),
-                          ),
-                      isLoading: viewModel.isInitializing,
-                      enabled: viewModel.canStart,
+                    child: Showcase(
+                      key: _startRecordKey,
+                      title: l10n.tutorialRecordTitle,
+                      description: l10n.tutorialRecordDesc,
+                      disposeOnTap: true,
+                      onTargetClick: () {
+                        context.read<TutorialBloc>().add(const TutorialStepCompleted(4));
+                        context.read<VoiceCaptureBloc>().add(
+                              VoiceCaptureStartRecording(
+                                patientId: widget.patientId,
+                              ),
+                            );
+                      },
+                      child: AppButton(
+                        label: l10n.buttonStart,
+                        onPressed: () {
+                          if (context.read<TutorialBloc>().state is TutorialInProgress) {
+                            context.read<TutorialBloc>().add(const TutorialStepCompleted(4));
+                          }
+                          context.read<VoiceCaptureBloc>().add(
+                                VoiceCaptureStartRecording(
+                                  patientId: widget.patientId,
+                                ),
+                              );
+                        },
+                        isLoading: viewModel.isInitializing,
+                        enabled: viewModel.canStart,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
@@ -163,7 +195,7 @@ class _RecordViewState extends State<_RecordView> {
               ),
             ],
           ),
-        );
+        ));
       },
     );
   }

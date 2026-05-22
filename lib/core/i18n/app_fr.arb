@@ -135,5 +135,7 @@
   "tutorialPatientAddTitle": "Ajouter un patient",
   "tutorialPatientAddDesc": "C'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.",
   "tutorialDetailConsultTitle": "Nouvelle consultation",
-  "tutorialDetailConsultDesc": "Lancez l'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient."
+  "tutorialDetailConsultDesc": "Lancez l'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.",
+  "tutorialRecordTitle": "La Dictée",
+  "tutorialRecordDesc": "Appuyez sur ce bouton pour lancer l'enregistrement vocal. L'IA transcrira automatiquement vos paroles et anonymisera les données."
 }

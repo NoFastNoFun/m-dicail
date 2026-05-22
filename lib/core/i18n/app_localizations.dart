@@ -909,6 +909,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.'**
   String get tutorialDetailConsultDesc;
+
+  /// No description provided for @tutorialRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'La Dictée'**
+  String get tutorialRecordTitle;
+
+  /// No description provided for @tutorialRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.'**
+  String get tutorialRecordDesc;
 }
 
 class _AppLocalizationsDelegate

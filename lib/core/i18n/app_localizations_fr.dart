@@ -424,4 +424,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialDetailConsultDesc =>
       'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.';
+
+  @override
+  String get tutorialRecordTitle => 'La Dictée';
+
+  @override
+  String get tutorialRecordDesc =>
+      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.';
 }
