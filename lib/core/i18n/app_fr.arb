@@ -110,5 +110,18 @@
   "patientPhoneLabel": "Téléphone",
   "patientAddressLabel": "Adresse",
   "patientNotesLabel": "Notes",
-  "patientCreateSubmit": "Créer le dossier"
+  "patientCreateSubmit": "Créer le dossier",
+  "loginWelcomeTitle": "Bienvenue sur Medicail",
+  "loginWelcomeSubtitle": "Connectez-vous pour accéder à vos dossiers.",
+  "loginEmailLabel": "Adresse email",
+  "loginPasswordLabel": "Mot de passe",
+  "loginSubmit": "Se connecter",
+  "loginCreateAccountButton": "Créer un compte",
+  "registerTitle": "Créer un compte",
+  "registerSubtitle": "Rejoignez Medicail pour gérer vos consultations.",
+  "registerFullNameLabel": "Nom complet (optionnel)",
+  "registerEmailLabel": "Adresse email",
+  "registerPasswordLabel": "Mot de passe",
+  "registerSubmit": "S'inscrire",
+  "recordingDateLabel": "Date"
 }

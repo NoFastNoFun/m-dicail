@@ -343,4 +343,45 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get patientCreateSubmit => 'Créer le dossier';
+
+  @override
+  String get loginWelcomeTitle => 'Bienvenue sur Medicail';
+
+  @override
+  String get loginWelcomeSubtitle =>
+      'Connectez-vous pour accéder à vos dossiers.';
+
+  @override
+  String get loginEmailLabel => 'Adresse email';
+
+  @override
+  String get loginPasswordLabel => 'Mot de passe';
+
+  @override
+  String get loginSubmit => 'Se connecter';
+
+  @override
+  String get loginCreateAccountButton => 'Créer un compte';
+
+  @override
+  String get registerTitle => 'Créer un compte';
+
+  @override
+  String get registerSubtitle =>
+      'Rejoignez Medicail pour gérer vos consultations.';
+
+  @override
+  String get registerFullNameLabel => 'Nom complet (optionnel)';
+
+  @override
+  String get registerEmailLabel => 'Adresse email';
+
+  @override
+  String get registerPasswordLabel => 'Mot de passe';
+
+  @override
+  String get registerSubmit => 'S\'inscrire';
+
+  @override
+  String get recordingDateLabel => 'Date';
 }

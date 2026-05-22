@@ -4,17 +4,21 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
-import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/features/patient/presentation/detail/patient_detail_bloc.dart';
+import 'package:medicail/features/patient/presentation/detail/patient_detail_event.dart';
+import 'package:medicail/features/patient/presentation/detail/patient_detail_state.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 
-class PatientDetailPage extends StatefulWidget {
+class PatientDetailPage extends StatelessWidget {
   const PatientDetailPage({
     super.key,
     required this.patientId,
@@ -23,45 +27,31 @@ class PatientDetailPage extends StatefulWidget {
   final String patientId;
 
   @override
-  State<PatientDetailPage> createState() => _PatientDetailPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<PatientDetailBloc>()
+        ..add(PatientDetailRequested(patientId)),
+      child: const _PatientDetailContent(),
+    );
+  }
 }
 
-class _PatientDetailPageState extends State<PatientDetailPage> {
-  late Future<_PatientDetailData> _detailFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _refresh();
-  }
-
-  void _refresh() {
-    setState(() {
-      _detailFuture = _loadDetail();
-    });
-  }
-
-  Future<_PatientDetailData> _loadDetail() async {
-    final patientRepository = getIt<PatientRepository>();
-    final recordingRepository = getIt<RecordingSessionRepository>();
-    final patient = await patientRepository.getById(widget.patientId);
-    final sessions = await recordingRepository.getByPatientId(widget.patientId);
-    return _PatientDetailData(patient: patient, sessions: sessions);
-  }
+class _PatientDetailContent extends StatelessWidget {
+  const _PatientDetailContent();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return FutureBuilder<_PatientDetailData>(
-      future: _detailFuture,
-      builder: (context, snapshot) {
-        final data = snapshot.data;
-        final patient = data?.patient;
+    return BlocBuilder<PatientDetailBloc, PatientDetailState>(
+      builder: (context, state) {
+        final patient = state is PatientDetailLoaded ? state.patient : null;
+        final sessions = state is PatientDetailLoaded ? state.sessions : <RecordingSession>[];
+        final isLoading = state is PatientDetailLoading || state is PatientDetailInitial;
 
         return AppScaffold(
           title: l10n.patientDetailTitle,
-          body: snapshot.connectionState != ConnectionState.done
+          body: isLoading
               ? const Center(child: CircularProgressIndicator())
               : patient == null
                   ? Center(
@@ -73,8 +63,12 @@ class _PatientDetailPageState extends State<PatientDetailPage> {
                     )
                   : _PatientDetailView(
                       patient: patient,
-                      sessions: data?.sessions ?? const [],
-                      onRefresh: _refresh,
+                      sessions: sessions,
+                      onRefresh: () {
+                        context
+                            .read<PatientDetailBloc>()
+                            .add(PatientDetailRequested(patient.id));
+                      },
                     ),
         );
       },
@@ -183,7 +177,7 @@ class _RecordingSessionListItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        session.startedAt.toLocal().toString(),
+                        '${l10n.recordingDateLabel}: ${DateFormat('dd/MM/yyyy HH:mm').format(session.startedAt.toLocal())}',
                         variant: AppTextVariant.label,
                       ),
                       const SizedBox(height: AppSpacing.sm),
@@ -229,12 +223,3 @@ class _RecordingSessionListItem extends StatelessWidget {
   }
 }
 
-class _PatientDetailData {
-  const _PatientDetailData({
-    required this.patient,
-    required this.sessions,
-  });
-
-  final Patient? patient;
-  final List<RecordingSession> sessions;
-}
