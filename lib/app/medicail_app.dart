@@ -7,6 +7,7 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class MedicailApp extends StatelessWidget {
   const MedicailApp({super.key});
@@ -23,7 +24,11 @@ class MedicailApp extends StatelessWidget {
       builder: (context, child) {
         return BlocProvider<AuthBloc>(
           create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
-          child: AppToastHost(child: child ?? const SizedBox.shrink()),
+          child: AppToastHost(
+            child: ShowCaseWidget(
+              builder: (context) => child ?? const SizedBox.shrink(),
+            ),
+          ),
         );
       },
     );
