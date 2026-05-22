@@ -21,12 +21,16 @@ final class VoiceCaptureReady extends VoiceCaptureState {
 }
 
 final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
-  const VoiceCaptureConsultationFinished({this.transcript = ''});
+  const VoiceCaptureConsultationFinished({
+    required this.sessionId,
+    this.transcript = '',
+  });
 
+  final String sessionId;
   final String transcript;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [sessionId, transcript];
 }
 
 final class RecordingInProgress extends VoiceCaptureState {

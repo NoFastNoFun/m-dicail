@@ -39,5 +39,10 @@ class PatientMrnConflict extends PatientState {
 }
 
 class PatientCreateSuccess extends PatientState {
-  const PatientCreateSuccess();
+  const PatientCreateSuccess(this.patientId);
+
+  final String patientId;
+
+  @override
+  List<Object?> get props => [patientId];
 }

@@ -88,11 +88,15 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final transcript = _currentTranscript;
     try {
       await _audioCaptureService.stopListening();
+      final sessionId = _activeSession?.id ?? '';
       await _completeActiveSession(
         transcript: transcript,
       );
       _segmentBase = '';
-      emit(VoiceCaptureConsultationFinished(transcript: transcript));
+      emit(VoiceCaptureConsultationFinished(
+        sessionId: sessionId,
+        transcript: transcript,
+      ));
     } catch (error) {
       await _failActiveSession(transcript);
       emit(

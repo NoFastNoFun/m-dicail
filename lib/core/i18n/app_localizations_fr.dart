@@ -384,4 +384,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordingDateLabel => 'Date';
+
+  @override
+  String get assignPatientTitle => 'Associer à un patient';
+
+  @override
+  String get assignPatientSearchTab => 'Rechercher';
+
+  @override
+  String get assignPatientNewTab => 'Nouveau patient';
 }
