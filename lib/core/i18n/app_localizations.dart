@@ -837,6 +837,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Date'**
   String get recordingDateLabel;
+
+  /// No description provided for @assignPatientTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer à un patient'**
+  String get assignPatientTitle;
+
+  /// No description provided for @assignPatientSearchTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher'**
+  String get assignPatientSearchTab;
+
+  /// No description provided for @assignPatientNewTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get assignPatientNewTab;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,7 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_session_status_banner.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class RecordPage extends StatelessWidget {
@@ -65,12 +66,13 @@ class _RecordViewState extends State<_RecordView> {
     return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
       listener: (context, state) {
         if (state is VoiceCaptureConsultationFinished) {
-          if (context.canPop()) {
-            context.pop();
-          } else if (widget.patientId != null) {
+          if (widget.patientId != null) {
+            if (context.canPop()) {
+              context.pop();
+            }
             context.goPatientDetail(widget.patientId!);
           } else {
-            context.goHome();
+            AssignPatientSheet.show(context, state.sessionId);
           }
           return;
         }
