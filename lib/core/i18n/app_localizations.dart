@@ -861,6 +861,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
+
+  /// No description provided for @tutorialHomePatientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers Patients'**
+  String get tutorialHomePatientsTitle;
+
+  /// No description provided for @tutorialHomePatientsDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.'**
+  String get tutorialHomePatientsDesc;
+
+  /// No description provided for @tutorialHomeRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultation Rapide'**
+  String get tutorialHomeRecordTitle;
+
+  /// No description provided for @tutorialHomeRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisez ce bouton pour démarrer immédiatement une consultation vocale.'**
+  String get tutorialHomeRecordDesc;
 }
 
 class _AppLocalizationsDelegate

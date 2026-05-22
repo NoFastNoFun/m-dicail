@@ -127,5 +127,9 @@
   "assignPatientTitle": "Associer à un patient",
   "assignPatientSearchTab": "Rechercher",
   "assignPatientNewTab": "Nouveau patient",
-  "assignPatientError": "Erreur lors de l'association"
+  "assignPatientError": "Erreur lors de l'association",
+  "tutorialHomePatientsTitle": "Dossiers Patients",
+  "tutorialHomePatientsDesc": "Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.",
+  "tutorialHomeRecordTitle": "Consultation Rapide",
+  "tutorialHomeRecordDesc": "Utilisez ce bouton pour démarrer immédiatement une consultation vocale."
 }

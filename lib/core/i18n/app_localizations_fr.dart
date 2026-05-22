@@ -396,4 +396,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get assignPatientError => 'Erreur lors de l\'association';
+
+  @override
+  String get tutorialHomePatientsTitle => 'Dossiers Patients';
+
+  @override
+  String get tutorialHomePatientsDesc =>
+      'Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.';
+
+  @override
+  String get tutorialHomeRecordTitle => 'Consultation Rapide';
+
+  @override
+  String get tutorialHomeRecordDesc =>
+      'Utilisez ce bouton pour démarrer immédiatement une consultation vocale.';
 }
