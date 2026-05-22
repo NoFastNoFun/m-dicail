@@ -63,9 +63,14 @@ class _PatientsViewState extends State<_PatientsView> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
-        return BlocProvider.value(
-          value: context.read<PatientBloc>(),
-          child: const PatientCreationSheet(),
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: BlocProvider.value(
+            value: context.read<PatientBloc>(),
+            child: const PatientCreationSheet(),
+          ),
         );
       },
     );
