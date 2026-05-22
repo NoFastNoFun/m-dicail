@@ -65,22 +65,27 @@ class SecureStoragePatientRepository implements PatientRepository {
   Future<void> clear() => _storage.delete(key: _patientsKey);
 
   Future<List<Patient>> _readPatients() async {
-    final raw = await _storage.read(key: _patientsKey);
-    if (raw == null || raw.isEmpty) {
+    try {
+      final raw = await _storage.read(key: _patientsKey);
+      if (raw == null || raw.isEmpty) {
+        return const [];
+      }
+
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        return const [];
+      }
+
+      return decoded
+          .whereType<Map>()
+          .map((json) => Map<String, dynamic>.from(json))
+          .map(PatientModel.fromJson)
+          .toList()
+        ..sort((a, b) => a.lastName.compareTo(b.lastName));
+    } catch (e) {
+      await _storage.delete(key: _patientsKey);
       return const [];
     }
-
-    final decoded = jsonDecode(raw);
-    if (decoded is! List) {
-      return const [];
-    }
-
-    return decoded
-        .whereType<Map>()
-        .map((json) => Map<String, dynamic>.from(json))
-        .map(PatientModel.fromJson)
-        .toList()
-      ..sort((a, b) => a.lastName.compareTo(b.lastName));
   }
 
   Future<void> _writePatients(List<Patient> patients) {
