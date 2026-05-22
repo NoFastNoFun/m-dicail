@@ -89,6 +89,7 @@ class AssignPatientSheet extends StatelessWidget {
   }
 
   static Future<void> _assignAndNavigate(BuildContext context, String sessionId, String patientId) async {
+    final l10n = AppLocalizations.of(context);
     try {
       final repo = getIt<RecordingSessionRepository>();
       final session = await repo.getById(sessionId);
@@ -104,7 +105,7 @@ class AssignPatientSheet extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppToast.showError(context, "Erreur lors de l'association");
+        AppToast.showError(context, l10n.assignPatientError);
       }
     }
   }

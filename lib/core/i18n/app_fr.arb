@@ -126,5 +126,6 @@
   "recordingDateLabel": "Date",
   "assignPatientTitle": "Associer à un patient",
   "assignPatientSearchTab": "Rechercher",
-  "assignPatientNewTab": "Nouveau patient"
+  "assignPatientNewTab": "Nouveau patient",
+  "assignPatientError": "Erreur lors de l'association"
 }
