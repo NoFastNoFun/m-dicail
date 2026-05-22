@@ -897,6 +897,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.'**
   String get tutorialPatientAddDesc;
+
+  /// No description provided for @tutorialDetailConsultTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle consultation'**
+  String get tutorialDetailConsultTitle;
+
+  /// No description provided for @tutorialDetailConsultDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.'**
+  String get tutorialDetailConsultDesc;
 }
 
 class _AppLocalizationsDelegate

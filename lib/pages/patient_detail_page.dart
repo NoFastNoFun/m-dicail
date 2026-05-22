@@ -17,6 +17,10 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class PatientDetailPage extends StatelessWidget {
   const PatientDetailPage({
@@ -36,8 +40,27 @@ class PatientDetailPage extends StatelessWidget {
   }
 }
 
-class _PatientDetailContent extends StatelessWidget {
+class _PatientDetailContent extends StatefulWidget {
   const _PatientDetailContent();
+
+  @override
+  State<_PatientDetailContent> createState() => _PatientDetailContentState();
+}
+
+class _PatientDetailContentState extends State<_PatientDetailContent> {
+  final GlobalKey _consultKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    ShowcaseView.register();
+  }
+
+  @override
+  void dispose() {
+    ShowcaseView.get().unregister();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +84,24 @@ class _PatientDetailContent extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                     )
-                  : _PatientDetailView(
-                      patient: patient,
-                      sessions: sessions,
-                      onRefresh: () {
-                        context
-                            .read<PatientDetailBloc>()
-                            .add(PatientDetailRequested(patient.id));
+                  : BlocListener<TutorialBloc, TutorialState>(
+                      listener: (context, state) {
+                        if (state is TutorialInProgress && state.currentStep == 3) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ShowcaseView.get().startShowCase([_consultKey]);
+                          });
+                        }
                       },
+                      child: _PatientDetailView(
+                        patient: patient,
+                        sessions: sessions,
+                        consultKey: _consultKey,
+                        onRefresh: () {
+                          context
+                              .read<PatientDetailBloc>()
+                              .add(PatientDetailRequested(patient.id));
+                        },
+                      ),
                     ),
         );
       },
@@ -80,11 +113,13 @@ class _PatientDetailView extends StatelessWidget {
   const _PatientDetailView({
     required this.patient,
     required this.sessions,
+    required this.consultKey,
     required this.onRefresh,
   });
 
   final Patient patient;
   final List<RecordingSession> sessions;
+  final GlobalKey consultKey;
   final VoidCallback onRefresh;
 
   @override
@@ -104,12 +139,26 @@ class _PatientDetailView extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppSpacing.lg),
-        AppButton(
-          label: l10n.patientNewConsultationButton,
-          onPressed: () async {
+        Showcase(
+          key: consultKey,
+          title: l10n.tutorialDetailConsultTitle,
+          description: l10n.tutorialDetailConsultDesc,
+          disposeOnTap: true,
+          onTargetClick: () async {
+            context.read<TutorialBloc>().add(const TutorialStepCompleted(3));
             await context.goRecord(patientId: patient.id);
             onRefresh();
           },
+          child: AppButton(
+            label: l10n.patientNewConsultationButton,
+            onPressed: () async {
+              if (context.read<TutorialBloc>().state is TutorialInProgress) {
+                context.read<TutorialBloc>().add(const TutorialStepCompleted(3));
+              }
+              await context.goRecord(patientId: patient.id);
+              onRefresh();
+            },
+          ),
         ),
         const SizedBox(height: AppSpacing.xl),
         AppText(

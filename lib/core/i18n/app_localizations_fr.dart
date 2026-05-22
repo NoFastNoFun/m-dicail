@@ -417,4 +417,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialPatientAddDesc =>
       'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.';
+
+  @override
+  String get tutorialDetailConsultTitle => 'Nouvelle consultation';
+
+  @override
+  String get tutorialDetailConsultDesc =>
+      'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.';
 }
