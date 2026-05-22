@@ -759,6 +759,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Créer le dossier'**
   String get patientCreateSubmit;
+
+  /// No description provided for @loginWelcomeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur Medicail'**
+  String get loginWelcomeTitle;
+
+  /// No description provided for @loginWelcomeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour accéder à vos dossiers.'**
+  String get loginWelcomeSubtitle;
+
+  /// No description provided for @loginEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse email'**
+  String get loginEmailLabel;
+
+  /// No description provided for @loginPasswordLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get loginPasswordLabel;
+
+  /// No description provided for @loginSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get loginSubmit;
+
+  /// No description provided for @loginCreateAccountButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get loginCreateAccountButton;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get registerTitle;
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoignez Medicail pour gérer vos consultations.'**
+  String get registerSubtitle;
+
+  /// No description provided for @registerFullNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom complet (optionnel)'**
+  String get registerFullNameLabel;
+
+  /// No description provided for @registerEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse email'**
+  String get registerEmailLabel;
+
+  /// No description provided for @registerPasswordLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get registerPasswordLabel;
+
+  /// No description provided for @registerSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'S\'inscrire'**
+  String get registerSubmit;
+
+  /// No description provided for @recordingDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get recordingDateLabel;
 }
 
 class _AppLocalizationsDelegate

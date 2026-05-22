@@ -55,6 +55,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return AppScaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -71,14 +73,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const AppText(
-                    'Créer un compte',
+                  AppText(
+                    l10n.registerTitle,
                     variant: AppTextVariant.headline,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const AppText(
-                    'Rejoignez Medicail pour gérer vos consultations.',
+                  AppText(
+                    l10n.registerSubtitle,
                     variant: AppTextVariant.body,
                     color: AppColors.textSecondary,
                     textAlign: TextAlign.center,
@@ -86,20 +88,20 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: AppSpacing.xxl),
                   AppInput(
                     variant: AppInputVariant.text,
-                    label: 'Nom complet (optionnel)',
+                    label: l10n.registerFullNameLabel,
                     controller: _fullNameController,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppInput(
                     variant: AppInputVariant.email,
-                    label: 'Adresse email',
+                    label: l10n.registerEmailLabel,
                     controller: _emailController,
                     messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppInput(
                     variant: AppInputVariant.password,
-                    label: 'Mot de passe',
+                    label: l10n.registerPasswordLabel,
                     controller: _passwordController,
                     messageResolver: _messageResolver,
                   ),
@@ -107,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return AppButton(
-                        label: 'S\'inscrire',
+                        label: l10n.registerSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
                       );

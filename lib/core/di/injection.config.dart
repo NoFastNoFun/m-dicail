@@ -46,6 +46,8 @@ import 'package:medicail/features/patient/data/repositories/secure_storage_patie
     as _i830;
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart'
     as _i390;
+import 'package:medicail/features/patient/presentation/detail/patient_detail_bloc.dart'
+    as _i802;
 import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
@@ -129,6 +131,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i545.ApiPatientRepository>(),
         gh<_i830.SecureStoragePatientRepository>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.factory<_i301.PatientBloc>(

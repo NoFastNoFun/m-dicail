@@ -55,6 +55,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return AppScaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -77,14 +79,14 @@ class _LoginPageState extends State<LoginPage> {
                     color: AppColors.primary,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  const AppText(
-                    'Bienvenue sur Medicail',
+                  AppText(
+                    l10n.loginWelcomeTitle,
                     variant: AppTextVariant.headline,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const AppText(
-                    'Connectez-vous pour accéder à vos dossiers.',
+                  AppText(
+                    l10n.loginWelcomeSubtitle,
                     variant: AppTextVariant.body,
                     color: AppColors.textSecondary,
                     textAlign: TextAlign.center,
@@ -92,14 +94,14 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: AppSpacing.xxl),
                   AppInput(
                     variant: AppInputVariant.email,
-                    label: 'Adresse email',
+                    label: l10n.loginEmailLabel,
                     controller: _emailController,
                     messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppInput(
                     variant: AppInputVariant.password,
-                    label: 'Mot de passe',
+                    label: l10n.loginPasswordLabel,
                     controller: _passwordController,
                     messageResolver: _messageResolver,
                   ),
@@ -107,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return AppButton(
-                        label: 'Se connecter',
+                        label: l10n.loginSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
                       );
@@ -115,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppButton(
-                    label: 'Créer un compte',
+                    label: l10n.loginCreateAccountButton,
                     style: AppButtonStyle.secondary,
                     onPressed: () => context.push(AppRoutes.register),
                   ),
