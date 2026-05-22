@@ -37,3 +37,7 @@ final class PatientFailure extends PatientState {
 class PatientMrnConflict extends PatientState {
   const PatientMrnConflict();
 }
+
+class PatientCreateSuccess extends PatientState {
+  const PatientCreateSuccess();
+}
