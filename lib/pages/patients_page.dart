@@ -16,6 +16,10 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class PatientsPage extends StatelessWidget {
   const PatientsPage({super.key});
@@ -38,16 +42,19 @@ class _PatientsView extends StatefulWidget {
 
 class _PatientsViewState extends State<_PatientsView> {
   final _searchController = TextEditingController();
+  final GlobalKey _addPatientKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    ShowcaseView.register();
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    ShowcaseView.get().unregister();
     super.dispose();
   }
 
@@ -96,13 +103,36 @@ class _PatientsViewState extends State<_PatientsView> {
         return AppScaffold(
           title: l10n.patientsTitle,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.add, color: AppColors.textPrimary),
-              onPressed: () => _showCreatePatientSheet(context),
+            Showcase(
+              key: _addPatientKey,
+              title: l10n.tutorialPatientAddTitle,
+              description: l10n.tutorialPatientAddDesc,
+              disposeOnTap: true,
+              onTargetClick: () {
+                context.read<TutorialBloc>().add(const TutorialStepCompleted(2));
+                _showCreatePatientSheet(context);
+              },
+              child: IconButton(
+                icon: const Icon(Icons.add, color: AppColors.textPrimary),
+                onPressed: () {
+                  if (context.read<TutorialBloc>().state is TutorialInProgress) {
+                    context.read<TutorialBloc>().add(const TutorialStepCompleted(2));
+                  }
+                  _showCreatePatientSheet(context);
+                },
+              ),
             ),
           ],
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: BlocListener<TutorialBloc, TutorialState>(
+            listener: (context, state) {
+              if (state is TutorialInProgress && state.currentStep == 2) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ShowcaseView.get().startShowCase([_addPatientKey]);
+                });
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppInput(
                 variant: AppInputVariant.text,
@@ -135,6 +165,7 @@ class _PatientsViewState extends State<_PatientsView> {
               ),
             ],
           ),
+        ),
         );
       },
     );

@@ -9,7 +9,6 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class MedicailApp extends StatelessWidget {
   const MedicailApp({super.key});
@@ -34,9 +33,7 @@ class MedicailApp extends StatelessWidget {
             ),
           ],
           child: AppToastHost(
-            child: ShowCaseWidget(
-              builder: (context) => child ?? const SizedBox.shrink(),
-            ),
+            child: child ?? const SizedBox.shrink(),
           ),
         );
       },

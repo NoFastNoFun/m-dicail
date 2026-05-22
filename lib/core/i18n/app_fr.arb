@@ -131,5 +131,7 @@
   "tutorialHomePatientsTitle": "Dossiers Patients",
   "tutorialHomePatientsDesc": "Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.",
   "tutorialHomeRecordTitle": "Consultation Rapide",
-  "tutorialHomeRecordDesc": "Utilisez ce bouton pour démarrer immédiatement une consultation vocale."
+  "tutorialHomeRecordDesc": "Utilisez ce bouton pour démarrer immédiatement une consultation vocale.",
+  "tutorialPatientAddTitle": "Ajouter un patient",
+  "tutorialPatientAddDesc": "C'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base."
 }

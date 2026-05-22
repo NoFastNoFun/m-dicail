@@ -410,4 +410,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialHomeRecordDesc =>
       'Utilisez ce bouton pour démarrer immédiatement une consultation vocale.';
+
+  @override
+  String get tutorialPatientAddTitle => 'Ajouter un patient';
+
+  @override
+  String get tutorialPatientAddDesc =>
+      'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.';
 }
