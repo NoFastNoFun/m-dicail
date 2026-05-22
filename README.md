@@ -62,6 +62,41 @@ flutter run -d windows
 flutter run -d android
 ```
 
+## Mode hors ligne (mock admin)
+
+L'application propose un mode hors ligne qui permet de se connecter avec les
+identifiants `admin` / `admin` sans backend. Ce mode est active via un flag de
+compilation `--dart-define`.
+
+### Depuis le terminal
+
+```bash
+flutter run --dart-define=ENABLE_MOCK_ADMIN=true
+```
+
+### Depuis VS Code
+
+Le fichier `.vscode/launch.json` contient deux configurations pre-configurees :
+
+- **Medicail (mock admin)** : mode hors ligne avec le flag active
+- **Medicail** : mode standard (connexion au backend)
+
+Selectionnez la configuration souhaitee dans le menu de lancement de VS Code
+(F5 ou barre de debug), puis lancez.
+
+### Variables d'environnement disponibles
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `ENABLE_MOCK_ADMIN` | `bool` | `false` | Active la connexion `admin`/`admin` |
+| `API_BASE_URL` | `String` | `http://localhost:8000` | URL de base de l'API |
+
+Exemple combinant les deux :
+
+```bash
+flutter run --dart-define=ENABLE_MOCK_ADMIN=true --dart-define=API_BASE_URL=https://api.staging.example.com
+```
+
 ## Commandes utiles (qualite)
 
 Analyser le code:
