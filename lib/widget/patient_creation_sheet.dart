@@ -103,8 +103,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           color: AppColors.background,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+        padding: const EdgeInsets.only(
+          bottom: AppSpacing.lg,
           left: AppSpacing.lg,
           right: AppSpacing.lg,
           top: AppSpacing.lg,
