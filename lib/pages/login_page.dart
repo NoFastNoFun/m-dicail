@@ -11,8 +11,9 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'package:medicail/widget/inputs/input_validators.dart';
+import 'package:medicail/widget/inputs/input_validation_l10n.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,8 +34,16 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  static const _enableMockAdmin =
+      bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
+
+  String? _messageResolver(String key) {
+    final l10n = AppLocalizations.of(context);
+    return resolveInputValidationMessage(l10n, key);
+  }
+
   void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthLoginRequested(
           email: _emailController.text.trim(),
@@ -85,14 +94,14 @@ class _LoginPageState extends State<LoginPage> {
                     variant: AppInputVariant.email,
                     label: 'Adresse email',
                     controller: _emailController,
-                    validator: InputValidators.validateEmail,
+                    messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppInput(
                     variant: AppInputVariant.password,
                     label: 'Mot de passe',
                     controller: _passwordController,
-                    validator: InputValidators.validatePassword,
+                    messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.xxl),
                   BlocBuilder<AuthBloc, AuthState>(

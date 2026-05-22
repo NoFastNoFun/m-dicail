@@ -33,3 +33,7 @@ final class PatientFailure extends PatientState {
   @override
   List<Object?> get props => [message];
 }
+
+class PatientMrnConflict extends PatientState {
+  const PatientMrnConflict();
+}

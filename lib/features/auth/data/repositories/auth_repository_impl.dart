@@ -3,7 +3,8 @@ import 'package:medicail/core/network/api_client.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/features/auth/domain/entities/user.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:medicail/core/error/exceptions.dart';
+
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -21,7 +22,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> login({required String email, required String password}) async {
-    final enableMockAdmin = dotenv.env['ENABLE_MOCK_ADMIN'] == 'true';
+    const enableMockAdmin = bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
     if (enableMockAdmin && email == 'admin' && password == 'admin') {
       await _tokenStorage.writeToken(_mockToken);
       return _mockAdmin;
@@ -80,7 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final response = await _apiClient.get<Map<String, dynamic>>('/auth/me');
     final data = response.data;
     if (data == null) {
-      throw Exception('Aucune donnée utilisateur retournée.');
+      throw const ServerException('Aucune donnée utilisateur retournée.');
     }
     return _mapUser(data);
   }
