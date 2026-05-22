@@ -260,7 +260,7 @@ class _PatientCreationSheetState extends State<_PatientCreationSheet> {
 
     return BlocListener<PatientBloc, PatientState>(
       listener: (context, state) {
-        if (state is PatientLoaded) {
+        if (state is PatientCreateSuccess) {
           Navigator.of(context).pop();
           AppToast.showSuccess(context, l10n.patientCreateSuccess);
         }

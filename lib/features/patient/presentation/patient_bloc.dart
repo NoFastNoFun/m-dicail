@@ -55,6 +55,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         updatedAt: now,
       );
       await _patientRepository.save(patient);
+      emit(const PatientCreateSuccess());
       await _loadPatients(emit);
     } on DioException catch (error) {
       if (error.response?.statusCode == 409) {
