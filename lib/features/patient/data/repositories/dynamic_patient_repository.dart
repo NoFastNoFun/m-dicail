@@ -4,6 +4,7 @@ import 'package:medicail/features/patient/data/repositories/api_patient_reposito
 import 'package:medicail/features/patient/data/repositories/secure_storage_patient_repository.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
+import 'package:medicail/core/config/app_config.dart';
 
 @LazySingleton(as: PatientRepository)
 class DynamicPatientRepository implements PatientRepository {
@@ -17,11 +18,9 @@ class DynamicPatientRepository implements PatientRepository {
   final SecureStoragePatientRepository _localRepository;
   final AuthTokenStorage _tokenStorage;
 
-  static const _mockToken = 'mock_admin_token';
-
   Future<PatientRepository> _getRepository() async {
     final token = await _tokenStorage.readToken();
-    if (token == _mockToken) {
+    if (token == AppConfig.mockAdminToken) {
       return _localRepository;
     }
     return _apiRepository;

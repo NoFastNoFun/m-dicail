@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 class AppConfig {
   static const String _defaultBaseUrl = 'http://localhost:8000';
+  static const String mockAdminToken = 'mock_admin_token';
 
   String get baseUrl {
     const envUrl = String.fromEnvironment('API_BASE_URL');
