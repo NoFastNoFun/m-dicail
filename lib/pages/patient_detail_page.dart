@@ -9,8 +9,6 @@ import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
-import 'package:medicail/core/audio/audio_playback_service.dart';
-import 'package:medicail/widget/app_audio_player.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -216,19 +214,6 @@ class _RecordingSessionListItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty)
-              AppAudioPlayer(
-                playbackService: getIt<AudioPlaybackService>(),
-                source: session.rawAudioPath,
-                title: l10n.recordingAudioLabel,
-              )
-            else
-              AppText(
-                'Audio indisponible',
-                variant: AppTextVariant.caption,
-                color: AppColors.textSecondary,
-              ),
-            const SizedBox(height: AppSpacing.sm),
             AppText(
               session.transcript.isEmpty
                   ? l10n.transcriptEmptyFallback
