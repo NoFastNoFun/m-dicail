@@ -1,4 +1,5 @@
-import 'dart:convert';import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/features/recording/data/models/recording_session_model.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
@@ -70,22 +71,29 @@ class SecureStorageRecordingSessionRepository
   }
 
   Future<List<RecordingSession>> _readSessions() async {
-    final raw = await _storage.read(key: _sessionsKey);
-    if (raw == null || raw.isEmpty) {
+    try {
+      final raw = await _storage.read(key: _sessionsKey);
+      if (raw == null || raw.isEmpty) {
+        return const [];
+      }
+
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        return const [];
+      }
+
+      return decoded
+          .whereType<Map>()
+          .map((json) => Map<String, dynamic>.from(json))
+          .map(RecordingSessionModel.fromJson)
+          .toList()
+        ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+    } catch (e) {
+      // Si le KeyStore Android est désynchronisé (PlatformException),
+      // on purge les données corrompues pour ne pas bloquer l'app.
+      await _storage.delete(key: _sessionsKey);
       return const [];
     }
-
-    final decoded = jsonDecode(raw);
-    if (decoded is! List) {
-      return const [];
-    }
-
-    return decoded
-        .whereType<Map>()
-        .map((json) => Map<String, dynamic>.from(json))
-        .map(RecordingSessionModel.fromJson)
-        .toList()
-      ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
   }
 
   Future<void> _writeSessions(List<RecordingSession> sessions) {
