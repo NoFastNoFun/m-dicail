@@ -133,11 +133,6 @@ class _RecordingSessionDebugItem extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             AppText(
-              'Audio: ${session.rawAudioPath ?? '-'}',
-              variant: AppTextVariant.caption,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            AppText(
               session.transcript.isEmpty
                   ? 'Transcription vide'
                   : session.transcript,

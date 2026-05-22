@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/features/recording/data/models/recording_session_model.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
@@ -59,16 +56,7 @@ class SecureStorageRecordingSessionRepository
     final nextSessions = <RecordingSession>[];
 
     for (final session in sessions) {
-      if (session.id == id) {
-        if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty) {
-          try {
-            final file = File(session.rawAudioPath!);
-            if (await file.exists()) {
-              await file.delete();
-            }
-          } catch (_) {}
-        }
-      } else {
+      if (session.id != id) {
         nextSessions.add(session);
       }
     }
@@ -78,17 +66,6 @@ class SecureStorageRecordingSessionRepository
 
   @override
   Future<void> clear() async {
-    final sessions = await _readSessions();
-    for (final session in sessions) {
-      if (session.rawAudioPath != null && session.rawAudioPath!.isNotEmpty) {
-        try {
-          final file = File(session.rawAudioPath!);
-          if (await file.exists()) {
-            await file.delete();
-          }
-        } catch (_) {}
-      }
-    }
     return _storage.delete(key: _sessionsKey);
   }
 

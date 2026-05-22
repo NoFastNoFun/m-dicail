@@ -15,7 +15,6 @@ class RecordingSession extends Equatable {
     required this.status,
     this.patientId,
     this.endedAt,
-    this.rawAudioPath,
     this.transcript = '',
     this.soapNote,
   });
@@ -24,7 +23,6 @@ class RecordingSession extends Equatable {
   final String? patientId;
   final DateTime startedAt;
   final DateTime? endedAt;
-  final String? rawAudioPath;
   final String transcript;
   final SoapNote? soapNote;
   final RecordingSessionStatus status;
@@ -34,13 +32,11 @@ class RecordingSession extends Equatable {
     String? patientId,
     DateTime? startedAt,
     DateTime? endedAt,
-    String? rawAudioPath,
     String? transcript,
     SoapNote? soapNote,
     RecordingSessionStatus? status,
     bool clearPatientId = false,
     bool clearEndedAt = false,
-    bool clearRawAudioPath = false,
     bool clearSoapNote = false,
   }) {
     return RecordingSession(
@@ -48,8 +44,6 @@ class RecordingSession extends Equatable {
       patientId: clearPatientId ? null : patientId ?? this.patientId,
       startedAt: startedAt ?? this.startedAt,
       endedAt: clearEndedAt ? null : endedAt ?? this.endedAt,
-      rawAudioPath:
-          clearRawAudioPath ? null : rawAudioPath ?? this.rawAudioPath,
       transcript: transcript ?? this.transcript,
       soapNote: clearSoapNote ? null : soapNote ?? this.soapNote,
       status: status ?? this.status,
@@ -62,7 +56,6 @@ class RecordingSession extends Equatable {
         patientId,
         startedAt,
         endedAt,
-        rawAudioPath,
         transcript,
         soapNote,
         status,

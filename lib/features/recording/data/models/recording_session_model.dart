@@ -8,7 +8,6 @@ final class RecordingSessionModel extends RecordingSession {
     required super.status,
     super.patientId,
     super.endedAt,
-    super.rawAudioPath,
     super.transcript,
     super.soapNote,
   });
@@ -19,7 +18,6 @@ final class RecordingSessionModel extends RecordingSession {
       patientId: session.patientId,
       startedAt: session.startedAt,
       endedAt: session.endedAt,
-      rawAudioPath: session.rawAudioPath,
       transcript: session.transcript,
       soapNote: session.soapNote,
       status: session.status,
@@ -32,7 +30,6 @@ final class RecordingSessionModel extends RecordingSession {
       patientId: json['patientId'] as String?,
       startedAt: DateTime.parse(json['startedAt'] as String),
       endedAt: _parseNullableDate(json['endedAt']),
-      rawAudioPath: json['rawAudioPath'] as String?,
       transcript: json['transcript'] as String? ?? '',
       soapNote: json['soapNote'] != null
           ? SoapNote.fromJson(json['soapNote'] as Map<String, dynamic>)
@@ -47,7 +44,6 @@ final class RecordingSessionModel extends RecordingSession {
       'patientId': patientId,
       'startedAt': startedAt.toIso8601String(),
       'endedAt': endedAt?.toIso8601String(),
-      'rawAudioPath': rawAudioPath,
       'transcript': transcript,
       'soapNote': soapNote?.toJson(),
       'status': status.name,

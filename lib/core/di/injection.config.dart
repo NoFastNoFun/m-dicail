@@ -17,9 +17,6 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
 import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
 import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
-import 'package:medicail/core/audio/raw_audio_recorder_service.dart' as _i67;
-import 'package:medicail/core/audio/record_raw_audio_recorder_service.dart'
-    as _i594;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/di/register_module.dart' as _i91;
@@ -75,9 +72,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i945.LoggingInterceptor(),
     );
     gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
-    gh.lazySingleton<_i67.RawAudioRecorderService>(
-      () => _i594.RecordRawAudioRecorderService(),
-    );
     gh.factory<_i830.SecureStoragePatientRepository>(
       () => _i830.SecureStoragePatientRepository(
         gh<_i558.FlutterSecureStorage>(),
@@ -90,6 +84,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
+    );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
     );
     gh.lazySingleton<_i366.AudioPlaybackService>(
       () => _i475.JustAudioPlaybackService(),
@@ -105,13 +105,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
-    );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i67.RawAudioRecorderService>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(
