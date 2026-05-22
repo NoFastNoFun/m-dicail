@@ -20,6 +20,19 @@ final class VoiceCaptureReady extends VoiceCaptureState {
   List<Object?> get props => [transcript];
 }
 
+final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
+  const VoiceCaptureConsultationFinished({
+    required this.sessionId,
+    this.transcript = '',
+  });
+
+  final String sessionId;
+  final String transcript;
+
+  @override
+  List<Object?> get props => [sessionId, transcript];
+}
+
 final class RecordingInProgress extends VoiceCaptureState {
   const RecordingInProgress({required this.transcript});
 
@@ -29,11 +42,21 @@ final class RecordingInProgress extends VoiceCaptureState {
   List<Object?> get props => [transcript];
 }
 
-final class VoiceCaptureFailure extends VoiceCaptureState {
-  const VoiceCaptureFailure(this.message);
+final class ListeningPaused extends VoiceCaptureState {
+  const ListeningPaused({required this.transcript});
 
-  final String message;
+  final String transcript;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [transcript];
+}
+
+final class VoiceCaptureFailure extends VoiceCaptureState {
+  const VoiceCaptureFailure(this.message, {this.transcript = ''});
+
+  final String message;
+  final String transcript;
+
+  @override
+  List<Object?> get props => [message, transcript];
 }

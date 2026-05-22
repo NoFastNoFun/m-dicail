@@ -27,6 +27,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buttonSave => 'Enregistrer';
 
   @override
+  String get buttonFinishConsultation => 'Terminer consultation';
+
+  @override
   String get errorGeneric => 'Une erreur est survenue';
 
   @override
@@ -42,13 +45,85 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelHistory => 'Historique';
 
   @override
+  String get navigateToPatients => 'Dossiers patients';
+
+  @override
   String get navigateToRecord => 'Nouvel enregistrement';
 
   @override
   String get transcriptLabel => 'Transcription';
 
   @override
+  String get transcriptEmptyHint => 'Aucune parole captee pour le moment';
+
+  @override
+  String get transcriptEmptyFallback => 'Transcription vide';
+
+  @override
+  String get buttonClear => 'Effacer';
+
+  @override
+  String get recordStatusReady => 'Pret a ecouter';
+
+  @override
+  String get recordStatusInitializing => 'Initialisation du micro';
+
+  @override
+  String get recordStatusListening => 'Ecoute en cours';
+
+  @override
+  String get recordStatusPaused => 'Ecoute en pause';
+
+  @override
+  String get recordStatusEnded => 'Session terminee';
+
+  @override
   String get historyEmpty => 'Aucune note pour le moment';
+
+  @override
+  String get patientsTitle => 'Patients';
+
+  @override
+  String get patientsSectionTitle => 'Dossiers patients';
+
+  @override
+  String get patientsEmpty => 'Aucun patient pour le moment';
+
+  @override
+  String get patientFirstNameLabel => 'Prenom';
+
+  @override
+  String get patientLastNameLabel => 'Nom';
+
+  @override
+  String get patientCreateButton => 'Creer le patient';
+
+  @override
+  String get patientOpenButton => 'Ouvrir le dossier';
+
+  @override
+  String get patientDetailTitle => 'Dossier patient';
+
+  @override
+  String get patientNotFound => 'Patient introuvable';
+
+  @override
+  String get patientMrnConflict => 'Le numéro de dossier (MRN) existe déjà.';
+
+  @override
+  String get patientNewConsultationButton => 'Nouvelle consultation';
+
+  @override
+  String get patientSessionsTitle => 'Consultations';
+
+  @override
+  String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
+
+  @override
+  String get recordingStatusLabel => 'Statut';
+
+  @override
+  String get recordingAudioLabel => 'Audio';
 
   @override
   String get inputErrorRequired => 'Ce champ est obligatoire';
@@ -193,4 +268,132 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debugClose => 'Fermer';
+
+  @override
+  String get soapNoteTitle => 'Note SOAP';
+
+  @override
+  String get soapNoteSubjective => 'Subjectif';
+
+  @override
+  String get soapNoteObjective => 'Objectif';
+
+  @override
+  String get soapNoteAssessment => 'Évaluation';
+
+  @override
+  String get soapNotePlan => 'Plan';
+
+  @override
+  String get soapNoteSave => 'Enregistrer la note';
+
+  @override
+  String get soapNoteViewAction => 'Voir la note SOAP';
+
+  @override
+  String get patientSearchPlaceholder => 'Rechercher un patient';
+
+  @override
+  String get patientCreateErrorRequired => 'MRN, Prénom et Nom sont requis.';
+
+  @override
+  String get patientCreateSuccess => 'Dossier patient créé avec succès.';
+
+  @override
+  String get patientCreateTitle => 'Nouveau Patient';
+
+  @override
+  String get patientMrnLabel => 'MRN (Numéro de dossier) *';
+
+  @override
+  String get patientFirstNameRequiredLabel => 'Prénom *';
+
+  @override
+  String get patientLastNameRequiredLabel => 'Nom *';
+
+  @override
+  String get patientBirthDateLabel => 'Date de naissance';
+
+  @override
+  String get patientBirthDateSelect => 'Sélectionner';
+
+  @override
+  String get patientSexLabel => 'Sexe';
+
+  @override
+  String get patientSexMale => 'Homme';
+
+  @override
+  String get patientSexFemale => 'Femme';
+
+  @override
+  String get patientSexOther => 'Autre';
+
+  @override
+  String get patientEmailLabel => 'Email';
+
+  @override
+  String get patientPhoneLabel => 'Téléphone';
+
+  @override
+  String get patientAddressLabel => 'Adresse';
+
+  @override
+  String get patientNotesLabel => 'Notes';
+
+  @override
+  String get patientCreateSubmit => 'Créer le dossier';
+
+  @override
+  String get loginWelcomeTitle => 'Bienvenue sur Medicail';
+
+  @override
+  String get loginWelcomeSubtitle =>
+      'Connectez-vous pour accéder à vos dossiers.';
+
+  @override
+  String get loginEmailLabel => 'Adresse email';
+
+  @override
+  String get loginPasswordLabel => 'Mot de passe';
+
+  @override
+  String get loginSubmit => 'Se connecter';
+
+  @override
+  String get loginCreateAccountButton => 'Créer un compte';
+
+  @override
+  String get registerTitle => 'Créer un compte';
+
+  @override
+  String get registerSubtitle =>
+      'Rejoignez Medicail pour gérer vos consultations.';
+
+  @override
+  String get registerFullNameLabel => 'Nom complet (optionnel)';
+
+  @override
+  String get registerEmailLabel => 'Adresse email';
+
+  @override
+  String get registerPasswordLabel => 'Mot de passe';
+
+  @override
+  String get registerSubmit => 'S\'inscrire';
+
+  @override
+  String get recordingDateLabel => 'Date';
+
+  @override
+  String get assignPatientTitle => 'Associer à un patient';
+
+  @override
+  String get assignPatientSearchTab => 'Rechercher';
+
+  @override
+  String get assignPatientNewTab => 'Nouveau patient';
+
+  @override
+  String get assignPatientError => 'Erreur lors de l\'association';
 }

@@ -130,6 +130,12 @@ abstract class AppLocalizations {
   /// **'Enregistrer'**
   String get buttonSave;
 
+  /// No description provided for @buttonFinishConsultation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer consultation'**
+  String get buttonFinishConsultation;
+
   /// No description provided for @errorGeneric.
   ///
   /// In fr, this message translates to:
@@ -160,6 +166,12 @@ abstract class AppLocalizations {
   /// **'Historique'**
   String get labelHistory;
 
+  /// No description provided for @navigateToPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get navigateToPatients;
+
   /// No description provided for @navigateToRecord.
   ///
   /// In fr, this message translates to:
@@ -172,11 +184,149 @@ abstract class AppLocalizations {
   /// **'Transcription'**
   String get transcriptLabel;
 
+  /// No description provided for @transcriptEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune parole captee pour le moment'**
+  String get transcriptEmptyHint;
+
+  /// No description provided for @transcriptEmptyFallback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription vide'**
+  String get transcriptEmptyFallback;
+
+  /// No description provided for @buttonClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get buttonClear;
+
+  /// No description provided for @recordStatusReady.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pret a ecouter'**
+  String get recordStatusReady;
+
+  /// No description provided for @recordStatusInitializing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Initialisation du micro'**
+  String get recordStatusInitializing;
+
+  /// No description provided for @recordStatusListening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en cours'**
+  String get recordStatusListening;
+
+  /// No description provided for @recordStatusPaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en pause'**
+  String get recordStatusPaused;
+
+  /// No description provided for @recordStatusEnded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Session terminee'**
+  String get recordStatusEnded;
+
   /// No description provided for @historyEmpty.
   ///
   /// In fr, this message translates to:
   /// **'Aucune note pour le moment'**
   String get historyEmpty;
+
+  /// No description provided for @patientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get patientsTitle;
+
+  /// No description provided for @patientsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get patientsSectionTitle;
+
+  /// No description provided for @patientsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun patient pour le moment'**
+  String get patientsEmpty;
+
+  /// No description provided for @patientFirstNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenom'**
+  String get patientFirstNameLabel;
+
+  /// No description provided for @patientLastNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get patientLastNameLabel;
+
+  /// No description provided for @patientCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le patient'**
+  String get patientCreateButton;
+
+  /// No description provided for @patientOpenButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir le dossier'**
+  String get patientOpenButton;
+
+  /// No description provided for @patientDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier patient'**
+  String get patientDetailTitle;
+
+  /// No description provided for @patientNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient introuvable'**
+  String get patientNotFound;
+
+  /// No description provided for @patientMrnConflict.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le numéro de dossier (MRN) existe déjà.'**
+  String get patientMrnConflict;
+
+  /// No description provided for @patientNewConsultationButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle consultation'**
+  String get patientNewConsultationButton;
+
+  /// No description provided for @patientSessionsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations'**
+  String get patientSessionsTitle;
+
+  /// No description provided for @patientSessionsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune consultation pour ce patient'**
+  String get patientSessionsEmpty;
+
+  /// No description provided for @recordingStatusLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get recordingStatusLabel;
+
+  /// No description provided for @recordingAudioLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio'**
+  String get recordingAudioLabel;
 
   /// No description provided for @inputErrorRequired.
   ///
@@ -459,6 +609,258 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Fermer'**
   String get debugClose;
+
+  /// No description provided for @soapNoteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note SOAP'**
+  String get soapNoteTitle;
+
+  /// No description provided for @soapNoteSubjective.
+  ///
+  /// In fr, this message translates to:
+  /// **'Subjectif'**
+  String get soapNoteSubjective;
+
+  /// No description provided for @soapNoteObjective.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif'**
+  String get soapNoteObjective;
+
+  /// No description provided for @soapNoteAssessment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Évaluation'**
+  String get soapNoteAssessment;
+
+  /// No description provided for @soapNotePlan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plan'**
+  String get soapNotePlan;
+
+  /// No description provided for @soapNoteSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer la note'**
+  String get soapNoteSave;
+
+  /// No description provided for @soapNoteViewAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la note SOAP'**
+  String get soapNoteViewAction;
+
+  /// No description provided for @patientSearchPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un patient'**
+  String get patientSearchPlaceholder;
+
+  /// No description provided for @patientCreateErrorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'MRN, Prénom et Nom sont requis.'**
+  String get patientCreateErrorRequired;
+
+  /// No description provided for @patientCreateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier patient créé avec succès.'**
+  String get patientCreateSuccess;
+
+  /// No description provided for @patientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau Patient'**
+  String get patientCreateTitle;
+
+  /// No description provided for @patientMrnLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'MRN (Numéro de dossier) *'**
+  String get patientMrnLabel;
+
+  /// No description provided for @patientFirstNameRequiredLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom *'**
+  String get patientFirstNameRequiredLabel;
+
+  /// No description provided for @patientLastNameRequiredLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom *'**
+  String get patientLastNameRequiredLabel;
+
+  /// No description provided for @patientBirthDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de naissance'**
+  String get patientBirthDateLabel;
+
+  /// No description provided for @patientBirthDateSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner'**
+  String get patientBirthDateSelect;
+
+  /// No description provided for @patientSexLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sexe'**
+  String get patientSexLabel;
+
+  /// No description provided for @patientSexMale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Homme'**
+  String get patientSexMale;
+
+  /// No description provided for @patientSexFemale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Femme'**
+  String get patientSexFemale;
+
+  /// No description provided for @patientSexOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get patientSexOther;
+
+  /// No description provided for @patientEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get patientEmailLabel;
+
+  /// No description provided for @patientPhoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get patientPhoneLabel;
+
+  /// No description provided for @patientAddressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse'**
+  String get patientAddressLabel;
+
+  /// No description provided for @patientNotesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get patientNotesLabel;
+
+  /// No description provided for @patientCreateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le dossier'**
+  String get patientCreateSubmit;
+
+  /// No description provided for @loginWelcomeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur Medicail'**
+  String get loginWelcomeTitle;
+
+  /// No description provided for @loginWelcomeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour accéder à vos dossiers.'**
+  String get loginWelcomeSubtitle;
+
+  /// No description provided for @loginEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse email'**
+  String get loginEmailLabel;
+
+  /// No description provided for @loginPasswordLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get loginPasswordLabel;
+
+  /// No description provided for @loginSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get loginSubmit;
+
+  /// No description provided for @loginCreateAccountButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get loginCreateAccountButton;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get registerTitle;
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoignez Medicail pour gérer vos consultations.'**
+  String get registerSubtitle;
+
+  /// No description provided for @registerFullNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom complet (optionnel)'**
+  String get registerFullNameLabel;
+
+  /// No description provided for @registerEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse email'**
+  String get registerEmailLabel;
+
+  /// No description provided for @registerPasswordLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get registerPasswordLabel;
+
+  /// No description provided for @registerSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'S\'inscrire'**
+  String get registerSubmit;
+
+  /// No description provided for @recordingDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get recordingDateLabel;
+
+  /// No description provided for @assignPatientTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer à un patient'**
+  String get assignPatientTitle;
+
+  /// No description provided for @assignPatientSearchTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher'**
+  String get assignPatientSearchTab;
+
+  /// No description provided for @assignPatientNewTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get assignPatientNewTab;
+
+  /// No description provided for @assignPatientError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de l\'association'**
+  String get assignPatientError;
 }
 
 class _AppLocalizationsDelegate

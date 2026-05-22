@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:medicail/core/config/app_theme.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,7 +21,10 @@ class MedicailApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: getIt<GoRouter>(),
       builder: (context, child) {
-        return AppToastHost(child: child ?? const SizedBox.shrink());
+        return BlocProvider<AuthBloc>(
+          create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
+          child: AppToastHost(child: child ?? const SizedBox.shrink()),
+        );
       },
     );
   }

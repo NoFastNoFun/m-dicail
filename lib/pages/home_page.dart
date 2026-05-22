@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -15,6 +18,14 @@ class HomePage extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.homeTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            context.read<AuthBloc>().add(const AuthLogoutRequested());
+          },
+        ),
+      ],
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -29,7 +40,13 @@ class HomePage extends StatelessWidget {
             ),
           ),
           AppButton(
+            label: l10n.navigateToPatients,
+            onPressed: () => context.goPatients(),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
             label: l10n.navigateToRecord,
+            style: AppButtonStyle.secondary,
             onPressed: () => context.goRecord(),
           ),
         ],
