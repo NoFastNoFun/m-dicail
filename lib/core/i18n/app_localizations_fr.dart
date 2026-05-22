@@ -393,4 +393,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get assignPatientNewTab => 'Nouveau patient';
+
+  @override
+  String get assignPatientError => 'Erreur lors de l\'association';
 }

@@ -855,6 +855,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Nouveau patient'**
   String get assignPatientNewTab;
+
+  /// No description provided for @assignPatientError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de l\'association'**
+  String get assignPatientError;
 }
 
 class _AppLocalizationsDelegate
