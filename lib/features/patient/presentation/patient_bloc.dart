@@ -58,7 +58,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
       await _loadPatients(emit);
     } on DioException catch (error) {
       if (error.response?.statusCode == 409) {
-        emit(const PatientFailure('Le numéro de dossier (MRN) existe déjà.'));
+        emit(const PatientMrnConflict());
       } else {
         emit(PatientFailure(Failure.fromException(error).message));
       }

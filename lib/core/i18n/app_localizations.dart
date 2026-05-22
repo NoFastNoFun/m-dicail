@@ -292,6 +292,12 @@ abstract class AppLocalizations {
   /// **'Patient introuvable'**
   String get patientNotFound;
 
+  /// No description provided for @patientMrnConflict.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le numéro de dossier (MRN) existe déjà.'**
+  String get patientMrnConflict;
+
   /// No description provided for @patientNewConsultationButton.
   ///
   /// In fr, this message translates to:

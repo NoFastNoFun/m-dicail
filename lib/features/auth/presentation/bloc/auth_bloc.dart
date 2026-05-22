@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:medicail/core/error/failure.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -46,7 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user));
     } catch (e) {
       _authNotifier.setAuthenticated(false);
-      emit(AuthError(e.toString()));
+      emit(AuthError(Failure.fromException(e).message));
       emit(const AuthUnauthenticated());
     }
   }
@@ -66,7 +67,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user));
     } catch (e) {
       _authNotifier.setAuthenticated(false);
-      emit(AuthError(e.toString()));
+      emit(AuthError(Failure.fromException(e).message));
       emit(const AuthUnauthenticated());
     }
   }

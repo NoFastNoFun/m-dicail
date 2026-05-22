@@ -79,6 +79,9 @@ class _PatientsViewState extends State<_PatientsView> {
         if (state is PatientFailure) {
           AppToast.showError(context, state.message);
         }
+        if (state is PatientMrnConflict) {
+          AppToast.showError(context, l10n.patientMrnConflict);
+        }
       },
       builder: (context, state) {
         final patients = state is PatientLoaded ? state.patients : <Patient>[];

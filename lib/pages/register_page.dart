@@ -9,8 +9,9 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'package:medicail/widget/inputs/input_validators.dart';
+import 'package:medicail/widget/inputs/input_validation_l10n.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -31,6 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
     _passwordController.dispose();
     _fullNameController.dispose();
     super.dispose();
+  }
+
+  String? _messageResolver(String key) {
+    final l10n = AppLocalizations.of(context);
+    return resolveInputValidationMessage(l10n, key);
   }
 
   void _submit() {
@@ -88,14 +94,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     variant: AppInputVariant.email,
                     label: 'Adresse email',
                     controller: _emailController,
-                    validator: InputValidators.validateEmail,
+                    messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppInput(
                     variant: AppInputVariant.password,
                     label: 'Mot de passe',
                     controller: _passwordController,
-                    validator: InputValidators.validatePassword,
+                    messageResolver: _messageResolver,
                   ),
                   const SizedBox(height: AppSpacing.xxl),
                   BlocBuilder<AuthBloc, AuthState>(

@@ -108,6 +108,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientNotFound => 'Patient introuvable';
 
   @override
+  String get patientMrnConflict => 'Le numéro de dossier (MRN) existe déjà.';
+
+  @override
   String get patientNewConsultationButton => 'Nouvelle consultation';
 
   @override
