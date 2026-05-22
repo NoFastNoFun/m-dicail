@@ -5,6 +5,8 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -22,8 +24,15 @@ class MedicailApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: getIt<GoRouter>(),
       builder: (context, child) {
-        return BlocProvider<AuthBloc>(
-          create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>(
+              create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
+            ),
+            BlocProvider<TutorialBloc>(
+              create: (_) => getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
+            ),
+          ],
           child: AppToastHost(
             child: ShowCaseWidget(
               builder: (context) => child ?? const SizedBox.shrink(),
