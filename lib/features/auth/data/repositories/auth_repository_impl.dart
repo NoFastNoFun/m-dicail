@@ -4,13 +4,13 @@ import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/features/auth/domain/entities/user.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
 import 'package:medicail/core/error/exceptions.dart';
+import 'package:medicail/core/config/app_config.dart';
 
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._apiClient, this._tokenStorage);
 
-  static const _mockToken = 'mock_admin_token';
   static const _mockAdmin = User(
     id: 999,
     email: 'admin@local.com',
@@ -24,7 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<User> login({required String email, required String password}) async {
     const enableMockAdmin = bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
     if (enableMockAdmin && email == 'admin' && password == 'admin') {
-      await _tokenStorage.writeToken(_mockToken);
+      await _tokenStorage.writeToken(AppConfig.mockAdminToken);
       return _mockAdmin;
     }
 
@@ -74,7 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<User> getMe() async {
     final token = await _tokenStorage.readToken();
-    if (token == _mockToken) {
+    if (token == AppConfig.mockAdminToken) {
       return _mockAdmin;
     }
 
