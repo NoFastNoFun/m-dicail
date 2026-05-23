@@ -54,6 +54,14 @@ import 'package:medicail/features/recording/data/repositories/secure_storage_rec
     as _i913;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
+import 'package:medicail/features/templates/data/repositories/secure_storage_template_repository.dart'
+    as _i157;
+import 'package:medicail/features/templates/domain/repositories/template_repository.dart'
+    as _i870;
+import 'package:medicail/features/templates/domain/services/template_suggestion_service.dart'
+    as _i267;
+import 'package:medicail/features/templates/presentation/template_bloc.dart'
+    as _i185;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 
@@ -99,6 +107,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i760.AuthTokenStorage>(
       () => _i249.SecureStorageAuthToken(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.lazySingleton<_i870.TemplateRepository>(
+      () => _i157.SecureStorageTemplateRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.lazySingleton<_i1038.AppRouter>(
       () => _i1038.AppRouter(gh<_i541.AuthNotifier>()),
     );
@@ -107,6 +120,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
+    );
+    gh.factory<_i267.TemplateSuggestionService>(
+      () => _i267.TemplateSuggestionService(gh<_i870.TemplateRepository>()),
+    );
+    gh.factory<_i185.TemplateBloc>(
+      () => _i185.TemplateBloc(gh<_i870.TemplateRepository>()),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(

@@ -396,4 +396,80 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get assignPatientError => 'Erreur lors de l\'association';
+
+  @override
+  String get templatePickerTitle => 'Choisir un modele';
+
+  @override
+  String get templatePickerSearchHint => 'Rechercher une pathologie';
+
+  @override
+  String get templateBadgeBuiltin => 'Modele d\'origine';
+
+  @override
+  String get templateBadgeVariant => 'Ma variante';
+
+  @override
+  String get templateLoadModel => 'Charger un modele';
+
+  @override
+  String get templateSaveVariant => 'Enregistrer comme variante';
+
+  @override
+  String get templateVariantNameLabel => 'Nom de la variante';
+
+  @override
+  String get templateVariantNameHint => 'Ex. Lombalgie - Protocole V1';
+
+  @override
+  String get templateVariantSaveAction => 'Enregistrer';
+
+  @override
+  String get templateVariantSaveSuccess => 'Variante enregistree';
+
+  @override
+  String get templateVariantCancelAction => 'Annuler';
+
+  @override
+  String get templateDuplicateTitle => 'Nom deja utilise';
+
+  @override
+  String get templateDuplicateMessage =>
+      'Une variante porte deja ce nom. Renommez ou ecrasez la variante existante.';
+
+  @override
+  String get templateDuplicateOverwrite => 'Ecraser';
+
+  @override
+  String get templateDuplicateRename => 'Renommer';
+
+  @override
+  String get templateSuggestionTitle => 'Modele suggere';
+
+  @override
+  String templateSuggestionMessage(String pathologyName) {
+    return 'La transcription evoque : $pathologyName. Appliquer ce modele SOAP ?';
+  }
+
+  @override
+  String get templateSuggestionApply => 'Appliquer';
+
+  @override
+  String get templateSuggestionChooseOther => 'Choisir un autre modele';
+
+  @override
+  String get templateSuggestionSkip => 'Ignorer';
+
+  @override
+  String get sessionDeleteConfirmTitle => 'Supprimer la consultation';
+
+  @override
+  String get sessionDeleteConfirmMessage =>
+      'Cette action supprime definitivement la consultation et sa note.';
+
+  @override
+  String get sessionDeleteAction => 'Supprimer';
+
+  @override
+  String get sessionDeleteSuccess => 'Consultation supprimee';
 }

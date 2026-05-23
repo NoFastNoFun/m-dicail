@@ -16,6 +16,8 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_sta
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 
 class PatientDetailPage extends StatelessWidget {
@@ -133,6 +135,7 @@ class _PatientDetailView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return _RecordingSessionListItem(
                       session: sessions[index],
+                      patientId: patient.id,
                       onRefresh: onRefresh,
                     );
                   },
@@ -146,11 +149,51 @@ class _PatientDetailView extends StatelessWidget {
 class _RecordingSessionListItem extends StatelessWidget {
   const _RecordingSessionListItem({
     required this.session,
+    required this.patientId,
     required this.onRefresh,
   });
 
   final RecordingSession session;
+  final String patientId;
   final VoidCallback onRefresh;
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.sessionDeleteConfirmTitle,
+      body: AppText(
+        l10n.sessionDeleteConfirmMessage,
+        variant: AppTextVariant.body,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.templateVariantCancelAction),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.sessionDeleteAction),
+        ),
+      ],
+    );
+
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+
+    context.read<PatientDetailBloc>().add(
+          RecordingSessionDeleteRequested(
+            patientId: patientId,
+            sessionId: session.id,
+          ),
+        );
+
+    if (context.mounted) {
+      AppToast.showSuccess(context, l10n.sessionDeleteSuccess);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,22 +232,37 @@ class _RecordingSessionListItem extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (hasSoap)
-                  IconButton(
-                    icon: const Icon(Icons.edit_document, color: AppColors.primary),
-                    tooltip: l10n.soapNoteViewAction,
-                    onPressed: () {
-                      SoapNoteBottomSheet.show(
-                        context,
-                        initialNote: session.soapNote!,
-                        onSave: (updatedNote) async {
-                          final repo = getIt<RecordingSessionRepository>();
-                          await repo.save(session.copyWith(soapNote: updatedNote));
-                          onRefresh();
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (hasSoap)
+                      IconButton(
+                        icon: const Icon(
+                          Icons.edit_document,
+                          color: AppColors.primary,
+                        ),
+                        tooltip: l10n.soapNoteViewAction,
+                        onPressed: () {
+                          SoapNoteBottomSheet.show(
+                            context,
+                            initialNote: session.soapNote!,
+                            onSave: (updatedNote) async {
+                              final repo = getIt<RecordingSessionRepository>();
+                              await repo.save(
+                                session.copyWith(soapNote: updatedNote),
+                              );
+                              onRefresh();
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                      tooltip: l10n.sessionDeleteAction,
+                      onPressed: () => _confirmDelete(context),
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),

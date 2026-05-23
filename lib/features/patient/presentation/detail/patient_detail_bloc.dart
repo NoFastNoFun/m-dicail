@@ -13,6 +13,7 @@ class PatientDetailBloc extends Bloc<PatientDetailEvent, PatientDetailState> {
     this._recordingRepository,
   ) : super(const PatientDetailInitial()) {
     on<PatientDetailRequested>(_onPatientDetailRequested);
+    on<RecordingSessionDeleteRequested>(_onRecordingSessionDeleteRequested);
   }
 
   final PatientRepository _patientRepository;
@@ -23,9 +24,28 @@ class PatientDetailBloc extends Bloc<PatientDetailEvent, PatientDetailState> {
     Emitter<PatientDetailState> emit,
   ) async {
     emit(const PatientDetailLoading());
+    await _loadPatientDetail(event.patientId, emit);
+  }
+
+  Future<void> _onRecordingSessionDeleteRequested(
+    RecordingSessionDeleteRequested event,
+    Emitter<PatientDetailState> emit,
+  ) async {
     try {
-      final patient = await _patientRepository.getById(event.patientId);
-      final sessions = await _recordingRepository.getByPatientId(event.patientId);
+      await _recordingRepository.delete(event.sessionId);
+      await _loadPatientDetail(event.patientId, emit);
+    } catch (e) {
+      emit(PatientDetailFailure(Failure.fromException(e).message));
+    }
+  }
+
+  Future<void> _loadPatientDetail(
+    String patientId,
+    Emitter<PatientDetailState> emit,
+  ) async {
+    try {
+      final patient = await _patientRepository.getById(patientId);
+      final sessions = await _recordingRepository.getByPatientId(patientId);
       emit(PatientDetailLoaded(patient: patient, sessions: sessions));
     } catch (e) {
       emit(PatientDetailFailure(Failure.fromException(e).message));

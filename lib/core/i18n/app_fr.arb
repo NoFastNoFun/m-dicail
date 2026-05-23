@@ -127,5 +127,36 @@
   "assignPatientTitle": "Associer à un patient",
   "assignPatientSearchTab": "Rechercher",
   "assignPatientNewTab": "Nouveau patient",
-  "assignPatientError": "Erreur lors de l'association"
+  "assignPatientError": "Erreur lors de l'association",
+  "templatePickerTitle": "Choisir un modele",
+  "templatePickerSearchHint": "Rechercher une pathologie",
+  "templateBadgeBuiltin": "Modele d'origine",
+  "templateBadgeVariant": "Ma variante",
+  "templateLoadModel": "Charger un modele",
+  "templateSaveVariant": "Enregistrer comme variante",
+  "templateVariantNameLabel": "Nom de la variante",
+  "templateVariantNameHint": "Ex. Lombalgie - Protocole V1",
+  "templateVariantSaveAction": "Enregistrer",
+  "templateVariantSaveSuccess": "Variante enregistree",
+  "templateVariantCancelAction": "Annuler",
+  "templateDuplicateTitle": "Nom deja utilise",
+  "templateDuplicateMessage": "Une variante porte deja ce nom. Renommez ou ecrasez la variante existante.",
+  "templateDuplicateOverwrite": "Ecraser",
+  "templateDuplicateRename": "Renommer",
+  "templateSuggestionTitle": "Modele suggere",
+  "templateSuggestionMessage": "La transcription evoque : {pathologyName}. Appliquer ce modele SOAP ?",
+  "@templateSuggestionMessage": {
+    "placeholders": {
+      "pathologyName": {
+        "type": "String"
+      }
+    }
+  },
+  "templateSuggestionApply": "Appliquer",
+  "templateSuggestionChooseOther": "Choisir un autre modele",
+  "templateSuggestionSkip": "Ignorer",
+  "sessionDeleteConfirmTitle": "Supprimer la consultation",
+  "sessionDeleteConfirmMessage": "Cette action supprime definitivement la consultation et sa note.",
+  "sessionDeleteAction": "Supprimer",
+  "sessionDeleteSuccess": "Consultation supprimee"
 }

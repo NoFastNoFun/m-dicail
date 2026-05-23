@@ -10,6 +10,7 @@ import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
+import 'package:medicail/pages/consultation_completion_flow.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_session_status_banner.dart';
@@ -64,8 +65,16 @@ class _RecordViewState extends State<_RecordView> {
     final l10n = AppLocalizations.of(context);
 
     return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is VoiceCaptureConsultationFinished) {
+          await ConsultationCompletionFlow.run(
+            context: context,
+            sessionId: state.sessionId,
+            transcript: state.transcript,
+          );
+          if (!context.mounted) {
+            return;
+          }
           if (widget.patientId != null) {
             if (context.canPop()) {
               context.pop();

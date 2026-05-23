@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 
 sealed class VoiceCaptureEvent extends Equatable {
   const VoiceCaptureEvent();
@@ -43,4 +44,13 @@ final class VoiceCaptureTranscriptUpdated extends VoiceCaptureEvent {
 
   @override
   List<Object?> get props => [rawText];
+}
+
+final class VoiceCaptureSoapNoteUpdated extends VoiceCaptureEvent {
+  const VoiceCaptureSoapNoteUpdated(this.soapNote);
+
+  final SoapNote soapNote;
+
+  @override
+  List<Object?> get props => [soapNote];
 }

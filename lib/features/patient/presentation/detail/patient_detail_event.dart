@@ -15,3 +15,16 @@ class PatientDetailRequested extends PatientDetailEvent {
   @override
   List<Object?> get props => [patientId];
 }
+
+class RecordingSessionDeleteRequested extends PatientDetailEvent {
+  const RecordingSessionDeleteRequested({
+    required this.patientId,
+    required this.sessionId,
+  });
+
+  final String patientId;
+  final String sessionId;
+
+  @override
+  List<Object?> get props => [patientId, sessionId];
+}

@@ -4,7 +4,6 @@ import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
-import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -22,6 +21,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureClearTranscript>(_onClearTranscript);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
+    on<VoiceCaptureSoapNoteUpdated>(_onSoapNoteUpdated);
   }
 
   final AudioCaptureService _audioCaptureService;
@@ -49,13 +49,21 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         patientId: event.patientId,
       );
       await _startListeningSession();
-      emit(RecordingInProgress(transcript: currentTranscript));
+      emit(
+        RecordingInProgress(
+          transcript: currentTranscript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(currentTranscript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: currentTranscript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
         ),
       );
     }
@@ -69,13 +77,21 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _audioCaptureService.stopListening();
       await _saveActiveSessionTranscript(_currentTranscript);
       _segmentBase = '';
-      emit(ListeningPaused(transcript: _currentTranscript));
+      emit(
+        ListeningPaused(
+          transcript: _currentTranscript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(_currentTranscript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: _currentTranscript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
         ),
       );
     }
@@ -103,6 +119,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: transcript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
         ),
       );
     }
@@ -132,13 +150,21 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _segmentBase = transcript;
     try {
       await _startListeningSession();
-      emit(RecordingInProgress(transcript: transcript));
+      emit(
+        RecordingInProgress(
+          transcript: transcript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(transcript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: transcript,
+          activeSessionId: _activeSession?.id,
+          activeSoapNote: _activeSession?.soapNote,
         ),
       );
     }
@@ -159,7 +185,73 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     final merged = _mergeTranscript(_segmentBase, anonymized);
     await _saveActiveSessionTranscript(merged);
-    emit(RecordingInProgress(transcript: merged));
+    emit(
+      RecordingInProgress(
+        transcript: merged,
+        activeSessionId: _activeSession?.id,
+        activeSoapNote: _activeSession?.soapNote,
+      ),
+    );
+  }
+
+  Future<void> _onSoapNoteUpdated(
+    VoiceCaptureSoapNoteUpdated event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    final session = _activeSession;
+    if (session == null) {
+      return;
+    }
+
+    final updated = session.copyWith(soapNote: event.soapNote);
+    _activeSession = updated;
+    await _recordingSessionRepository.save(updated);
+    _emitWithActiveSession(emit);
+  }
+
+  void _emitWithActiveSession(Emitter<VoiceCaptureState> emit) {
+    final transcript = _currentTranscript;
+    final sessionId = _activeSession?.id;
+    final soapNote = _activeSession?.soapNote;
+
+    switch (state) {
+      case RecordingInProgress():
+        emit(
+          RecordingInProgress(
+            transcript: transcript,
+            activeSessionId: sessionId,
+            activeSoapNote: soapNote,
+          ),
+        );
+      case ListeningPaused():
+        emit(
+          ListeningPaused(
+            transcript: transcript,
+            activeSessionId: sessionId,
+            activeSoapNote: soapNote,
+          ),
+        );
+      case VoiceCaptureFailure():
+        final failure = state as VoiceCaptureFailure;
+        emit(
+          VoiceCaptureFailure(
+            failure.message,
+            transcript: transcript,
+            activeSessionId: sessionId,
+            activeSoapNote: soapNote,
+          ),
+        );
+      case VoiceCaptureReady():
+        emit(
+          VoiceCaptureReady(
+            transcript: transcript,
+            activeSessionId: sessionId,
+            activeSoapNote: soapNote,
+          ),
+        );
+      default:
+        break;
+    }
   }
 
   Future<void> _startListeningSession() {
@@ -232,7 +324,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
-      soapNote: session.soapNote ?? _generateMockSoapNote(transcript),
+      soapNote: session.soapNote,
       status: RecordingSessionStatus.completed,
     );
     _activeSession = completed;
@@ -265,15 +357,4 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     await _recordingSessionRepository.save(updated);
   }
 
-  SoapNote _generateMockSoapNote(String transcript) {
-    final cleanTranscript = transcript.trim();
-    return SoapNote(
-      subjective: cleanTranscript.isEmpty
-          ? '- Motif de consultation :\n- Symptômes décrits :'
-          : cleanTranscript,
-      objective: '- Constantes :\n- Examen clinique :',
-      assessment: '- Diagnostics suspectés :',
-      plan: '- Traitement :\n- Examens complémentaires :\n- Suivi :',
-    );
-  }
 }

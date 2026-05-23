@@ -861,6 +861,150 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
+
+  /// No description provided for @templatePickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un modele'**
+  String get templatePickerTitle;
+
+  /// No description provided for @templatePickerSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une pathologie'**
+  String get templatePickerSearchHint;
+
+  /// No description provided for @templateBadgeBuiltin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele d\'origine'**
+  String get templateBadgeBuiltin;
+
+  /// No description provided for @templateBadgeVariant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma variante'**
+  String get templateBadgeVariant;
+
+  /// No description provided for @templateLoadModel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Charger un modele'**
+  String get templateLoadModel;
+
+  /// No description provided for @templateSaveVariant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer comme variante'**
+  String get templateSaveVariant;
+
+  /// No description provided for @templateVariantNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de la variante'**
+  String get templateVariantNameLabel;
+
+  /// No description provided for @templateVariantNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. Lombalgie - Protocole V1'**
+  String get templateVariantNameHint;
+
+  /// No description provided for @templateVariantSaveAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get templateVariantSaveAction;
+
+  /// No description provided for @templateVariantSaveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Variante enregistree'**
+  String get templateVariantSaveSuccess;
+
+  /// No description provided for @templateVariantCancelAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get templateVariantCancelAction;
+
+  /// No description provided for @templateDuplicateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom deja utilise'**
+  String get templateDuplicateTitle;
+
+  /// No description provided for @templateDuplicateMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une variante porte deja ce nom. Renommez ou ecrasez la variante existante.'**
+  String get templateDuplicateMessage;
+
+  /// No description provided for @templateDuplicateOverwrite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecraser'**
+  String get templateDuplicateOverwrite;
+
+  /// No description provided for @templateDuplicateRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get templateDuplicateRename;
+
+  /// No description provided for @templateSuggestionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele suggere'**
+  String get templateSuggestionTitle;
+
+  /// No description provided for @templateSuggestionMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'La transcription evoque : {pathologyName}. Appliquer ce modele SOAP ?'**
+  String templateSuggestionMessage(String pathologyName);
+
+  /// No description provided for @templateSuggestionApply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appliquer'**
+  String get templateSuggestionApply;
+
+  /// No description provided for @templateSuggestionChooseOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un autre modele'**
+  String get templateSuggestionChooseOther;
+
+  /// No description provided for @templateSuggestionSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignorer'**
+  String get templateSuggestionSkip;
+
+  /// No description provided for @sessionDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la consultation'**
+  String get sessionDeleteConfirmTitle;
+
+  /// No description provided for @sessionDeleteConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action supprime definitivement la consultation et sa note.'**
+  String get sessionDeleteConfirmMessage;
+
+  /// No description provided for @sessionDeleteAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get sessionDeleteAction;
+
+  /// No description provided for @sessionDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultation supprimee'**
+  String get sessionDeleteSuccess;
 }
 
 class _AppLocalizationsDelegate
