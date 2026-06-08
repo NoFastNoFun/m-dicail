@@ -419,6 +419,34 @@ class AppLocalizationsFr extends AppLocalizations {
       'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.';
 
   @override
+  String get tutorialPatientMrnTitle => 'Numero de dossier';
+
+  @override
+  String get tutorialPatientMrnDesc =>
+      'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.';
+
+  @override
+  String get tutorialPatientFirstNameTitle => 'Prenom du patient';
+
+  @override
+  String get tutorialPatientFirstNameDesc =>
+      'Saisissez le prenom du patient pour completer son dossier.';
+
+  @override
+  String get tutorialPatientLastNameTitle => 'Nom du patient';
+
+  @override
+  String get tutorialPatientLastNameDesc =>
+      'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.';
+
+  @override
+  String get tutorialPatientCreateTitle => 'Creer le dossier';
+
+  @override
+  String get tutorialPatientCreateDesc =>
+      'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.';
+
+  @override
   String get tutorialDetailConsultTitle => 'Nouvelle consultation';
 
   @override

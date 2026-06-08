@@ -898,6 +898,54 @@ abstract class AppLocalizations {
   /// **'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.'**
   String get tutorialPatientAddDesc;
 
+  /// No description provided for @tutorialPatientMrnTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numero de dossier'**
+  String get tutorialPatientMrnTitle;
+
+  /// No description provided for @tutorialPatientMrnDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.'**
+  String get tutorialPatientMrnDesc;
+
+  /// No description provided for @tutorialPatientFirstNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenom du patient'**
+  String get tutorialPatientFirstNameTitle;
+
+  /// No description provided for @tutorialPatientFirstNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le prenom du patient pour completer son dossier.'**
+  String get tutorialPatientFirstNameDesc;
+
+  /// No description provided for @tutorialPatientLastNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du patient'**
+  String get tutorialPatientLastNameTitle;
+
+  /// No description provided for @tutorialPatientLastNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.'**
+  String get tutorialPatientLastNameDesc;
+
+  /// No description provided for @tutorialPatientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le dossier'**
+  String get tutorialPatientCreateTitle;
+
+  /// No description provided for @tutorialPatientCreateDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.'**
+  String get tutorialPatientCreateDesc;
+
   /// No description provided for @tutorialDetailConsultTitle.
   ///
   /// In fr, this message translates to:

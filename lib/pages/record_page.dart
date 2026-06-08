@@ -50,7 +50,7 @@ class _RecordView extends StatefulWidget {
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
   final GlobalKey _startRecordKey = GlobalKey();
-  bool _didStartStepFourShowcase = false;
+  bool _didStartStepEightShowcase = false;
 
   @override
   void initState() {
@@ -69,9 +69,9 @@ class _RecordViewState extends State<_RecordView> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && state.currentStep == 4) {
-      if (_didStartStepFourShowcase) return;
-      _didStartStepFourShowcase = true;
+    if (state is TutorialInProgress && state.currentStep == 8) {
+      if (_didStartStepEightShowcase) return;
+      _didStartStepEightShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_startRecordKey]);
@@ -146,7 +146,7 @@ class _RecordViewState extends State<_RecordView> {
                       description: l10n.tutorialRecordDesc,
                       disposeOnTap: true,
                       onTargetClick: () {
-                        context.read<TutorialBloc>().add(const TutorialStepCompleted(4));
+                        context.read<TutorialBloc>().add(const TutorialStepCompleted(8));
                         context.read<VoiceCaptureBloc>().add(
                               VoiceCaptureStartRecording(
                                 patientId: widget.patientId,
@@ -157,7 +157,7 @@ class _RecordViewState extends State<_RecordView> {
                         label: l10n.buttonStart,
                         onPressed: () {
                           if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                            context.read<TutorialBloc>().add(const TutorialStepCompleted(4));
+                            context.read<TutorialBloc>().add(const TutorialStepCompleted(8));
                           }
                           context.read<VoiceCaptureBloc>().add(
                                 VoiceCaptureStartRecording(

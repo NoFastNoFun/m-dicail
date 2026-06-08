@@ -7,10 +7,14 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class PatientCreationSheet extends StatefulWidget {
   const PatientCreationSheet({super.key, this.onSuccess});
@@ -29,8 +33,25 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
+  final _mrnFocusNode = FocusNode();
+  final _firstNameFocusNode = FocusNode();
+  final _lastNameFocusNode = FocusNode();
+  final GlobalKey _mrnKey = GlobalKey();
+  final GlobalKey _firstNameKey = GlobalKey();
+  final GlobalKey _lastNameKey = GlobalKey();
+  final GlobalKey _submitKey = GlobalKey();
   String? _selectedSex;
   DateTime? _selectedBirthDate;
+  final Set<int> _startedTutorialSteps = <int>{};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
 
   @override
   void dispose() {
@@ -41,7 +62,49 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
+    _mrnFocusNode.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
     super.dispose();
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInProgress &&
+        state.currentStep >= 3 &&
+        state.currentStep <= 6) {
+      if (!_startedTutorialSteps.add(state.currentStep)) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_showcaseKeyForStep(state.currentStep)]);
+      });
+    }
+  }
+
+  GlobalKey _showcaseKeyForStep(int step) {
+    return switch (step) {
+      3 => _mrnKey,
+      4 => _firstNameKey,
+      5 => _lastNameKey,
+      _ => _submitKey,
+    };
+  }
+
+  void _completeTutorialStepWhenFilled(int step, String value) {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final state = tutorialBloc.state;
+    if (state is TutorialInProgress &&
+        state.currentStep == step &&
+        value.trim().isNotEmpty) {
+      tutorialBloc.add(TutorialStepCompleted(step));
+    }
+  }
+
+  void _completeSubmitTutorialStep() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final state = tutorialBloc.state;
+    if (state is TutorialInProgress && state.currentStep == 6) {
+      tutorialBloc.add(const TutorialStepCompleted(6));
+    }
   }
 
   void _submit() {
@@ -87,18 +150,21 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocListener<PatientBloc, PatientState>(
-      listener: (context, state) {
-        if (state is PatientCreateSuccess) {
-          if (widget.onSuccess != null) {
-            widget.onSuccess!(state.patientId);
-          } else {
-            Navigator.of(context).pop();
+    return BlocListener<TutorialBloc, TutorialState>(
+      listener: (context, state) => _handleTutorialState(state),
+      child: BlocListener<PatientBloc, PatientState>(
+        listenWhen: (previous, current) => current is PatientCreateSuccess,
+        listener: (context, state) {
+          if (state is PatientCreateSuccess) {
+            AppToast.showSuccess(context, l10n.patientCreateSuccess);
+            if (widget.onSuccess != null) {
+              widget.onSuccess!(state.patientId);
+            } else {
+              Navigator.of(context).pop();
+            }
           }
-          AppToast.showSuccess(context, l10n.patientCreateSuccess);
-        }
-      },
-      child: Container(
+        },
+        child: Container(
         decoration: const BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -116,27 +182,56 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             children: [
               AppText(l10n.patientCreateTitle, variant: AppTextVariant.title),
               const SizedBox(height: AppSpacing.lg),
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientMrnLabel,
-                controller: _mrnController,
+              Showcase(
+                key: _mrnKey,
+                title: l10n.tutorialPatientMrnTitle,
+                description: l10n.tutorialPatientMrnDesc,
+                disposeOnTap: true,
+                onTargetClick: _mrnFocusNode.requestFocus,
+                child: AppInput(
+                  variant: AppInputVariant.text,
+                  label: l10n.patientMrnLabel,
+                  controller: _mrnController,
+                  focusNode: _mrnFocusNode,
+                  onChanged: (value) => _completeTutorialStepWhenFilled(3, value),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               Row(
                 children: [
                   Expanded(
-                    child: AppInput(
-                      variant: AppInputVariant.text,
-                      label: l10n.patientFirstNameRequiredLabel,
-                      controller: _firstNameController,
+                    child: Showcase(
+                      key: _firstNameKey,
+                      title: l10n.tutorialPatientFirstNameTitle,
+                      description: l10n.tutorialPatientFirstNameDesc,
+                      disposeOnTap: true,
+                      onTargetClick: _firstNameFocusNode.requestFocus,
+                      child: AppInput(
+                        variant: AppInputVariant.text,
+                        label: l10n.patientFirstNameRequiredLabel,
+                        controller: _firstNameController,
+                        focusNode: _firstNameFocusNode,
+                        onChanged: (value) =>
+                            _completeTutorialStepWhenFilled(4, value),
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
-                    child: AppInput(
-                      variant: AppInputVariant.text,
-                      label: l10n.patientLastNameRequiredLabel,
-                      controller: _lastNameController,
+                    child: Showcase(
+                      key: _lastNameKey,
+                      title: l10n.tutorialPatientLastNameTitle,
+                      description: l10n.tutorialPatientLastNameDesc,
+                      disposeOnTap: true,
+                      onTargetClick: _lastNameFocusNode.requestFocus,
+                      child: AppInput(
+                        variant: AppInputVariant.text,
+                        label: l10n.patientLastNameRequiredLabel,
+                        controller: _lastNameController,
+                        focusNode: _lastNameFocusNode,
+                        onChanged: (value) =>
+                            _completeTutorialStepWhenFilled(5, value),
+                      ),
                     ),
                   ),
                 ],
@@ -215,16 +310,30 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
               const SizedBox(height: AppSpacing.lg),
               BlocBuilder<PatientBloc, PatientState>(
                 builder: (context, state) {
-                  return AppButton(
-                    label: l10n.patientCreateSubmit,
-                    isLoading: state is PatientLoading,
-                    onPressed: _submit,
+                  return Showcase(
+                    key: _submitKey,
+                    title: l10n.tutorialPatientCreateTitle,
+                    description: l10n.tutorialPatientCreateDesc,
+                    disposeOnTap: true,
+                    onTargetClick: () {
+                      _completeSubmitTutorialStep();
+                      _submit();
+                    },
+                    child: AppButton(
+                      label: l10n.patientCreateSubmit,
+                      isLoading: state is PatientLoading,
+                      onPressed: () {
+                        _completeSubmitTutorialStep();
+                        _submit();
+                      },
+                    ),
                   );
                 },
               ),
               const SizedBox(height: AppSpacing.xl),
             ],
           ),
+        ),
         ),
       ),
     );

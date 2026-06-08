@@ -49,12 +49,12 @@ class _PatientDetailContent extends StatefulWidget {
 
 class _PatientDetailContentState extends State<_PatientDetailContent> {
   final GlobalKey _consultKey = GlobalKey();
-  bool _didStartStepThreeShowcase = false;
+  bool _didStartStepSevenShowcase = false;
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && state.currentStep == 3) {
-      if (_didStartStepThreeShowcase) return;
-      _didStartStepThreeShowcase = true;
+    if (state is TutorialInProgress && state.currentStep == 7) {
+      if (_didStartStepSevenShowcase) return;
+      _didStartStepSevenShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_consultKey]);
@@ -144,7 +144,7 @@ class _PatientDetailView extends StatelessWidget {
           description: l10n.tutorialDetailConsultDesc,
           disposeOnTap: true,
           onTargetClick: () async {
-            context.read<TutorialBloc>().add(const TutorialStepCompleted(3));
+            context.read<TutorialBloc>().add(const TutorialStepCompleted(7));
             await context.goRecord(patientId: patient.id);
             onRefresh();
           },
@@ -152,7 +152,7 @@ class _PatientDetailView extends StatelessWidget {
             label: l10n.patientNewConsultationButton,
             onPressed: () async {
               if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                context.read<TutorialBloc>().add(const TutorialStepCompleted(3));
+                context.read<TutorialBloc>().add(const TutorialStepCompleted(7));
               }
               await context.goRecord(patientId: patient.id);
               onRefresh();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
@@ -68,18 +69,28 @@ class _PatientsViewState extends State<_PatientsView> {
   }
 
   void _showCreatePatientSheet(BuildContext context) {
+    final router = GoRouter.of(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) {
+      builder: (sheetContext) {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: BlocProvider.value(
             value: context.read<PatientBloc>(),
-            child: const PatientCreationSheet(),
+            child: PatientCreationSheet(
+              onSuccess: (patientId) {
+                Navigator.of(sheetContext).pop();
+                final tutorialState = context.read<TutorialBloc>().state;
+                if (tutorialState is TutorialInProgress) {
+                  router.push('/patients/$patientId');
+                }
+              },
+            ),
           ),
         );
       },
