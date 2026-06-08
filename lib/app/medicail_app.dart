@@ -9,9 +9,29 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class MedicailApp extends StatelessWidget {
+class MedicailApp extends StatefulWidget {
   const MedicailApp({super.key});
+
+  @override
+  State<MedicailApp> createState() => _MedicailAppState();
+}
+
+class _MedicailAppState extends State<MedicailApp> {
+  late final ShowcaseView _showcaseView;
+
+  @override
+  void initState() {
+    super.initState();
+    _showcaseView = ShowcaseView.register(skipIfTargetNotPresent: true);
+  }
+
+  @override
+  void dispose() {
+    _showcaseView.unregister();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

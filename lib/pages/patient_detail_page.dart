@@ -51,18 +51,6 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
   final GlobalKey _consultKey = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    ShowcaseView.register();
-  }
-
-  @override
-  void dispose() {
-    ShowcaseView.get().unregister();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
@@ -88,6 +76,7 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
                       listener: (context, state) {
                         if (state is TutorialInProgress && state.currentStep == 3) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (!mounted) return;
                             ShowcaseView.get().startShowCase([_consultKey]);
                           });
                         }

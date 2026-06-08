@@ -164,8 +164,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   Future<void> _startListeningSession() {
     return _audioCaptureService.startListening(
-      onResult: (text) => add(VoiceCaptureTranscriptUpdated(text)),
-      onListeningEnded: () => add(const VoiceCaptureListeningSessionEnded()),
+      onResult: (text) {
+        if (isClosed) return;
+        add(VoiceCaptureTranscriptUpdated(text));
+      },
+      onListeningEnded: () {
+        if (isClosed) return;
+        add(const VoiceCaptureListeningSessionEnded());
+      },
     );
   }
 

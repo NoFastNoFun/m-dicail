@@ -47,14 +47,12 @@ class _PatientsViewState extends State<_PatientsView> {
   @override
   void initState() {
     super.initState();
-    ShowcaseView.register();
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    ShowcaseView.get().unregister();
     super.dispose();
   }
 
@@ -127,6 +125,7 @@ class _PatientsViewState extends State<_PatientsView> {
             listener: (context, state) {
               if (state is TutorialInProgress && state.currentStep == 2) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
                   ShowcaseView.get().startShowCase([_addPatientKey]);
                 });
               }

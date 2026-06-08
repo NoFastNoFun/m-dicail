@@ -6,7 +6,6 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
-import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
@@ -18,11 +17,25 @@ import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
 
 class AssignPatientSheet extends StatelessWidget {
-  const AssignPatientSheet({super.key, required this.sessionId});
+  const AssignPatientSheet({
+    super.key,
+    required this.sessionId,
+    required this.onAssigned,
+  });
 
   final String sessionId;
+  final ValueChanged<String> onAssigned;
 
   static void show(BuildContext context, String sessionId) {
+    final router = GoRouter.of(context);
+
+    void openAssignedPatient(String patientId) {
+      if (context.mounted && context.canPop()) {
+        context.pop();
+      }
+      router.push('/patients/$patientId');
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -30,7 +43,10 @@ class AssignPatientSheet extends StatelessWidget {
       builder: (_) {
         return BlocProvider(
           create: (_) => getIt<PatientBloc>()..add(const PatientsRequested()),
-          child: AssignPatientSheet(sessionId: sessionId),
+          child: AssignPatientSheet(
+            sessionId: sessionId,
+            onAssigned: openAssignedPatient,
+          ),
         );
       },
     );
@@ -75,9 +91,17 @@ class AssignPatientSheet extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  _PatientSearchTab(sessionId: sessionId),
+                  _PatientSearchTab(
+                    sessionId: sessionId,
+                    onAssigned: onAssigned,
+                  ),
                   PatientCreationSheet(
-                    onSuccess: (patientId) => _assignAndNavigate(context, sessionId, patientId),
+                    onSuccess: (patientId) => _assignAndNavigate(
+                      context,
+                      sessionId,
+                      patientId,
+                      onAssigned,
+                    ),
                   ),
                 ],
               ),
@@ -88,7 +112,12 @@ class AssignPatientSheet extends StatelessWidget {
     );
   }
 
-  static Future<void> _assignAndNavigate(BuildContext context, String sessionId, String patientId) async {
+  static Future<void> _assignAndNavigate(
+    BuildContext context,
+    String sessionId,
+    String patientId,
+    ValueChanged<String> onAssigned,
+  ) async {
     final l10n = AppLocalizations.of(context);
     try {
       final repo = getIt<RecordingSessionRepository>();
@@ -97,11 +126,8 @@ class AssignPatientSheet extends StatelessWidget {
         await repo.save(session.copyWith(patientId: patientId));
       }
       if (context.mounted) {
-        Navigator.of(context).pop(); // Fermer la modale
-        if (context.canPop()) {
-          context.pop(); // Fermer la page de record si besoin
-        }
-        context.goPatientDetail(patientId);
+        await Navigator.of(context).maybePop();
+        onAssigned(patientId);
       }
     } catch (e) {
       if (context.mounted) {
@@ -112,9 +138,13 @@ class AssignPatientSheet extends StatelessWidget {
 }
 
 class _PatientSearchTab extends StatefulWidget {
-  const _PatientSearchTab({required this.sessionId});
+  const _PatientSearchTab({
+    required this.sessionId,
+    required this.onAssigned,
+  });
 
   final String sessionId;
+  final ValueChanged<String> onAssigned;
 
   @override
   State<_PatientSearchTab> createState() => _PatientSearchTabState();
@@ -188,6 +218,7 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                         context,
                         widget.sessionId,
                         patient.id,
+                        widget.onAssigned,
                       ),
                       child: DecoratedBox(
                         decoration: BoxDecoration(

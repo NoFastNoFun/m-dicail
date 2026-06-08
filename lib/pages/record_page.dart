@@ -5,7 +5,6 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -55,14 +54,12 @@ class _RecordViewState extends State<_RecordView> {
   @override
   void initState() {
     super.initState();
-    ShowcaseView.register();
     _transcriptController = TextEditingController();
   }
 
   @override
   void dispose() {
     _transcriptController.dispose();
-    ShowcaseView.get().unregister();
     super.dispose();
   }
 
@@ -77,7 +74,6 @@ class _RecordViewState extends State<_RecordView> {
             if (context.canPop()) {
               context.pop();
             }
-            context.goPatientDetail(widget.patientId!);
           } else {
             AssignPatientSheet.show(context, state.sessionId);
           }
@@ -96,6 +92,7 @@ class _RecordViewState extends State<_RecordView> {
           listener: (context, tutState) {
             if (tutState is TutorialInProgress && tutState.currentStep == 4) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
                 ShowcaseView.get().startShowCase([_startRecordKey]);
               });
             }

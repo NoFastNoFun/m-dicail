@@ -25,18 +25,6 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _recordKey = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    ShowcaseView.register();
-  }
-
-  @override
-  void dispose() {
-    ShowcaseView.get().unregister();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
@@ -61,6 +49,7 @@ class _HomePageState extends State<HomePage> {
                 });
               } else if (state is TutorialInProgress && state.currentStep == 1) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
                   ShowcaseView.get().startShowCase([_patientsKey, _recordKey]);
                 });
               }
