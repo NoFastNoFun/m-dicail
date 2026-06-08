@@ -51,6 +51,7 @@ class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
   final GlobalKey _startRecordKey = GlobalKey();
   bool _didStartStepEightShowcase = false;
+  bool _didStartStepTenShowcase = false;
 
   @override
   void initState() {
@@ -69,13 +70,34 @@ class _RecordViewState extends State<_RecordView> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && state.currentStep == 8) {
+    if (state is! TutorialInProgress) return;
+
+    if (state.currentStep == 8) {
       if (_didStartStepEightShowcase) return;
       _didStartStepEightShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_startRecordKey]);
       });
+    } else if (state.currentStep == 10) {
+      if (_didStartStepTenShowcase) return;
+      _didStartStepTenShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_startRecordKey]);
+      });
+    }
+  }
+
+  void _completeStartRecordingTutorialStep() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final state = tutorialBloc.state;
+    if (state is TutorialInProgress) {
+      if (state.currentStep == 8) {
+        tutorialBloc.add(const TutorialStepCompleted(8));
+      } else if (state.currentStep == 10) {
+        tutorialBloc.add(const TutorialStepCompleted(10));
+      }
     }
   }
 
@@ -146,7 +168,7 @@ class _RecordViewState extends State<_RecordView> {
                       description: l10n.tutorialRecordDesc,
                       disposeOnTap: true,
                       onTargetClick: () {
-                        context.read<TutorialBloc>().add(const TutorialStepCompleted(8));
+                        _completeStartRecordingTutorialStep();
                         context.read<VoiceCaptureBloc>().add(
                               VoiceCaptureStartRecording(
                                 patientId: widget.patientId,
@@ -156,9 +178,7 @@ class _RecordViewState extends State<_RecordView> {
                       child: AppButton(
                         label: l10n.buttonStart,
                         onPressed: () {
-                          if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                            context.read<TutorialBloc>().add(const TutorialStepCompleted(8));
-                          }
+                          _completeStartRecordingTutorialStep();
                           context.read<VoiceCaptureBloc>().add(
                                 VoiceCaptureStartRecording(
                                   patientId: widget.patientId,

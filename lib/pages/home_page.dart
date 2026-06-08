@@ -8,6 +8,7 @@ import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -23,7 +24,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey _patientsKey = GlobalKey();
   final GlobalKey _recordKey = GlobalKey();
+  bool _didAskTutorialStart = false;
   bool _didStartStepOneShowcase = false;
+  bool _didStartStepNineShowcase = false;
 
   @override
   void initState() {
@@ -36,18 +39,80 @@ class _HomePageState extends State<HomePage> {
 
   void _handleTutorialState(TutorialState state) {
     if (state is TutorialInitial) {
+      if (_didAskTutorialStart) return;
+      _didAskTutorialStart = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        context.read<TutorialBloc>().add(const TutorialStartRequested());
+        _showTutorialStartDialog();
       });
     } else if (state is TutorialInProgress && state.currentStep == 1) {
       if (_didStartStepOneShowcase) return;
       _didStartStepOneShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ShowcaseView.get().startShowCase([_patientsKey, _recordKey]);
+        ShowcaseView.get().startShowCase([_patientsKey]);
+      });
+    } else if (state is TutorialInProgress && state.currentStep == 9) {
+      if (_didStartStepNineShowcase) return;
+      _didStartStepNineShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_recordKey]);
       });
     }
+  }
+
+  Future<void> _showTutorialStartDialog() async {
+    final l10n = AppLocalizations.of(context);
+    final shouldStart = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.lockScreen,
+      title: l10n.tutorialIntroTitle,
+      body: AppText(
+        l10n.tutorialIntroDesc,
+        variant: AppTextVariant.body,
+      ),
+      actions: [
+        AppButton(
+          label: l10n.tutorialIntroSkip,
+          style: AppButtonStyle.secondary,
+          expanded: false,
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        AppButton(
+          label: l10n.tutorialIntroStart,
+          expanded: false,
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    );
+
+    if (!mounted) return;
+    context.read<TutorialBloc>().add(
+          shouldStart == true
+              ? const TutorialStartRequested()
+              : const TutorialSkipRequested(),
+        );
+  }
+
+  void _openPatientsFromTutorial() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final state = tutorialBloc.state;
+    if (state is TutorialInProgress && state.currentStep == 1) {
+      tutorialBloc.add(const TutorialStepCompleted(1));
+    }
+    context.goPatients();
+  }
+
+  void _openRecordFromTutorial() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final state = tutorialBloc.state;
+    if (state is TutorialInProgress) {
+      if (state.currentStep == 9) {
+        tutorialBloc.add(const TutorialStepCompleted(9));
+      }
+    }
+    context.goRecord();
   }
 
   @override
@@ -89,12 +154,11 @@ class _HomePageState extends State<HomePage> {
             description: l10n.tutorialHomePatientsDesc,
             disposeOnTap: true,
             onTargetClick: () {
-              context.read<TutorialBloc>().add(const TutorialStepCompleted(1));
-              context.goPatients();
+              _openPatientsFromTutorial();
             },
             child: AppButton(
               label: l10n.navigateToPatients,
-              onPressed: () => context.goPatients(),
+              onPressed: _openPatientsFromTutorial,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -104,13 +168,12 @@ class _HomePageState extends State<HomePage> {
             description: l10n.tutorialHomeRecordDesc,
             disposeOnTap: true,
             onTargetClick: () {
-              context.read<TutorialBloc>().add(const TutorialStepCompleted(1));
-              context.goRecord();
+              _openRecordFromTutorial();
             },
             child: AppButton(
               label: l10n.navigateToRecord,
               style: AppButtonStyle.secondary,
-              onPressed: () => context.goRecord(),
+              onPressed: _openRecordFromTutorial,
             ),
           ),
         ],

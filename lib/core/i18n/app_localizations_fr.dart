@@ -398,6 +398,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get assignPatientError => 'Erreur lors de l\'association';
 
   @override
+  String get tutorialIntroTitle => 'Decouvrir Medicail';
+
+  @override
+  String get tutorialIntroDesc =>
+      'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.';
+
+  @override
+  String get tutorialIntroStart => 'Faire le tutoriel';
+
+  @override
+  String get tutorialIntroSkip => 'Passer';
+
+  @override
   String get tutorialHomePatientsTitle => 'Dossiers Patients';
 
   @override

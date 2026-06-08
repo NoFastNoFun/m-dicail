@@ -862,6 +862,30 @@ abstract class AppLocalizations {
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
 
+  /// No description provided for @tutorialIntroTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Decouvrir Medicail'**
+  String get tutorialIntroTitle;
+
+  /// No description provided for @tutorialIntroDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.'**
+  String get tutorialIntroDesc;
+
+  /// No description provided for @tutorialIntroStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire le tutoriel'**
+  String get tutorialIntroStart;
+
+  /// No description provided for @tutorialIntroSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get tutorialIntroSkip;
+
   /// No description provided for @tutorialHomePatientsTitle.
   ///
   /// In fr, this message translates to:

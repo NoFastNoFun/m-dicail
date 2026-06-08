@@ -45,8 +45,8 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     if (state is! TutorialInProgress) return;
 
     final nextStep = event.completedStep + 1;
-    // We have 8 steps in our tutorial
-    if (nextStep > 8) {
+    // We have 10 steps in our tutorial.
+    if (nextStep > 10) {
       await _repository.setTutorialCompleted();
       emit(const TutorialCompleted());
     } else {
