@@ -50,17 +50,33 @@ class _RecordView extends StatefulWidget {
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
   final GlobalKey _startRecordKey = GlobalKey();
+  bool _didStartStepFourShowcase = false;
 
   @override
   void initState() {
     super.initState();
     _transcriptController = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
   }
 
   @override
   void dispose() {
     _transcriptController.dispose();
     super.dispose();
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInProgress && state.currentStep == 4) {
+      if (_didStartStepFourShowcase) return;
+      _didStartStepFourShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_startRecordKey]);
+      });
+    }
   }
 
   @override
@@ -90,12 +106,7 @@ class _RecordViewState extends State<_RecordView> {
 
         return BlocListener<TutorialBloc, TutorialState>(
           listener: (context, tutState) {
-            if (tutState is TutorialInProgress && tutState.currentStep == 4) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (!mounted) return;
-                ShowcaseView.get().startShowCase([_startRecordKey]);
-              });
-            }
+            _handleTutorialState(tutState);
           },
           child: AppScaffold(
             title: l10n.recordTitle,

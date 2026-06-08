@@ -43,11 +43,16 @@ class _PatientsView extends StatefulWidget {
 class _PatientsViewState extends State<_PatientsView> {
   final _searchController = TextEditingController();
   final GlobalKey _addPatientKey = GlobalKey();
+  bool _didStartStepTwoShowcase = false;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
   }
 
   @override
@@ -79,6 +84,17 @@ class _PatientsViewState extends State<_PatientsView> {
         );
       },
     );
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInProgress && state.currentStep == 2) {
+      if (_didStartStepTwoShowcase) return;
+      _didStartStepTwoShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_addPatientKey]);
+      });
+    }
   }
 
   @override
@@ -123,12 +139,7 @@ class _PatientsViewState extends State<_PatientsView> {
           ],
           body: BlocListener<TutorialBloc, TutorialState>(
             listener: (context, state) {
-              if (state is TutorialInProgress && state.currentStep == 2) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  ShowcaseView.get().startShowCase([_addPatientKey]);
-                });
-              }
+              _handleTutorialState(state);
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

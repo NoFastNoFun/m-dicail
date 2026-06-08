@@ -49,6 +49,18 @@ class _PatientDetailContent extends StatefulWidget {
 
 class _PatientDetailContentState extends State<_PatientDetailContent> {
   final GlobalKey _consultKey = GlobalKey();
+  bool _didStartStepThreeShowcase = false;
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInProgress && state.currentStep == 3) {
+      if (_didStartStepThreeShowcase) return;
+      _didStartStepThreeShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_consultKey]);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +71,9 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
         final patient = state is PatientDetailLoaded ? state.patient : null;
         final sessions = state is PatientDetailLoaded ? state.sessions : <RecordingSession>[];
         final isLoading = state is PatientDetailLoading || state is PatientDetailInitial;
+        if (patient != null) {
+          _handleTutorialState(context.read<TutorialBloc>().state);
+        }
 
         return AppScaffold(
           title: l10n.patientDetailTitle,
@@ -74,12 +89,7 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
                     )
                   : BlocListener<TutorialBloc, TutorialState>(
                       listener: (context, state) {
-                        if (state is TutorialInProgress && state.currentStep == 3) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (!mounted) return;
-                            ShowcaseView.get().startShowCase([_consultKey]);
-                          });
-                        }
+                        _handleTutorialState(state);
                       },
                       child: _PatientDetailView(
                         patient: patient,

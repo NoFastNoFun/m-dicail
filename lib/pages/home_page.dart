@@ -23,6 +23,32 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey _patientsKey = GlobalKey();
   final GlobalKey _recordKey = GlobalKey();
+  bool _didStartStepOneShowcase = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInitial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<TutorialBloc>().add(const TutorialStartRequested());
+      });
+    } else if (state is TutorialInProgress && state.currentStep == 1) {
+      if (_didStartStepOneShowcase) return;
+      _didStartStepOneShowcase = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ShowcaseView.get().startShowCase([_patientsKey, _recordKey]);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +69,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           BlocListener<TutorialBloc, TutorialState>(
             listener: (context, state) {
-              if (state is TutorialInitial) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.read<TutorialBloc>().add(const TutorialStartRequested());
-                });
-              } else if (state is TutorialInProgress && state.currentStep == 1) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  ShowcaseView.get().startShowCase([_patientsKey, _recordKey]);
-                });
-              }
+              _handleTutorialState(state);
             },
             child: const SizedBox.shrink(),
           ),

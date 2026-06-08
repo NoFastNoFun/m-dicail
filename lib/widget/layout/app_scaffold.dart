@@ -37,7 +37,12 @@ class AppScaffold extends StatelessWidget {
                 onPressed: () => context.pop(),
               )
             : null,
-        actions: actions,
+        actions: actions == null
+            ? null
+            : [
+                ...actions!,
+                if (kDebugMode) const SizedBox(width: 48),
+              ],
       ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
