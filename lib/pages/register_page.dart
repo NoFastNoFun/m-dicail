@@ -39,8 +39,11 @@ class _RegisterPageState extends State<RegisterPage> {
     return resolveInputValidationMessage(l10n, key);
   }
 
+  static const _enableMockAdmin =
+      bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
+
   void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthRegisterRequested(
           email: _emailController.text.trim(),

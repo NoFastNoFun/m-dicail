@@ -51,6 +51,12 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     String? fullName,
   }) async {
+    const enableMockAdmin = bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
+    if (enableMockAdmin && email == 'admin') {
+      await _tokenStorage.writeToken(AppConfig.mockAdminToken);
+      return _mockAdmin;
+    }
+
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/auth/register',
       data: {
