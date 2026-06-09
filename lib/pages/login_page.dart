@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/router/app_routes.dart';
@@ -34,16 +35,21 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  static const _enableMockAdmin =
-      bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
-
   String? _messageResolver(String key) {
     final l10n = AppLocalizations.of(context);
     return resolveInputValidationMessage(l10n, key);
   }
 
+  void _fillMockAdminCredentials() {
+    if (!AppConfig.enableMockAdmin) {
+      return;
+    }
+    _emailController.text = AppConfig.mockAdminEmail;
+    _passwordController.text = AppConfig.mockAdminPassword;
+  }
+
   void _submit() {
-    if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
+    if (AppConfig.enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthLoginRequested(
           email: _emailController.text.trim(),
@@ -73,10 +79,13 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
-                    Icons.medical_services_rounded,
-                    size: 64,
-                    color: AppColors.primary,
+                  GestureDetector(
+                    onDoubleTap: _fillMockAdminCredentials,
+                    child: const Icon(
+                      Icons.medical_services_rounded,
+                      size: 64,
+                      color: AppColors.primary,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppText(

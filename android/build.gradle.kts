@@ -1,4 +1,4 @@
-import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 
 allprojects {
     repositories {
@@ -22,8 +22,8 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
-        extensions.findByType<BaseExtension>()?.apply {
+    plugins.withId("com.android.library") {
+        extensions.configure<LibraryExtension>("android") {
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_17
                 targetCompatibility = JavaVersion.VERSION_17

@@ -22,8 +22,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> login({required String email, required String password}) async {
-    const enableMockAdmin = bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
-    if (enableMockAdmin && email == 'admin' && password == 'admin') {
+    if (AppConfig.enableMockAdmin &&
+        email == AppConfig.mockAdminEmail &&
+        password == AppConfig.mockAdminPassword) {
       await _tokenStorage.writeToken(AppConfig.mockAdminToken);
       return _mockAdmin;
     }
@@ -51,8 +52,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     String? fullName,
   }) async {
-    const enableMockAdmin = bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
-    if (enableMockAdmin && email == 'admin') {
+    if (AppConfig.enableMockAdmin && email == AppConfig.mockAdminEmail) {
       await _tokenStorage.writeToken(AppConfig.mockAdminToken);
       return _mockAdmin;
     }

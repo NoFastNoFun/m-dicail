@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
@@ -39,11 +40,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return resolveInputValidationMessage(l10n, key);
   }
 
-  static const _enableMockAdmin =
-      bool.fromEnvironment('ENABLE_MOCK_ADMIN', defaultValue: false);
-
   void _submit() {
-    if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
+    if (AppConfig.enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthRegisterRequested(
           email: _emailController.text.trim(),

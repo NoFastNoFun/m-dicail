@@ -2,15 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Medicail (mock admin)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "toolArgs": [
-        "--dart-define=ENABLE_MOCK_ADMIN=true"
-      ]
-    },
-    {
       "name": "Medicail",
       "request": "launch",
       "type": "dart",
