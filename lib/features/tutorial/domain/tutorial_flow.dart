@@ -52,4 +52,14 @@ class TutorialFlow {
   static bool isStep(int currentStep, TutorialStepId id) {
     return currentStep == indexOf(id);
   }
+
+  static int? nextStepAfter(int currentStep) {
+    for (var index = 0; index < steps.length; index++) {
+      if (steps[index].index != currentStep) continue;
+      final nextIndex = index + 1;
+      if (nextIndex >= steps.length) return null;
+      return steps[nextIndex].index;
+    }
+    return null;
+  }
 }

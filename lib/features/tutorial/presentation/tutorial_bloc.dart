@@ -43,10 +43,12 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     TutorialStepCompleted event,
     Emitter<TutorialState> emit,
   ) async {
-    if (state is! TutorialInProgress) return;
+    final currentState = state;
+    if (currentState is! TutorialInProgress) return;
+    if (event.completedStep != currentState.currentStep) return;
 
-    final nextStep = event.completedStep + 1;
-    if (nextStep > TutorialFlow.lastStep) {
+    final nextStep = TutorialFlow.nextStepAfter(currentState.currentStep);
+    if (nextStep == null) {
       await _repository.setTutorialCompleted();
       emit(const TutorialCompleted());
     } else {
