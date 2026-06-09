@@ -17,24 +17,22 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientDetailPage extends StatelessWidget {
-  const PatientDetailPage({
-    super.key,
-    required this.patientId,
-  });
+  const PatientDetailPage({super.key, required this.patientId});
 
   final String patientId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<PatientDetailBloc>()
-        ..add(PatientDetailRequested(patientId)),
+      create: (context) =>
+          getIt<PatientDetailBloc>()..add(PatientDetailRequested(patientId)),
       child: const _PatientDetailContent(),
     );
   }
@@ -52,7 +50,11 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
   bool _didStartStepSevenShowcase = false;
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && state.currentStep == 7) {
+    if (state is TutorialInProgress &&
+        TutorialFlow.isStep(
+          state.currentStep,
+          TutorialStepId.patientConsultation,
+        )) {
       if (_didStartStepSevenShowcase) return;
       _didStartStepSevenShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -69,8 +71,11 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
     return BlocBuilder<PatientDetailBloc, PatientDetailState>(
       builder: (context, state) {
         final patient = state is PatientDetailLoaded ? state.patient : null;
-        final sessions = state is PatientDetailLoaded ? state.sessions : <RecordingSession>[];
-        final isLoading = state is PatientDetailLoading || state is PatientDetailInitial;
+        final sessions = state is PatientDetailLoaded
+            ? state.sessions
+            : <RecordingSession>[];
+        final isLoading =
+            state is PatientDetailLoading || state is PatientDetailInitial;
         if (patient != null) {
           _handleTutorialState(context.read<TutorialBloc>().state);
         }
@@ -80,28 +85,28 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
           body: isLoading
               ? const Center(child: CircularProgressIndicator())
               : patient == null
-                  ? Center(
-                      child: AppText(
-                        l10n.patientNotFound,
-                        variant: AppTextVariant.body,
-                        color: AppColors.textSecondary,
-                      ),
-                    )
-                  : BlocListener<TutorialBloc, TutorialState>(
-                      listener: (context, state) {
-                        _handleTutorialState(state);
-                      },
-                      child: _PatientDetailView(
-                        patient: patient,
-                        sessions: sessions,
-                        consultKey: _consultKey,
-                        onRefresh: () {
-                          context
-                              .read<PatientDetailBloc>()
-                              .add(PatientDetailRequested(patient.id));
-                        },
-                      ),
-                    ),
+              ? Center(
+                  child: AppText(
+                    l10n.patientNotFound,
+                    variant: AppTextVariant.body,
+                    color: AppColors.textSecondary,
+                  ),
+                )
+              : BlocListener<TutorialBloc, TutorialState>(
+                  listener: (context, state) {
+                    _handleTutorialState(state);
+                  },
+                  child: _PatientDetailView(
+                    patient: patient,
+                    sessions: sessions,
+                    consultKey: _consultKey,
+                    onRefresh: () {
+                      context.read<PatientDetailBloc>().add(
+                        PatientDetailRequested(patient.id),
+                      );
+                    },
+                  ),
+                ),
         );
       },
     );
@@ -144,7 +149,11 @@ class _PatientDetailView extends StatelessWidget {
           description: l10n.tutorialDetailConsultDesc,
           disposeOnTap: true,
           onTargetClick: () async {
-            context.read<TutorialBloc>().add(const TutorialStepCompleted(7));
+            context.read<TutorialBloc>().add(
+              TutorialStepCompleted(
+                TutorialFlow.indexOf(TutorialStepId.patientConsultation),
+              ),
+            );
             await context.goRecord(patientId: patient.id);
             onRefresh();
           },
@@ -152,7 +161,11 @@ class _PatientDetailView extends StatelessWidget {
             label: l10n.patientNewConsultationButton,
             onPressed: () async {
               if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                context.read<TutorialBloc>().add(const TutorialStepCompleted(7));
+                context.read<TutorialBloc>().add(
+                  TutorialStepCompleted(
+                    TutorialFlow.indexOf(TutorialStepId.patientConsultation),
+                  ),
+                );
               }
               await context.goRecord(patientId: patient.id);
               onRefresh();
@@ -160,10 +173,7 @@ class _PatientDetailView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.xl),
-        AppText(
-          l10n.patientSessionsTitle,
-          variant: AppTextVariant.title,
-        ),
+        AppText(l10n.patientSessionsTitle, variant: AppTextVariant.title),
         const SizedBox(height: AppSpacing.sm),
         Expanded(
           child: sessions.isEmpty
@@ -239,7 +249,10 @@ class _RecordingSessionListItem extends StatelessWidget {
                 ),
                 if (hasSoap)
                   IconButton(
-                    icon: const Icon(Icons.edit_document, color: AppColors.primary),
+                    icon: const Icon(
+                      Icons.edit_document,
+                      color: AppColors.primary,
+                    ),
                     tooltip: l10n.soapNoteViewAction,
                     onPressed: () {
                       SoapNoteBottomSheet.show(
@@ -247,7 +260,9 @@ class _RecordingSessionListItem extends StatelessWidget {
                         initialNote: session.soapNote!,
                         onSave: (updatedNote) async {
                           final repo = getIt<RecordingSessionRepository>();
-                          await repo.save(session.copyWith(soapNote: updatedNote));
+                          await repo.save(
+                            session.copyWith(soapNote: updatedNote),
+                          );
                           onRefresh();
                         },
                       );
@@ -270,4 +285,3 @@ class _RecordingSessionListItem extends StatelessWidget {
     );
   }
 }
-

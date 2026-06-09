@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/features/tutorial/domain/repositories/tutorial_repository.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 
@@ -34,7 +35,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     Emitter<TutorialState> emit,
   ) {
     if (state is! TutorialCompleted) {
-      emit(const TutorialInProgress(1));
+      emit(TutorialInProgress(TutorialFlow.firstStep));
     }
   }
 
@@ -45,8 +46,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     if (state is! TutorialInProgress) return;
 
     final nextStep = event.completedStep + 1;
-    // We have 10 steps in our tutorial.
-    if (nextStep > 10) {
+    if (nextStep > TutorialFlow.lastStep) {
       await _repository.setTutorialCompleted();
       emit(const TutorialCompleted());
     } else {

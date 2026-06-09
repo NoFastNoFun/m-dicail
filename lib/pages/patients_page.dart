@@ -11,6 +11,7 @@ import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -63,9 +64,9 @@ class _PatientsViewState extends State<_PatientsView> {
   }
 
   void _onSearchChanged() {
-    context
-        .read<PatientBloc>()
-        .add(PatientsRequested(query: _searchController.text.trim()));
+    context.read<PatientBloc>().add(
+      PatientsRequested(query: _searchController.text.trim()),
+    );
   }
 
   void _showCreatePatientSheet(BuildContext context) {
@@ -98,7 +99,8 @@ class _PatientsViewState extends State<_PatientsView> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && state.currentStep == 2) {
+    if (state is TutorialInProgress &&
+        TutorialFlow.isStep(state.currentStep, TutorialStepId.patientsAdd)) {
       if (_didStartStepTwoShowcase) return;
       _didStartStepTwoShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -134,14 +136,23 @@ class _PatientsViewState extends State<_PatientsView> {
               description: l10n.tutorialPatientAddDesc,
               disposeOnTap: true,
               onTargetClick: () {
-                context.read<TutorialBloc>().add(const TutorialStepCompleted(2));
+                context.read<TutorialBloc>().add(
+                  TutorialStepCompleted(
+                    TutorialFlow.indexOf(TutorialStepId.patientsAdd),
+                  ),
+                );
                 _showCreatePatientSheet(context);
               },
               child: IconButton(
                 icon: const Icon(Icons.add, color: AppColors.textPrimary),
                 onPressed: () {
-                  if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                    context.read<TutorialBloc>().add(const TutorialStepCompleted(2));
+                  if (context.read<TutorialBloc>().state
+                      is TutorialInProgress) {
+                    context.read<TutorialBloc>().add(
+                      TutorialStepCompleted(
+                        TutorialFlow.indexOf(TutorialStepId.patientsAdd),
+                      ),
+                    );
                   }
                   _showCreatePatientSheet(context);
                 },
@@ -154,39 +165,42 @@ class _PatientsViewState extends State<_PatientsView> {
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientSearchPlaceholder,
-                controller: _searchController,
-                prefixIcon: Icons.search,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              AppText(l10n.patientsSectionTitle, variant: AppTextVariant.title),
-              const SizedBox(height: AppSpacing.sm),
-              Expanded(
-                child: isLoading && patients.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : patients.isEmpty
-                        ? Center(
-                            child: AppText(
-                              l10n.patientsEmpty,
-                              variant: AppTextVariant.body,
-                              color: AppColors.textSecondary,
-                            ),
-                          )
-                        : ListView.separated(
-                            itemCount: patients.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: AppSpacing.md),
-                            itemBuilder: (context, index) {
-                              return _PatientListItem(patient: patients[index]);
-                            },
+              children: [
+                AppInput(
+                  variant: AppInputVariant.text,
+                  label: l10n.patientSearchPlaceholder,
+                  controller: _searchController,
+                  prefixIcon: Icons.search,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                AppText(
+                  l10n.patientsSectionTitle,
+                  variant: AppTextVariant.title,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Expanded(
+                  child: isLoading && patients.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : patients.isEmpty
+                      ? Center(
+                          child: AppText(
+                            l10n.patientsEmpty,
+                            variant: AppTextVariant.body,
+                            color: AppColors.textSecondary,
                           ),
-              ),
-            ],
+                        )
+                      : ListView.separated(
+                          itemCount: patients.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: AppSpacing.md),
+                          itemBuilder: (context, index) {
+                            return _PatientListItem(patient: patients[index]);
+                          },
+                        ),
+                ),
+              ],
+            ),
           ),
-        ),
         );
       },
     );
@@ -217,7 +231,11 @@ class _PatientListItem extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
-                const Icon(Icons.badge_outlined, size: 16, color: AppColors.textSecondary),
+                const Icon(
+                  Icons.badge_outlined,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: AppText(
@@ -242,4 +260,3 @@ class _PatientListItem extends StatelessWidget {
     );
   }
 }
-

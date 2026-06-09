@@ -15,24 +15,23 @@ import 'package:medicail/widget/app_session_status_banner.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class RecordPage extends StatelessWidget {
-  const RecordPage({
-    super.key,
-    this.patientId,
-  });
+  const RecordPage({super.key, this.patientId});
 
   final String? patientId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<VoiceCaptureBloc>()
-        ..add(const VoiceCaptureInitializeRequested()),
+      create: (_) =>
+          getIt<VoiceCaptureBloc>()
+            ..add(const VoiceCaptureInitializeRequested()),
       child: _RecordView(patientId: patientId),
     );
   }
@@ -72,14 +71,20 @@ class _RecordViewState extends State<_RecordView> {
   void _handleTutorialState(TutorialState state) {
     if (state is! TutorialInProgress) return;
 
-    if (state.currentStep == 8) {
+    if (TutorialFlow.isStep(
+      state.currentStep,
+      TutorialStepId.recordFromPatient,
+    )) {
       if (_didStartStepEightShowcase) return;
       _didStartStepEightShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_startRecordKey]);
       });
-    } else if (state.currentStep == 10) {
+    } else if (TutorialFlow.isStep(
+      state.currentStep,
+      TutorialStepId.quickRecordStart,
+    )) {
       if (_didStartStepTenShowcase) return;
       _didStartStepTenShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -93,10 +98,24 @@ class _RecordViewState extends State<_RecordView> {
     final tutorialBloc = context.read<TutorialBloc>();
     final state = tutorialBloc.state;
     if (state is TutorialInProgress) {
-      if (state.currentStep == 8) {
-        tutorialBloc.add(const TutorialStepCompleted(8));
-      } else if (state.currentStep == 10) {
-        tutorialBloc.add(const TutorialStepCompleted(10));
+      if (TutorialFlow.isStep(
+        state.currentStep,
+        TutorialStepId.recordFromPatient,
+      )) {
+        tutorialBloc.add(
+          TutorialStepCompleted(
+            TutorialFlow.indexOf(TutorialStepId.recordFromPatient),
+          ),
+        );
+      } else if (TutorialFlow.isStep(
+        state.currentStep,
+        TutorialStepId.quickRecordStart,
+      )) {
+        tutorialBloc.add(
+          TutorialStepCompleted(
+            TutorialFlow.indexOf(TutorialStepId.quickRecordStart),
+          ),
+        );
       }
     }
   }
@@ -135,103 +154,101 @@ class _RecordViewState extends State<_RecordView> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-              AppSessionStatusBanner(
-                label: viewModel.errorMessage != null
-                    ? l10n.errorAudio
-                    : _statusLabel(l10n, viewModel.status),
-                color: _statusColor(viewModel.status),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              if (viewModel.errorMessage != null) ...[
-                AppText(
-                  viewModel.errorMessage!,
-                  variant: AppTextVariant.body,
-                  color: AppColors.error,
+                AppSessionStatusBanner(
+                  label: viewModel.errorMessage != null
+                      ? l10n.errorAudio
+                      : _statusLabel(l10n, viewModel.status),
+                  color: _statusColor(viewModel.status),
                 ),
-                const SizedBox(height: AppSpacing.md),
-              ],
-              AppInput(
-                variant: AppInputVariant.textarea,
-                label: l10n.transcriptLabel,
-                hint: l10n.transcriptEmptyHint,
-                controller: _transcriptController,
-                readOnly: true,
-                maxLines: 12,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  Expanded(
-                    child: Showcase(
-                      key: _startRecordKey,
-                      title: l10n.tutorialRecordTitle,
-                      description: l10n.tutorialRecordDesc,
-                      disposeOnTap: true,
-                      onTargetClick: () {
-                        _completeStartRecordingTutorialStep();
-                        context.read<VoiceCaptureBloc>().add(
+                const SizedBox(height: AppSpacing.lg),
+                if (viewModel.errorMessage != null) ...[
+                  AppText(
+                    viewModel.errorMessage!,
+                    variant: AppTextVariant.body,
+                    color: AppColors.error,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+                AppInput(
+                  variant: AppInputVariant.textarea,
+                  label: l10n.transcriptLabel,
+                  hint: l10n.transcriptEmptyHint,
+                  controller: _transcriptController,
+                  readOnly: true,
+                  maxLines: 12,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Showcase(
+                        key: _startRecordKey,
+                        title: l10n.tutorialRecordTitle,
+                        description: l10n.tutorialRecordDesc,
+                        disposeOnTap: true,
+                        onTargetClick: () {
+                          _completeStartRecordingTutorialStep();
+                          context.read<VoiceCaptureBloc>().add(
+                            VoiceCaptureStartRecording(
+                              patientId: widget.patientId,
+                            ),
+                          );
+                        },
+                        child: AppButton(
+                          label: l10n.buttonStart,
+                          onPressed: () {
+                            _completeStartRecordingTutorialStep();
+                            context.read<VoiceCaptureBloc>().add(
                               VoiceCaptureStartRecording(
                                 patientId: widget.patientId,
                               ),
                             );
-                      },
-                      child: AppButton(
-                        label: l10n.buttonStart,
-                        onPressed: () {
-                          _completeStartRecordingTutorialStep();
-                          context.read<VoiceCaptureBloc>().add(
-                                VoiceCaptureStartRecording(
-                                  patientId: widget.patientId,
-                                ),
-                              );
-                        },
-                        isLoading: viewModel.isInitializing,
-                        enabled: viewModel.canStart,
+                          },
+                          isLoading: viewModel.isInitializing,
+                          enabled: viewModel.canStart,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: AppButton(
-                      label: l10n.buttonStop,
-                      style: AppButtonStyle.secondary,
-                      onPressed: () => context
-                          .read<VoiceCaptureBloc>()
-                          .add(const VoiceCaptureStopRecording()),
-                      enabled: viewModel.canStop,
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: AppButton(
+                        label: l10n.buttonStop,
+                        style: AppButtonStyle.secondary,
+                        onPressed: () => context.read<VoiceCaptureBloc>().add(
+                          const VoiceCaptureStopRecording(),
+                        ),
+                        enabled: viewModel.canStop,
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppButton(
+                  label: l10n.buttonFinishConsultation,
+                  style: AppButtonStyle.warning,
+                  onPressed: () => context.read<VoiceCaptureBloc>().add(
+                    const VoiceCaptureFinishConsultation(),
                   ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppButton(
-                label: l10n.buttonFinishConsultation,
-                style: AppButtonStyle.warning,
-                onPressed: () => context
-                    .read<VoiceCaptureBloc>()
-                    .add(const VoiceCaptureFinishConsultation()),
-                enabled: viewModel.canFinishConsultation,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppButton(
-                label: l10n.buttonClear,
-                style: AppButtonStyle.secondary,
-                onPressed: () => context
-                    .read<VoiceCaptureBloc>()
-                    .add(const VoiceCaptureClearTranscript()),
-                enabled: viewModel.canClear,
-              ),
-            ],
+                  enabled: viewModel.canFinishConsultation,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppButton(
+                  label: l10n.buttonClear,
+                  style: AppButtonStyle.secondary,
+                  onPressed: () => context.read<VoiceCaptureBloc>().add(
+                    const VoiceCaptureClearTranscript(),
+                  ),
+                  enabled: viewModel.canClear,
+                ),
+              ],
+            ),
           ),
-        ));
+        );
       },
     );
   }
 
-  String _statusLabel(
-    AppLocalizations l10n,
-    VoiceCaptureSessionStatus status,
-  ) {
+  String _statusLabel(AppLocalizations l10n, VoiceCaptureSessionStatus status) {
     return switch (status) {
       VoiceCaptureSessionStatus.initializing => l10n.recordStatusInitializing,
       VoiceCaptureSessionStatus.listening => l10n.recordStatusListening,

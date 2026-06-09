@@ -5,6 +5,7 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -45,14 +46,19 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         _showTutorialStartDialog();
       });
-    } else if (state is TutorialInProgress && state.currentStep == 1) {
+    } else if (state is TutorialInProgress &&
+        TutorialFlow.isStep(state.currentStep, TutorialStepId.homePatients)) {
       if (_didStartStepOneShowcase) return;
       _didStartStepOneShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_patientsKey]);
       });
-    } else if (state is TutorialInProgress && state.currentStep == 9) {
+    } else if (state is TutorialInProgress &&
+        TutorialFlow.isStep(
+          state.currentStep,
+          TutorialStepId.homeQuickRecord,
+        )) {
       if (_didStartStepNineShowcase) return;
       _didStartStepNineShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,10 +74,7 @@ class _HomePageState extends State<HomePage> {
       context,
       variant: AppDialogVariant.lockScreen,
       title: l10n.tutorialIntroTitle,
-      body: AppText(
-        l10n.tutorialIntroDesc,
-        variant: AppTextVariant.body,
-      ),
+      body: AppText(l10n.tutorialIntroDesc, variant: AppTextVariant.body),
       actions: [
         AppButton(
           label: l10n.tutorialIntroSkip,
@@ -89,17 +92,22 @@ class _HomePageState extends State<HomePage> {
 
     if (!mounted) return;
     context.read<TutorialBloc>().add(
-          shouldStart == true
-              ? const TutorialStartRequested()
-              : const TutorialSkipRequested(),
-        );
+      shouldStart == true
+          ? const TutorialStartRequested()
+          : const TutorialSkipRequested(),
+    );
   }
 
   void _openPatientsFromTutorial() {
     final tutorialBloc = context.read<TutorialBloc>();
     final state = tutorialBloc.state;
-    if (state is TutorialInProgress && state.currentStep == 1) {
-      tutorialBloc.add(const TutorialStepCompleted(1));
+    if (state is TutorialInProgress &&
+        TutorialFlow.isStep(state.currentStep, TutorialStepId.homePatients)) {
+      tutorialBloc.add(
+        TutorialStepCompleted(
+          TutorialFlow.indexOf(TutorialStepId.homePatients),
+        ),
+      );
     }
     context.goPatients();
   }
@@ -108,8 +116,15 @@ class _HomePageState extends State<HomePage> {
     final tutorialBloc = context.read<TutorialBloc>();
     final state = tutorialBloc.state;
     if (state is TutorialInProgress) {
-      if (state.currentStep == 9) {
-        tutorialBloc.add(const TutorialStepCompleted(9));
+      if (TutorialFlow.isStep(
+        state.currentStep,
+        TutorialStepId.homeQuickRecord,
+      )) {
+        tutorialBloc.add(
+          TutorialStepCompleted(
+            TutorialFlow.indexOf(TutorialStepId.homeQuickRecord),
+          ),
+        );
       }
     }
     context.goRecord();
@@ -142,10 +157,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: AppSpacing.sm),
           Expanded(
             child: Center(
-              child: AppText(
-                l10n.historyEmpty,
-                variant: AppTextVariant.body,
-              ),
+              child: AppText(l10n.historyEmpty, variant: AppTextVariant.body),
             ),
           ),
           Showcase(
