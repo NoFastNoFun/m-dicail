@@ -7,6 +7,7 @@ enum TutorialStepId {
   patientCreate,
   patientConsultation,
   recordFromPatient,
+  recordTranscriptFromPatient,
   recordStopFromPatient,
   recordFinishFromPatient,
   homeQuickRecord,
@@ -32,13 +33,17 @@ class TutorialFlow {
     TutorialStepDefinition(index: 6, id: TutorialStepId.patientCreate),
     TutorialStepDefinition(index: 7, id: TutorialStepId.patientConsultation),
     TutorialStepDefinition(index: 8, id: TutorialStepId.recordFromPatient),
-    TutorialStepDefinition(index: 9, id: TutorialStepId.recordStopFromPatient),
     TutorialStepDefinition(
-      index: 10,
+      index: 9,
+      id: TutorialStepId.recordTranscriptFromPatient,
+    ),
+    TutorialStepDefinition(index: 10, id: TutorialStepId.recordStopFromPatient),
+    TutorialStepDefinition(
+      index: 11,
       id: TutorialStepId.recordFinishFromPatient,
     ),
-    TutorialStepDefinition(index: 11, id: TutorialStepId.homeQuickRecord),
-    TutorialStepDefinition(index: 12, id: TutorialStepId.quickRecordStart),
+    TutorialStepDefinition(index: 12, id: TutorialStepId.homeQuickRecord),
+    TutorialStepDefinition(index: 13, id: TutorialStepId.quickRecordStart),
   ];
 
   static int get firstStep => steps.first.index;

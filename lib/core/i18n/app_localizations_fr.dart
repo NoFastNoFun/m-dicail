@@ -422,7 +422,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialHomeRecordDesc =>
-      'Utilisez ce bouton pour démarrer immédiatement une consultation vocale.';
+      'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.';
 
   @override
   String get tutorialPatientAddTitle => 'Ajouter un patient';
@@ -486,4 +486,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialRecordFinishDesc =>
       'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.';
+
+  @override
+  String get tutorialRecordTranscriptTitle => 'Transcription en temps reel';
+
+  @override
+  String get tutorialRecordTranscriptDesc =>
+      'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.';
 }

@@ -135,7 +135,7 @@
   "tutorialHomePatientsTitle": "Dossiers Patients",
   "tutorialHomePatientsDesc": "Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.",
   "tutorialHomeRecordTitle": "Consultation Rapide",
-  "tutorialHomeRecordDesc": "Utilisez ce bouton pour démarrer immédiatement une consultation vocale.",
+  "tutorialHomeRecordDesc": "Depuis l'ecran d'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.",
   "tutorialPatientAddTitle": "Ajouter un patient",
   "tutorialPatientAddDesc": "C'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.",
   "tutorialPatientMrnTitle": "Numero de dossier",
@@ -155,4 +155,7 @@
   "tutorialRecordStopDesc": "Appuyez ici quand la consultation vocale est terminee pour mettre l'ecoute en pause.",
   "tutorialRecordFinishTitle": "Terminer la consultation",
   "tutorialRecordFinishDesc": "Validez la fin de la consultation. Vous reviendrez ensuite a l'accueil pour voir le workflow Nouvel enregistrement."
+,
+  "tutorialRecordTranscriptTitle": "Transcription en temps reel",
+  "tutorialRecordTranscriptDesc": "Pendant l'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee."
 }

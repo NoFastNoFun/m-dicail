@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
@@ -44,6 +46,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   String? _selectedSex;
   DateTime? _selectedBirthDate;
   final Set<TutorialStepId> _startedTutorialSteps = <TutorialStepId>{};
+  final Map<TutorialStepId, Timer> _fieldCompletionTimers = {};
 
   static const _patientFormSteps = {
     TutorialStepId.patientMrn,
@@ -51,6 +54,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     TutorialStepId.patientLastName,
     TutorialStepId.patientCreate,
   };
+  static const _fieldCompletionDelay = Duration(milliseconds: 900);
 
   @override
   void initState() {
@@ -63,6 +67,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
 
   @override
   void dispose() {
+    for (final timer in _fieldCompletionTimers.values) {
+      timer.cancel();
+    }
     _mrnController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
@@ -95,10 +102,15 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     };
   }
 
-  void _completeTutorialStepWhenFilled(TutorialStepId stepId, String value) {
-    final tutorialBloc = context.read<TutorialBloc>();
+  void _completeTutorialStepAfterTyping(TutorialStepId stepId, String value) {
+    _fieldCompletionTimers.remove(stepId)?.cancel();
     if (value.trim().isEmpty) return;
-    tutorialBloc.completeStep(stepId);
+    _fieldCompletionTimers[stepId] = Timer(_fieldCompletionDelay, () {
+      if (!mounted) return;
+      final tutorialBloc = context.read<TutorialBloc>();
+      if (!tutorialBloc.isCurrentStep(stepId)) return;
+      tutorialBloc.completeStep(stepId);
+    });
   }
 
   void _completeSubmitTutorialStep() {
@@ -195,7 +207,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                     label: l10n.patientMrnLabel,
                     controller: _mrnController,
                     focusNode: _mrnFocusNode,
-                    onChanged: (value) => _completeTutorialStepWhenFilled(
+                    onChanged: (value) => _completeTutorialStepAfterTyping(
                       TutorialStepId.patientMrn,
                       value,
                     ),
@@ -216,10 +228,11 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                           label: l10n.patientFirstNameRequiredLabel,
                           controller: _firstNameController,
                           focusNode: _firstNameFocusNode,
-                          onChanged: (value) => _completeTutorialStepWhenFilled(
-                            TutorialStepId.patientFirstName,
-                            value,
-                          ),
+                          onChanged: (value) =>
+                              _completeTutorialStepAfterTyping(
+                                TutorialStepId.patientFirstName,
+                                value,
+                              ),
                         ),
                       ),
                     ),
@@ -236,10 +249,11 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                           label: l10n.patientLastNameRequiredLabel,
                           controller: _lastNameController,
                           focusNode: _lastNameFocusNode,
-                          onChanged: (value) => _completeTutorialStepWhenFilled(
-                            TutorialStepId.patientLastName,
-                            value,
-                          ),
+                          onChanged: (value) =>
+                              _completeTutorialStepAfterTyping(
+                                TutorialStepId.patientLastName,
+                                value,
+                              ),
                         ),
                       ),
                     ),

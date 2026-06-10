@@ -907,7 +907,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialHomeRecordDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Utilisez ce bouton pour démarrer immédiatement une consultation vocale.'**
+  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.'**
   String get tutorialHomeRecordDesc;
 
   /// No description provided for @tutorialPatientAddTitle.
@@ -1017,6 +1017,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.'**
   String get tutorialRecordFinishDesc;
+
+  /// No description provided for @tutorialRecordTranscriptTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription en temps reel'**
+  String get tutorialRecordTranscriptTitle;
+
+  /// No description provided for @tutorialRecordTranscriptDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.'**
+  String get tutorialRecordTranscriptDesc;
 }
 
 class _AppLocalizationsDelegate

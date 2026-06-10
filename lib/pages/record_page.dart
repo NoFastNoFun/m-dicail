@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
@@ -50,9 +52,11 @@ class _RecordView extends StatefulWidget {
 class _RecordViewState extends State<_RecordView> {
   late final TextEditingController _transcriptController;
   final GlobalKey _startRecordKey = GlobalKey();
+  final GlobalKey _transcriptKey = GlobalKey();
   final GlobalKey _stopRecordKey = GlobalKey();
   final GlobalKey _finishConsultationKey = GlobalKey();
   final Set<TutorialStepId> _startedTutorialSteps = {};
+  Timer? _transcriptTutorialTimer;
   bool _returnHomeAfterTutorialConsultation = false;
 
   @override
@@ -67,6 +71,7 @@ class _RecordViewState extends State<_RecordView> {
 
   @override
   void dispose() {
+    _transcriptTutorialTimer?.cancel();
     _transcriptController.dispose();
     super.dispose();
   }
@@ -79,11 +84,15 @@ class _RecordViewState extends State<_RecordView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ShowcaseView.get().startShowCase([_showcaseKeyForStep(stepId)]);
+      if (stepId == TutorialStepId.recordTranscriptFromPatient) {
+        _scheduleTranscriptTutorialCompletion();
+      }
     });
   }
 
   static const _recordPageSteps = {
     TutorialStepId.recordFromPatient,
+    TutorialStepId.recordTranscriptFromPatient,
     TutorialStepId.recordStopFromPatient,
     TutorialStepId.recordFinishFromPatient,
     TutorialStepId.quickRecordStart,
@@ -91,10 +100,32 @@ class _RecordViewState extends State<_RecordView> {
 
   GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
     return switch (stepId) {
+      TutorialStepId.recordTranscriptFromPatient => _transcriptKey,
       TutorialStepId.recordStopFromPatient => _stopRecordKey,
       TutorialStepId.recordFinishFromPatient => _finishConsultationKey,
       _ => _startRecordKey,
     };
+  }
+
+  void _scheduleTranscriptTutorialCompletion() {
+    _transcriptTutorialTimer?.cancel();
+    _transcriptTutorialTimer = Timer(const Duration(seconds: 4), () {
+      if (!mounted) return;
+      final tutorialBloc = context.read<TutorialBloc>();
+      if (!tutorialBloc.isCurrentStep(
+        TutorialStepId.recordTranscriptFromPatient,
+      )) {
+        return;
+      }
+      ShowcaseView.get().dismiss();
+      tutorialBloc.completeStep(TutorialStepId.recordTranscriptFromPatient);
+    });
+  }
+
+  void _completeTranscriptTutorialStep() {
+    _transcriptTutorialTimer?.cancel();
+    final tutorialBloc = context.read<TutorialBloc>();
+    tutorialBloc.completeStep(TutorialStepId.recordTranscriptFromPatient);
   }
 
   void _startRecording() {
@@ -181,13 +212,20 @@ class _RecordViewState extends State<_RecordView> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],
-                AppInput(
-                  variant: AppInputVariant.textarea,
-                  label: l10n.transcriptLabel,
-                  hint: l10n.transcriptEmptyHint,
-                  controller: _transcriptController,
-                  readOnly: true,
-                  maxLines: 12,
+                Showcase(
+                  key: _transcriptKey,
+                  title: l10n.tutorialRecordTranscriptTitle,
+                  description: l10n.tutorialRecordTranscriptDesc,
+                  disposeOnTap: true,
+                  onTargetClick: _completeTranscriptTutorialStep,
+                  child: AppInput(
+                    variant: AppInputVariant.textarea,
+                    label: l10n.transcriptLabel,
+                    hint: l10n.transcriptEmptyHint,
+                    controller: _transcriptController,
+                    readOnly: true,
+                    maxLines: 12,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Row(
