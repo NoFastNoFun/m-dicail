@@ -493,4 +493,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialRecordTranscriptDesc =>
       'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.';
+
+  @override
+  String get tutorialAssignPatientTitle => 'Associer a un patient';
+
+  @override
+  String get tutorialAssignPatientDesc =>
+      'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.';
 }

@@ -1029,6 +1029,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.'**
   String get tutorialRecordTranscriptDesc;
+
+  /// No description provided for @tutorialAssignPatientTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer a un patient'**
+  String get tutorialAssignPatientTitle;
+
+  /// No description provided for @tutorialAssignPatientDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.'**
+  String get tutorialAssignPatientDesc;
 }
 
 class _AppLocalizationsDelegate

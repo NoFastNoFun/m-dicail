@@ -84,7 +84,7 @@ class _RecordViewState extends State<_RecordView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ShowcaseView.get().startShowCase([_showcaseKeyForStep(stepId)]);
-      if (stepId == TutorialStepId.recordTranscriptFromPatient) {
+      if (_isTranscriptTutorialStep(stepId)) {
         _scheduleTranscriptTutorialCompletion();
       }
     });
@@ -96,15 +96,30 @@ class _RecordViewState extends State<_RecordView> {
     TutorialStepId.recordStopFromPatient,
     TutorialStepId.recordFinishFromPatient,
     TutorialStepId.quickRecordStart,
+    TutorialStepId.quickRecordTranscript,
+    TutorialStepId.quickRecordStop,
+    TutorialStepId.quickRecordFinish,
+  };
+
+  static const _transcriptTutorialSteps = {
+    TutorialStepId.recordTranscriptFromPatient,
+    TutorialStepId.quickRecordTranscript,
   };
 
   GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
     return switch (stepId) {
-      TutorialStepId.recordTranscriptFromPatient => _transcriptKey,
-      TutorialStepId.recordStopFromPatient => _stopRecordKey,
-      TutorialStepId.recordFinishFromPatient => _finishConsultationKey,
+      TutorialStepId.recordTranscriptFromPatient ||
+      TutorialStepId.quickRecordTranscript => _transcriptKey,
+      TutorialStepId.recordStopFromPatient ||
+      TutorialStepId.quickRecordStop => _stopRecordKey,
+      TutorialStepId.recordFinishFromPatient ||
+      TutorialStepId.quickRecordFinish => _finishConsultationKey,
       _ => _startRecordKey,
     };
+  }
+
+  bool _isTranscriptTutorialStep(TutorialStepId stepId) {
+    return _transcriptTutorialSteps.contains(stepId);
   }
 
   void _scheduleTranscriptTutorialCompletion() {
@@ -112,20 +127,21 @@ class _RecordViewState extends State<_RecordView> {
     _transcriptTutorialTimer = Timer(const Duration(seconds: 4), () {
       if (!mounted) return;
       final tutorialBloc = context.read<TutorialBloc>();
-      if (!tutorialBloc.isCurrentStep(
-        TutorialStepId.recordTranscriptFromPatient,
-      )) {
+      final stepId = tutorialBloc.state.tutorialStepId;
+      if (stepId == null || !_isTranscriptTutorialStep(stepId)) {
         return;
       }
       ShowcaseView.get().dismiss();
-      tutorialBloc.completeStep(TutorialStepId.recordTranscriptFromPatient);
+      tutorialBloc.completeStep(stepId);
     });
   }
 
   void _completeTranscriptTutorialStep() {
     _transcriptTutorialTimer?.cancel();
     final tutorialBloc = context.read<TutorialBloc>();
-    tutorialBloc.completeStep(TutorialStepId.recordTranscriptFromPatient);
+    final stepId = tutorialBloc.state.tutorialStepId;
+    if (stepId == null || !_isTranscriptTutorialStep(stepId)) return;
+    tutorialBloc.completeStep(stepId);
   }
 
   void _startRecording() {
@@ -142,9 +158,12 @@ class _RecordViewState extends State<_RecordView> {
   }
 
   void _stopRecording() {
-    context.read<TutorialBloc>().completeStep(
-      TutorialStepId.recordStopFromPatient,
-    );
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (tutorialBloc.isCurrentStep(TutorialStepId.recordStopFromPatient)) {
+      tutorialBloc.completeStep(TutorialStepId.recordStopFromPatient);
+    } else if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordStop)) {
+      tutorialBloc.completeStep(TutorialStepId.quickRecordStop);
+    }
     context.read<VoiceCaptureBloc>().add(const VoiceCaptureStopRecording());
   }
 
@@ -153,6 +172,8 @@ class _RecordViewState extends State<_RecordView> {
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFinishFromPatient)) {
       _returnHomeAfterTutorialConsultation = true;
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
+    } else if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordFinish)) {
+      tutorialBloc.completeStep(TutorialStepId.quickRecordFinish);
     }
 
     context.read<VoiceCaptureBloc>().add(

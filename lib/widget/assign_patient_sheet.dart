@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,12 +13,17 @@ import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class AssignPatientSheet extends StatelessWidget {
+class AssignPatientSheet extends StatefulWidget {
   const AssignPatientSheet({
     super.key,
     required this.sessionId,
@@ -53,64 +60,7 @@ class AssignPatientSheet extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        top: AppSpacing.lg,
-      ),
-      height: MediaQuery.of(context).size.height * 0.85,
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: AppText(
-                l10n.assignPatientTitle,
-                variant: AppTextVariant.title,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TabBar(
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textSecondary,
-              indicatorColor: AppColors.primary,
-              tabs: [
-                Tab(text: l10n.assignPatientSearchTab),
-                Tab(text: l10n.assignPatientNewTab),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _PatientSearchTab(
-                    sessionId: sessionId,
-                    onAssigned: onAssigned,
-                  ),
-                  PatientCreationSheet(
-                    onSuccess: (patientId) => _assignAndNavigate(
-                      context,
-                      sessionId,
-                      patientId,
-                      onAssigned,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  State<AssignPatientSheet> createState() => _AssignPatientSheetState();
 
   static Future<void> _assignAndNavigate(
     BuildContext context,
@@ -137,11 +87,141 @@ class AssignPatientSheet extends StatelessWidget {
   }
 }
 
+class _AssignPatientSheetState extends State<AssignPatientSheet> {
+  final GlobalKey _assignPatientTutorialKey = GlobalKey();
+  Timer? _assignPatientTutorialTimer;
+  bool _didStartAssignPatientTutorial = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
+  @override
+  void dispose() {
+    _assignPatientTutorialTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (!state.isTutorialStep(TutorialStepId.quickRecordAssignPatient)) return;
+    if (_didStartAssignPatientTutorial) return;
+    _didStartAssignPatientTutorial = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ShowcaseView.get().startShowCase([_assignPatientTutorialKey]);
+      _scheduleAssignPatientTutorialCompletion();
+    });
+  }
+
+  void _scheduleAssignPatientTutorialCompletion() {
+    _assignPatientTutorialTimer?.cancel();
+    _assignPatientTutorialTimer = Timer(const Duration(seconds: 7), () {
+      if (!mounted) return;
+      final tutorialBloc = context.read<TutorialBloc>();
+      if (!tutorialBloc.isCurrentStep(
+        TutorialStepId.quickRecordAssignPatient,
+      )) {
+        return;
+      }
+      ShowcaseView.get().dismiss();
+      tutorialBloc.completeStep(TutorialStepId.quickRecordAssignPatient);
+    });
+  }
+
+  void _completeAssignPatientTutorialStep() {
+    _assignPatientTutorialTimer?.cancel();
+    context.read<TutorialBloc>().completeStep(
+      TutorialStepId.quickRecordAssignPatient,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return BlocListener<TutorialBloc, TutorialState>(
+      listener: (context, state) => _handleTutorialState(state),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: AppSpacing.lg,
+        ),
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              Showcase(
+                key: _assignPatientTutorialKey,
+                title: l10n.tutorialAssignPatientTitle,
+                description: l10n.tutorialAssignPatientDesc,
+                disposeOnTap: true,
+                onTargetClick: _completeAssignPatientTutorialStep,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                      ),
+                      child: AppText(
+                        l10n.assignPatientTitle,
+                        variant: AppTextVariant.title,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    TabBar(
+                      labelColor: AppColors.primary,
+                      unselectedLabelColor: AppColors.textSecondary,
+                      indicatorColor: AppColors.primary,
+                      tabs: [
+                        Tab(text: l10n.assignPatientSearchTab),
+                        Tab(text: l10n.assignPatientNewTab),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _PatientSearchTab(
+                      sessionId: widget.sessionId,
+                      onAssigned: widget.onAssigned,
+                    ),
+                    PatientCreationSheet(
+                      onSuccess: (patientId) =>
+                          AssignPatientSheet._assignAndNavigate(
+                            context,
+                            widget.sessionId,
+                            patientId,
+                            widget.onAssigned,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PatientSearchTab extends StatefulWidget {
-  const _PatientSearchTab({
-    required this.sessionId,
-    required this.onAssigned,
-  });
+  const _PatientSearchTab({required this.sessionId, required this.onAssigned});
 
   final String sessionId;
   final ValueChanged<String> onAssigned;
@@ -166,9 +246,9 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
   }
 
   void _onSearchChanged() {
-    context
-        .read<PatientBloc>()
-        .add(PatientsRequested(query: _searchController.text.trim()));
+    context.read<PatientBloc>().add(
+      PatientsRequested(query: _searchController.text.trim()),
+    );
   }
 
   @override
@@ -190,7 +270,9 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
           Expanded(
             child: BlocBuilder<PatientBloc, PatientState>(
               builder: (context, state) {
-                final patients = state is PatientLoaded ? state.patients : <Patient>[];
+                final patients = state is PatientLoaded
+                    ? state.patients
+                    : <Patient>[];
                 final isLoading = state is PatientLoading;
 
                 if (isLoading && patients.isEmpty) {
@@ -231,7 +313,10 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              AppText(patient.displayName, variant: AppTextVariant.title),
+                              AppText(
+                                patient.displayName,
+                                variant: AppTextVariant.title,
+                              ),
                               const SizedBox(height: AppSpacing.xs),
                               AppText(
                                 'MRN: ${patient.mrn}',

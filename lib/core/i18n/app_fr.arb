@@ -157,5 +157,7 @@
   "tutorialRecordFinishDesc": "Validez la fin de la consultation. Vous reviendrez ensuite a l'accueil pour voir le workflow Nouvel enregistrement."
 ,
   "tutorialRecordTranscriptTitle": "Transcription en temps reel",
-  "tutorialRecordTranscriptDesc": "Pendant l'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee."
+  "tutorialRecordTranscriptDesc": "Pendant l'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.",
+  "tutorialAssignPatientTitle": "Associer a un patient",
+  "tutorialAssignPatientDesc": "Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l'onglet Rechercher, ou creer un nouveau dossier avec l'onglet Nouveau patient."
 }
