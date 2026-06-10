@@ -150,4 +150,9 @@
   "tutorialDetailConsultDesc": "Lancez l'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.",
   "tutorialRecordTitle": "La Dictée",
   "tutorialRecordDesc": "Appuyez sur ce bouton pour lancer l'enregistrement vocal. L'IA transcrira automatiquement vos paroles et anonymisera les données."
+,
+  "tutorialRecordStopTitle": "Arreter l'ecoute",
+  "tutorialRecordStopDesc": "Appuyez ici quand la consultation vocale est terminee pour mettre l'ecoute en pause.",
+  "tutorialRecordFinishTitle": "Terminer la consultation",
+  "tutorialRecordFinishDesc": "Validez la fin de la consultation. Vous reviendrez ensuite a l'accueil pour voir le workflow Nouvel enregistrement."
 }

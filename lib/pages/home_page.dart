@@ -13,6 +13,7 @@ import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,19 +47,14 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         _showTutorialStartDialog();
       });
-    } else if (state is TutorialInProgress &&
-        TutorialFlow.isStep(state.currentStep, TutorialStepId.homePatients)) {
+    } else if (state.isTutorialStep(TutorialStepId.homePatients)) {
       if (_didStartStepOneShowcase) return;
       _didStartStepOneShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ShowcaseView.get().startShowCase([_patientsKey]);
       });
-    } else if (state is TutorialInProgress &&
-        TutorialFlow.isStep(
-          state.currentStep,
-          TutorialStepId.homeQuickRecord,
-        )) {
+    } else if (state.isTutorialStep(TutorialStepId.homeQuickRecord)) {
       if (_didStartStepNineShowcase) return;
       _didStartStepNineShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,33 +96,13 @@ class _HomePageState extends State<HomePage> {
 
   void _openPatientsFromTutorial() {
     final tutorialBloc = context.read<TutorialBloc>();
-    final state = tutorialBloc.state;
-    if (state is TutorialInProgress &&
-        TutorialFlow.isStep(state.currentStep, TutorialStepId.homePatients)) {
-      tutorialBloc.add(
-        TutorialStepCompleted(
-          TutorialFlow.indexOf(TutorialStepId.homePatients),
-        ),
-      );
-    }
+    tutorialBloc.completeStep(TutorialStepId.homePatients);
     context.goPatients();
   }
 
   void _openRecordFromTutorial() {
     final tutorialBloc = context.read<TutorialBloc>();
-    final state = tutorialBloc.state;
-    if (state is TutorialInProgress) {
-      if (TutorialFlow.isStep(
-        state.currentStep,
-        TutorialStepId.homeQuickRecord,
-      )) {
-        tutorialBloc.add(
-          TutorialStepCompleted(
-            TutorialFlow.indexOf(TutorialStepId.homeQuickRecord),
-          ),
-        );
-      }
-    }
+    tutorialBloc.completeStep(TutorialStepId.homeQuickRecord);
     context.goRecord();
   }
 

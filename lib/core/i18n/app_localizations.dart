@@ -993,6 +993,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.'**
   String get tutorialRecordDesc;
+
+  /// No description provided for @tutorialRecordStopTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arreter l\'ecoute'**
+  String get tutorialRecordStopTitle;
+
+  /// No description provided for @tutorialRecordStopDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.'**
+  String get tutorialRecordStopDesc;
+
+  /// No description provided for @tutorialRecordFinishTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer la consultation'**
+  String get tutorialRecordFinishTitle;
+
+  /// No description provided for @tutorialRecordFinishDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.'**
+  String get tutorialRecordFinishDesc;
 }
 
 class _AppLocalizationsDelegate

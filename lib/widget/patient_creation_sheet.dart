@@ -9,8 +9,8 @@ import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
@@ -43,7 +43,14 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   final GlobalKey _submitKey = GlobalKey();
   String? _selectedSex;
   DateTime? _selectedBirthDate;
-  final Set<int> _startedTutorialSteps = <int>{};
+  final Set<TutorialStepId> _startedTutorialSteps = <TutorialStepId>{};
+
+  static const _patientFormSteps = {
+    TutorialStepId.patientMrn,
+    TutorialStepId.patientFirstName,
+    TutorialStepId.patientLastName,
+    TutorialStepId.patientCreate,
+  };
 
   @override
   void initState() {
@@ -70,58 +77,33 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress && _isPatientFormStep(state.currentStep)) {
-      if (!_startedTutorialSteps.add(state.currentStep)) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ShowcaseView.get().startShowCase([
-          _showcaseKeyForStep(state.currentStep),
-        ]);
-      });
-    }
+    final stepId = state.tutorialStepId;
+    if (stepId == null || !_patientFormSteps.contains(stepId)) return;
+    if (!_startedTutorialSteps.add(stepId)) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ShowcaseView.get().startShowCase([_showcaseKeyForStep(stepId)]);
+    });
   }
 
-  bool _isPatientFormStep(int step) {
-    return TutorialFlow.isStep(step, TutorialStepId.patientMrn) ||
-        TutorialFlow.isStep(step, TutorialStepId.patientFirstName) ||
-        TutorialFlow.isStep(step, TutorialStepId.patientLastName) ||
-        TutorialFlow.isStep(step, TutorialStepId.patientCreate);
-  }
-
-  GlobalKey _showcaseKeyForStep(int step) {
-    if (TutorialFlow.isStep(step, TutorialStepId.patientMrn)) {
-      return _mrnKey;
-    }
-    if (TutorialFlow.isStep(step, TutorialStepId.patientFirstName)) {
-      return _firstNameKey;
-    }
-    if (TutorialFlow.isStep(step, TutorialStepId.patientLastName)) {
-      return _lastNameKey;
-    }
-    return _submitKey;
+  GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
+    return switch (stepId) {
+      TutorialStepId.patientMrn => _mrnKey,
+      TutorialStepId.patientFirstName => _firstNameKey,
+      TutorialStepId.patientLastName => _lastNameKey,
+      _ => _submitKey,
+    };
   }
 
   void _completeTutorialStepWhenFilled(TutorialStepId stepId, String value) {
     final tutorialBloc = context.read<TutorialBloc>();
-    final state = tutorialBloc.state;
-    if (state is TutorialInProgress &&
-        TutorialFlow.isStep(state.currentStep, stepId) &&
-        value.trim().isNotEmpty) {
-      tutorialBloc.add(TutorialStepCompleted(TutorialFlow.indexOf(stepId)));
-    }
+    if (value.trim().isEmpty) return;
+    tutorialBloc.completeStep(stepId);
   }
 
   void _completeSubmitTutorialStep() {
     final tutorialBloc = context.read<TutorialBloc>();
-    final state = tutorialBloc.state;
-    if (state is TutorialInProgress &&
-        TutorialFlow.isStep(state.currentStep, TutorialStepId.patientCreate)) {
-      tutorialBloc.add(
-        TutorialStepCompleted(
-          TutorialFlow.indexOf(TutorialStepId.patientCreate),
-        ),
-      );
-    }
+    tutorialBloc.completeStep(TutorialStepId.patientCreate);
   }
 
   void _submit() {

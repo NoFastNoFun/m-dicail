@@ -19,8 +19,8 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientsPage extends StatelessWidget {
@@ -99,8 +99,7 @@ class _PatientsViewState extends State<_PatientsView> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress &&
-        TutorialFlow.isStep(state.currentStep, TutorialStepId.patientsAdd)) {
+    if (state.isTutorialStep(TutorialStepId.patientsAdd)) {
       if (_didStartStepTwoShowcase) return;
       _didStartStepTwoShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -136,24 +135,17 @@ class _PatientsViewState extends State<_PatientsView> {
               description: l10n.tutorialPatientAddDesc,
               disposeOnTap: true,
               onTargetClick: () {
-                context.read<TutorialBloc>().add(
-                  TutorialStepCompleted(
-                    TutorialFlow.indexOf(TutorialStepId.patientsAdd),
-                  ),
+                context.read<TutorialBloc>().completeStep(
+                  TutorialStepId.patientsAdd,
                 );
                 _showCreatePatientSheet(context);
               },
               child: IconButton(
                 icon: const Icon(Icons.add, color: AppColors.textPrimary),
                 onPressed: () {
-                  if (context.read<TutorialBloc>().state
-                      is TutorialInProgress) {
-                    context.read<TutorialBloc>().add(
-                      TutorialStepCompleted(
-                        TutorialFlow.indexOf(TutorialStepId.patientsAdd),
-                      ),
-                    );
-                  }
+                  context.read<TutorialBloc>().completeStep(
+                    TutorialStepId.patientsAdd,
+                  );
                   _showCreatePatientSheet(context);
                 },
               ),

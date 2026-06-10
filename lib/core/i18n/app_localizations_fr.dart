@@ -472,4 +472,18 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tutorialRecordDesc =>
       'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.';
+
+  @override
+  String get tutorialRecordStopTitle => 'Arreter l\'ecoute';
+
+  @override
+  String get tutorialRecordStopDesc =>
+      'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.';
+
+  @override
+  String get tutorialRecordFinishTitle => 'Terminer la consultation';
+
+  @override
+  String get tutorialRecordFinishDesc =>
+      'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.';
 }

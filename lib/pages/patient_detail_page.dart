@@ -19,8 +19,8 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientDetailPage extends StatelessWidget {
@@ -50,11 +50,7 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
   bool _didStartStepSevenShowcase = false;
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInProgress &&
-        TutorialFlow.isStep(
-          state.currentStep,
-          TutorialStepId.patientConsultation,
-        )) {
+    if (state.isTutorialStep(TutorialStepId.patientConsultation)) {
       if (_didStartStepSevenShowcase) return;
       _didStartStepSevenShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -149,10 +145,8 @@ class _PatientDetailView extends StatelessWidget {
           description: l10n.tutorialDetailConsultDesc,
           disposeOnTap: true,
           onTargetClick: () async {
-            context.read<TutorialBloc>().add(
-              TutorialStepCompleted(
-                TutorialFlow.indexOf(TutorialStepId.patientConsultation),
-              ),
+            context.read<TutorialBloc>().completeStep(
+              TutorialStepId.patientConsultation,
             );
             await context.goRecord(patientId: patient.id);
             onRefresh();
@@ -160,13 +154,9 @@ class _PatientDetailView extends StatelessWidget {
           child: AppButton(
             label: l10n.patientNewConsultationButton,
             onPressed: () async {
-              if (context.read<TutorialBloc>().state is TutorialInProgress) {
-                context.read<TutorialBloc>().add(
-                  TutorialStepCompleted(
-                    TutorialFlow.indexOf(TutorialStepId.patientConsultation),
-                  ),
-                );
-              }
+              context.read<TutorialBloc>().completeStep(
+                TutorialStepId.patientConsultation,
+              );
               await context.goRecord(patientId: patient.id);
               onRefresh();
             },
