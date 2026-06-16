@@ -1,10 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
+import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/error/failure.dart';
+import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
+import 'package:medicail/features/recording/domain/entities/note_processing_result.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
+import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -14,6 +18,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   VoiceCaptureBloc(
     this._audioCaptureService,
     this._recordingSessionRepository,
+    this._noteProcessingRepository,
+    this._tokenStorage,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -26,6 +32,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   final AudioCaptureService _audioCaptureService;
   final RecordingSessionRepository _recordingSessionRepository;
+  final NoteProcessingRepository _noteProcessingRepository;
+  final AuthTokenStorage _tokenStorage;
   String _segmentBase = '';
   RecordingSession? _activeSession;
 
@@ -86,10 +94,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     final transcript = _currentTranscript;
+    final sessionId = _activeSession?.id ?? '';
     try {
       await _audioCaptureService.stopListening();
-      final sessionId = _activeSession?.id ?? '';
+      emit(VoiceCaptureProcessing(transcript: transcript));
       await _completeActiveSession(
+        sessionId: sessionId,
         transcript: transcript,
       );
       _segmentBase = '';
@@ -193,6 +203,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       VoiceCaptureReady(:final transcript) => transcript,
       RecordingInProgress(:final transcript) => transcript,
       ListeningPaused(:final transcript) => transcript,
+      VoiceCaptureProcessing(:final transcript) => transcript,
       VoiceCaptureFailure(:final transcript) => transcript,
       _ => '',
     };
@@ -228,6 +239,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   }
 
   Future<void> _completeActiveSession({
+    required String sessionId,
     required String transcript,
   }) async {
     final session = _activeSession;
@@ -235,10 +247,15 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
+    final processedSoapNote = await _processTranscript(
+      sessionId: sessionId,
+      transcript: transcript,
+    );
+
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
-      soapNote: session.soapNote ?? _generateMockSoapNote(transcript),
+      soapNote: processedSoapNote,
       status: RecordingSessionStatus.completed,
     );
     _activeSession = completed;
@@ -281,5 +298,76 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       assessment: '- Diagnostics suspectés :',
       plan: '- Traitement :\n- Examens complémentaires :\n- Suivi :',
     );
+  }
+
+  Future<SoapNote> _processTranscript({
+    required String sessionId,
+    required String transcript,
+  }) async {
+    final cleanTranscript = transcript.trim();
+    if (cleanTranscript.isEmpty) {
+      return _generateMockSoapNote(cleanTranscript);
+    }
+
+    final token = await _tokenStorage.readToken();
+    if (token == AppConfig.mockAdminToken) {
+      return _generateMockSoapNote(cleanTranscript);
+    }
+
+    final result = await _noteProcessingRepository.processNote(
+      sessionId: sessionId,
+      rawText: cleanTranscript,
+    );
+    final sessionSummary = await _noteProcessingRepository.summarizeNote(
+      sessionId: sessionId,
+      anonymizedText: result.anonymizedText,
+    );
+
+    if (result.aiResponse.isEmpty && sessionSummary.trim().isEmpty) {
+      return _generateMockSoapNote(result.anonymizedText);
+    }
+
+    return _soapNoteFromProcessingResult(
+      result,
+      sessionSummary: sessionSummary,
+    );
+  }
+
+  SoapNote _soapNoteFromProcessingResult(
+    NoteProcessingResult result, {
+    String sessionSummary = '',
+  }) {
+    final ai = result.aiResponse;
+    final summary = sessionSummary.trim().isNotEmpty
+        ? sessionSummary
+        : ai.summary;
+
+    return SoapNote(
+      subjective: result.anonymizedText,
+      objective: _sectionFromItems('Exercices', ai.exercises),
+      assessment: _sectionFromItems(
+        'Recommandations',
+        ai.recommendations,
+        fallback: summary,
+      ),
+      plan: [
+        if (ai.precautions.isNotEmpty)
+          _sectionFromItems('Precautions', ai.precautions),
+        if (ai.evidenceLevel.trim().isNotEmpty)
+          'Niveau de preuve : ${ai.evidenceLevel}',
+        if (ai.sources.isNotEmpty) _sectionFromItems('Sources', ai.sources),
+      ].where((section) => section.trim().isNotEmpty).join('\n\n'),
+    );
+  }
+
+  String _sectionFromItems(
+    String title,
+    List<String> items, {
+    String fallback = '',
+  }) {
+    if (items.isEmpty) {
+      return fallback;
+    }
+    return '$title :\n${items.map((item) => '- $item').join('\n')}';
   }
 }

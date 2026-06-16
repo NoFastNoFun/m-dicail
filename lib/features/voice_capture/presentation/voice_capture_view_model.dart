@@ -5,6 +5,7 @@ enum VoiceCaptureSessionStatus {
   ready,
   listening,
   paused,
+  processing,
   ended,
   failure,
 }
@@ -31,6 +32,10 @@ final class VoiceCaptureViewModel {
           status: VoiceCaptureSessionStatus.ended,
           transcript: transcript,
         ),
+      VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.processing,
+          transcript: transcript,
+        ),
       RecordingInProgress(:final transcript) => VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           transcript: transcript,
@@ -52,7 +57,9 @@ final class VoiceCaptureViewModel {
   final String transcript;
   final String? errorMessage;
 
-  bool get isInitializing => status == VoiceCaptureSessionStatus.initializing;
+  bool get isInitializing =>
+      status == VoiceCaptureSessionStatus.initializing ||
+      status == VoiceCaptureSessionStatus.processing;
 
   bool get isListening => status == VoiceCaptureSessionStatus.listening;
 

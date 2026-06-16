@@ -322,6 +322,7 @@ class _RecordViewState extends State<_RecordView> {
   String _statusLabel(AppLocalizations l10n, VoiceCaptureSessionStatus status) {
     return switch (status) {
       VoiceCaptureSessionStatus.initializing => l10n.recordStatusInitializing,
+      VoiceCaptureSessionStatus.processing => l10n.recordStatusInitializing,
       VoiceCaptureSessionStatus.listening => l10n.recordStatusListening,
       VoiceCaptureSessionStatus.paused => l10n.recordStatusPaused,
       VoiceCaptureSessionStatus.ended => l10n.recordStatusEnded,
