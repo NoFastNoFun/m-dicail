@@ -46,7 +46,7 @@ final class PatientModel extends Patient {
       contact: json['contact'] != null
           ? Contact.fromJson(json['contact'] as Map<String, dynamic>)
           : null,
-      notes: json['notes'] as String?,
+      notes: _blankToNull(json['notes'] as String?),
       metadata: json['patient_metadata'] as Map<String, dynamic>?,
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
       updatedAt: _parseDate(json['updated_at'] ?? json['updatedAt']),
@@ -65,7 +65,7 @@ final class PatientModel extends Patient {
           : null,
       'sex': sex,
       'contact': contact?.toJson(),
-      'notes': notes,
+      'notes': _blankToNull(notes),
       'patient_metadata': metadata,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -82,7 +82,7 @@ final class PatientModel extends Patient {
           : null,
       'sex': sex,
       'contact': contact?.toJson(),
-      'notes': notes,
+      'notes': _blankToNull(notes),
       'patient_metadata': metadata,
     };
   }
@@ -109,5 +109,13 @@ final class PatientModel extends Patient {
       return int.tryParse(value);
     }
     return null;
+  }
+
+  static String? _blankToNull(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    return trimmed;
   }
 }

@@ -28,18 +28,26 @@ class Contact extends Equatable {
 
   factory Contact.fromJson(Map<String, dynamic> json) {
     return Contact(
-      phone: json['phone'] as String?,
-      email: json['email'] as String?,
-      address: json['address'] as String?,
+      phone: _blankToNull(json['phone'] as String?),
+      email: _blankToNull(json['email'] as String?),
+      address: _blankToNull(json['address'] as String?),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (phone != null) 'phone': phone,
-      if (email != null) 'email': email,
-      if (address != null) 'address': address,
+      'phone': _blankToNull(phone),
+      'email': _blankToNull(email),
+      'address': _blankToNull(address),
     };
+  }
+
+  static String? _blankToNull(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    return trimmed;
   }
 
   @override
