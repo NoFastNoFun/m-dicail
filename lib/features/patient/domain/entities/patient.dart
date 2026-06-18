@@ -9,6 +9,7 @@ class Patient extends Equatable {
     required this.lastName,
     required this.createdAt,
     required this.updatedAt,
+    this.userId,
     this.birthDate,
     this.sex,
     this.contact,
@@ -20,6 +21,7 @@ class Patient extends Equatable {
   final String mrn;
   final String firstName;
   final String lastName;
+  final int? userId;
   final DateTime? birthDate;
   final String? sex;
   final Contact? contact;
@@ -35,6 +37,7 @@ class Patient extends Equatable {
     String? mrn,
     String? firstName,
     String? lastName,
+    int? userId,
     DateTime? birthDate,
     String? sex,
     Contact? contact,
@@ -44,6 +47,7 @@ class Patient extends Equatable {
     DateTime? updatedAt,
     bool clearBirthDate = false,
     bool clearSex = false,
+    bool clearUserId = false,
     bool clearContact = false,
     bool clearNotes = false,
     bool clearMetadata = false,
@@ -53,6 +57,7 @@ class Patient extends Equatable {
       mrn: mrn ?? this.mrn,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
+      userId: clearUserId ? null : userId ?? this.userId,
       birthDate: clearBirthDate ? null : birthDate ?? this.birthDate,
       sex: clearSex ? null : sex ?? this.sex,
       contact: clearContact ? null : contact ?? this.contact,
@@ -69,6 +74,7 @@ class Patient extends Equatable {
         mrn,
         firstName,
         lastName,
+        userId,
         birthDate,
         sex,
         contact,

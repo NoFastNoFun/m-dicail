@@ -9,6 +9,7 @@ final class PatientModel extends Patient {
     required super.lastName,
     required super.createdAt,
     required super.updatedAt,
+    super.userId,
     super.birthDate,
     super.sex,
     super.contact,
@@ -22,6 +23,7 @@ final class PatientModel extends Patient {
       mrn: patient.mrn,
       firstName: patient.firstName,
       lastName: patient.lastName,
+      userId: patient.userId,
       birthDate: patient.birthDate,
       sex: patient.sex,
       contact: patient.contact,
@@ -38,6 +40,7 @@ final class PatientModel extends Patient {
       mrn: json['mrn'] as String? ?? '',
       firstName: json['first_name'] as String? ?? json['firstName'] as String? ?? '',
       lastName: json['last_name'] as String? ?? json['lastName'] as String? ?? '',
+      userId: _parseNullableInt(json['user_id'] ?? json['userId']),
       birthDate: _parseNullableDate(json['birth_date'] ?? json['birthDate']),
       sex: json['sex'] as String?,
       contact: json['contact'] != null
@@ -53,6 +56,7 @@ final class PatientModel extends Patient {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'user_id': userId,
       'mrn': mrn,
       'first_name': firstName,
       'last_name': lastName,
@@ -68,6 +72,21 @@ final class PatientModel extends Patient {
     };
   }
 
+  Map<String, dynamic> toApiJson() {
+    return {
+      'mrn': mrn,
+      'first_name': firstName,
+      'last_name': lastName,
+      'birth_date': birthDate != null
+          ? '${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}'
+          : null,
+      'sex': sex,
+      'contact': contact?.toJson(),
+      'notes': notes,
+      'patient_metadata': metadata,
+    };
+  }
+
   static DateTime _parseDate(Object? value) {
     if (value is String && value.isNotEmpty) {
       return DateTime.parse(value);
@@ -80,5 +99,15 @@ final class PatientModel extends Patient {
       return null;
     }
     return DateTime.parse(value);
+  }
+
+  static int? _parseNullableInt(Object? value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is String && value.isNotEmpty) {
+      return int.tryParse(value);
+    }
+    return null;
   }
 }

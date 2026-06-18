@@ -51,14 +51,13 @@ class ApiPatientRepository implements PatientRepository {
     if (patient.id.isEmpty || _isFrontendGeneratedId(patient.id)) {
       final response = await _apiClient.post<Map<String, dynamic>>(
         '/patients',
-        data: model.toJson()..remove('id'),
+        data: model.toApiJson(),
       );
       return PatientModel.fromJson(response.data ?? const <String, dynamic>{});
     } else {
-      // Sinon c'est une mise à jour (à adapter selon l'API si PUT existe, pour l'instant on garde save simple)
       final response = await _apiClient.put<Map<String, dynamic>>(
         '/patients/${patient.id}',
-        data: model.toJson(),
+        data: model.toApiJson(),
       );
       return PatientModel.fromJson(response.data ?? const <String, dynamic>{});
     }
