@@ -40,7 +40,7 @@ class SecureStoragePatientRepository implements PatientRepository {
   }
 
   @override
-  Future<void> save(Patient patient) async {
+  Future<Patient> save(Patient patient) async {
     final patients = await _readPatients();
     final nextPatients = <Patient>[
       for (final current in patients)
@@ -49,6 +49,7 @@ class SecureStoragePatientRepository implements PatientRepository {
     ]..sort((a, b) => a.lastName.compareTo(b.lastName));
 
     await _writePatients(nextPatients);
+    return patient;
   }
 
   @override

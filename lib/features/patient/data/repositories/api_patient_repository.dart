@@ -44,21 +44,23 @@ class ApiPatientRepository implements PatientRepository {
   }
 
   @override
-  Future<void> save(Patient patient) async {
+  Future<Patient> save(Patient patient) async {
     final model = PatientModel.fromEntity(patient);
-    
-    // Si l'ID est vide, c'est une création
-    if (patient.id.isEmpty) {
-      await _apiClient.post<Map<String, dynamic>>(
+
+    // The backend owns persisted ids. Numeric patient_* ids are local drafts.
+    if (patient.id.isEmpty || _isFrontendGeneratedId(patient.id)) {
+      final response = await _apiClient.post<Map<String, dynamic>>(
         '/patients',
         data: model.toJson()..remove('id'),
       );
+      return PatientModel.fromJson(response.data ?? const <String, dynamic>{});
     } else {
       // Sinon c'est une mise à jour (à adapter selon l'API si PUT existe, pour l'instant on garde save simple)
-      await _apiClient.put<Map<String, dynamic>>(
+      final response = await _apiClient.put<Map<String, dynamic>>(
         '/patients/${patient.id}',
         data: model.toJson(),
       );
+      return PatientModel.fromJson(response.data ?? const <String, dynamic>{});
     }
   }
 
@@ -71,5 +73,9 @@ class ApiPatientRepository implements PatientRepository {
   Future<void> clear() async {
     // API n'a pas d'endpoint global pour effacer tous les patients.
     // Ignoré ou lève une exception selon le besoin.
+  }
+
+  bool _isFrontendGeneratedId(String id) {
+    return RegExp(r'^patient_\d+$').hasMatch(id);
   }
 }
