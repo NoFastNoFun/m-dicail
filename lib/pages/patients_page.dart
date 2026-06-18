@@ -98,6 +98,30 @@ class _PatientsViewState extends State<_PatientsView> {
     );
   }
 
+  void _showEditPatientSheet(BuildContext context, Patient patient) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: BlocProvider.value(
+            value: context.read<PatientBloc>(),
+            child: PatientCreationSheet(
+              initialPatient: patient,
+              onSuccess: (_) {
+                Navigator.of(sheetContext).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _handleTutorialState(TutorialState state) {
     if (state.isTutorialStep(TutorialStepId.patientsAdd)) {
       if (_didStartStepTwoShowcase) return;
@@ -186,7 +210,13 @@ class _PatientsViewState extends State<_PatientsView> {
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: AppSpacing.md),
                           itemBuilder: (context, index) {
-                            return _PatientListItem(patient: patients[index]);
+                            return _PatientListItem(
+                              patient: patients[index],
+                              onEdit: () => _showEditPatientSheet(
+                                context,
+                                patients[index],
+                              ),
+                            );
                           },
                         ),
                 ),
@@ -200,9 +230,10 @@ class _PatientsViewState extends State<_PatientsView> {
 }
 
 class _PatientListItem extends StatelessWidget {
-  const _PatientListItem({required this.patient});
+  const _PatientListItem({required this.patient, required this.onEdit});
 
   final Patient patient;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +250,24 @@ class _PatientListItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppText(patient.displayName, variant: AppTextVariant.title),
+            Row(
+              children: [
+                Expanded(
+                  child: AppText(
+                    patient.displayName,
+                    variant: AppTextVariant.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Modifier le patient',
+                  icon: const Icon(Icons.edit_outlined),
+                  color: AppColors.textSecondary,
+                  onPressed: onEdit,
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [

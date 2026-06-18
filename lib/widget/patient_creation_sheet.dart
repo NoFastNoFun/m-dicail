@@ -6,6 +6,8 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/features/patient/domain/entities/contact.dart';
+import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
@@ -20,8 +22,9 @@ import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientCreationSheet extends StatefulWidget {
-  const PatientCreationSheet({super.key, this.onSuccess});
+  const PatientCreationSheet({super.key, this.initialPatient, this.onSuccess});
 
+  final Patient? initialPatient;
   final void Function(String patientId)? onSuccess;
 
   @override
@@ -59,6 +62,18 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   @override
   void initState() {
     super.initState();
+    final patient = widget.initialPatient;
+    if (patient != null) {
+      _mrnController.text = patient.mrn;
+      _firstNameController.text = patient.firstName;
+      _lastNameController.text = patient.lastName;
+      _emailController.text = patient.contact?.email ?? '';
+      _phoneController.text = patient.contact?.phone ?? '';
+      _addressController.text = patient.contact?.address ?? '';
+      _notesController.text = patient.notes ?? '';
+      _selectedSex = patient.sex;
+      _selectedBirthDate = patient.birthDate;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
@@ -132,17 +147,36 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     }
 
     context.read<PatientBloc>().add(
-      PatientCreated(
-        mrn: mrn,
-        firstName: firstName,
-        lastName: lastName,
-        birthDate: _selectedBirthDate,
-        sex: _selectedSex,
-        email: _emailController.text.trim(),
-        phone: _phoneController.text.trim(),
-        address: _addressController.text.trim(),
-        notes: _notesController.text.trim(),
-      ),
+      widget.initialPatient == null
+          ? PatientCreated(
+              mrn: mrn,
+              firstName: firstName,
+              lastName: lastName,
+              birthDate: _selectedBirthDate,
+              sex: _selectedSex,
+              email: _emailController.text.trim(),
+              phone: _phoneController.text.trim(),
+              address: _addressController.text.trim(),
+              notes: _notesController.text.trim(),
+            )
+          : PatientUpdated(
+              widget.initialPatient!.copyWith(
+                mrn: mrn,
+                firstName: firstName,
+                lastName: lastName,
+                birthDate: _selectedBirthDate,
+                sex: _selectedSex,
+                contact: Contact(
+                  email: _emailController.text.trim(),
+                  phone: _phoneController.text.trim(),
+                  address: _addressController.text.trim(),
+                ),
+                notes: _notesController.text.trim(),
+                updatedAt: DateTime.now(),
+                clearBirthDate: _selectedBirthDate == null,
+                clearSex: _selectedSex == null,
+              ),
+            ),
     );
   }
 
@@ -163,16 +197,26 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isEditing = widget.initialPatient != null;
 
     return BlocListener<TutorialBloc, TutorialState>(
       listener: (context, state) => _handleTutorialState(state),
       child: BlocListener<PatientBloc, PatientState>(
-        listenWhen: (previous, current) => current is PatientCreateSuccess,
+        listenWhen: (previous, current) =>
+            current is PatientCreateSuccess || current is PatientUpdateSuccess,
         listener: (context, state) {
-          if (state is PatientCreateSuccess) {
-            AppToast.showSuccess(context, l10n.patientCreateSuccess);
+          if (state is PatientCreateSuccess || state is PatientUpdateSuccess) {
+            AppToast.showSuccess(
+              context,
+              isEditing
+                  ? 'Dossier patient mis a jour avec succes.'
+                  : l10n.patientCreateSuccess,
+            );
+            final patientId = state is PatientCreateSuccess
+                ? state.patientId
+                : (state as PatientUpdateSuccess).patientId;
             if (widget.onSuccess != null) {
-              widget.onSuccess!(state.patientId);
+              widget.onSuccess!(patientId);
             } else {
               Navigator.of(context).pop();
             }
@@ -194,7 +238,10 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppText(l10n.patientCreateTitle, variant: AppTextVariant.title),
+                AppText(
+                  isEditing ? 'Modifier le patient' : l10n.patientCreateTitle,
+                  variant: AppTextVariant.title,
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 Showcase(
                   key: _mrnKey,
@@ -353,7 +400,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         _submit();
                       },
                       child: AppButton(
-                        label: l10n.patientCreateSubmit,
+                        label: isEditing
+                            ? 'Enregistrer les modifications'
+                            : l10n.patientCreateSubmit,
                         isLoading: state is PatientLoading,
                         onPressed: () {
                           _completeSubmitTutorialStep();

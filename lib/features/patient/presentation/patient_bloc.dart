@@ -19,6 +19,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           .switchMap(mapper),
     );
     on<PatientCreated>(_onPatientCreated);
+    on<PatientUpdated>(_onPatientUpdated);
     on<PatientDeleted>(_onPatientDeleted);
   }
 
@@ -75,6 +76,25 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     try {
       await _patientRepository.delete(event.id);
       await _loadPatients(emit);
+    } catch (error) {
+      emit(PatientFailure(Failure.fromException(error).message));
+    }
+  }
+
+  Future<void> _onPatientUpdated(
+    PatientUpdated event,
+    Emitter<PatientState> emit,
+  ) async {
+    try {
+      final savedPatient = await _patientRepository.save(event.patient);
+      emit(PatientUpdateSuccess(savedPatient.id));
+      await _loadPatients(emit);
+    } on DioException catch (error) {
+      if (error.response?.statusCode == 409) {
+        emit(const PatientMrnConflict());
+      } else {
+        emit(PatientFailure(Failure.fromException(error).message));
+      }
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));
     }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/patient/domain/entities/patient.dart';
 
 sealed class PatientEvent extends Equatable {
   const PatientEvent();
@@ -60,4 +61,13 @@ final class PatientDeleted extends PatientEvent {
 
   @override
   List<Object?> get props => [id];
+}
+
+final class PatientUpdated extends PatientEvent {
+  const PatientUpdated(this.patient);
+
+  final Patient patient;
+
+  @override
+  List<Object?> get props => [patient];
 }
