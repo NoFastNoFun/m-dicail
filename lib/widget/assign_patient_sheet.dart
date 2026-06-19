@@ -71,10 +71,7 @@ class AssignPatientSheet extends StatefulWidget {
     final l10n = AppLocalizations.of(context);
     try {
       final repo = getIt<RecordingSessionRepository>();
-      final session = await repo.getById(sessionId);
-      if (session != null) {
-        await repo.save(session.copyWith(patientId: patientId));
-      }
+      await repo.associatePatient(sessionId, patientId);
       if (context.mounted) {
         await Navigator.of(context).maybePop();
         onAssigned(patientId);

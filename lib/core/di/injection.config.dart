@@ -52,6 +52,10 @@ import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
 import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart'
     as _i616;
+import 'package:medicail/features/recording/data/repositories/api_recording_session_repository.dart'
+    as _i617;
+import 'package:medicail/features/recording/data/repositories/dynamic_recording_session_repository.dart'
+    as _i618;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
@@ -89,7 +93,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
+    gh.lazySingleton<_i913.SecureStorageRecordingSessionRepository>(
       () => _i913.SecureStorageRecordingSessionRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
@@ -127,6 +131,16 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
+    gh.lazySingleton<_i617.ApiRecordingSessionRepository>(
+      () => _i617.ApiRecordingSessionRepository(gh<_i1005.ApiClient>()),
+    );
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i618.DynamicRecordingSessionRepository(
+        gh<_i617.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
     gh.lazySingleton<_i517.NoteProcessingRepository>(
       () => _i616.ApiNoteProcessingRepository(gh<_i1005.ApiClient>()),
     );

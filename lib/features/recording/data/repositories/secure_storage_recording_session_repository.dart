@@ -5,7 +5,7 @@ import 'package:medicail/features/recording/data/models/recording_session_model.
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 
-@LazySingleton(as: RecordingSessionRepository)
+@lazySingleton
 class SecureStorageRecordingSessionRepository
     implements RecordingSessionRepository {
   const SecureStorageRecordingSessionRepository(this._storage);
@@ -13,6 +13,14 @@ class SecureStorageRecordingSessionRepository
   static const String _sessionsKey = 'recording_sessions_v1';
 
   final FlutterSecureStorage _storage;
+
+  @override
+  Future<RecordingSession> create(RecordingSession session) async {
+    final created = session.id.isEmpty
+        ? session.copyWith(id: _generateSessionId())
+        : session;
+    return save(created);
+  }
 
   @override
   Future<List<RecordingSession>> getAll() async {
@@ -40,7 +48,7 @@ class SecureStorageRecordingSessionRepository
   }
 
   @override
-  Future<void> save(RecordingSession session) async {
+  Future<RecordingSession> save(RecordingSession session) async {
     final sessions = await _readSessions();
     final nextSessions = <RecordingSession>[
       for (final current in sessions)
@@ -49,6 +57,19 @@ class SecureStorageRecordingSessionRepository
     ]..sort((a, b) => b.startedAt.compareTo(a.startedAt));
 
     await _writeSessions(nextSessions);
+    return session;
+  }
+
+  @override
+  Future<RecordingSession> associatePatient(
+    String sessionId,
+    String patientId,
+  ) async {
+    final session = await getById(sessionId);
+    if (session == null) {
+      throw StateError('Session introuvable');
+    }
+    return save(session.copyWith(patientId: patientId));
   }
 
   @override
@@ -104,5 +125,9 @@ class SecureStorageRecordingSessionRepository
           .toList(),
     );
     return _storage.write(key: _sessionsKey, value: encoded);
+  }
+
+  String _generateSessionId() {
+    return 'recording_${DateTime.now().toUtc().microsecondsSinceEpoch}';
   }
 }
