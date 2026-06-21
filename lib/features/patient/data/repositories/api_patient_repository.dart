@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/api_client.dart';
 import 'package:medicail/features/patient/data/models/patient_model.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
@@ -44,22 +45,34 @@ class ApiPatientRepository implements PatientRepository {
   }
 
   @override
-  Future<void> save(Patient patient) async {
+  Future<Patient> save(Patient patient) async {
     final model = PatientModel.fromEntity(patient);
-    
-    // Si l'ID est vide, c'est une création
+    final payload = model.toJson()
+      ..remove('id')
+      ..remove('created_at')
+      ..remove('updated_at');
+
     if (patient.id.isEmpty) {
-      await _apiClient.post<Map<String, dynamic>>(
+      final response = await _apiClient.post<Map<String, dynamic>>(
         '/patients',
-        data: model.toJson()..remove('id'),
+        data: payload,
       );
-    } else {
-      // Sinon c'est une mise à jour (à adapter selon l'API si PUT existe, pour l'instant on garde save simple)
-      await _apiClient.put<Map<String, dynamic>>(
-        '/patients/${patient.id}',
-        data: model.toJson(),
-      );
+      final data = response.data;
+      if (data == null) {
+        throw const ServerException('Aucune donnee patient retournee.');
+      }
+      return PatientModel.fromJson(data);
     }
+
+    final response = await _apiClient.put<Map<String, dynamic>>(
+      '/patients/${patient.id}',
+      data: payload,
+    );
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Aucune donnee patient retournee.');
+    }
+    return PatientModel.fromJson(data);
   }
 
   @override

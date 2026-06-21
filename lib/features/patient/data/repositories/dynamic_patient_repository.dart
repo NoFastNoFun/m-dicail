@@ -39,9 +39,9 @@ class DynamicPatientRepository implements PatientRepository {
   }
 
   @override
-  Future<void> save(Patient patient) async {
+  Future<Patient> save(Patient patient) async {
     final repo = await _getRepository();
-    await repo.save(patient);
+    return repo.save(patient);
   }
 
   @override
