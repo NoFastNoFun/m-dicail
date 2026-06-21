@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
+import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -33,7 +34,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureInitializeRequested event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    emit(const VoiceCaptureReady());
+    try {
+      await _audioCaptureService.initialize();
+      emit(const VoiceCaptureReady());
+    } catch (error) {
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: _currentTranscript,
+        ),
+      );
+    }
   }
 
   Future<void> _onStartRecording(
@@ -131,6 +142,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final transcript = _currentTranscript;
     _segmentBase = transcript;
     try {
+      await _saveActiveSessionTranscript(transcript);
       await _startListeningSession();
       emit(RecordingInProgress(transcript: transcript));
     } catch (error) {
@@ -144,10 +156,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
   }
 
-  Future<void> _onTranscriptUpdated(
+  void _onTranscriptUpdated(
     VoiceCaptureTranscriptUpdated event,
     Emitter<VoiceCaptureState> emit,
-  ) async {
+  ) {
     if (state is! RecordingInProgress) {
       return;
     }
@@ -157,29 +169,26 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final merged = _mergeTranscript(_segmentBase, anonymized);
-    await _saveActiveSessionTranscript(merged);
+    final merged = TranscriptMergeHelper.merge(_segmentBase, anonymized);
+    _updateActiveSessionTranscriptInMemory(merged);
     emit(RecordingInProgress(transcript: merged));
   }
 
   Future<void> _startListeningSession() {
     return _audioCaptureService.startListening(
-      onResult: (text) => add(VoiceCaptureTranscriptUpdated(text)),
-      onListeningEnded: () => add(const VoiceCaptureListeningSessionEnded()),
+      onResult: (text) {
+        if (isClosed) {
+          return;
+        }
+        add(VoiceCaptureTranscriptUpdated(text));
+      },
+      onListeningEnded: () {
+        if (isClosed) {
+          return;
+        }
+        add(const VoiceCaptureListeningSessionEnded());
+      },
     );
-  }
-
-  String _mergeTranscript(String base, String segment) {
-    if (base.isEmpty) {
-      return segment;
-    }
-    if (segment.isEmpty) {
-      return base;
-    }
-    if (segment.startsWith(base)) {
-      return segment;
-    }
-    return '$base $segment';
   }
 
   String get _currentTranscript {
@@ -252,6 +261,15 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     );
     _activeSession = failed;
     await _recordingSessionRepository.save(failed);
+  }
+
+  void _updateActiveSessionTranscriptInMemory(String transcript) {
+    final session = _activeSession;
+    if (session == null) {
+      return;
+    }
+
+    _activeSession = session.copyWith(transcript: transcript);
   }
 
   Future<void> _saveActiveSessionTranscript(String transcript) async {

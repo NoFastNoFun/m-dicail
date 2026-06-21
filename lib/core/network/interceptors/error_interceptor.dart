@@ -36,15 +36,23 @@ class ErrorInterceptor extends Interceptor {
 
   ServerException _mapResponseException(DioException err) {
     final statusCode = err.response?.statusCode;
-    final message = _extractMessage(err.response?.data) ??
-        err.message ??
-        'Erreur serveur';
+    final extracted = _extractMessage(err.response?.data);
+    final message = extracted ?? err.message ?? 'Erreur serveur';
 
     if (statusCode != null && statusCode >= 500) {
       return ServerException(message, statusCode: statusCode);
     }
-    if (statusCode == 401 || statusCode == 403) {
-      return ServerException('Non autorise', statusCode: statusCode);
+    if (statusCode == 401) {
+      return ServerException(
+        extracted ?? 'Email ou mot de passe incorrect',
+        statusCode: statusCode,
+      );
+    }
+    if (statusCode == 403) {
+      return ServerException(
+        extracted ?? 'Non autorise',
+        statusCode: statusCode,
+      );
     }
     return ServerException(message, statusCode: statusCode);
   }

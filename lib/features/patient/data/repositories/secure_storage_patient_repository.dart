@@ -40,15 +40,25 @@ class SecureStoragePatientRepository implements PatientRepository {
   }
 
   @override
-  Future<void> save(Patient patient) async {
+  Future<Patient> save(Patient patient) async {
+    final now = DateTime.now();
+    final savedPatient = patient.id.isEmpty
+        ? patient.copyWith(
+            id: 'patient_${now.toUtc().microsecondsSinceEpoch}',
+            createdAt: now,
+            updatedAt: now,
+          )
+        : patient.copyWith(updatedAt: now);
+
     final patients = await _readPatients();
     final nextPatients = <Patient>[
       for (final current in patients)
-        if (current.id != patient.id) current,
-      patient,
+        if (current.id != savedPatient.id) current,
+      savedPatient,
     ]..sort((a, b) => a.lastName.compareTo(b.lastName));
 
     await _writePatients(nextPatients);
+    return savedPatient;
   }
 
   @override

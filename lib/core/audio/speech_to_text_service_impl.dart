@@ -28,7 +28,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
 
     final available = await _speech.initialize(
       onStatus: _onSpeechStatus,
-      onError: (_) {},
+      onError: _onSpeechError,
     );
 
     if (!available) {
@@ -42,6 +42,13 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     if (status != SpeechToText.doneStatus) {
       return;
     }
+    _isListening = false;
+    if (_keepListening) {
+      _onListeningEnded?.call();
+    }
+  }
+
+  void _onSpeechError(Object error) {
     _isListening = false;
     if (_keepListening) {
       _onListeningEnded?.call();
@@ -73,6 +80,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       pauseFor: _pauseFor,
       listenFor: _listenFor,
       listenOptions: SpeechListenOptions(
+        cancelOnError: false,
         partialResults: true,
         listenMode: ListenMode.dictation,
       ),

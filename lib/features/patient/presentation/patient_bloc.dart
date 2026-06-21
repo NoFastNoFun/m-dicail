@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/features/patient/domain/entities/contact.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
-import 'package:dio/dio.dart';
 
 @injectable
 class PatientBloc extends Bloc<PatientEvent, PatientState> {
@@ -39,7 +39,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     try {
       final now = DateTime.now();
       final patient = Patient(
-        id: _generatePatientId(now),
+        id: '',
         mrn: event.mrn.trim(),
         firstName: event.firstName.trim(),
         lastName: event.lastName.trim(),
@@ -54,14 +54,14 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         createdAt: now,
         updatedAt: now,
       );
-      await _patientRepository.save(patient);
-      emit(PatientCreateSuccess(patient.id));
+      final savedPatient = await _patientRepository.save(patient);
+      emit(PatientCreateSuccess(savedPatient.id));
       await _loadPatients(emit);
-    } on DioException catch (error) {
-      if (error.response?.statusCode == 409) {
+    } on ServerException catch (error) {
+      if (error.statusCode == 409) {
         emit(const PatientMrnConflict());
       } else {
-        emit(PatientFailure(Failure.fromException(error).message));
+        emit(PatientFailure(error.message));
       }
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));
@@ -87,9 +87,5 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));
     }
-  }
-
-  String _generatePatientId(DateTime createdAt) {
-    return 'patient_${createdAt.toUtc().microsecondsSinceEpoch}';
   }
 }
