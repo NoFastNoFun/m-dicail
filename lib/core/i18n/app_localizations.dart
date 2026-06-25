@@ -874,6 +874,48 @@ abstract class AppLocalizations {
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
 
+  /// No description provided for @recordLeaveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter l\'enregistrement ?'**
+  String get recordLeaveTitle;
+
+  /// No description provided for @recordLeaveMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?'**
+  String get recordLeaveMessage;
+
+  /// No description provided for @recordLeaveMessageWithPatient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?'**
+  String get recordLeaveMessageWithPatient;
+
+  /// No description provided for @recordLeaveSaveAndAssign.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer et associer'**
+  String get recordLeaveSaveAndAssign;
+
+  /// No description provided for @recordLeaveSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get recordLeaveSave;
+
+  /// No description provided for @recordLeaveDiscard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter sans enregistrer'**
+  String get recordLeaveDiscard;
+
+  /// No description provided for @recordLeaveCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer l\'enregistrement'**
+  String get recordLeaveCancel;
+
   /// No description provided for @navHome.
   ///
   /// In fr, this message translates to:

@@ -404,6 +404,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get assignPatientError => 'Erreur lors de l\'association';
 
   @override
+  String get recordLeaveTitle => 'Quitter l\'enregistrement ?';
+
+  @override
+  String get recordLeaveMessage =>
+      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?';
+
+  @override
+  String get recordLeaveMessageWithPatient =>
+      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?';
+
+  @override
+  String get recordLeaveSaveAndAssign => 'Enregistrer et associer';
+
+  @override
+  String get recordLeaveSave => 'Enregistrer';
+
+  @override
+  String get recordLeaveDiscard => 'Quitter sans enregistrer';
+
+  @override
+  String get recordLeaveCancel => 'Continuer l\'enregistrement';
+
+  @override
   String get navHome => 'Accueil';
 
   @override
