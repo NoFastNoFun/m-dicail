@@ -29,6 +29,10 @@ class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
 
+class AuthRegisterSuccess extends AuthState {
+  const AuthRegisterSuccess();
+}
+
 class AuthError extends AuthState {
   const AuthError(this.message);
 

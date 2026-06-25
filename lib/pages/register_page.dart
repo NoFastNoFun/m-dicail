@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
@@ -13,6 +14,7 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/inputs/input_validation_l10n.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -63,6 +65,9 @@ class _RegisterPageState extends State<RegisterPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
+          }
+          if (state is AuthRegisterSuccess) {
+            context.go(AppRoutes.login);
           }
         },
         child: Center(

@@ -9,7 +9,7 @@ abstract interface class NoteProcessingRepository {
 
   Future<String> summarizeNote({
     required String sessionId,
-    required String anonymizedText,
+    required String processedText,
     String language = 'fr',
   });
 }

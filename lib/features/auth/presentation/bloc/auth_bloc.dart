@@ -58,13 +58,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.register(
+      await _authRepository.register(
         email: event.email,
         password: event.password,
         fullName: event.fullName,
       );
-      _authNotifier.setAuthenticated(true);
-      emit(AuthAuthenticated(user));
+      _authNotifier.setAuthenticated(false);
+      emit(const AuthRegisterSuccess());
     } catch (e) {
       _authNotifier.setAuthenticated(false);
       emit(AuthError(Failure.fromException(e).message));

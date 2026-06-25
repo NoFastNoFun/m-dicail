@@ -152,7 +152,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i21.AudioCaptureService>(),
         gh<_i814.RecordingSessionRepository>(),
         gh<_i517.NoteProcessingRepository>(),
-        gh<_i760.AuthTokenStorage>(),
       ),
     );
     gh.lazySingleton<_i790.AuthRepository>(

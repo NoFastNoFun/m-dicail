@@ -47,17 +47,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> register({
+  Future<void> register({
     required String email,
     required String password,
     String? fullName,
   }) async {
     if (AppConfig.enableMockAdmin && email == AppConfig.mockAdminEmail) {
-      await _tokenStorage.writeToken(AppConfig.mockAdminToken);
-      return _mockAdmin;
+      return;
     }
 
-    final response = await _apiClient.post<Map<String, dynamic>>(
+    await _apiClient.post<Map<String, dynamic>>(
       '/auth/register',
       data: {
         'email': email,
@@ -65,16 +64,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'fullName': fullName,
       },
     );
-
-    final data = response.data;
-    final token = _readAccessToken(data);
-    if (data != null && token != null) {
-      await _tokenStorage.writeToken(token);
-      final userJson = data['user'] as Map<String, dynamic>;
-      return _mapUser(userJson);
-    }
-
-    return getMe();
+    await _tokenStorage.clearToken();
   }
 
   @override

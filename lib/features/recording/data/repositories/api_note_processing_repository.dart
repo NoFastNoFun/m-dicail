@@ -32,14 +32,14 @@ class ApiNoteProcessingRepository implements NoteProcessingRepository {
   @override
   Future<String> summarizeNote({
     required String sessionId,
-    required String anonymizedText,
+    required String processedText,
     String language = 'fr',
   }) async {
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/notes/summarize',
       data: {
         'session_id': sessionId,
-        'anonymized_text': anonymizedText,
+        'processed_text': processedText,
         'language': language,
       },
     );

@@ -12,15 +12,18 @@ class SoapNoteBottomSheet extends StatefulWidget {
     super.key,
     required this.initialNote,
     required this.onSave,
+    this.transcript = '',
   });
 
   final SoapNote initialNote;
   final ValueChanged<SoapNote> onSave;
+  final String transcript;
 
   static Future<void> show(
     BuildContext context, {
     required SoapNote initialNote,
     required ValueChanged<SoapNote> onSave,
+    String transcript = '',
   }) {
     return showModalBottomSheet(
       context: context,
@@ -36,6 +39,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
         child: SoapNoteBottomSheet(
           initialNote: initialNote,
           onSave: onSave,
+          transcript: transcript,
         ),
       ),
     );
@@ -83,6 +87,7 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final transcript = widget.transcript.trim();
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -117,6 +122,28 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                   controller: scrollController,
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
+                    if (transcript.isNotEmpty) ...[
+                      AppText(
+                        'Transcription complete',
+                        variant: AppTextVariant.label,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          child: AppText(
+                            transcript,
+                            variant: AppTextVariant.body,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
                     AppInput(
                       variant: AppInputVariant.textarea,
                       label: l10n.soapNoteSubjective,

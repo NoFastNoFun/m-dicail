@@ -204,6 +204,7 @@ class _RecordingSessionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final hasSoap = session.soapNote != null;
+    final summary = session.summary?.trim();
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -248,6 +249,7 @@ class _RecordingSessionListItem extends StatelessWidget {
                       SoapNoteBottomSheet.show(
                         context,
                         initialNote: session.soapNote!,
+                        transcript: session.transcript,
                         onSave: (updatedNote) async {
                           final repo = getIt<RecordingSessionRepository>();
                           await repo.save(
@@ -262,11 +264,17 @@ class _RecordingSessionListItem extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             AppText(
-              session.transcript.isEmpty
-                  ? l10n.transcriptEmptyFallback
-                  : session.transcript,
+              'Resume',
+              variant: AppTextVariant.caption,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            AppText(
+              summary == null || summary.isEmpty
+                  ? 'Resume indisponible'
+                  : summary,
               variant: AppTextVariant.body,
-              maxLines: 4,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ],
