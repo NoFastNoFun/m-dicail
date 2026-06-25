@@ -21,6 +21,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureStopRecording>(_onStopRecording);
     on<VoiceCaptureFinishConsultation>(_onFinishConsultation);
     on<VoiceCaptureClearTranscript>(_onClearTranscript);
+    on<VoiceCaptureDiscardConsultation>(_onDiscardConsultation);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
   }
@@ -126,6 +127,26 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     if (state is RecordingInProgress) {
       return;
     }
+    _segmentBase = '';
+    _activeSession = null;
+    emit(const VoiceCaptureReady());
+  }
+
+  Future<void> _onDiscardConsultation(
+    VoiceCaptureDiscardConsultation event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    try {
+      await _audioCaptureService.stopListening();
+    } catch (_) {
+      // Best effort when abandoning an in-progress session.
+    }
+
+    final session = _activeSession;
+    if (session != null) {
+      await _recordingSessionRepository.delete(session.id);
+    }
+
     _segmentBase = '';
     _activeSession = null;
     emit(const VoiceCaptureReady());
