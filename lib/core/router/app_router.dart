@@ -5,9 +5,11 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
+import 'package:medicail/pages/main_shell.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
+import 'package:medicail/pages/settings_page.dart';
 import 'package:medicail/widget/app_text.dart';
 
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
@@ -50,10 +52,25 @@ class AppRouter {
         name: 'register',
         builder: (context, state) => const RegisterPage(),
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (context, state) => const HomePage(),
+      ShellRoute(
+        builder: (context, state, child) => MainShell(child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.patients,
+            name: 'patients',
+            builder: (context, state) => const PatientsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.settings,
+            name: 'settings',
+            builder: (context, state) => const SettingsPage(),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.record,
@@ -61,11 +78,6 @@ class AppRouter {
         builder: (context, state) => RecordPage(
           patientId: state.uri.queryParameters['patientId'],
         ),
-      ),
-      GoRoute(
-        path: AppRoutes.patients,
-        name: 'patients',
-        builder: (context, state) => const PatientsPage(),
       ),
       GoRoute(
         path: AppRoutes.patientDetail,
@@ -105,7 +117,9 @@ extension AppRouterNavigation on BuildContext {
     }).toString());
   }
 
-  void goPatients() => push(AppRoutes.patients);
+  void goPatients() => go(AppRoutes.patients);
+
+  void goSettings() => go(AppRoutes.settings);
 
   void goPatientDetail(String patientId) => push('/patients/$patientId');
 
