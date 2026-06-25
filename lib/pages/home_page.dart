@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
-import 'package:medicail/core/router/app_router.dart';
-import 'package:medicail/core/router/app_routes.dart';
-import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
-import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
-import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 
@@ -21,26 +13,6 @@ class HomePage extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.homeTitle,
-      actions: [
-        BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is AuthAuthenticated) {
-              return IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: l10n.loginSubmit,
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthLogoutRequested());
-                },
-              );
-            }
-            return IconButton(
-              icon: const Icon(Icons.login),
-              tooltip: l10n.homeSignIn,
-              onPressed: () => context.push(AppRoutes.login),
-            );
-          },
-        ),
-      ],
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -53,16 +25,6 @@ class HomePage extends StatelessWidget {
                 variant: AppTextVariant.body,
               ),
             ),
-          ),
-          AppButton(
-            label: l10n.navigateToPatients,
-            onPressed: () => context.goPatients(),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          AppButton(
-            label: l10n.navigateToRecord,
-            style: AppButtonStyle.secondary,
-            onPressed: () => context.goRecord(),
           ),
         ],
       ),

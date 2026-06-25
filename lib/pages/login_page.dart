@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
@@ -75,10 +75,10 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.medical_services_rounded,
                     size: 64,
-                    color: AppColors.primary,
+                    color: context.colorScheme.primary,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppText(
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   AppText(
                     l10n.loginWelcomeSubtitle,
                     variant: AppTextVariant.body,
-                    color: AppColors.textSecondary,
+                    color: context.secondaryTextColor,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xxl),

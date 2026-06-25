@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +95,7 @@ class _RecordViewState extends State<_RecordView> {
                 label: viewModel.errorMessage != null
                     ? l10n.errorAudio
                     : _statusLabel(l10n, viewModel.status),
-                color: _statusColor(viewModel.status),
+                color: _statusColor(context, viewModel.status),
               ),
               const SizedBox(height: AppSpacing.lg),
               if (viewModel.errorMessage != null) ...[
@@ -181,12 +182,13 @@ class _RecordViewState extends State<_RecordView> {
     };
   }
 
-  Color _statusColor(VoiceCaptureSessionStatus status) {
+  Color _statusColor(BuildContext context, VoiceCaptureSessionStatus status) {
+    final colorScheme = context.colorScheme;
     return switch (status) {
       VoiceCaptureSessionStatus.listening => AppColors.info,
-      VoiceCaptureSessionStatus.paused => AppColors.textSecondary,
-      VoiceCaptureSessionStatus.failure => AppColors.error,
-      _ => AppColors.textSecondary,
+      VoiceCaptureSessionStatus.paused => context.secondaryTextColor,
+      VoiceCaptureSessionStatus.failure => colorScheme.error,
+      _ => context.secondaryTextColor,
     };
   }
 }

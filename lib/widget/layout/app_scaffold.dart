@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/debug/debug_menu.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/widget/app_text.dart';
 
@@ -22,17 +21,19 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final canPop = context.canPop();
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: theme.colorScheme.onSurface,
         title: title != null ? _AppBarTitle(title: title!) : null,
         automaticallyImplyLeading: false,
         leading: canPop
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
-                color: AppColors.textPrimary,
+                color: theme.colorScheme.onSurface,
                 tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () => context.pop(),
               )

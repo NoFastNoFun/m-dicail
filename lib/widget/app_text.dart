@@ -23,7 +23,9 @@ class AppText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = switch (variant) {
+    final theme = Theme.of(context);
+
+    final metrics = switch (variant) {
       AppTextVariant.display => AppTypography.display,
       AppTextVariant.headline => AppTypography.headline,
       AppTextVariant.title => AppTypography.title,
@@ -32,9 +34,27 @@ class AppText extends StatelessWidget {
       AppTextVariant.caption => AppTypography.caption,
     };
 
+    final themeStyle = switch (variant) {
+      AppTextVariant.display => theme.textTheme.displayLarge,
+      AppTextVariant.headline => theme.textTheme.headlineMedium,
+      AppTextVariant.title => theme.textTheme.titleMedium,
+      AppTextVariant.body =>
+        theme.textTheme.bodyLarge ?? theme.textTheme.bodyMedium,
+      AppTextVariant.label => theme.textTheme.labelLarge,
+      AppTextVariant.caption => theme.textTheme.bodySmall,
+    };
+
+    final defaultColor = variant == AppTextVariant.caption
+        ? theme.colorScheme.onSurface.withValues(alpha: 0.65)
+        : theme.colorScheme.onSurface;
+
+    final style = metrics.copyWith(
+      color: color ?? themeStyle?.color ?? defaultColor,
+    );
+
     return Text(
       data,
-      style: color != null ? baseStyle.copyWith(color: color) : baseStyle,
+      style: style,
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,

@@ -873,6 +873,126 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
+
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get navPatients;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reglages'**
+  String get navSettings;
+
+  /// No description provided for @radialActionPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get radialActionPatients;
+
+  /// No description provided for @radialActionNewRecord.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel enregistrement'**
+  String get radialActionNewRecord;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reglages'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Theme'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clair'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sombre'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeSolarized.
+  ///
+  /// In fr, this message translates to:
+  /// **'Solarized'**
+  String get settingsThemeSolarized;
+
+  /// No description provided for @settingsFontSize.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille du texte'**
+  String get settingsFontSize;
+
+  /// No description provided for @settingsFontSizeSmall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Petit'**
+  String get settingsFontSizeSmall;
+
+  /// No description provided for @settingsFontSizeDefault.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normal'**
+  String get settingsFontSizeDefault;
+
+  /// No description provided for @settingsFontSizeLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Grand'**
+  String get settingsFontSizeLarge;
+
+  /// No description provided for @settingsFontSizeExtraLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tres grand'**
+  String get settingsFontSizeExtraLarge;
+
+  /// No description provided for @settingsTemplates.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles'**
+  String get settingsTemplates;
+
+  /// No description provided for @settingsRestartOnboarding.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommencer l\'introduction'**
+  String get settingsRestartOnboarding;
+
+  /// No description provided for @settingsTbd.
+  ///
+  /// In fr, this message translates to:
+  /// **'TBD'**
+  String get settingsTbd;
+
+  /// No description provided for @settingsLogout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se deconnecter'**
+  String get settingsLogout;
+
+  /// No description provided for @settingsSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get settingsSignIn;
 }
 
 class _AppLocalizationsDelegate

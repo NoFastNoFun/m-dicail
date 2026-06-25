@@ -402,4 +402,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get assignPatientError => 'Erreur lors de l\'association';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navPatients => 'Patients';
+
+  @override
+  String get navSettings => 'Reglages';
+
+  @override
+  String get radialActionPatients => 'Dossiers patients';
+
+  @override
+  String get radialActionNewRecord => 'Nouvel enregistrement';
+
+  @override
+  String get settingsTitle => 'Reglages';
+
+  @override
+  String get settingsTheme => 'Theme';
+
+  @override
+  String get settingsThemeLight => 'Clair';
+
+  @override
+  String get settingsThemeDark => 'Sombre';
+
+  @override
+  String get settingsThemeSolarized => 'Solarized';
+
+  @override
+  String get settingsFontSize => 'Taille du texte';
+
+  @override
+  String get settingsFontSizeSmall => 'Petit';
+
+  @override
+  String get settingsFontSizeDefault => 'Normal';
+
+  @override
+  String get settingsFontSizeLarge => 'Grand';
+
+  @override
+  String get settingsFontSizeExtraLarge => 'Tres grand';
+
+  @override
+  String get settingsTemplates => 'Modeles';
+
+  @override
+  String get settingsRestartOnboarding => 'Recommencer l\'introduction';
+
+  @override
+  String get settingsTbd => 'TBD';
+
+  @override
+  String get settingsLogout => 'Se deconnecter';
+
+  @override
+  String get settingsSignIn => 'Se connecter';
 }
