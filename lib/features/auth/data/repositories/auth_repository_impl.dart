@@ -74,6 +74,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<User> getMe() async {
     final token = await _tokenStorage.readToken();
+    if (token == null) {
+      throw const ServerException('Aucun jeton d\'authentification.');
+    }
     if (token == AppConfig.mockAdminToken) {
       return _mockAdmin;
     }

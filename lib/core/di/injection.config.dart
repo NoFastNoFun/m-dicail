@@ -30,6 +30,7 @@ import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
     as _i945;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
+import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
 import 'package:medicail/features/auth/data/repositories/auth_repository_impl.dart'
     as _i985;
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
@@ -74,6 +75,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i945.LoggingInterceptor(),
     );
     gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
+    gh.lazySingleton<_i345.AppSessionStorage>(
+      () => _i345.SecureAppSessionStorage(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.factory<_i830.SecureStoragePatientRepository>(
       () => _i830.SecureStoragePatientRepository(
         gh<_i558.FlutterSecureStorage>(),
@@ -143,8 +147,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
     );
     gh.factory<_i250.AuthBloc>(
-      () =>
-          _i250.AuthBloc(gh<_i790.AuthRepository>(), gh<_i541.AuthNotifier>()),
+      () => _i250.AuthBloc(
+        gh<_i790.AuthRepository>(),
+        gh<_i541.AuthNotifier>(),
+        gh<_i345.AppSessionStorage>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
     );
     return this;
   }

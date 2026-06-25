@@ -62,11 +62,18 @@ flutter run -d windows
 flutter run -d android
 ```
 
-## Mode hors ligne (mock admin)
+## Mode hors ligne (invite)
 
-L'application propose un mode hors ligne qui permet de se connecter avec les
-identifiants `admin` / `admin` sans backend. Ce mode est active via un flag de
-compilation `--dart-define`.
+L'application fonctionne sans compte. Au premier lancement, l'ecran de connexion
+propose **Continuer sans compte** : les patients, sessions et notes SOAP sont
+alors stockes localement de maniere chiffree (`flutter_secure_storage`).
+
+Les lancements suivants ouvrent directement l'accueil. La connexion reste
+optionnelle pour synchroniser avec le backend.
+
+Un mode de test supplementaire permet de se connecter avec les identifiants
+`admin` / `admin` sans backend. Il est active via un flag de compilation
+`--dart-define`.
 
 ### Depuis le terminal
 

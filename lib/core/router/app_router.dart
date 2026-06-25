@@ -21,18 +21,19 @@ class AppRouter {
   final AuthNotifier _authNotifier;
 
   late final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.home,
     refreshListenable: _authNotifier,
     redirect: (context, state) {
-      final isAuth = _authNotifier.isAuthenticated;
-      final isLoggingIn = state.uri.toString() == AppRoutes.login || 
-                          state.uri.toString() == AppRoutes.register;
+      final hasCompletedOnboarding = _authNotifier.hasCompletedOnboarding;
+      final isAuthenticated = _authNotifier.isAuthenticated;
+      final isAuthRoute = state.uri.toString() == AppRoutes.login ||
+          state.uri.toString() == AppRoutes.register;
 
-      if (!isAuth && !isLoggingIn) {
+      if (!hasCompletedOnboarding && !isAuthRoute) {
         return AppRoutes.login;
       }
 
-      if (isAuth && isLoggingIn) {
+      if (isAuthenticated && isAuthRoute) {
         return AppRoutes.home;
       }
 

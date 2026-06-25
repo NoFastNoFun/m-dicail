@@ -62,6 +62,8 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
+          } else if (state is AuthGuest) {
+            context.go(AppRoutes.home);
           }
         },
         child: Center(
@@ -112,6 +114,16 @@ class _LoginPageState extends State<LoginPage> {
                         label: l10n.loginSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppButton(
+                    label: l10n.loginContinueWithoutAccount,
+                    style: AppButtonStyle.secondary,
+                    onPressed: () {
+                      context.read<AuthBloc>().add(
+                        const AuthGuestContinueRequested(),
                       );
                     },
                   ),
