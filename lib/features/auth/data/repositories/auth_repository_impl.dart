@@ -12,7 +12,7 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._apiClient, this._tokenStorage);
 
   static const _mockAdmin = User(
-    id: 999,
+    id: '999',
     email: 'admin@local.com',
     fullName: 'Admin Local',
   );
@@ -38,8 +38,8 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final data = response.data;
-    if (data != null && data['access_token'] != null) {
-      final token = data['access_token'] as String;
+    final token = _readAccessToken(data);
+    if (token != null) {
       await _tokenStorage.writeToken(token);
     }
 
@@ -62,13 +62,13 @@ class AuthRepositoryImpl implements AuthRepository {
       data: {
         'email': email,
         'password': password,
-        'full_name': fullName,
+        'fullName': fullName,
       },
     );
 
     final data = response.data;
-    if (data != null && data['access_token'] != null) {
-      final token = data['access_token'] as String;
+    final token = _readAccessToken(data);
+    if (data != null && token != null) {
       await _tokenStorage.writeToken(token);
       final userJson = data['user'] as Map<String, dynamic>;
       return _mapUser(userJson);
@@ -97,11 +97,15 @@ class AuthRepositoryImpl implements AuthRepository {
     await _tokenStorage.clearToken();
   }
 
+  String? _readAccessToken(Map<String, dynamic>? json) {
+    return (json?['accessToken'] ?? json?['access_token']) as String?;
+  }
+
   User _mapUser(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
+      id: json['id'].toString(),
       email: json['email'] as String,
-      fullName: json['full_name'] as String?,
+      fullName: (json['fullName'] ?? json['full_name']) as String?,
     );
   }
 }
