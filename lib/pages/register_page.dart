@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
@@ -62,6 +64,8 @@ class _RegisterPageState extends State<RegisterPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
+          } else if (state is AuthGuest) {
+            context.go(AppRoutes.home);
           }
         },
         child: Center(
@@ -112,6 +116,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         label: l10n.registerSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppButton(
+                    label: l10n.loginContinueWithoutAccount,
+                    style: AppButtonStyle.secondary,
+                    onPressed: () {
+                      context.read<AuthBloc>().add(
+                        const AuthGuestContinueRequested(),
                       );
                     },
                   ),

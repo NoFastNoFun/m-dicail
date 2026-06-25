@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// **'Accueil'**
   String get homeTitle;
 
+  /// No description provided for @homeSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get homeSignIn;
+
   /// No description provided for @recordTitle.
   ///
   /// In fr, this message translates to:
@@ -769,7 +775,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginWelcomeSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Connectez-vous pour accéder à vos dossiers.'**
+  /// **'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.'**
   String get loginWelcomeSubtitle;
 
   /// No description provided for @loginEmailLabel.
@@ -793,8 +799,14 @@ abstract class AppLocalizations {
   /// No description provided for @loginCreateAccountButton.
   ///
   /// In fr, this message translates to:
-  /// **'Créer un compte'**
+  /// **'Creer un compte'**
   String get loginCreateAccountButton;
+
+  /// No description provided for @loginContinueWithoutAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer sans compte'**
+  String get loginContinueWithoutAccount;
 
   /// No description provided for @registerTitle.
   ///

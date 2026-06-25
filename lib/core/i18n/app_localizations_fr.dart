@@ -15,6 +15,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeTitle => 'Accueil';
 
   @override
+  String get homeSignIn => 'Se connecter';
+
+  @override
   String get recordTitle => 'Enregistrement';
 
   @override
@@ -349,7 +352,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loginWelcomeSubtitle =>
-      'Connectez-vous pour accéder à vos dossiers.';
+      'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.';
 
   @override
   String get loginEmailLabel => 'Adresse email';
@@ -361,7 +364,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginSubmit => 'Se connecter';
 
   @override
-  String get loginCreateAccountButton => 'Créer un compte';
+  String get loginCreateAccountButton => 'Creer un compte';
+
+  @override
+  String get loginContinueWithoutAccount => 'Continuer sans compte';
 
   @override
   String get registerTitle => 'Créer un compte';

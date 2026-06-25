@@ -29,6 +29,10 @@ class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
 
+class AuthGuest extends AuthState {
+  const AuthGuest();
+}
+
 class AuthError extends AuthState {
   const AuthError(this.message);
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
+import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -19,10 +22,22 @@ class HomePage extends StatelessWidget {
     return AppScaffold(
       title: l10n.homeTitle,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () {
-            context.read<AuthBloc>().add(const AuthLogoutRequested());
+        BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthAuthenticated) {
+              return IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: l10n.loginSubmit,
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthLogoutRequested());
+                },
+              );
+            }
+            return IconButton(
+              icon: const Icon(Icons.login),
+              tooltip: l10n.homeSignIn,
+              onPressed: () => context.push(AppRoutes.login),
+            );
           },
         ),
       ],
