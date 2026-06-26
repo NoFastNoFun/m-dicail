@@ -111,7 +111,10 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ShowcaseView.get().startShowCase([_assignPatientTutorialKey]);
+      ShowcaseView.get().startShowCase(
+        [_assignPatientTutorialKey],
+        delay: const Duration(milliseconds: 250),
+      );
       _scheduleAssignPatientTutorialCompletion();
     });
   }

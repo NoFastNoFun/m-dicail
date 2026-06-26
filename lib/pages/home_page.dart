@@ -52,14 +52,20 @@ class _HomePageState extends State<HomePage> {
       _didStartStepOneShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ShowcaseView.get().startShowCase([_patientsKey]);
+        ShowcaseView.get().startShowCase(
+          [_patientsKey],
+          delay: const Duration(milliseconds: 250),
+        );
       });
     } else if (state.isTutorialStep(TutorialStepId.homeQuickRecord)) {
       if (_didStartStepNineShowcase) return;
       _didStartStepNineShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ShowcaseView.get().startShowCase([_recordKey]);
+        ShowcaseView.get().startShowCase(
+          [_recordKey],
+          delay: const Duration(milliseconds: 250),
+        );
       });
     }
   }

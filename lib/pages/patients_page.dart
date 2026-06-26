@@ -128,7 +128,10 @@ class _PatientsViewState extends State<_PatientsView> {
       _didStartStepTwoShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ShowcaseView.get().startShowCase([_addPatientKey]);
+        ShowcaseView.get().startShowCase(
+          [_addPatientKey],
+          delay: const Duration(milliseconds: 250),
+        );
       });
     }
   }

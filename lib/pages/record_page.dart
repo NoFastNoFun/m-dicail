@@ -83,7 +83,10 @@ class _RecordViewState extends State<_RecordView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ShowcaseView.get().startShowCase([_showcaseKeyForStep(stepId)]);
+      ShowcaseView.get().startShowCase(
+        [_showcaseKeyForStep(stepId)],
+        delay: const Duration(milliseconds: 250),
+      );
       if (_isTranscriptTutorialStep(stepId)) {
         _scheduleTranscriptTutorialCompletion();
       }

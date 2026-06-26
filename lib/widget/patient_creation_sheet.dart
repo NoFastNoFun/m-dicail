@@ -104,7 +104,10 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     if (!_startedTutorialSteps.add(stepId)) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ShowcaseView.get().startShowCase([_showcaseKeyForStep(stepId)]);
+      ShowcaseView.get().startShowCase(
+        [_showcaseKeyForStep(stepId)],
+        delay: const Duration(milliseconds: 250),
+      );
     });
   }
 

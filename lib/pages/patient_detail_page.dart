@@ -55,7 +55,10 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
       _didStartStepSevenShowcase = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ShowcaseView.get().startShowCase([_consultKey]);
+        ShowcaseView.get().startShowCase(
+          [_consultKey],
+          delay: const Duration(milliseconds: 250),
+        );
       });
     }
   }
