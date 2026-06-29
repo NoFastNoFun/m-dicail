@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,8 +9,12 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -23,14 +25,9 @@ import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 enum _RecordLeaveAction { save, discard, cancel }
-import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class RecordPage extends StatelessWidget {
   const RecordPage({super.key, this.patientId});
@@ -62,8 +59,14 @@ class _RecordViewState extends State<_RecordView> {
   Duration _elapsed = Duration.zero;
   DateTime? _recordingStartedAt;
   Timer? _timer;
+  Timer? _transcriptTutorialTimer;
   bool _wasListening = false;
   bool _pendingDiscardLeave = false;
+  bool _returnHomeAfterTutorialConsultation = false;
+  final _startedTutorialSteps = <TutorialStepId>{};
+  final _recordToggleKey = GlobalKey();
+  final _finishMenuKey = GlobalKey();
+  final _transcriptKey = GlobalKey();
 
   @override
   void initState() {
@@ -72,13 +75,16 @@ class _RecordViewState extends State<_RecordView> {
     if (patientId != null && patientId.isNotEmpty) {
       _loadPatientName(patientId);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
-    _transcriptController.dispose();
     super.dispose();
   }
 
@@ -122,10 +128,10 @@ class _RecordViewState extends State<_RecordView> {
       TutorialStepId.recordTranscriptFromPatient ||
       TutorialStepId.quickRecordTranscript => _transcriptKey,
       TutorialStepId.recordStopFromPatient ||
-      TutorialStepId.quickRecordStop => _stopRecordKey,
+      TutorialStepId.quickRecordStop => _recordToggleKey,
       TutorialStepId.recordFinishFromPatient ||
-      TutorialStepId.quickRecordFinish => _finishConsultationKey,
-      _ => _startRecordKey,
+      TutorialStepId.quickRecordFinish => _finishMenuKey,
+      _ => _recordToggleKey,
     };
   }
 
@@ -190,6 +196,40 @@ class _RecordViewState extends State<_RecordView> {
     context.read<VoiceCaptureBloc>().add(
       const VoiceCaptureFinishConsultation(),
     );
+  }
+
+  void _handlePrimaryShowcaseTap() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final stepId = tutorialBloc.state.tutorialStepId;
+    if (stepId == TutorialStepId.recordStopFromPatient ||
+        stepId == TutorialStepId.quickRecordStop) {
+      _stopRecording();
+      return;
+    }
+    if (stepId == TutorialStepId.recordFinishFromPatient ||
+        stepId == TutorialStepId.quickRecordFinish) {
+      _finishConsultation();
+      return;
+    }
+    _startRecording();
+  }
+
+  String _recordToggleTutorialTitle(
+    AppLocalizations l10n,
+    VoiceCaptureViewModel viewModel,
+  ) {
+    return viewModel.canStop
+        ? l10n.tutorialRecordStopTitle
+        : l10n.tutorialRecordTitle;
+  }
+
+  String _recordToggleTutorialDescription(
+    AppLocalizations l10n,
+    VoiceCaptureViewModel viewModel,
+  ) {
+    return viewModel.canStop
+        ? l10n.tutorialRecordStopDesc
+        : l10n.tutorialRecordDesc;
   }
 
   Future<void> _loadPatientName(String patientId) async {
@@ -308,141 +348,144 @@ class _RecordViewState extends State<_RecordView> {
     final locale = Localizations.localeOf(context).toString();
     final dateLabel = DateFormat('EEE, MMM d', locale).format(DateTime.now());
 
-    return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
-      listener: (context, state) {
-        if (_pendingDiscardLeave && state is VoiceCaptureReady) {
-          _pendingDiscardLeave = false;
-          if (context.canPop()) {
-            context.pop();
-          }
-          return;
-        }
-
-        if (state is VoiceCaptureConsultationFinished) {
-          if (_returnHomeAfterTutorialConsultation) {
-            _returnHomeAfterTutorialConsultation = false;
-            context.goHome();
-          } else if (widget.patientId != null) {
+    return BlocListener<TutorialBloc, TutorialState>(
+      listener: (context, state) => _handleTutorialState(state),
+      child: BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
+        listener: (context, state) {
+          if (_pendingDiscardLeave && state is VoiceCaptureReady) {
+            _pendingDiscardLeave = false;
             if (context.canPop()) {
               context.pop();
             }
-          } else {
-            AssignPatientSheet.show(context, state.sessionId);
+            return;
           }
-          return;
-        }
 
-        final viewModel = VoiceCaptureViewModel.fromState(state);
-        _syncRecordingTimer(viewModel.isListening);
-      },
-      builder: (context, state) {
-        final viewModel = VoiceCaptureViewModel.fromState(state);
-        final theme = Theme.of(context);
-
-        return PopScope(
-          canPop: !viewModel.hasUnsavedWork,
-          onPopInvokedWithResult: (didPop, _) {
-            if (didPop) {
-              return;
+          if (state is VoiceCaptureConsultationFinished) {
+            if (_returnHomeAfterTutorialConsultation) {
+              _returnHomeAfterTutorialConsultation = false;
+              context.goHome();
+            } else if (widget.patientId != null) {
+              if (context.canPop()) {
+                context.pop();
+              }
+            } else {
+              AssignPatientSheet.show(context, state.sessionId);
             }
-            _handleLeaveRequest(context);
-          },
-          child: Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.pagePadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppRecordHeaderCard(
-                      dateLabel: dateLabel,
-                      sessionTitle: _patientName,
-                      elapsedLabel: _formatElapsed(_elapsed),
-                      isRecording: viewModel.isListening,
-                      isInitializing: viewModel.isInitializing,
-                      canStart: viewModel.canStart,
-                      canStop: viewModel.canStop,
-                      onBack: () => _handleLeaveRequest(context),
-                      onToggleRecording: () {
-                      final bloc = context.read<VoiceCaptureBloc>();
-                      if (viewModel.canStop) {
-                        bloc.add(const VoiceCaptureStopRecording());
-                        return;
-                      }
-                      if (viewModel.canStart) {
-                        bloc.add(
-                          VoiceCaptureStartRecording(
-                            patientId: widget.patientId,
-                          ),
-                        );
-                      }
-                      },
-                      menuItems: [
-                      AppRecordMenuItem(
-                        label: l10n.buttonFinishConsultation,
-                        enabled: viewModel.canFinishConsultation,
-                        onSelected: () => context
-                            .read<VoiceCaptureBloc>()
-                            .add(const VoiceCaptureFinishConsultation()),
-                      ),
-                      AppRecordMenuItem(
-                        label: l10n.buttonClear,
-                        enabled: viewModel.canClear,
-                        onSelected: () {
-                          setState(() {
-                            _elapsed = Duration.zero;
-                            _recordingStartedAt = null;
-                          });
-                          context
-                              .read<VoiceCaptureBloc>()
-                              .add(const VoiceCaptureClearTranscript());
+            return;
+          }
+
+          final viewModel = VoiceCaptureViewModel.fromState(state);
+          _syncRecordingTimer(viewModel.isListening);
+          if (viewModel.transcript.trim().isNotEmpty) {
+            _completeTranscriptTutorialStep();
+          }
+        },
+        builder: (context, state) {
+          final viewModel = VoiceCaptureViewModel.fromState(state);
+          final theme = Theme.of(context);
+
+          return PopScope(
+            canPop: !viewModel.hasUnsavedWork,
+            onPopInvokedWithResult: (didPop, _) {
+              if (didPop) {
+                return;
+              }
+              _handleLeaveRequest(context);
+            },
+            child: Scaffold(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppRecordHeaderCard(
+                        dateLabel: dateLabel,
+                        sessionTitle: _patientName,
+                        elapsedLabel: _formatElapsed(_elapsed),
+                        isRecording: viewModel.isListening,
+                        isInitializing: viewModel.isInitializing,
+                        canStart: viewModel.canStart,
+                        canStop: viewModel.canStop,
+                        onBack: () => _handleLeaveRequest(context),
+                        onToggleRecording: () {
+                          if (viewModel.canStop) {
+                            _stopRecording();
+                            return;
+                          }
+                          if (viewModel.canStart) {
+                            _startRecording();
+                          }
                         },
+                        toggleWrapper: (child) => Showcase(
+                          key: _recordToggleKey,
+                          title: _recordToggleTutorialTitle(l10n, viewModel),
+                          description: _recordToggleTutorialDescription(
+                            l10n,
+                            viewModel,
+                          ),
+                          disposeOnTap: true,
+                          onTargetClick: _handlePrimaryShowcaseTap,
+                          child: child,
+                        ),
+                        menuWrapper: (child) => Showcase(
+                          key: _finishMenuKey,
+                          title: l10n.tutorialRecordFinishTitle,
+                          description: l10n.tutorialRecordFinishDesc,
+                          disposeOnTap: true,
+                          onTargetClick: _finishConsultation,
+                          child: child,
+                        ),
+                        menuItems: [
+                          AppRecordMenuItem(
+                            label: l10n.buttonFinishConsultation,
+                            enabled: viewModel.canFinishConsultation,
+                            onSelected: _finishConsultation,
+                          ),
+                          AppRecordMenuItem(
+                            label: l10n.buttonClear,
+                            enabled: viewModel.canClear,
+                            onSelected: () {
+                              setState(() {
+                                _elapsed = Duration.zero;
+                                _recordingStartedAt = null;
+                              });
+                              context
+                                  .read<VoiceCaptureBloc>()
+                                  .add(const VoiceCaptureClearTranscript());
+                            },
+                          ),
+                        ],
                       ),
+                      if (viewModel.errorMessage != null) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        AppText(
+                          viewModel.errorMessage!,
+                          variant: AppTextVariant.body,
+                          color: AppColors.error,
+                        ),
                       ],
-                    ),
-                  if (viewModel.errorMessage != null) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    AppText(
-                      viewModel.errorMessage!,
-                      variant: AppTextVariant.body,
-                      color: AppColors.error,
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.lg),
-                  Expanded(
-                    child: AppRecordTranscriptView(
-                      transcript: viewModel.transcript,
-                      emptyHint: l10n.transcriptEmptyHint,
-                    ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Expanded(
+                        child: Showcase(
+                          key: _transcriptKey,
+                          title: l10n.tutorialRecordTranscriptTitle,
+                          description: l10n.tutorialRecordTranscriptDesc,
+                          child: AppRecordTranscriptView(
+                            transcript: viewModel.transcript,
+                            emptyHint: l10n.transcriptEmptyHint,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-        );
-      },
+          );
+        },
+      ),
     );
-  }
-
-  String _statusLabel(AppLocalizations l10n, VoiceCaptureSessionStatus status) {
-    return switch (status) {
-      VoiceCaptureSessionStatus.initializing => l10n.recordStatusInitializing,
-      VoiceCaptureSessionStatus.processing => l10n.recordStatusInitializing,
-      VoiceCaptureSessionStatus.listening => l10n.recordStatusListening,
-      VoiceCaptureSessionStatus.paused => l10n.recordStatusPaused,
-      VoiceCaptureSessionStatus.ended => l10n.recordStatusEnded,
-      _ => l10n.recordStatusReady,
-    };
-  }
-
-  Color _statusColor(VoiceCaptureSessionStatus status) {
-    return switch (status) {
-      VoiceCaptureSessionStatus.listening => AppColors.info,
-      VoiceCaptureSessionStatus.paused => AppColors.textSecondary,
-      VoiceCaptureSessionStatus.failure => AppColors.error,
-      _ => AppColors.textSecondary,
-    };
   }
 }

@@ -108,8 +108,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       await _sessionStorage.markOnboardingCompleted();
       _authNotifier.setHasCompletedOnboarding(true);
-      _authNotifier.setAuthenticated(true);
-      emit(AuthAuthenticated(user));
+      _authNotifier.setAuthenticated(false);
+      emit(const AuthRegisterSuccess());
     } catch (e) {
       _authNotifier.setAuthenticated(false);
       emit(AuthError(Failure.fromException(e).message));

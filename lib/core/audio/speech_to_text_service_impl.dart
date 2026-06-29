@@ -34,17 +34,18 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       _log('web:speechRecognitionSupported=$supported');
     }
 
-    final available = await _speech.initialize(
-      onStatus: _onSpeechStatus,
-      onError: _onSpeechError,
-    );
+    try {
+      final available = await _speech.initialize(
+        onStatus: _onSpeechStatus,
+        onError: _onSpeechError,
+      );
 
       if (!available) {
         throw const AudioException('Reconnaissance vocale indisponible');
       }
 
       return true;
-    } catch (error, stackTrace) {
+    } catch (error) {
       _log('initialize:exception=$error');
       rethrow;
     }

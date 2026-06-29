@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/error/exceptions.dart';

@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
-import 'package:intl/intl.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
-import 'package:medicail/features/recording/domain/entities/recording_session.dart';
-import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_bloc.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_event.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_state.dart';
-import 'package:medicail/widget/app_button.dart';
-import 'package:medicail/widget/app_scaffold.dart';
-import 'package:medicail/widget/app_text.dart';
-import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
+import 'package:medicail/widget/app_button.dart';
+import 'package:medicail/widget/app_scaffold.dart';
+import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientDetailPage extends StatelessWidget {
@@ -96,6 +97,7 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
                   : _PatientDetailView(
                       patient: patient,
                       sessions: sessions,
+                      consultKey: _consultKey,
                       onRefresh: () {
                         context
                             .read<PatientDetailBloc>()
@@ -203,6 +205,7 @@ class _RecordingSessionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final hasSoap = session.soapNote != null;
+    final summary = session.summary;
 
     final theme = Theme.of(context);
 

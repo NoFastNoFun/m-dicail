@@ -230,6 +230,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     );
   }
 
+  Future<void> _stopListeningSafely() async {
+    try {
+      await _audioCaptureService.stopListening();
+    } catch (_) {
+      // Best effort cleanup after a failed recording start.
+    }
+  }
+
   String get _currentTranscript {
     return switch (state) {
       VoiceCaptureReady(:final transcript) => transcript,

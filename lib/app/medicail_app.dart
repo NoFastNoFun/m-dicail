@@ -67,6 +67,10 @@ class _MedicailAppState extends State<MedicailApp> {
                     create: (_) =>
                         getIt<SettingsBloc>()..add(const SettingsLoadRequested()),
                   ),
+                  BlocProvider<TutorialBloc>(
+                    create: (_) =>
+                        getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
+                  ),
                 ],
                 child: AppToastHost(child: child ?? const SizedBox.shrink()),
               ),

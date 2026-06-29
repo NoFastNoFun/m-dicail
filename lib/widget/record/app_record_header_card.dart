@@ -19,6 +19,8 @@ class AppRecordHeaderCard extends StatelessWidget {
     required this.onBack,
     required this.onToggleRecording,
     required this.menuItems,
+    this.toggleWrapper,
+    this.menuWrapper,
   });
 
   final String dateLabel;
@@ -31,11 +33,23 @@ class AppRecordHeaderCard extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback onToggleRecording;
   final List<AppRecordMenuItem> menuItems;
+  final Widget Function(Widget child)? toggleWrapper;
+  final Widget Function(Widget child)? menuWrapper;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     final controlSurface = colorScheme.surface.withValues(alpha: 0.9);
+    final toggleButton = AppRecordToggleButton(
+      isRecording: isRecording,
+      isLoading: isInitializing,
+      enabled: canStart || canStop,
+      onPressed: onToggleRecording,
+    );
+    final menuButton = _RecordMenuButton(
+      backgroundColor: controlSurface,
+      items: menuItems,
+    );
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -84,18 +98,10 @@ class AppRecordHeaderCard extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
-                child: AppRecordToggleButton(
-                  isRecording: isRecording,
-                  isLoading: isInitializing,
-                  enabled: canStart || canStop,
-                  onPressed: onToggleRecording,
-                ),
+                child: toggleWrapper?.call(toggleButton) ?? toggleButton,
               ),
               const SizedBox(width: AppSpacing.md),
-              _RecordMenuButton(
-                backgroundColor: controlSurface,
-                items: menuItems,
-              ),
+              menuWrapper?.call(menuButton) ?? menuButton,
             ],
           ),
         ],
