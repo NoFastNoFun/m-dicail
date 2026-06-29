@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/config/app_config.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
-import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/inputs/input_validation_l10n.dart';
-import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -66,6 +66,8 @@ class _RegisterPageState extends State<RegisterPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
+          } else if (state is AuthGuest) {
+            context.go(AppRoutes.home);
           }
           if (state is AuthRegisterSuccess) {
             context.go(AppRoutes.login);
@@ -89,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   AppText(
                     l10n.registerSubtitle,
                     variant: AppTextVariant.body,
-                    color: AppColors.textSecondary,
+                    color: context.secondaryTextColor,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xxl),
@@ -119,6 +121,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         label: l10n.registerSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppButton(
+                    label: l10n.loginContinueWithoutAccount,
+                    style: AppButtonStyle.secondary,
+                    onPressed: () {
+                      context.read<AuthBloc>().add(
+                        const AuthGuestContinueRequested(),
                       );
                     },
                   ),

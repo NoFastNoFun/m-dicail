@@ -1,23 +1,30 @@
 import 'dart:async';
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
-import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
-import 'package:medicail/widget/app_button.dart';
-import 'package:medicail/widget/app_scaffold.dart';
-import 'package:medicail/widget/app_session_status_banner.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
-import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/widget/buttons/app_button.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
+import 'package:medicail/widget/record/app_record_header_card.dart';
+import 'package:medicail/widget/record/app_record_transcript_view.dart';
+
+enum _RecordLeaveAction { save, discard, cancel }
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -51,27 +58,25 @@ class _RecordView extends StatefulWidget {
 }
 
 class _RecordViewState extends State<_RecordView> {
-  late final TextEditingController _transcriptController;
-  final GlobalKey _startRecordKey = GlobalKey();
-  final GlobalKey _transcriptKey = GlobalKey();
-  final GlobalKey _stopRecordKey = GlobalKey();
-  final GlobalKey _finishConsultationKey = GlobalKey();
-  final Set<TutorialStepId> _startedTutorialSteps = {};
-  Timer? _transcriptTutorialTimer;
-  bool _returnHomeAfterTutorialConsultation = false;
+  String? _patientName;
+  Duration _elapsed = Duration.zero;
+  DateTime? _recordingStartedAt;
+  Timer? _timer;
+  bool _wasListening = false;
+  bool _pendingDiscardLeave = false;
 
   @override
   void initState() {
     super.initState();
-    _transcriptController = TextEditingController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _handleTutorialState(context.read<TutorialBloc>().state);
-    });
+    final patientId = widget.patientId;
+    if (patientId != null && patientId.isNotEmpty) {
+      _loadPatientName(patientId);
+    }
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
     _transcriptController.dispose();
     super.dispose();
@@ -187,12 +192,132 @@ class _RecordViewState extends State<_RecordView> {
     );
   }
 
+  Future<void> _loadPatientName(String patientId) async {
+    final patient = await getIt<PatientRepository>().getById(patientId);
+    if (!mounted || patient == null) {
+      return;
+    }
+    setState(() => _patientName = patient.displayName);
+  }
+
+  void _syncRecordingTimer(bool isListening) {
+    if (isListening && !_wasListening) {
+      _recordingStartedAt = DateTime.now().subtract(_elapsed);
+      _timer?.cancel();
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        final startedAt = _recordingStartedAt;
+        if (startedAt == null || !mounted) {
+          return;
+        }
+        setState(() {
+          _elapsed = DateTime.now().difference(startedAt);
+        });
+      });
+    } else if (!isListening && _wasListening) {
+      _timer?.cancel();
+      _timer = null;
+      final startedAt = _recordingStartedAt;
+      if (startedAt != null) {
+        _elapsed = DateTime.now().difference(startedAt);
+      }
+      _recordingStartedAt = null;
+    }
+    _wasListening = isListening;
+  }
+
+  String _formatElapsed(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:'
+        '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _handleLeaveRequest(BuildContext context) async {
+    final viewModel = VoiceCaptureViewModel.fromState(
+      context.read<VoiceCaptureBloc>().state,
+    );
+    if (!viewModel.hasUnsavedWork) {
+      if (context.canPop()) {
+        context.pop();
+      }
+      return;
+    }
+
+    await _confirmLeave(context);
+  }
+
+  Future<void> _confirmLeave(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final hasPatient =
+        widget.patientId != null && widget.patientId!.isNotEmpty;
+
+    final action = await AppDialog.show<_RecordLeaveAction>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.recordLeaveTitle,
+      body: AppText(
+        hasPatient ? l10n.recordLeaveMessageWithPatient : l10n.recordLeaveMessage,
+        variant: AppTextVariant.body,
+      ),
+      actions: [
+        AppButton(
+          label: l10n.recordLeaveCancel,
+          style: AppButtonStyle.secondary,
+          expanded: false,
+          onPressed: () =>
+              Navigator.of(context).pop(_RecordLeaveAction.cancel),
+        ),
+        AppButton(
+          label: l10n.recordLeaveDiscard,
+          style: AppButtonStyle.error,
+          expanded: false,
+          onPressed: () =>
+              Navigator.of(context).pop(_RecordLeaveAction.discard),
+        ),
+        AppButton(
+          label: hasPatient
+              ? l10n.recordLeaveSave
+              : l10n.recordLeaveSaveAndAssign,
+          expanded: false,
+          onPressed: () => Navigator.of(context).pop(_RecordLeaveAction.save),
+        ),
+      ],
+    );
+
+    if (!context.mounted ||
+        action == null ||
+        action == _RecordLeaveAction.cancel) {
+      return;
+    }
+
+    final bloc = context.read<VoiceCaptureBloc>();
+    if (action == _RecordLeaveAction.save) {
+      bloc.add(const VoiceCaptureFinishConsultation());
+      return;
+    }
+
+    setState(() => _pendingDiscardLeave = true);
+    bloc.add(const VoiceCaptureDiscardConsultation());
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final dateLabel = DateFormat('EEE, MMM d', locale).format(DateTime.now());
 
     return BlocConsumer<VoiceCaptureBloc, VoiceCaptureState>(
       listener: (context, state) {
+        if (_pendingDiscardLeave && state is VoiceCaptureReady) {
+          _pendingDiscardLeave = false;
+          if (context.canPop()) {
+            context.pop();
+          }
+          return;
+        }
+
         if (state is VoiceCaptureConsultationFinished) {
           if (_returnHomeAfterTutorialConsultation) {
             _returnHomeAfterTutorialConsultation = false;
@@ -207,119 +332,95 @@ class _RecordViewState extends State<_RecordView> {
           return;
         }
 
-        final transcript = VoiceCaptureViewModel.fromState(state).transcript;
-        if (_transcriptController.text != transcript) {
-          _transcriptController.text = transcript;
-        }
+        final viewModel = VoiceCaptureViewModel.fromState(state);
+        _syncRecordingTimer(viewModel.isListening);
       },
       builder: (context, state) {
         final viewModel = VoiceCaptureViewModel.fromState(state);
+        final theme = Theme.of(context);
 
-        return BlocListener<TutorialBloc, TutorialState>(
-          listener: (context, tutState) {
-            _handleTutorialState(tutState);
+        return PopScope(
+          canPop: !viewModel.hasUnsavedWork,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) {
+              return;
+            }
+            _handleLeaveRequest(context);
           },
-          child: AppScaffold(
-            title: l10n.recordTitle,
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppSessionStatusBanner(
-                  label: viewModel.errorMessage != null
-                      ? l10n.errorAudio
-                      : _statusLabel(l10n, viewModel.status),
-                  color: _statusColor(viewModel.status),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                if (viewModel.errorMessage != null) ...[
-                  AppText(
-                    viewModel.errorMessage!,
-                    variant: AppTextVariant.body,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-                Showcase(
-                  key: _transcriptKey,
-                  title: l10n.tutorialRecordTranscriptTitle,
-                  description: l10n.tutorialRecordTranscriptDesc,
-                  disposeOnTap: true,
-                  onTargetClick: _completeTranscriptTutorialStep,
-                  child: AppInput(
-                    variant: AppInputVariant.textarea,
-                    label: l10n.transcriptLabel,
-                    hint: l10n.transcriptEmptyHint,
-                    controller: _transcriptController,
-                    readOnly: true,
-                    maxLines: 12,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Row(
+          child: Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: Showcase(
-                        key: _startRecordKey,
-                        title: l10n.tutorialRecordTitle,
-                        description: l10n.tutorialRecordDesc,
-                        disposeOnTap: true,
-                        onTargetClick: () {
-                          _startRecording();
+                    AppRecordHeaderCard(
+                      dateLabel: dateLabel,
+                      sessionTitle: _patientName,
+                      elapsedLabel: _formatElapsed(_elapsed),
+                      isRecording: viewModel.isListening,
+                      isInitializing: viewModel.isInitializing,
+                      canStart: viewModel.canStart,
+                      canStop: viewModel.canStop,
+                      onBack: () => _handleLeaveRequest(context),
+                      onToggleRecording: () {
+                      final bloc = context.read<VoiceCaptureBloc>();
+                      if (viewModel.canStop) {
+                        bloc.add(const VoiceCaptureStopRecording());
+                        return;
+                      }
+                      if (viewModel.canStart) {
+                        bloc.add(
+                          VoiceCaptureStartRecording(
+                            patientId: widget.patientId,
+                          ),
+                        );
+                      }
+                      },
+                      menuItems: [
+                      AppRecordMenuItem(
+                        label: l10n.buttonFinishConsultation,
+                        enabled: viewModel.canFinishConsultation,
+                        onSelected: () => context
+                            .read<VoiceCaptureBloc>()
+                            .add(const VoiceCaptureFinishConsultation()),
+                      ),
+                      AppRecordMenuItem(
+                        label: l10n.buttonClear,
+                        enabled: viewModel.canClear,
+                        onSelected: () {
+                          setState(() {
+                            _elapsed = Duration.zero;
+                            _recordingStartedAt = null;
+                          });
+                          context
+                              .read<VoiceCaptureBloc>()
+                              .add(const VoiceCaptureClearTranscript());
                         },
-                        child: AppButton(
-                          label: l10n.buttonStart,
-                          onPressed: () {
-                            _startRecording();
-                          },
-                          isLoading: viewModel.isInitializing,
-                          enabled: viewModel.canStart,
-                        ),
                       ),
+                      ],
                     ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Showcase(
-                        key: _stopRecordKey,
-                        title: l10n.tutorialRecordStopTitle,
-                        description: l10n.tutorialRecordStopDesc,
-                        disposeOnTap: true,
-                        onTargetClick: _stopRecording,
-                        child: AppButton(
-                          label: l10n.buttonStop,
-                          style: AppButtonStyle.secondary,
-                          onPressed: _stopRecording,
-                          enabled: viewModel.canStop,
-                        ),
-                      ),
+                  if (viewModel.errorMessage != null) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    AppText(
+                      viewModel.errorMessage!,
+                      variant: AppTextVariant.body,
+                      color: AppColors.error,
                     ),
                   ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Showcase(
-                  key: _finishConsultationKey,
-                  title: l10n.tutorialRecordFinishTitle,
-                  description: l10n.tutorialRecordFinishDesc,
-                  disposeOnTap: true,
-                  onTargetClick: _finishConsultation,
-                  child: AppButton(
-                    label: l10n.buttonFinishConsultation,
-                    style: AppButtonStyle.warning,
-                    onPressed: _finishConsultation,
-                    enabled: viewModel.canFinishConsultation,
+                  const SizedBox(height: AppSpacing.lg),
+                  Expanded(
+                    child: AppRecordTranscriptView(
+                      transcript: viewModel.transcript,
+                      emptyHint: l10n.transcriptEmptyHint,
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppButton(
-                  label: l10n.buttonClear,
-                  style: AppButtonStyle.secondary,
-                  onPressed: () => context.read<VoiceCaptureBloc>().add(
-                    const VoiceCaptureClearTranscript(),
-                  ),
-                  enabled: viewModel.canClear,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+        ),
         );
       },
     );

@@ -79,4 +79,8 @@ final class VoiceCaptureViewModel {
   bool get canFinishConsultation => isConsultationOpen;
 
   bool get canClear => !isConsultationOpen && hasTranscript;
+
+  bool get hasUnsavedWork =>
+      isConsultationOpen ||
+      (hasTranscript && status != VoiceCaptureSessionStatus.initializing);
 }

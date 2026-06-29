@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_typography.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/inputs/input_validators.dart';
 
 enum AppInputVariant { text, number, email, password, textarea }
@@ -74,6 +75,9 @@ class _AppInputState extends State<AppInput> {
 
   @override
   Widget build(BuildContext context) {
+    final secondaryColor = context.secondaryTextColor;
+    final errorColor = Theme.of(context).colorScheme.error;
+
     final effectiveValidator = widget.validator ?? _defaultValidator;
     final isPassword = widget.variant == AppInputVariant.password;
     final isTextarea = widget.variant == AppInputVariant.textarea;
@@ -99,11 +103,11 @@ class _AppInputState extends State<AppInput> {
         labelText: widget.label,
         hintText: widget.hint,
         errorText: widget.errorText,
-        errorStyle: AppTypography.caption.copyWith(color: AppColors.error),
+        errorStyle: AppTypography.caption.copyWith(color: errorColor),
         errorBorder: _errorBorder,
         focusedErrorBorder: _focusedErrorBorder,
         prefixIcon: widget.prefixIcon != null
-            ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
+            ? Icon(widget.prefixIcon, color: secondaryColor)
             : null,
         suffixIcon: isPassword
             ? IconButton(
@@ -111,7 +115,7 @@ class _AppInputState extends State<AppInput> {
                   _obscurePassword
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
-                  color: AppColors.textSecondary,
+                  color: secondaryColor,
                 ),
                 onPressed: widget.enabled && !widget.readOnly
                     ? () => setState(() => _obscurePassword = !_obscurePassword)

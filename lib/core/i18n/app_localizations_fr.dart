@@ -15,6 +15,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeTitle => 'Accueil';
 
   @override
+  String get homeSignIn => 'Se connecter';
+
+  @override
   String get recordTitle => 'Enregistrement';
 
   @override
@@ -349,7 +352,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loginWelcomeSubtitle =>
-      'Connectez-vous pour accéder à vos dossiers.';
+      'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.';
 
   @override
   String get loginEmailLabel => 'Adresse email';
@@ -361,7 +364,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginSubmit => 'Se connecter';
 
   @override
-  String get loginCreateAccountButton => 'Créer un compte';
+  String get loginCreateAccountButton => 'Creer un compte';
+
+  @override
+  String get loginContinueWithoutAccount => 'Continuer sans compte';
 
   @override
   String get registerTitle => 'Créer un compte';
@@ -396,6 +402,89 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get assignPatientError => 'Erreur lors de l\'association';
+
+  @override
+  String get recordLeaveTitle => 'Quitter l\'enregistrement ?';
+
+  @override
+  String get recordLeaveMessage =>
+      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?';
+
+  @override
+  String get recordLeaveMessageWithPatient =>
+      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?';
+
+  @override
+  String get recordLeaveSaveAndAssign => 'Enregistrer et associer';
+
+  @override
+  String get recordLeaveSave => 'Enregistrer';
+
+  @override
+  String get recordLeaveDiscard => 'Quitter sans enregistrer';
+
+  @override
+  String get recordLeaveCancel => 'Continuer l\'enregistrement';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navPatients => 'Patients';
+
+  @override
+  String get navSettings => 'Reglages';
+
+  @override
+  String get radialActionPatients => 'Dossiers patients';
+
+  @override
+  String get radialActionNewRecord => 'Nouvel enregistrement';
+
+  @override
+  String get settingsTitle => 'Reglages';
+
+  @override
+  String get settingsTheme => 'Theme';
+
+  @override
+  String get settingsThemeLight => 'Clair';
+
+  @override
+  String get settingsThemeDark => 'Sombre';
+
+  @override
+  String get settingsThemeSolarized => 'Solarized';
+
+  @override
+  String get settingsFontSize => 'Taille du texte';
+
+  @override
+  String get settingsFontSizeSmall => 'Petit';
+
+  @override
+  String get settingsFontSizeDefault => 'Normal';
+
+  @override
+  String get settingsFontSizeLarge => 'Grand';
+
+  @override
+  String get settingsFontSizeExtraLarge => 'Tres grand';
+
+  @override
+  String get settingsTemplates => 'Modeles';
+
+  @override
+  String get settingsRestartOnboarding => 'Recommencer l\'introduction';
+
+  @override
+  String get settingsTbd => 'TBD';
+
+  @override
+  String get settingsLogout => 'Se deconnecter';
+
+  @override
+  String get settingsSignIn => 'Se connecter';
 
   @override
   String get tutorialIntroTitle => 'Decouvrir Medicail';

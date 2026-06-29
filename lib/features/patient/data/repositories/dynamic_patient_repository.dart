@@ -20,7 +20,7 @@ class DynamicPatientRepository implements PatientRepository {
 
   Future<PatientRepository> _getRepository() async {
     final token = await _tokenStorage.readToken();
-    if (token == AppConfig.mockAdminToken) {
+    if (AppConfig.isOfflineMode(token)) {
       return _localRepository;
     }
     return _apiRepository;

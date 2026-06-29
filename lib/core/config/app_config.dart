@@ -10,6 +10,9 @@ class AppConfig {
 
   static bool get enableMockAdmin => kDebugMode;
 
+  static bool isOfflineMode(String? token) =>
+      token == null || token == mockAdminToken;
+
   String get baseUrl {
     const envUrl = String.fromEnvironment('API_BASE_URL');
     if (envUrl.isNotEmpty) {

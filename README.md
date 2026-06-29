@@ -62,12 +62,34 @@ flutter run -d windows
 flutter run -d android
 ```
 
-## Mode hors ligne (mock admin)
+## Mode hors ligne (invite)
 
-En **debug**, l'application permet de se connecter avec `admin` / `admin` sans
-backend. Ce mode est desactive automatiquement en **release**.
+L'application fonctionne sans compte. Au premier lancement, l'ecran de connexion
+propose **Continuer sans compte** : les patients, sessions et notes SOAP sont
+alors stockes localement de maniere chiffree (`flutter_secure_storage`).
 
-Sur l'ecran de connexion, un double-tap sur le logo pre-remplit ces identifiants.
+Les lancements suivants ouvrent directement l'accueil. La connexion reste
+optionnelle pour synchroniser avec le backend.
+
+Un mode de test supplementaire permet de se connecter avec les identifiants
+`admin` / `admin` sans backend. Il est active via un flag de compilation
+`--dart-define`.
+
+### Depuis le terminal
+
+```bash
+flutter run --dart-define=ENABLE_MOCK_ADMIN=true
+```
+
+### Depuis VS Code
+
+Le fichier `.vscode/launch.json` contient deux configurations pre-configurees :
+
+- **Medicail (mock admin)** : mode hors ligne avec le flag active
+- **Medicail** : mode standard (connexion au backend)
+
+Selectionnez la configuration souhaitee dans le menu de lancement de VS Code
+(F5 ou barre de debug), puis lancez.
 
 ### Variables d'environnement disponibles
 

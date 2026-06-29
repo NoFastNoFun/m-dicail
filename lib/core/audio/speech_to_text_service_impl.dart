@@ -34,18 +34,10 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       _log('web:speechRecognitionSupported=$supported');
     }
 
-    try {
-      final available = await _speech.initialize(
-        onStatus: _onSpeechStatus,
-        onError: (error) {
-          _log('native:error=${error.errorMsg} permanent=${error.permanent}');
-        },
-        debugLogging: kDebugMode,
-      );
-
-      _log(
-        'initialize:done available=$available isAvailable=${_speech.isAvailable}',
-      );
+    final available = await _speech.initialize(
+      onStatus: _onSpeechStatus,
+      onError: _onSpeechError,
+    );
 
       if (!available) {
         throw const AudioException('Reconnaissance vocale indisponible');
@@ -71,6 +63,13 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     }
   }
 
+  void _onSpeechError(Object error) {
+    _isListening = false;
+    if (_keepListening) {
+      _onListeningEnded?.call();
+    }
+  }
+
   @override
   Future<void> startListening({
     required void Function(String text) onResult,
@@ -89,33 +88,22 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     _onListeningEnded = onListeningEnded;
     _keepListening = true;
 
-    try {
-      await _speech.listen(
-        onResult: (result) {
-          _log(
-            'result:received final=${result.finalResult} chars=${result.recognizedWords.length}',
-          );
-          if (result.recognizedWords.isNotEmpty) {
-            onResult(result.recognizedWords);
-          }
-        },
-        localeId: kIsWeb ? 'fr-FR' : 'fr_FR',
-        pauseFor: _pauseFor,
-        listenFor: _listenFor,
-        listenOptions: SpeechListenOptions(
-          partialResults: true,
-          listenMode: ListenMode.dictation,
-        ),
-      );
-      _isListening = true;
-      _log(
-        'listen:requested pluginListening=${_speech.isListening} localListening=$_isListening',
-      );
-    } catch (error, stackTrace) {
-      _keepListening = false;
-      _log('listen:exception=$error');
-      rethrow;
-    }
+    await _speech.listen(
+      onResult: (result) {
+        if (result.recognizedWords.isNotEmpty) {
+          onResult(result.recognizedWords);
+        }
+      },
+      localeId: 'fr_FR',
+      pauseFor: _pauseFor,
+      listenFor: _listenFor,
+      listenOptions: SpeechListenOptions(
+        cancelOnError: false,
+        partialResults: true,
+        listenMode: ListenMode.dictation,
+      ),
+    );
+    _isListening = true;
   }
 
   @override

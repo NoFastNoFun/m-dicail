@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
@@ -147,12 +147,14 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    final theme = Theme.of(context);
+
     return BlocListener<TutorialBloc, TutorialState>(
       listener: (context, state) => _handleTutorialState(state),
       child: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -184,9 +186,9 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     TabBar(
-                      labelColor: AppColors.primary,
-                      unselectedLabelColor: AppColors.textSecondary,
-                      indicatorColor: AppColors.primary,
+                      labelColor: theme.colorScheme.primary,
+                      unselectedLabelColor: context.secondaryTextColor,
+                      indicatorColor: theme.colorScheme.primary,
                       tabs: [
                         Tab(text: l10n.assignPatientSearchTab),
                         Tab(text: l10n.assignPatientNewTab),
@@ -286,7 +288,7 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                     child: AppText(
                       l10n.patientsEmpty,
                       variant: AppTextVariant.body,
-                      color: AppColors.textSecondary,
+                      color: context.secondaryTextColor,
                     ),
                   );
                 }
@@ -297,6 +299,7 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                       const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final patient = patients[index];
+                    final theme = Theme.of(context);
                     return InkWell(
                       onTap: () => AssignPatientSheet._assignAndNavigate(
                         context,
@@ -306,8 +309,8 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                       ),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          border: Border.all(color: AppColors.border),
+                          color: theme.colorScheme.surface,
+                          border: Border.all(color: theme.dividerColor),
                           borderRadius: AppRadius.mdBorder,
                         ),
                         child: Padding(
@@ -323,7 +326,7 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                               AppText(
                                 'MRN: ${patient.mrn}',
                                 variant: AppTextVariant.caption,
-                                color: AppColors.textSecondary,
+                                color: context.secondaryTextColor,
                               ),
                             ],
                           ),

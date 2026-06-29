@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// **'Accueil'**
   String get homeTitle;
 
+  /// No description provided for @homeSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get homeSignIn;
+
   /// No description provided for @recordTitle.
   ///
   /// In fr, this message translates to:
@@ -769,7 +775,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginWelcomeSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Connectez-vous pour accéder à vos dossiers.'**
+  /// **'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.'**
   String get loginWelcomeSubtitle;
 
   /// No description provided for @loginEmailLabel.
@@ -793,8 +799,14 @@ abstract class AppLocalizations {
   /// No description provided for @loginCreateAccountButton.
   ///
   /// In fr, this message translates to:
-  /// **'Créer un compte'**
+  /// **'Creer un compte'**
   String get loginCreateAccountButton;
+
+  /// No description provided for @loginContinueWithoutAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer sans compte'**
+  String get loginContinueWithoutAccount;
 
   /// No description provided for @registerTitle.
   ///
@@ -861,6 +873,168 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Erreur lors de l\'association'**
   String get assignPatientError;
+
+  /// No description provided for @recordLeaveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter l\'enregistrement ?'**
+  String get recordLeaveTitle;
+
+  /// No description provided for @recordLeaveMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?'**
+  String get recordLeaveMessage;
+
+  /// No description provided for @recordLeaveMessageWithPatient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?'**
+  String get recordLeaveMessageWithPatient;
+
+  /// No description provided for @recordLeaveSaveAndAssign.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer et associer'**
+  String get recordLeaveSaveAndAssign;
+
+  /// No description provided for @recordLeaveSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get recordLeaveSave;
+
+  /// No description provided for @recordLeaveDiscard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter sans enregistrer'**
+  String get recordLeaveDiscard;
+
+  /// No description provided for @recordLeaveCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer l\'enregistrement'**
+  String get recordLeaveCancel;
+
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get navPatients;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reglages'**
+  String get navSettings;
+
+  /// No description provided for @radialActionPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers patients'**
+  String get radialActionPatients;
+
+  /// No description provided for @radialActionNewRecord.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel enregistrement'**
+  String get radialActionNewRecord;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reglages'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Theme'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clair'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sombre'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeSolarized.
+  ///
+  /// In fr, this message translates to:
+  /// **'Solarized'**
+  String get settingsThemeSolarized;
+
+  /// No description provided for @settingsFontSize.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille du texte'**
+  String get settingsFontSize;
+
+  /// No description provided for @settingsFontSizeSmall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Petit'**
+  String get settingsFontSizeSmall;
+
+  /// No description provided for @settingsFontSizeDefault.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normal'**
+  String get settingsFontSizeDefault;
+
+  /// No description provided for @settingsFontSizeLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Grand'**
+  String get settingsFontSizeLarge;
+
+  /// No description provided for @settingsFontSizeExtraLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tres grand'**
+  String get settingsFontSizeExtraLarge;
+
+  /// No description provided for @settingsTemplates.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles'**
+  String get settingsTemplates;
+
+  /// No description provided for @settingsRestartOnboarding.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommencer l\'introduction'**
+  String get settingsRestartOnboarding;
+
+  /// No description provided for @settingsTbd.
+  ///
+  /// In fr, this message translates to:
+  /// **'TBD'**
+  String get settingsTbd;
+
+  /// No description provided for @settingsLogout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se deconnecter'**
+  String get settingsLogout;
+
+  /// No description provided for @settingsSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get settingsSignIn;
 
   /// No description provided for @tutorialIntroTitle.
   ///

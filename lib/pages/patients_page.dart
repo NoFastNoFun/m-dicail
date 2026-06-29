@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
@@ -170,7 +170,7 @@ class _PatientsViewState extends State<_PatientsView> {
                 _showCreatePatientSheet(context);
               },
               child: IconButton(
-                icon: const Icon(Icons.add, color: AppColors.textPrimary),
+                icon: Icon(Icons.add, color: context.colorScheme.onSurface),
                 onPressed: () {
                   context.read<TutorialBloc>().completeStep(
                     TutorialStepId.patientsAdd,
@@ -207,7 +207,7 @@ class _PatientsViewState extends State<_PatientsView> {
                           child: AppText(
                             l10n.patientsEmpty,
                             variant: AppTextVariant.body,
-                            color: AppColors.textSecondary,
+                            color: context.secondaryTextColor,
                           ),
                         )
                       : ListView.separated(
@@ -244,10 +244,12 @@ class _PatientListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    final theme = Theme.of(context);
+
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.dividerColor),
         borderRadius: AppRadius.mdBorder,
       ),
       child: Padding(
@@ -276,17 +278,17 @@ class _PatientListItem extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.badge_outlined,
                   size: 16,
-                  color: AppColors.textSecondary,
+                  color: context.secondaryTextColor,
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: AppText(
                     'MRN: ${patient.mrn}',
                     variant: AppTextVariant.caption,
-                    color: AppColors.textSecondary,
+                    color: context.secondaryTextColor,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

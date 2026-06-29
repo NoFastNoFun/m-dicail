@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -86,28 +86,22 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
           body: isLoading
               ? const Center(child: CircularProgressIndicator())
               : patient == null
-              ? Center(
-                  child: AppText(
-                    l10n.patientNotFound,
-                    variant: AppTextVariant.body,
-                    color: AppColors.textSecondary,
-                  ),
-                )
-              : BlocListener<TutorialBloc, TutorialState>(
-                  listener: (context, state) {
-                    _handleTutorialState(state);
-                  },
-                  child: _PatientDetailView(
-                    patient: patient,
-                    sessions: sessions,
-                    consultKey: _consultKey,
-                    onRefresh: () {
-                      context.read<PatientDetailBloc>().add(
-                        PatientDetailRequested(patient.id),
-                      );
-                    },
-                  ),
-                ),
+                  ? Center(
+                      child: AppText(
+                        l10n.patientNotFound,
+                        variant: AppTextVariant.body,
+                        color: context.secondaryTextColor,
+                      ),
+                    )
+                  : _PatientDetailView(
+                      patient: patient,
+                      sessions: sessions,
+                      onRefresh: () {
+                        context
+                            .read<PatientDetailBloc>()
+                            .add(PatientDetailRequested(patient.id));
+                      },
+                    ),
         );
       },
     );
@@ -139,7 +133,7 @@ class _PatientDetailView extends StatelessWidget {
         AppText(
           patient.id,
           variant: AppTextVariant.caption,
-          color: AppColors.textSecondary,
+          color: context.secondaryTextColor,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -176,7 +170,7 @@ class _PatientDetailView extends StatelessWidget {
                   child: AppText(
                     l10n.patientSessionsEmpty,
                     variant: AppTextVariant.body,
-                    color: AppColors.textSecondary,
+                    color: context.secondaryTextColor,
                   ),
                 )
               : ListView.separated(
@@ -209,12 +203,13 @@ class _RecordingSessionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final hasSoap = session.soapNote != null;
-    final summary = session.summary?.trim();
+
+    final theme = Theme.of(context);
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.dividerColor),
         borderRadius: AppRadius.mdBorder,
       ),
       child: Padding(
@@ -238,16 +233,16 @@ class _RecordingSessionListItem extends StatelessWidget {
                       AppText(
                         '${l10n.recordingStatusLabel}: ${session.status.name}',
                         variant: AppTextVariant.caption,
-                        color: AppColors.textSecondary,
+                        color: context.secondaryTextColor,
                       ),
                     ],
                   ),
                 ),
                 if (hasSoap)
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.edit_document,
-                      color: AppColors.primary,
+                      color: context.colorScheme.primary,
                     ),
                     tooltip: l10n.soapNoteViewAction,
                     onPressed: () {

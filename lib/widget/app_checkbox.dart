@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppCheckbox extends StatelessWidget {
@@ -16,11 +15,13 @@ class AppCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return CheckboxListTile(
       value: value,
       onChanged: onChanged,
-      activeColor: AppColors.primary,
-      checkColor: AppColors.onPrimary,
+      activeColor: colorScheme.primary,
+      checkColor: colorScheme.onPrimary,
       title: AppText(label, variant: AppTextVariant.body),
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: EdgeInsets.zero,

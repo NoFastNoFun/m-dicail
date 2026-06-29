@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 
@@ -65,6 +66,7 @@ class AppToastWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final accent = switch (type) {
       AppToastType.success => AppColors.success,
       AppToastType.warning => AppColors.warning,
@@ -88,12 +90,12 @@ class AppToastWidget extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: theme.scaffoldBackgroundColor,
           borderRadius: AppRadius.mdBorder,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: theme.dividerColor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: theme.colorScheme.shadow.withValues(alpha: 0.12),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -115,7 +117,7 @@ class AppToastWidget extends StatelessWidget {
             Expanded(child: AppText(message, variant: AppTextVariant.body)),
             IconButton(
               icon: const Icon(Icons.close, size: 20),
-              color: AppColors.textSecondary,
+              color: context.secondaryTextColor,
               onPressed: onDismiss,
               visualDensity: VisualDensity.compact,
             ),

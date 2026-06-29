@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/config/app_config.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
@@ -69,6 +69,8 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
+          } else if (state is AuthGuest) {
+            context.go(AppRoutes.home);
           }
         },
         child: Center(
@@ -80,13 +82,10 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  GestureDetector(
-                    onDoubleTap: _fillMockAdminCredentials,
-                    child: const Icon(
-                      Icons.medical_services_rounded,
-                      size: 64,
-                      color: AppColors.primary,
-                    ),
+                  Icon(
+                    Icons.medical_services_rounded,
+                    size: 64,
+                    color: context.colorScheme.primary,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppText(
@@ -98,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                   AppText(
                     l10n.loginWelcomeSubtitle,
                     variant: AppTextVariant.body,
-                    color: AppColors.textSecondary,
+                    color: context.secondaryTextColor,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xxl),
@@ -122,6 +121,16 @@ class _LoginPageState extends State<LoginPage> {
                         label: l10n.loginSubmit,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppButton(
+                    label: l10n.loginContinueWithoutAccount,
+                    style: AppButtonStyle.secondary,
+                    onPressed: () {
+                      context.read<AuthBloc>().add(
+                        const AuthGuestContinueRequested(),
                       );
                     },
                   ),
