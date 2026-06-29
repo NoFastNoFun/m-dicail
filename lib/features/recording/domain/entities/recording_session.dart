@@ -1,12 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 
-enum RecordingSessionStatus {
-  draft,
-  recording,
-  completed,
-  failed,
-}
+enum RecordingSessionStatus { draft, recording, completed, failed }
 
 class RecordingSession extends Equatable {
   const RecordingSession({
@@ -69,16 +64,16 @@ class RecordingSession extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        patientId,
-        startedAt,
-        endedAt,
-        transcript,
-        soapNote,
-        summary,
-        userId,
-        createdAt,
-        updatedAt,
-        status,
-      ];
+    id,
+    patientId,
+    startedAt,
+    endedAt,
+    transcript,
+    soapNote,
+    summary,
+    userId,
+    createdAt,
+    updatedAt,
+    status,
+  ];
 }

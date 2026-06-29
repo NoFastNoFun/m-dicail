@@ -100,7 +100,10 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     }
   }
 
-  Future<void> _loadPatients(Emitter<PatientState> emit, {String? query}) async {
+  Future<void> _loadPatients(
+    Emitter<PatientState> emit, {
+    String? query,
+  }) async {
     try {
       final patients = await _patientRepository.getAll(query: query);
       emit(PatientLoaded(patients));

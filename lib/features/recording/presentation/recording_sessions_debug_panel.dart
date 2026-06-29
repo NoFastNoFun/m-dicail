@@ -8,10 +8,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 
 class RecordingSessionsDebugPanel extends StatefulWidget {
-  const RecordingSessionsDebugPanel({
-    super.key,
-    required this.repository,
-  });
+  const RecordingSessionsDebugPanel({super.key, required this.repository});
 
   final RecordingSessionRepository repository;
 

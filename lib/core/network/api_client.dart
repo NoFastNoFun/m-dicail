@@ -21,11 +21,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.post<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.post<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
@@ -35,11 +31,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.put<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.put<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
@@ -49,11 +41,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.delete<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.delete<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
@@ -80,7 +68,9 @@ class ApiClient {
           }
         }
 
-        if (data is Map<String, dynamic> && data.containsKey('detail') && data['detail'] is String) {
+        if (data is Map<String, dynamic> &&
+            data.containsKey('detail') &&
+            data['detail'] is String) {
           throw ServerException(data['detail'] as String);
         }
       }

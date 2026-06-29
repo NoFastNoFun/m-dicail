@@ -6,7 +6,6 @@ import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/config/app_config.dart';
 
-
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._apiClient, this._tokenStorage);
@@ -31,10 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/auth/login',
-      data: {
-        'email': email,
-        'password': password,
-      },
+      data: {'email': email, 'password': password},
     );
 
     final data = response.data;
@@ -58,11 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     await _apiClient.post<Map<String, dynamic>>(
       '/auth/register',
-      data: {
-        'email': email,
-        'password': password,
-        'fullName': fullName,
-      },
+      data: {'email': email, 'password': password, 'fullName': fullName},
     );
     await _tokenStorage.clearToken();
   }

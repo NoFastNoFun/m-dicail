@@ -102,7 +102,9 @@ class _AppInputState extends State<AppInput> {
         errorStyle: AppTypography.caption.copyWith(color: AppColors.error),
         errorBorder: _errorBorder,
         focusedErrorBorder: _focusedErrorBorder,
-        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon, color: AppColors.textSecondary) : null,
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
+            : null,
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(
@@ -122,8 +124,9 @@ class _AppInputState extends State<AppInput> {
 
   TextInputType _keyboardType() {
     return switch (widget.variant) {
-      AppInputVariant.number =>
-        const TextInputType.numberWithOptions(decimal: true),
+      AppInputVariant.number => const TextInputType.numberWithOptions(
+        decimal: true,
+      ),
       AppInputVariant.email => TextInputType.emailAddress,
       AppInputVariant.password => TextInputType.visiblePassword,
       AppInputVariant.textarea => TextInputType.multiline,
@@ -133,9 +136,7 @@ class _AppInputState extends State<AppInput> {
 
   List<TextInputFormatter>? _inputFormatters() {
     if (widget.variant == AppInputVariant.number) {
-      return [
-        FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
-      ];
+      return [FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]'))];
     }
     return null;
   }

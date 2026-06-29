@@ -21,6 +21,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class AssignPatientSheet extends StatefulWidget {
@@ -107,15 +108,16 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
   void _handleTutorialState(TutorialState state) {
     if (!state.isTutorialStep(TutorialStepId.quickRecordAssignPatient)) return;
     if (_didStartAssignPatientTutorial) return;
-    _didStartAssignPatientTutorial = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ShowcaseView.get().startShowCase(
-        [_assignPatientTutorialKey],
-        delay: const Duration(milliseconds: 250),
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final started = await TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _assignPatientTutorialKey,
       );
-      _scheduleAssignPatientTutorialCompletion();
+      if (started && mounted) {
+        _didStartAssignPatientTutorial = true;
+        _scheduleAssignPatientTutorialCompletion();
+      }
     });
   }
 

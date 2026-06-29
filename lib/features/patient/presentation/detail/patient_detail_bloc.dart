@@ -8,10 +8,8 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_sta
 
 @injectable
 class PatientDetailBloc extends Bloc<PatientDetailEvent, PatientDetailState> {
-  PatientDetailBloc(
-    this._patientRepository,
-    this._recordingRepository,
-  ) : super(const PatientDetailInitial()) {
+  PatientDetailBloc(this._patientRepository, this._recordingRepository)
+    : super(const PatientDetailInitial()) {
     on<PatientDetailRequested>(_onPatientDetailRequested);
   }
 
@@ -25,7 +23,9 @@ class PatientDetailBloc extends Bloc<PatientDetailEvent, PatientDetailState> {
     emit(const PatientDetailLoading());
     try {
       final patient = await _patientRepository.getById(event.patientId);
-      final sessions = await _recordingRepository.getByPatientId(event.patientId);
+      final sessions = await _recordingRepository.getByPatientId(
+        event.patientId,
+      );
       emit(PatientDetailLoaded(patient: patient, sessions: sessions));
     } catch (e) {
       emit(PatientDetailFailure(Failure.fromException(e).message));

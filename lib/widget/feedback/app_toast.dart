@@ -29,7 +29,12 @@ class AppToast {
     String message, {
     Duration duration = const Duration(seconds: 3),
   }) {
-    show(context, message: message, type: AppToastType.error, duration: duration);
+    show(
+      context,
+      message: message,
+      type: AppToastType.error,
+      duration: duration,
+    );
   }
 
   static void showSuccess(
@@ -37,7 +42,12 @@ class AppToast {
     String message, {
     Duration duration = const Duration(seconds: 3),
   }) {
-    show(context, message: message, type: AppToastType.success, duration: duration);
+    show(
+      context,
+      message: message,
+      type: AppToastType.success,
+      duration: duration,
+    );
   }
 }
 
@@ -102,9 +112,7 @@ class AppToastWidget extends StatelessWidget {
             const SizedBox(width: AppSpacing.md),
             Icon(icon, color: accent, size: 22),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: AppText(message, variant: AppTextVariant.body),
-            ),
+            Expanded(child: AppText(message, variant: AppTextVariant.body)),
             IconButton(
               icon: const Icon(Icons.close, size: 20),
               color: AppColors.textSecondary,

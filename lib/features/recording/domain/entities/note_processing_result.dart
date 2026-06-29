@@ -12,10 +12,12 @@ class NoteProcessingResult extends Equatable {
   factory NoteProcessingResult.fromJson(Map<String, dynamic> json) {
     return NoteProcessingResult(
       sessionId: json['session_id'] as String? ?? '',
-      processedText: (json['processed_text'] ??
-              json['anonymized_text'] ??
-              json['raw_text'] ??
-              json['text']) as String? ??
+      processedText:
+          (json['processed_text'] ??
+                  json['anonymized_text'] ??
+                  json['raw_text'] ??
+                  json['text'])
+              as String? ??
           '',
     );
   }

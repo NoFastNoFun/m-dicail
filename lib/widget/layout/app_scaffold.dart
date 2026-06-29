@@ -7,12 +7,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppScaffold extends StatelessWidget {
-  const AppScaffold({
-    super.key,
-    this.title,
-    required this.body,
-    this.actions,
-  });
+  const AppScaffold({super.key, this.title, required this.body, this.actions});
 
   final String? title;
   final Widget body;
@@ -39,10 +34,7 @@ class AppScaffold extends StatelessWidget {
             : null,
         actions: actions == null
             ? null
-            : [
-                ...actions!,
-                if (kDebugMode) const SizedBox(width: 48),
-              ],
+            : [...actions!, if (kDebugMode) const SizedBox(width: 48)],
       ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

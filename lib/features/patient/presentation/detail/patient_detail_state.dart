@@ -18,10 +18,7 @@ class PatientDetailLoading extends PatientDetailState {
 }
 
 class PatientDetailLoaded extends PatientDetailState {
-  const PatientDetailLoaded({
-    required this.patient,
-    required this.sessions,
-  });
+  const PatientDetailLoaded({required this.patient, required this.sessions});
 
   final Patient? patient;
   final List<RecordingSession> sessions;

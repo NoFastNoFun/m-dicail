@@ -21,6 +21,7 @@ import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PatientsPage extends StatelessWidget {
@@ -125,13 +126,14 @@ class _PatientsViewState extends State<_PatientsView> {
   void _handleTutorialState(TutorialState state) {
     if (state.isTutorialStep(TutorialStepId.patientsAdd)) {
       if (_didStartStepTwoShowcase) return;
-      _didStartStepTwoShowcase = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ShowcaseView.get().startShowCase(
-          [_addPatientKey],
-          delay: const Duration(milliseconds: 250),
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final started = await TutorialShowcaseLauncher.startWhenReady(
+          context: context,
+          key: _addPatientKey,
         );
+        if (started && mounted) {
+          _didStartStepTwoShowcase = true;
+        }
       });
     }
   }

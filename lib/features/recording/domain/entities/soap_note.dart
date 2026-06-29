@@ -52,10 +52,5 @@ class SoapNote extends Equatable {
       plan.trim().isEmpty;
 
   @override
-  List<Object?> get props => [
-        subjective,
-        objective,
-        assessment,
-        plan,
-      ];
+  List<Object?> get props => [subjective, objective, assessment, plan];
 }

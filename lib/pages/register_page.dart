@@ -43,7 +43,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submit() {
-    if (AppConfig.enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
+    if (AppConfig.enableMockAdmin ||
+        (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthRegisterRequested(
           email: _emailController.text.trim(),

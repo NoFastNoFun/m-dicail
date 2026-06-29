@@ -58,9 +58,15 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _subjectiveController = TextEditingController(text: widget.initialNote.subjective);
-    _objectiveController = TextEditingController(text: widget.initialNote.objective);
-    _assessmentController = TextEditingController(text: widget.initialNote.assessment);
+    _subjectiveController = TextEditingController(
+      text: widget.initialNote.subjective,
+    );
+    _objectiveController = TextEditingController(
+      text: widget.initialNote.objective,
+    );
+    _assessmentController = TextEditingController(
+      text: widget.initialNote.assessment,
+    );
     _planController = TextEditingController(text: widget.initialNote.plan);
   }
 
@@ -110,7 +116,10 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                      icon: const Icon(
+                        Icons.close,
+                        color: AppColors.textSecondary,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],

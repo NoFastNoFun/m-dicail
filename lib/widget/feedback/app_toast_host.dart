@@ -5,10 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 
 class AppToastHost extends StatefulWidget {
-  const AppToastHost({
-    super.key,
-    required this.child,
-  });
+  const AppToastHost({super.key, required this.child});
 
   final Widget child;
 

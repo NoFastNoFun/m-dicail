@@ -15,6 +15,7 @@ import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
@@ -101,13 +102,15 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   void _handleTutorialState(TutorialState state) {
     final stepId = state.tutorialStepId;
     if (stepId == null || !_patientFormSteps.contains(stepId)) return;
-    if (!_startedTutorialSteps.add(stepId)) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ShowcaseView.get().startShowCase(
-        [_showcaseKeyForStep(stepId)],
-        delay: const Duration(milliseconds: 250),
+    if (_startedTutorialSteps.contains(stepId)) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final started = await TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _showcaseKeyForStep(stepId),
       );
+      if (started && mounted) {
+        _startedTutorialSteps.add(stepId);
+      }
     });
   }
 

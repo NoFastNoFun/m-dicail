@@ -49,7 +49,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _submit() {
-    if (AppConfig.enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
+    if (AppConfig.enableMockAdmin ||
+        (_formKey.currentState?.validate() ?? false)) {
       context.read<AuthBloc>().add(
         AuthLoginRequested(
           email: _emailController.text.trim(),

@@ -22,6 +22,7 @@ import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class RecordPage extends StatelessWidget {
@@ -79,16 +80,18 @@ class _RecordViewState extends State<_RecordView> {
   void _handleTutorialState(TutorialState state) {
     final stepId = state.tutorialStepId;
     if (stepId == null || !_recordPageSteps.contains(stepId)) return;
-    if (!_startedTutorialSteps.add(stepId)) return;
+    if (_startedTutorialSteps.contains(stepId)) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ShowcaseView.get().startShowCase(
-        [_showcaseKeyForStep(stepId)],
-        delay: const Duration(milliseconds: 250),
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final started = await TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _showcaseKeyForStep(stepId),
       );
-      if (_isTranscriptTutorialStep(stepId)) {
-        _scheduleTranscriptTutorialCompletion();
+      if (started && mounted) {
+        _startedTutorialSteps.add(stepId);
+        if (_isTranscriptTutorialStep(stepId)) {
+          _scheduleTranscriptTutorialCompletion();
+        }
       }
     });
   }

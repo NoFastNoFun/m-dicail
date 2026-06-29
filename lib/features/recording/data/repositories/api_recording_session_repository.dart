@@ -64,9 +64,8 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
     );
     final sessions = (response.data ?? const <dynamic>[])
         .map(
-          (json) => RecordingSessionModel.fromJson(
-            json as Map<String, dynamic>,
-          ),
+          (json) =>
+              RecordingSessionModel.fromJson(json as Map<String, dynamic>),
         )
         .toList();
     sessions.sort((a, b) => b.startedAt.compareTo(a.startedAt));

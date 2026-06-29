@@ -20,30 +20,31 @@ final class VoiceCaptureViewModel {
   factory VoiceCaptureViewModel.fromState(VoiceCaptureState state) {
     return switch (state) {
       VoiceCaptureInitial() => const VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.initializing,
-        ),
+        status: VoiceCaptureSessionStatus.initializing,
+      ),
       VoiceCaptureReady(:final transcript) => VoiceCaptureViewModel(
-          status: transcript.trim().isEmpty
-              ? VoiceCaptureSessionStatus.ready
-              : VoiceCaptureSessionStatus.ended,
-          transcript: transcript,
-        ),
-      VoiceCaptureConsultationFinished(:final transcript) => VoiceCaptureViewModel(
+        status: transcript.trim().isEmpty
+            ? VoiceCaptureSessionStatus.ready
+            : VoiceCaptureSessionStatus.ended,
+        transcript: transcript,
+      ),
+      VoiceCaptureConsultationFinished(:final transcript) =>
+        VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.ended,
           transcript: transcript,
         ),
       VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.processing,
-          transcript: transcript,
-        ),
+        status: VoiceCaptureSessionStatus.processing,
+        transcript: transcript,
+      ),
       RecordingInProgress(:final transcript) => VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.listening,
-          transcript: transcript,
-        ),
+        status: VoiceCaptureSessionStatus.listening,
+        transcript: transcript,
+      ),
       ListeningPaused(:final transcript) => VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.paused,
-          transcript: transcript,
-        ),
+        status: VoiceCaptureSessionStatus.paused,
+        transcript: transcript,
+      ),
       VoiceCaptureFailure(:final message, :final transcript) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.failure,

@@ -7,8 +7,7 @@ import 'package:medicail/features/recording/domain/entities/recording_session.da
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 
 @LazySingleton(as: RecordingSessionRepository)
-class DynamicRecordingSessionRepository
-    implements RecordingSessionRepository {
+class DynamicRecordingSessionRepository implements RecordingSessionRepository {
   DynamicRecordingSessionRepository(
     this._apiRepository,
     this._localRepository,

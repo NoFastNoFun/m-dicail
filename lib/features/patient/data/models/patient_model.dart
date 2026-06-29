@@ -38,8 +38,10 @@ final class PatientModel extends Patient {
     return PatientModel(
       id: json['id']?.toString() ?? '',
       mrn: json['mrn'] as String? ?? '',
-      firstName: json['first_name'] as String? ?? json['firstName'] as String? ?? '',
-      lastName: json['last_name'] as String? ?? json['lastName'] as String? ?? '',
+      firstName:
+          json['first_name'] as String? ?? json['firstName'] as String? ?? '',
+      lastName:
+          json['last_name'] as String? ?? json['lastName'] as String? ?? '',
       userId: _parseNullableInt(json['user_id'] ?? json['userId']),
       birthDate: _parseNullableDate(json['birth_date'] ?? json['birthDate']),
       sex: json['sex'] as String?,

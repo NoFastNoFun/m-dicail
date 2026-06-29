@@ -25,8 +25,9 @@ class AppRouter {
     refreshListenable: _authNotifier,
     redirect: (context, state) {
       final isAuth = _authNotifier.isAuthenticated;
-      final isLoggingIn = state.uri.toString() == AppRoutes.login || 
-                          state.uri.toString() == AppRoutes.register;
+      final isLoggingIn =
+          state.uri.toString() == AppRoutes.login ||
+          state.uri.toString() == AppRoutes.register;
 
       if (!isAuth && !isLoggingIn) {
         return AppRoutes.login;
@@ -57,9 +58,8 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.record,
         name: 'record',
-        builder: (context, state) => RecordPage(
-          patientId: state.uri.queryParameters['patientId'],
-        ),
+        builder: (context, state) =>
+            RecordPage(patientId: state.uri.queryParameters['patientId']),
       ),
       GoRoute(
         path: AppRoutes.patients,
@@ -99,9 +99,12 @@ extension AppRouterNavigation on BuildContext {
       await push(AppRoutes.record);
       return;
     }
-    await push(Uri(path: AppRoutes.record, queryParameters: {
-      'patientId': patientId,
-    }).toString());
+    await push(
+      Uri(
+        path: AppRoutes.record,
+        queryParameters: {'patientId': patientId},
+      ).toString(),
+    );
   }
 
   void goPatients() => push(AppRoutes.patients);

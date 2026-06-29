@@ -36,9 +36,8 @@ class ErrorInterceptor extends Interceptor {
 
   ServerException _mapResponseException(DioException err) {
     final statusCode = err.response?.statusCode;
-    final message = _extractMessage(err.response?.data) ??
-        err.message ??
-        'Erreur serveur';
+    final message =
+        _extractMessage(err.response?.data) ?? err.message ?? 'Erreur serveur';
 
     if (statusCode != null && statusCode >= 500) {
       return ServerException(message, statusCode: statusCode);

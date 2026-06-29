@@ -57,10 +57,7 @@ class _DebugPageState extends State<DebugPage> {
           children: [
             _sectionTitle(l10n.debugSectionButtons),
             const SizedBox(height: AppSpacing.sm),
-            AppButton(
-              label: l10n.debugButtonPrimary,
-              onPressed: () {},
-            ),
+            AppButton(label: l10n.debugButtonPrimary, onPressed: () {}),
             const SizedBox(height: AppSpacing.sm),
             AppButton(
               label: l10n.debugButtonSecondary,
@@ -189,10 +186,7 @@ class _DebugPageState extends State<DebugPage> {
                 context,
                 variant: AppDialogVariant.lockScreen,
                 title: l10n.debugLockTitle,
-                body: AppText(
-                  l10n.debugLockBody,
-                  variant: AppTextVariant.body,
-                ),
+                body: AppText(l10n.debugLockBody, variant: AppTextVariant.body),
                 actions: [
                   AppButton(
                     label: l10n.debugLockDismiss,

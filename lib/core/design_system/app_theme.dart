@@ -62,7 +62,9 @@ abstract final class AppTheme {
           borderRadius: AppRadius.mdBorder,
           borderSide: const BorderSide(color: AppColors.disabled),
         ),
-        labelStyle: AppTypography.label.copyWith(color: AppColors.textSecondary),
+        labelStyle: AppTypography.label.copyWith(
+          color: AppColors.textSecondary,
+        ),
         hintStyle: AppTypography.body.copyWith(color: AppColors.textDisabled),
         errorStyle: AppTypography.caption.copyWith(color: AppColors.error),
       ),

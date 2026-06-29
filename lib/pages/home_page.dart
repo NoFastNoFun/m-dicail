@@ -14,6 +14,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class HomePage extends StatefulWidget {
@@ -49,23 +50,25 @@ class _HomePageState extends State<HomePage> {
       });
     } else if (state.isTutorialStep(TutorialStepId.homePatients)) {
       if (_didStartStepOneShowcase) return;
-      _didStartStepOneShowcase = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ShowcaseView.get().startShowCase(
-          [_patientsKey],
-          delay: const Duration(milliseconds: 250),
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final started = await TutorialShowcaseLauncher.startWhenReady(
+          context: context,
+          key: _patientsKey,
         );
+        if (started && mounted) {
+          _didStartStepOneShowcase = true;
+        }
       });
     } else if (state.isTutorialStep(TutorialStepId.homeQuickRecord)) {
       if (_didStartStepNineShowcase) return;
-      _didStartStepNineShowcase = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ShowcaseView.get().startShowCase(
-          [_recordKey],
-          delay: const Duration(milliseconds: 250),
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final started = await TutorialShowcaseLauncher.startWhenReady(
+          context: context,
+          key: _recordKey,
         );
+        if (started && mounted) {
+          _didStartStepNineShowcase = true;
+        }
       });
     }
   }

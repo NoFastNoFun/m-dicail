@@ -70,17 +70,17 @@ class Patient extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        mrn,
-        firstName,
-        lastName,
-        userId,
-        birthDate,
-        sex,
-        contact,
-        notes,
-        metadata,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    mrn,
+    firstName,
+    lastName,
+    userId,
+    birthDate,
+    sex,
+    contact,
+    notes,
+    metadata,
+    createdAt,
+    updatedAt,
+  ];
 }

@@ -49,12 +49,11 @@ class _MedicailAppState extends State<MedicailApp> {
               create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
             ),
             BlocProvider<TutorialBloc>(
-              create: (_) => getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
+              create: (_) =>
+                  getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
             ),
           ],
-          child: AppToastHost(
-            child: child ?? const SizedBox.shrink(),
-          ),
+          child: AppToastHost(child: child ?? const SizedBox.shrink()),
         );
       },
     );

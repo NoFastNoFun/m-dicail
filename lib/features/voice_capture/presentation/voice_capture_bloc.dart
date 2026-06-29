@@ -109,10 +109,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         transcript: transcript,
       );
       _segmentBase = '';
-      emit(VoiceCaptureConsultationFinished(
-        sessionId: sessionId,
-        transcript: transcript,
-      ));
+      emit(
+        VoiceCaptureConsultationFinished(
+          sessionId: sessionId,
+          transcript: transcript,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(transcript);
       emit(

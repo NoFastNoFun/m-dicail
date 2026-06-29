@@ -42,16 +42,16 @@ final class PatientCreated extends PatientEvent {
 
   @override
   List<Object?> get props => [
-        mrn,
-        firstName,
-        lastName,
-        birthDate,
-        sex,
-        email,
-        phone,
-        address,
-        notes,
-      ];
+    mrn,
+    firstName,
+    lastName,
+    birthDate,
+    sex,
+    email,
+    phone,
+    address,
+    notes,
+  ];
 }
 
 final class PatientDeleted extends PatientEvent {

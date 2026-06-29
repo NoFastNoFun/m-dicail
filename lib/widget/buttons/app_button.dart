@@ -20,19 +20,19 @@ class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.enabled = true,
     this.expanded = true,
-  })  : assert(
-          layout != AppButtonLayout.text || label != null,
-          'label is required for text layout',
-        ),
-        assert(
-          layout == AppButtonLayout.text || icon != null,
-          'icon is required for icon and textWithIcon layouts',
-        ),
-        assert(
-          layout != AppButtonLayout.textWithIcon ||
-              (label != null && icon != null),
-          'label and icon are required for textWithIcon layout',
-        );
+  }) : assert(
+         layout != AppButtonLayout.text || label != null,
+         'label is required for text layout',
+       ),
+       assert(
+         layout == AppButtonLayout.text || icon != null,
+         'icon is required for icon and textWithIcon layouts',
+       ),
+       assert(
+         layout != AppButtonLayout.textWithIcon ||
+             (label != null && icon != null),
+         'label and icon are required for textWithIcon layout',
+       );
 
   final VoidCallback? onPressed;
   final AppButtonStyle style;
@@ -67,38 +67,38 @@ class AppButton extends StatelessWidget {
 
     return switch (layout) {
       AppButtonLayout.text => _wrapSized(
-          _textButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _textButton(child, effectiveOnPressed, buttonStyle),
+      ),
       AppButtonLayout.icon => _wrapSized(
-          _iconButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _iconButton(child, effectiveOnPressed, buttonStyle),
+      ),
       AppButtonLayout.textWithIcon => _wrapSized(
-          _textButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _textButton(child, effectiveOnPressed, buttonStyle),
+      ),
     };
   }
 
   Widget _buildContent() {
     return switch (layout) {
       AppButtonLayout.text => AppText(
-          label!,
-          variant: AppTextVariant.label,
-          color: _foregroundColor(),
-        ),
+        label!,
+        variant: AppTextVariant.label,
+        color: _foregroundColor(),
+      ),
       AppButtonLayout.icon => Icon(icon, color: _foregroundColor(), size: 24),
       AppButtonLayout.textWithIcon => Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: _foregroundColor(), size: 20),
-            const SizedBox(width: AppSpacing.sm),
-            AppText(
-              label!,
-              variant: AppTextVariant.label,
-              color: _foregroundColor(),
-            ),
-          ],
-        ),
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: _foregroundColor(), size: 20),
+          const SizedBox(width: AppSpacing.sm),
+          AppText(
+            label!,
+            variant: AppTextVariant.label,
+            color: _foregroundColor(),
+          ),
+        ],
+      ),
     };
   }
 
@@ -112,10 +112,7 @@ class AppButton extends StatelessWidget {
     }
     if (!expanded) {
       return IntrinsicWidth(
-        child: SizedBox(
-          height: AppSpacing.minTouchTarget,
-          child: child,
-        ),
+        child: SizedBox(height: AppSpacing.minTouchTarget, child: child),
       );
     }
     return SizedBox(
@@ -177,30 +174,26 @@ class AppButton extends StatelessWidget {
 
     final (background, foreground, border) = switch (style) {
       AppButtonStyle.primary => (
-          AppColors.primary,
-          AppColors.onPrimary,
-          AppColors.primary,
-        ),
+        AppColors.primary,
+        AppColors.onPrimary,
+        AppColors.primary,
+      ),
       AppButtonStyle.secondary => (
-          Colors.transparent,
-          AppColors.primary,
-          AppColors.primary,
-        ),
+        Colors.transparent,
+        AppColors.primary,
+        AppColors.primary,
+      ),
       AppButtonStyle.warning => (
-          AppColors.warning,
-          AppColors.onWarning,
-          AppColors.warning,
-        ),
+        AppColors.warning,
+        AppColors.onWarning,
+        AppColors.warning,
+      ),
       AppButtonStyle.error => (
-          AppColors.error,
-          AppColors.onError,
-          AppColors.error,
-        ),
-      AppButtonStyle.info => (
-          AppColors.info,
-          AppColors.onInfo,
-          AppColors.info,
-        ),
+        AppColors.error,
+        AppColors.onError,
+        AppColors.error,
+      ),
+      AppButtonStyle.info => (AppColors.info, AppColors.onInfo, AppColors.info),
     };
 
     if (_isFilledStyle) {

@@ -38,9 +38,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       final available = await _speech.initialize(
         onStatus: _onSpeechStatus,
         onError: (error) {
-          _log(
-            'native:error=${error.errorMsg} permanent=${error.permanent}',
-          );
+          _log('native:error=${error.errorMsg} permanent=${error.permanent}');
         },
         debugLogging: kDebugMode,
       );
@@ -56,9 +54,6 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       return true;
     } catch (error, stackTrace) {
       _log('initialize:exception=$error');
-      if (kDebugMode) {
-        debugPrintStack(stackTrace: stackTrace);
-      }
       rethrow;
     }
   }
@@ -119,9 +114,6 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     } catch (error, stackTrace) {
       _keepListening = false;
       _log('listen:exception=$error');
-      if (kDebugMode) {
-        debugPrintStack(stackTrace: stackTrace);
-      }
       rethrow;
     }
   }
@@ -141,8 +133,6 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
   }
 
   void _log(String message) {
-    if (kDebugMode) {
-      debugPrint('[SpeechToText] $message');
-    }
+    // Debug logs removed as requested.
   }
 }

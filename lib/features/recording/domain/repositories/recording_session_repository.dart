@@ -11,10 +11,7 @@ abstract class RecordingSessionRepository {
 
   Future<RecordingSession> save(RecordingSession session);
 
-  Future<RecordingSession> associatePatient(
-    String sessionId,
-    String patientId,
-  );
+  Future<RecordingSession> associatePatient(String sessionId, String patientId);
 
   Future<void> delete(String id);
 

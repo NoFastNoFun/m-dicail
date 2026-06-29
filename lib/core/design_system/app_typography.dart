@@ -59,13 +59,13 @@ abstract final class AppTypography {
   );
 
   static TextTheme get textTheme => const TextTheme(
-        displayLarge: display,
-        headlineMedium: headline,
-        titleMedium: title,
-        bodyLarge: body,
-        bodyMedium: body,
-        labelLarge: label,
-        labelMedium: label,
-        bodySmall: caption,
-      );
+    displayLarge: display,
+    headlineMedium: headline,
+    titleMedium: title,
+    bodyLarge: body,
+    bodyMedium: body,
+    labelLarge: label,
+    labelMedium: label,
+    bodySmall: caption,
+  );
 }

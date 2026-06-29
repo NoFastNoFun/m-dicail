@@ -15,7 +15,9 @@ class ApiPatientRepository implements PatientRepository {
   Future<List<Patient>> getAll({String? query}) async {
     final response = await _apiClient.get<List<dynamic>>(
       '/patients',
-      queryParameters: query != null && query.isNotEmpty ? {'query': query} : null,
+      queryParameters: query != null && query.isNotEmpty
+          ? {'query': query}
+          : null,
     );
     final data = response.data;
     if (data == null) {
@@ -29,7 +31,9 @@ class ApiPatientRepository implements PatientRepository {
   @override
   Future<Patient?> getById(String id) async {
     try {
-      final response = await _apiClient.get<Map<String, dynamic>>('/patients/$id');
+      final response = await _apiClient.get<Map<String, dynamic>>(
+        '/patients/$id',
+      );
       final data = response.data;
       if (data == null) {
         return null;
