@@ -95,6 +95,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       );
       if (started && mounted) {
         _startedTutorialSteps.add(stepId);
+        _focusNodeForStep(stepId)?.requestFocus();
       }
     });
   }
@@ -105,6 +106,15 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       TutorialStepId.patientFirstName => _firstNameKey,
       TutorialStepId.patientLastName => _lastNameKey,
       _ => _submitKey,
+    };
+  }
+
+  FocusNode? _focusNodeForStep(TutorialStepId stepId) {
+    return switch (stepId) {
+      TutorialStepId.patientMrn => _mrnFocusNode,
+      TutorialStepId.patientFirstName => _firstNameFocusNode,
+      TutorialStepId.patientLastName => _lastNameFocusNode,
+      _ => null,
     };
   }
 
