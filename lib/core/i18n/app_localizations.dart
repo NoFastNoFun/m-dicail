@@ -1035,6 +1035,192 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se connecter'**
   String get settingsSignIn;
+
+  /// No description provided for @tutorialIntroTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Decouvrir Medicail'**
+  String get tutorialIntroTitle;
+
+  /// No description provided for @tutorialIntroDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.'**
+  String get tutorialIntroDesc;
+
+  /// No description provided for @tutorialIntroStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire le tutoriel'**
+  String get tutorialIntroStart;
+
+  /// No description provided for @tutorialIntroSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get tutorialIntroSkip;
+
+  /// No description provided for @tutorialHomePatientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers Patients'**
+  String get tutorialHomePatientsTitle;
+
+  /// No description provided for @tutorialHomePatientsDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.'**
+  String get tutorialHomePatientsDesc;
+
+  /// No description provided for @tutorialHomeRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultation Rapide'**
+  String get tutorialHomeRecordTitle;
+
+  /// No description provided for @tutorialHomeRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.'**
+  String get tutorialHomeRecordDesc;
+
+  /// No description provided for @tutorialPatientAddTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un patient'**
+  String get tutorialPatientAddTitle;
+
+  /// No description provided for @tutorialPatientAddDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.'**
+  String get tutorialPatientAddDesc;
+
+  /// No description provided for @tutorialPatientMrnTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numero de dossier'**
+  String get tutorialPatientMrnTitle;
+
+  /// No description provided for @tutorialPatientMrnDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.'**
+  String get tutorialPatientMrnDesc;
+
+  /// No description provided for @tutorialPatientFirstNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenom du patient'**
+  String get tutorialPatientFirstNameTitle;
+
+  /// No description provided for @tutorialPatientFirstNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le prenom du patient pour completer son dossier.'**
+  String get tutorialPatientFirstNameDesc;
+
+  /// No description provided for @tutorialPatientLastNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du patient'**
+  String get tutorialPatientLastNameTitle;
+
+  /// No description provided for @tutorialPatientLastNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.'**
+  String get tutorialPatientLastNameDesc;
+
+  /// No description provided for @tutorialPatientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le dossier'**
+  String get tutorialPatientCreateTitle;
+
+  /// No description provided for @tutorialPatientCreateDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.'**
+  String get tutorialPatientCreateDesc;
+
+  /// No description provided for @tutorialDetailConsultTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle consultation'**
+  String get tutorialDetailConsultTitle;
+
+  /// No description provided for @tutorialDetailConsultDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.'**
+  String get tutorialDetailConsultDesc;
+
+  /// No description provided for @tutorialRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'La Dictee'**
+  String get tutorialRecordTitle;
+
+  /// No description provided for @tutorialRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.'**
+  String get tutorialRecordDesc;
+
+  /// No description provided for @tutorialRecordStopTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arreter l\'ecoute'**
+  String get tutorialRecordStopTitle;
+
+  /// No description provided for @tutorialRecordStopDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.'**
+  String get tutorialRecordStopDesc;
+
+  /// No description provided for @tutorialRecordFinishTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer la consultation'**
+  String get tutorialRecordFinishTitle;
+
+  /// No description provided for @tutorialRecordFinishDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.'**
+  String get tutorialRecordFinishDesc;
+
+  /// No description provided for @tutorialRecordTranscriptTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription en temps reel'**
+  String get tutorialRecordTranscriptTitle;
+
+  /// No description provided for @tutorialRecordTranscriptDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.'**
+  String get tutorialRecordTranscriptDesc;
+
+  /// No description provided for @tutorialAssignPatientTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer a un patient'**
+  String get tutorialAssignPatientTitle;
+
+  /// No description provided for @tutorialAssignPatientDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.'**
+  String get tutorialAssignPatientDesc;
+
+  /// No description provided for @tutorialRestarted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le tutoriel a ete reinitialise.'**
+  String get tutorialRestarted;
 }
 
 class _AppLocalizationsDelegate
