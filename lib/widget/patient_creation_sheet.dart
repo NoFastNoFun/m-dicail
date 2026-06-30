@@ -191,8 +191,10 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           right: AppSpacing.lg,
           top: AppSpacing.lg,
         ),
-        child: SingleChildScrollView(
-          child: Column(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -210,6 +212,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                   label: l10n.patientMrnLabel,
                   controller: _mrnController,
                   focusNode: _mrnFocusNode,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => _firstNameFocusNode.requestFocus(),
                   onChanged: (value) => _completeTutorialStepAfterTyping(
                     TutorialStepId.patientMrn,
                     value,
@@ -232,6 +236,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         label: l10n.patientFirstNameRequiredLabel,
                         controller: _firstNameController,
                         focusNode: _firstNameFocusNode,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (_) => _lastNameFocusNode.requestFocus(),
                         onChanged: (value) => _completeTutorialStepAfterTyping(
                           TutorialStepId.patientFirstName,
                           value,
@@ -253,6 +259,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         label: l10n.patientLastNameRequiredLabel,
                         controller: _lastNameController,
                         focusNode: _lastNameFocusNode,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                         onChanged: (value) => _completeTutorialStepAfterTyping(
                           TutorialStepId.patientLastName,
                           value,
@@ -361,6 +369,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             ],
           ),
         ),
+      ),
       ),
       ),
     );

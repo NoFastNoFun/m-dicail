@@ -26,6 +26,8 @@ class AppInput extends StatefulWidget {
     this.maxLines,
     this.prefixIcon,
     this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   final AppInputVariant variant;
@@ -43,6 +45,8 @@ class AppInput extends StatefulWidget {
   final int? maxLines;
   final IconData? prefixIcon;
   final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -99,6 +103,8 @@ class _AppInputState extends State<AppInput> {
         return effectiveValidator(value);
       },
       onChanged: widget.onChanged,
+      textInputAction: widget.textInputAction,
+      onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,

@@ -85,10 +85,12 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
 
   void _scheduleAssignPatientTutorialCompletion() {
     _assignPatientTutorialTimer?.cancel();
-    _assignPatientTutorialTimer = Timer(const Duration(seconds: 7), () {
+    _assignPatientTutorialTimer = Timer(const Duration(seconds: 4), () {
       if (!mounted) return;
       _completeAssignPatientTutorialStep();
-      ShowcaseView.get().dismiss();
+      try {
+        ShowcaseView.get().dismiss();
+      } catch (_) {}
     });
   }
 
@@ -151,8 +153,8 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
                   key: _assignPatientTutorialKey,
                   title: l10n.tutorialAssignPatientTitle,
                   description: l10n.tutorialAssignPatientDesc,
-                  disposeOnTap: false,
-                  disableBarrierInteraction: true,
+                  disposeOnTap: true,
+                  disableBarrierInteraction: false,
                   onTargetClick: _completeAssignPatientTutorialStep,
                   child: AppText(
                     l10n.assignPatientTitle,
