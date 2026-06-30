@@ -11,6 +11,13 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'dart:async';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientCreationSheet extends StatefulWidget {
   const PatientCreationSheet({super.key, this.onSuccess});
@@ -32,6 +39,33 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   String? _selectedSex;
   DateTime? _selectedBirthDate;
 
+  final _mrnFocusNode = FocusNode();
+  final _firstNameFocusNode = FocusNode();
+  final _lastNameFocusNode = FocusNode();
+  final GlobalKey _mrnKey = GlobalKey();
+  final GlobalKey _firstNameKey = GlobalKey();
+  final GlobalKey _lastNameKey = GlobalKey();
+  final GlobalKey _submitKey = GlobalKey();
+  final Set<TutorialStepId> _startedTutorialSteps = <TutorialStepId>{};
+  final Map<TutorialStepId, Timer> _fieldCompletionTimers = {};
+
+  static const _patientFormSteps = {
+    TutorialStepId.patientMrn,
+    TutorialStepId.patientFirstName,
+    TutorialStepId.patientLastName,
+    TutorialStepId.patientCreate,
+  };
+  static const _fieldCompletionDelay = Duration(milliseconds: 900);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
   @override
   void dispose() {
     _mrnController.dispose();
@@ -41,7 +75,53 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
+    for (final timer in _fieldCompletionTimers.values) {
+      timer.cancel();
+    }
+    _mrnFocusNode.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
     super.dispose();
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    final stepId = state.tutorialStepId;
+    if (stepId == null || !_patientFormSteps.contains(stepId)) return;
+    if (_startedTutorialSteps.contains(stepId)) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final started = await TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _showcaseKeyForStep(stepId),
+      );
+      if (started && mounted) {
+        _startedTutorialSteps.add(stepId);
+      }
+    });
+  }
+
+  GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
+    return switch (stepId) {
+      TutorialStepId.patientMrn => _mrnKey,
+      TutorialStepId.patientFirstName => _firstNameKey,
+      TutorialStepId.patientLastName => _lastNameKey,
+      _ => _submitKey,
+    };
+  }
+
+  void _completeTutorialStepAfterTyping(TutorialStepId stepId, String value) {
+    _fieldCompletionTimers.remove(stepId)?.cancel();
+    if (value.trim().isEmpty) return;
+    _fieldCompletionTimers[stepId] = Timer(_fieldCompletionDelay, () {
+      if (!mounted) return;
+      final tutorialBloc = context.read<TutorialBloc>();
+      if (!tutorialBloc.isCurrentStep(stepId)) return;
+      tutorialBloc.completeStep(stepId);
+    });
+  }
+
+  void _completeSubmitTutorialStep() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    tutorialBloc.completeStep(TutorialStepId.patientCreate);
   }
 
   void _submit() {
@@ -98,8 +178,10 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           AppToast.showSuccess(context, l10n.patientCreateSuccess);
         }
       },
-      child: Container(
-        decoration: const BoxDecoration(
+      child: BlocListener<TutorialBloc, TutorialState>(
+        listener: (context, state) => _handleTutorialState(state),
+        child: Container(
+          decoration: const BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -116,27 +198,63 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             children: [
               AppText(l10n.patientCreateTitle, variant: AppTextVariant.title),
               const SizedBox(height: AppSpacing.lg),
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientMrnLabel,
-                controller: _mrnController,
+              Showcase(
+                key: _mrnKey,
+                title: l10n.tutorialPatientMrnTitle,
+                description: l10n.tutorialPatientMrnDesc,
+                disposeOnTap: true,
+                onTargetClick: () => _mrnFocusNode.requestFocus(),
+                child: AppInput(
+                  variant: AppInputVariant.text,
+                  label: l10n.patientMrnLabel,
+                  controller: _mrnController,
+                  focusNode: _mrnFocusNode,
+                  onChanged: (value) => _completeTutorialStepAfterTyping(
+                    TutorialStepId.patientMrn,
+                    value,
+                  ),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               Row(
                 children: [
                   Expanded(
-                    child: AppInput(
-                      variant: AppInputVariant.text,
-                      label: l10n.patientFirstNameRequiredLabel,
-                      controller: _firstNameController,
+                    child: Showcase(
+                      key: _firstNameKey,
+                      title: l10n.tutorialPatientFirstNameTitle,
+                      description: l10n.tutorialPatientFirstNameDesc,
+                      disposeOnTap: true,
+                      onTargetClick: () => _firstNameFocusNode.requestFocus(),
+                      child: AppInput(
+                        variant: AppInputVariant.text,
+                        label: l10n.patientFirstNameRequiredLabel,
+                        controller: _firstNameController,
+                        focusNode: _firstNameFocusNode,
+                        onChanged: (value) => _completeTutorialStepAfterTyping(
+                          TutorialStepId.patientFirstName,
+                          value,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
-                    child: AppInput(
-                      variant: AppInputVariant.text,
-                      label: l10n.patientLastNameRequiredLabel,
-                      controller: _lastNameController,
+                    child: Showcase(
+                      key: _lastNameKey,
+                      title: l10n.tutorialPatientLastNameTitle,
+                      description: l10n.tutorialPatientLastNameDesc,
+                      disposeOnTap: true,
+                      onTargetClick: () => _lastNameFocusNode.requestFocus(),
+                      child: AppInput(
+                        variant: AppInputVariant.text,
+                        label: l10n.patientLastNameRequiredLabel,
+                        controller: _lastNameController,
+                        focusNode: _lastNameFocusNode,
+                        onChanged: (value) => _completeTutorialStepAfterTyping(
+                          TutorialStepId.patientLastName,
+                          value,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -215,10 +333,23 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
               const SizedBox(height: AppSpacing.lg),
               BlocBuilder<PatientBloc, PatientState>(
                 builder: (context, state) {
-                  return AppButton(
-                    label: l10n.patientCreateSubmit,
-                    isLoading: state is PatientLoading,
-                    onPressed: _submit,
+                  return Showcase(
+                    key: _submitKey,
+                    title: l10n.tutorialPatientCreateTitle,
+                    description: l10n.tutorialPatientCreateDesc,
+                    disposeOnTap: true,
+                    onTargetClick: () {
+                      _completeSubmitTutorialStep();
+                      _submit();
+                    },
+                    child: AppButton(
+                      label: l10n.patientCreateSubmit,
+                      isLoading: state is PatientLoading,
+                      onPressed: () {
+                        _completeSubmitTutorialStep();
+                        _submit();
+                      },
+                    ),
                   );
                 },
               ),
@@ -226,6 +357,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

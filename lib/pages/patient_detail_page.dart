@@ -17,6 +17,12 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientDetailPage extends StatelessWidget {
   const PatientDetailPage({
@@ -36,14 +42,44 @@ class PatientDetailPage extends StatelessWidget {
   }
 }
 
-class _PatientDetailContent extends StatelessWidget {
+class _PatientDetailContent extends StatefulWidget {
   const _PatientDetailContent();
+
+  @override
+  State<_PatientDetailContent> createState() => _PatientDetailContentState();
+}
+
+class _PatientDetailContentState extends State<_PatientDetailContent> {
+  final _consultKey = GlobalKey();
+  bool _didStartStepSevenShowcase = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is! TutorialInProgress) return;
+    if (state.isTutorialStep(TutorialStepId.patientConsultation) &&
+        !_didStartStepSevenShowcase) {
+      _didStartStepSevenShowcase = true;
+      TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _consultKey,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocBuilder<PatientDetailBloc, PatientDetailState>(
+    return BlocConsumer<PatientDetailBloc, PatientDetailState>(
+      listener: (context, state) {},
       builder: (context, state) {
         final patient = state is PatientDetailLoaded ? state.patient : null;
         final sessions = state is PatientDetailLoaded ? state.sessions : <RecordingSession>[];
@@ -51,25 +87,29 @@ class _PatientDetailContent extends StatelessWidget {
 
         return AppScaffold(
           title: l10n.patientDetailTitle,
-          body: isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : patient == null
-                  ? Center(
-                      child: AppText(
-                        l10n.patientNotFound,
-                        variant: AppTextVariant.body,
-                        color: context.secondaryTextColor,
+          body: BlocListener<TutorialBloc, TutorialState>(
+            listener: (context, state) => _handleTutorialState(state),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : patient == null
+                    ? Center(
+                        child: AppText(
+                          l10n.patientNotFound,
+                          variant: AppTextVariant.body,
+                          color: context.secondaryTextColor,
+                        ),
+                      )
+                    : _PatientDetailView(
+                        patient: patient,
+                        sessions: sessions,
+                        consultKey: _consultKey,
+                        onRefresh: () {
+                          context
+                              .read<PatientDetailBloc>()
+                              .add(PatientDetailRequested(patient.id));
+                        },
                       ),
-                    )
-                  : _PatientDetailView(
-                      patient: patient,
-                      sessions: sessions,
-                      onRefresh: () {
-                        context
-                            .read<PatientDetailBloc>()
-                            .add(PatientDetailRequested(patient.id));
-                      },
-                    ),
+          ),
         );
       },
     );
@@ -80,11 +120,13 @@ class _PatientDetailView extends StatelessWidget {
   const _PatientDetailView({
     required this.patient,
     required this.sessions,
+    required this.consultKey,
     required this.onRefresh,
   });
 
   final Patient patient;
   final List<RecordingSession> sessions;
+  final GlobalKey consultKey;
   final VoidCallback onRefresh;
 
   @override
@@ -104,12 +146,24 @@ class _PatientDetailView extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppSpacing.lg),
-        AppButton(
-          label: l10n.patientNewConsultationButton,
-          onPressed: () async {
+        Showcase(
+          key: consultKey,
+          title: l10n.tutorialDetailConsultTitle,
+          description: l10n.tutorialDetailConsultDesc,
+          disposeOnTap: true,
+          onTargetClick: () async {
+            context.read<TutorialBloc>().completeStep(TutorialStepId.patientConsultation);
             await context.goRecord(patientId: patient.id);
             onRefresh();
           },
+          child: AppButton(
+            label: l10n.patientNewConsultationButton,
+            onPressed: () async {
+              context.read<TutorialBloc>().completeStep(TutorialStepId.patientConsultation);
+              await context.goRecord(patientId: patient.id);
+              onRefresh();
+            },
+          ),
         ),
         const SizedBox(height: AppSpacing.xl),
         AppText(

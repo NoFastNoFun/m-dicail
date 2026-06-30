@@ -25,6 +25,7 @@ class AppInput extends StatefulWidget {
     this.maxLength,
     this.maxLines,
     this.prefixIcon,
+    this.focusNode,
   });
 
   final AppInputVariant variant;
@@ -41,6 +42,7 @@ class AppInput extends StatefulWidget {
   final int? maxLength;
   final int? maxLines;
   final IconData? prefixIcon;
+  final FocusNode? focusNode;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -83,6 +85,7 @@ class _AppInputState extends State<AppInput> {
 
     return TextFormField(
       controller: widget.controller,
+      focusNode: widget.focusNode,
       enabled: widget.enabled,
       readOnly: widget.readOnly,
       obscureText: isPassword && _obscurePassword,

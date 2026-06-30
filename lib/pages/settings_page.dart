@@ -12,10 +12,13 @@ import 'package:medicail/features/settings/domain/entities/app_theme_variant.dar
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_tbd_pill.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/settings/app_settings_tile.dart';
 import 'package:medicail/widget/settings/app_stepped_slider.dart';
 
@@ -62,10 +65,15 @@ class SettingsPage extends StatelessWidget {
                 trailing: AppTbdPill(label: l10n.settingsTbd),
               ),
               const Divider(),
-              AppSettingsTile(
-                title: l10n.settingsRestartOnboarding,
-                enabled: false,
-                trailing: AppTbdPill(label: l10n.settingsTbd),
+              InkWell(
+                onTap: () {
+                  context.read<TutorialBloc>().add(const TutorialResetRequested());
+                  AppToast.showSuccess(context, l10n.tutorialRestarted);
+                  context.go(AppRoutes.home);
+                },
+                child: AppSettingsTile(
+                  title: l10n.settingsRestartOnboarding,
+                ),
               ),
               const Divider(),
               const SizedBox(height: AppSpacing.lg),

@@ -25,13 +25,7 @@ class _MedicailAppState extends State<MedicailApp> {
   @override
   void initState() {
     super.initState();
-    ShowcaseView.register(context);
-  }
-
-  @override
-  void dispose() {
-    ShowcaseView.unregister(context);
-    super.dispose();
+    ShowcaseView.register();
   }
 
   @override
@@ -70,7 +64,9 @@ class _MedicailAppState extends State<MedicailApp> {
                         getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
                   ),
                 ],
-                child: AppToastHost(child: child ?? const SizedBox.shrink()),
+                child: AppToastHost(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             );
           },

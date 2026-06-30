@@ -16,6 +16,12 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientsPage extends StatelessWidget {
   const PatientsPage({super.key});
@@ -38,6 +44,8 @@ class _PatientsView extends StatefulWidget {
 
 class _PatientsViewState extends State<_PatientsView> {
   final _searchController = TextEditingController();
+  final _addPatientKey = GlobalKey();
+  bool _didStartStepTwoShowcase = false;
 
   @override
   void initState() {
@@ -57,19 +65,36 @@ class _PatientsViewState extends State<_PatientsView> {
         .add(PatientsRequested(query: _searchController.text.trim()));
   }
 
+  void _handleTutorialState(TutorialState state) {
+    if (state is! TutorialInProgress) return;
+    if (state.isTutorialStep(TutorialStepId.patientsAdd) &&
+        !_didStartStepTwoShowcase) {
+      _didStartStepTwoShowcase = true;
+      TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _addPatientKey,
+      );
+    }
+  }
+
   void _showCreatePatientSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) {
+      builder: (sheetContext) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
           ),
           child: BlocProvider.value(
             value: context.read<PatientBloc>(),
-            child: const PatientCreationSheet(),
+            child: PatientCreationSheet(
+              onSuccess: (patientId) {
+                Navigator.of(sheetContext).pop();
+                context.goPatientDetail(patientId);
+              },
+            ),
           ),
         );
       },
@@ -96,12 +121,27 @@ class _PatientsViewState extends State<_PatientsView> {
         return AppScaffold(
           title: l10n.patientsTitle,
           actions: [
-            IconButton(
-              icon: Icon(Icons.add, color: context.colorScheme.onSurface),
-              onPressed: () => _showCreatePatientSheet(context),
+            Showcase(
+              key: _addPatientKey,
+              title: l10n.tutorialPatientAddTitle,
+              description: l10n.tutorialPatientAddDesc,
+              disposeOnTap: true,
+              onTargetClick: () {
+                context.read<TutorialBloc>().completeStep(TutorialStepId.patientsAdd);
+                _showCreatePatientSheet(context);
+              },
+              child: IconButton(
+                icon: Icon(Icons.add, color: context.colorScheme.onSurface),
+                onPressed: () {
+                  context.read<TutorialBloc>().completeStep(TutorialStepId.patientsAdd);
+                  _showCreatePatientSheet(context);
+                },
+              ),
             ),
           ],
-          body: Column(
+          body: BlocListener<TutorialBloc, TutorialState>(
+            listener: (context, state) => _handleTutorialState(state),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppInput(
@@ -135,6 +175,7 @@ class _PatientsViewState extends State<_PatientsView> {
               ),
             ],
           ),
+        ),
         );
       },
     );

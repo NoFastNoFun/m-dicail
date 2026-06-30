@@ -63,6 +63,12 @@ import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart'
     as _i488;
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart'
     as _i713;
+import 'package:medicail/features/tutorial/data/repositories/tutorial_repository_impl.dart'
+    as _i511;
+import 'package:medicail/features/tutorial/domain/repositories/tutorial_repository.dart'
+    as _i79;
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart'
+    as _i306;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 
@@ -126,11 +132,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1038.AppRouter>(
       () => _i1038.AppRouter(gh<_i541.AuthNotifier>()),
     );
+    gh.lazySingleton<_i79.TutorialRepository>(
+      () => _i511.TutorialRepositoryImpl(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i583.GoRouter>(
       () => registerModule.goRouter(gh<_i1038.AppRouter>()),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
+    );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(gh<_i79.TutorialRepository>()),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(

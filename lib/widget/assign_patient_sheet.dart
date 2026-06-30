@@ -14,10 +14,17 @@ import 'package:medicail/features/patient/presentation/patient_state.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'dart:async';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
-class AssignPatientSheet extends StatelessWidget {
+class AssignPatientSheet extends StatefulWidget {
   const AssignPatientSheet({super.key, required this.sessionId});
 
   final String sessionId;
@@ -34,6 +41,86 @@ class AssignPatientSheet extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  State<AssignPatientSheet> createState() => _AssignPatientSheetState();
+}
+
+class _AssignPatientSheetState extends State<AssignPatientSheet> {
+  final _assignPatientTutorialKey = GlobalKey();
+  bool _didStartAssignPatientTutorial = false;
+  Timer? _assignPatientTutorialTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
+  @override
+  void dispose() {
+    _assignPatientTutorialTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is! TutorialInProgress) return;
+    if (state.isTutorialStep(TutorialStepId.quickRecordAssignPatient) &&
+        !_didStartAssignPatientTutorial) {
+      _didStartAssignPatientTutorial = true;
+      TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _assignPatientTutorialKey,
+      ).then((started) {
+        if (started && mounted) {
+          _scheduleAssignPatientTutorialCompletion();
+        }
+      });
+    }
+  }
+
+  void _scheduleAssignPatientTutorialCompletion() {
+    _assignPatientTutorialTimer?.cancel();
+    _assignPatientTutorialTimer = Timer(const Duration(seconds: 7), () {
+      if (!mounted) return;
+      _completeAssignPatientTutorialStep();
+      ShowcaseView.get().dismiss();
+    });
+  }
+
+  void _completeAssignPatientTutorialStep() {
+    _assignPatientTutorialTimer?.cancel();
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordAssignPatient)) {
+      tutorialBloc.completeStep(TutorialStepId.quickRecordAssignPatient);
+    }
+  }
+
+  Future<void> _assignAndNavigate(BuildContext context, String patientId) async {
+    _completeAssignPatientTutorialStep();
+    final l10n = AppLocalizations.of(context);
+    try {
+      final repo = getIt<RecordingSessionRepository>();
+      final session = await repo.getById(widget.sessionId);
+      if (session != null) {
+        await repo.save(session.copyWith(patientId: patientId));
+      }
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Fermer la modale
+        if (context.canPop()) {
+          context.pop(); // Fermer la page de record si besoin
+        }
+        context.goPatientDetail(patientId);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppToast.showError(context, l10n.assignPatientError);
+      }
+    }
   }
 
   @override
@@ -58,10 +145,20 @@ class AssignPatientSheet extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: AppText(
-                l10n.assignPatientTitle,
-                variant: AppTextVariant.title,
-                textAlign: TextAlign.center,
+              child: BlocListener<TutorialBloc, TutorialState>(
+                listener: (context, state) => _handleTutorialState(state),
+                child: Showcase(
+                  key: _assignPatientTutorialKey,
+                  title: l10n.tutorialAssignPatientTitle,
+                  description: l10n.tutorialAssignPatientDesc,
+                  disposeOnTap: true,
+                  onTargetClick: _completeAssignPatientTutorialStep,
+                  child: AppText(
+                    l10n.assignPatientTitle,
+                    variant: AppTextVariant.title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -77,9 +174,12 @@ class AssignPatientSheet extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  _PatientSearchTab(sessionId: sessionId),
+                  _PatientSearchTab(
+                    sessionId: widget.sessionId,
+                    onAssign: (patientId) => _assignAndNavigate(context, patientId),
+                  ),
                   PatientCreationSheet(
-                    onSuccess: (patientId) => _assignAndNavigate(context, sessionId, patientId),
+                    onSuccess: (patientId) => _assignAndNavigate(context, patientId),
                   ),
                 ],
               ),
@@ -89,34 +189,13 @@ class AssignPatientSheet extends StatelessWidget {
       ),
     );
   }
-
-  static Future<void> _assignAndNavigate(BuildContext context, String sessionId, String patientId) async {
-    final l10n = AppLocalizations.of(context);
-    try {
-      final repo = getIt<RecordingSessionRepository>();
-      final session = await repo.getById(sessionId);
-      if (session != null) {
-        await repo.save(session.copyWith(patientId: patientId));
-      }
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Fermer la modale
-        if (context.canPop()) {
-          context.pop(); // Fermer la page de record si besoin
-        }
-        context.goPatientDetail(patientId);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        AppToast.showError(context, l10n.assignPatientError);
-      }
-    }
-  }
 }
 
 class _PatientSearchTab extends StatefulWidget {
-  const _PatientSearchTab({required this.sessionId});
+  const _PatientSearchTab({required this.sessionId, required this.onAssign});
 
   final String sessionId;
+  final ValueChanged<String> onAssign;
 
   @override
   State<_PatientSearchTab> createState() => _PatientSearchTabState();
@@ -187,11 +266,7 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                     final patient = patients[index];
                     final theme = Theme.of(context);
                     return InkWell(
-                      onTap: () => AssignPatientSheet._assignAndNavigate(
-                        context,
-                        widget.sessionId,
-                        patient.id,
-                      ),
+                      onTap: () => widget.onAssign(patient.id),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surface,
