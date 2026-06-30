@@ -1069,7 +1069,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialHomePatientsDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.'**
+  /// **'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.'**
   String get tutorialHomePatientsDesc;
 
   /// No description provided for @tutorialHomeRecordTitle.
@@ -1081,7 +1081,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialHomeRecordDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.'**
+  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.'**
   String get tutorialHomeRecordDesc;
 
   /// No description provided for @tutorialPatientAddTitle.
@@ -1093,7 +1093,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientAddDesc.
   ///
   /// In fr, this message translates to:
-  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.'**
+  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.'**
   String get tutorialPatientAddDesc;
 
   /// No description provided for @tutorialPatientMrnTitle.
@@ -1105,7 +1105,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientMrnDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.'**
+  /// **'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.\n\n👉 Saisissez le MRN pour continuer.'**
   String get tutorialPatientMrnDesc;
 
   /// No description provided for @tutorialPatientFirstNameTitle.
@@ -1117,7 +1117,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientFirstNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Saisissez le prenom du patient pour completer son dossier.'**
+  /// **'Saisissez le prenom du patient pour completer son dossier.\n\n👉 Saisissez le prenom pour continuer.'**
   String get tutorialPatientFirstNameDesc;
 
   /// No description provided for @tutorialPatientLastNameTitle.
@@ -1129,7 +1129,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientLastNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.'**
+  /// **'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.\n\n👉 Saisissez le nom pour continuer.'**
   String get tutorialPatientLastNameDesc;
 
   /// No description provided for @tutorialPatientCreateTitle.
@@ -1141,7 +1141,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientCreateDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.'**
+  /// **'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.\n\n👉 Appuyez sur \'Creer le dossier\' ci-dessous pour continuer.'**
   String get tutorialPatientCreateDesc;
 
   /// No description provided for @tutorialDetailConsultTitle.
@@ -1153,7 +1153,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialDetailConsultDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.'**
+  /// **'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.'**
   String get tutorialDetailConsultDesc;
 
   /// No description provided for @tutorialRecordTitle.
@@ -1165,7 +1165,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialRecordDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.'**
+  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.'**
   String get tutorialRecordDesc;
 
   /// No description provided for @tutorialRecordStopTitle.
@@ -1177,7 +1177,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialRecordStopDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.'**
+  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.'**
   String get tutorialRecordStopDesc;
 
   /// No description provided for @tutorialRecordFinishTitle.
@@ -1189,7 +1189,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialRecordFinishDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.'**
+  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.'**
   String get tutorialRecordFinishDesc;
 
   /// No description provided for @tutorialRecordTranscriptTitle.
@@ -1201,7 +1201,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialRecordTranscriptDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.'**
+  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.'**
   String get tutorialRecordTranscriptDesc;
 
   /// No description provided for @tutorialAssignPatientTitle.
@@ -1213,7 +1213,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialAssignPatientDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.'**
+  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.'**
   String get tutorialAssignPatientDesc;
 
   /// No description provided for @tutorialRestarted.

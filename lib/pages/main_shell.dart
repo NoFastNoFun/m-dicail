@@ -132,7 +132,8 @@ class _MainShellState extends State<MainShell> {
           key: _patientsNavKey,
           title: l10n.tutorialHomePatientsTitle,
           description: l10n.tutorialHomePatientsDesc,
-          disposeOnTap: true,
+          disposeOnTap: false,
+          disableBarrierInteraction: true,
           onTargetClick: () {
             context.read<TutorialBloc>().add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homePatients)));
             context.go(AppRoutes.patients);
@@ -179,7 +180,8 @@ class _MainShellState extends State<MainShell> {
                           key: _quickRecordKey,
                           title: l10n.tutorialHomeRecordTitle,
                           description: l10n.tutorialHomeRecordDesc,
-                          disposeOnTap: true,
+                          disposeOnTap: false,
+                          disableBarrierInteraction: true,
                           onTargetClick: () {
                             context.read<TutorialBloc>().add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homeQuickRecord)));
                             context.goRecord();

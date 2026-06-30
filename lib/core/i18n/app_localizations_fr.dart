@@ -504,91 +504,91 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialHomePatientsDesc =>
-      'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.';
+      'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.';
 
   @override
   String get tutorialHomeRecordTitle => 'Consultation Rapide';
 
   @override
   String get tutorialHomeRecordDesc =>
-      'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.';
+      'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.';
 
   @override
   String get tutorialPatientAddTitle => 'Ajouter un patient';
 
   @override
   String get tutorialPatientAddDesc =>
-      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.';
+      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.';
 
   @override
   String get tutorialPatientMrnTitle => 'Numero de dossier';
 
   @override
   String get tutorialPatientMrnDesc =>
-      'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.';
+      'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.\n\n👉 Saisissez le MRN pour continuer.';
 
   @override
   String get tutorialPatientFirstNameTitle => 'Prenom du patient';
 
   @override
   String get tutorialPatientFirstNameDesc =>
-      'Saisissez le prenom du patient pour completer son dossier.';
+      'Saisissez le prenom du patient pour completer son dossier.\n\n👉 Saisissez le prenom pour continuer.';
 
   @override
   String get tutorialPatientLastNameTitle => 'Nom du patient';
 
   @override
   String get tutorialPatientLastNameDesc =>
-      'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.';
+      'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.\n\n👉 Saisissez le nom pour continuer.';
 
   @override
   String get tutorialPatientCreateTitle => 'Creer le dossier';
 
   @override
   String get tutorialPatientCreateDesc =>
-      'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.';
+      'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.\n\n👉 Appuyez sur \'Creer le dossier\' ci-dessous pour continuer.';
 
   @override
   String get tutorialDetailConsultTitle => 'Nouvelle consultation';
 
   @override
   String get tutorialDetailConsultDesc =>
-      'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.';
+      'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.';
 
   @override
   String get tutorialRecordTitle => 'La Dictee';
 
   @override
   String get tutorialRecordDesc =>
-      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.';
+      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.';
 
   @override
   String get tutorialRecordStopTitle => 'Arreter l\'ecoute';
 
   @override
   String get tutorialRecordStopDesc =>
-      'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.';
+      'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.';
 
   @override
   String get tutorialRecordFinishTitle => 'Terminer la consultation';
 
   @override
   String get tutorialRecordFinishDesc =>
-      'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.';
+      'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.';
 
   @override
   String get tutorialRecordTranscriptTitle => 'Transcription en temps reel';
 
   @override
   String get tutorialRecordTranscriptDesc =>
-      'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.';
+      'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.';
 
   @override
   String get tutorialAssignPatientTitle => 'Associer a un patient';
 
   @override
   String get tutorialAssignPatientDesc =>
-      'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.';
+      'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.';
 
   @override
   String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';

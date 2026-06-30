@@ -150,7 +150,8 @@ class _PatientDetailView extends StatelessWidget {
           key: consultKey,
           title: l10n.tutorialDetailConsultTitle,
           description: l10n.tutorialDetailConsultDesc,
-          disposeOnTap: true,
+          disposeOnTap: false,
+          disableBarrierInteraction: true,
           onTargetClick: () async {
             context.read<TutorialBloc>().completeStep(TutorialStepId.patientConsultation);
             await context.goRecord(patientId: patient.id);

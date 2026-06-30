@@ -129,7 +129,8 @@ class _PatientsViewState extends State<_PatientsView> {
               key: _addPatientKey,
               title: l10n.tutorialPatientAddTitle,
               description: l10n.tutorialPatientAddDesc,
-              disposeOnTap: true,
+              disposeOnTap: false,
+              disableBarrierInteraction: true,
               onTargetClick: () {
                 context.read<TutorialBloc>().completeStep(TutorialStepId.patientsAdd);
                 _showCreatePatientSheet(context);

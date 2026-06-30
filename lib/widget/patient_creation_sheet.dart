@@ -202,7 +202,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                 key: _mrnKey,
                 title: l10n.tutorialPatientMrnTitle,
                 description: l10n.tutorialPatientMrnDesc,
-                disposeOnTap: true,
+                disposeOnTap: false,
+                disableBarrierInteraction: true,
                 onTargetClick: () => _mrnFocusNode.requestFocus(),
                 child: AppInput(
                   variant: AppInputVariant.text,
@@ -223,7 +224,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                       key: _firstNameKey,
                       title: l10n.tutorialPatientFirstNameTitle,
                       description: l10n.tutorialPatientFirstNameDesc,
-                      disposeOnTap: true,
+                      disposeOnTap: false,
+                      disableBarrierInteraction: true,
                       onTargetClick: () => _firstNameFocusNode.requestFocus(),
                       child: AppInput(
                         variant: AppInputVariant.text,
@@ -243,7 +245,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                       key: _lastNameKey,
                       title: l10n.tutorialPatientLastNameTitle,
                       description: l10n.tutorialPatientLastNameDesc,
-                      disposeOnTap: true,
+                      disposeOnTap: false,
+                      disableBarrierInteraction: true,
                       onTargetClick: () => _lastNameFocusNode.requestFocus(),
                       child: AppInput(
                         variant: AppInputVariant.text,
@@ -337,7 +340,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                     key: _submitKey,
                     title: l10n.tutorialPatientCreateTitle,
                     description: l10n.tutorialPatientCreateDesc,
-                    disposeOnTap: true,
+                    disposeOnTap: false,
+                    disableBarrierInteraction: true,
                     onTargetClick: () {
                       _completeSubmitTutorialStep();
                       _submit();

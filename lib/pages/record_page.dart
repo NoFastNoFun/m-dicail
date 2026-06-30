@@ -393,7 +393,8 @@ class _RecordViewState extends State<_RecordView> {
                         key: _recordToggleKey,
                         title: _currentShowcaseTitle(l10n),
                         description: _currentShowcaseDescription(l10n),
-                        disposeOnTap: true,
+                        disposeOnTap: false,
+                        disableBarrierInteraction: true,
                         onTargetClick: _handleShowcaseTap,
                         child: AppRecordHeaderCard(
                       dateLabel: dateLabel,
@@ -446,12 +447,19 @@ class _RecordViewState extends State<_RecordView> {
                   const SizedBox(height: AppSpacing.lg),
                   Expanded(
                     child: Showcase(
-                      key: _transcriptKey,
-                      title: l10n.tutorialRecordTranscriptTitle,
-                      description: l10n.tutorialRecordTranscriptDesc,
-                      disposeOnTap: true,
-                      onTargetClick: _completeTranscriptTutorialStep,
-                      child: AppRecordTranscriptView(
+                        key: _transcriptKey,
+                        title: l10n.tutorialRecordTranscriptTitle,
+                        description: l10n.tutorialRecordTranscriptDesc,
+                        disposeOnTap: false,
+                        disableBarrierInteraction: true,
+                        onTargetClick: () {
+                          final tutorialBloc = context.read<TutorialBloc>();
+                          final stepId = tutorialBloc.state.tutorialStepId;
+                          if (stepId != null) {
+                            tutorialBloc.completeStep(stepId);
+                          }
+                        },
+                        child: AppRecordTranscriptView(
                         transcript: viewModel.transcript,
                         emptyHint: l10n.transcriptEmptyHint,
                       ),

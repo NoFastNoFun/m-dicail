@@ -151,7 +151,8 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
                   key: _assignPatientTutorialKey,
                   title: l10n.tutorialAssignPatientTitle,
                   description: l10n.tutorialAssignPatientDesc,
-                  disposeOnTap: true,
+                  disposeOnTap: false,
+                  disableBarrierInteraction: true,
                   onTargetClick: _completeAssignPatientTutorialStep,
                   child: AppText(
                     l10n.assignPatientTitle,
