@@ -40,6 +40,15 @@ class _MainShellState extends State<MainShell> {
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
   void _handleTutorialState(TutorialState state) {
     if (state is TutorialInitial && !_didAskTutorialStart) {
       _didAskTutorialStart = true;
