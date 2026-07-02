@@ -53,6 +53,10 @@ import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
 import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart'
     as _i430;
+import 'package:medicail/features/recording/data/repositories/api_recording_session_repository.dart'
+    as _i962;
+import 'package:medicail/features/recording/data/repositories/dynamic_recording_session_repository.dart'
+    as _i932;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
@@ -101,7 +105,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
+    gh.factory<_i913.SecureStorageRecordingSessionRepository>(
       () => _i913.SecureStorageRecordingSessionRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
@@ -142,6 +146,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
     );
+    gh.factory<_i962.ApiRecordingSessionRepository>(
+      () => _i962.ApiRecordingSessionRepository(gh<_i1005.ApiClient>()),
+    );
     gh.lazySingleton<_i790.AuthRepository>(
       () => _i985.AuthRepositoryImpl(
         gh<_i1005.ApiClient>(),
@@ -158,10 +165,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i932.DynamicRecordingSessionRepository(
+        gh<_i962.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
       ),
     );
     gh.factory<_i301.PatientBloc>(
@@ -180,6 +188,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i21.AudioCaptureService>(),
         gh<_i814.RecordingSessionRepository>(),
         gh<_i341.NoteProcessingRepository>(),
+      ),
+    );
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     return this;

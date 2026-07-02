@@ -5,7 +5,7 @@ import 'package:medicail/features/recording/data/models/recording_session_model.
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 
-@LazySingleton(as: RecordingSessionRepository)
+@injectable
 class SecureStorageRecordingSessionRepository
     implements RecordingSessionRepository {
   const SecureStorageRecordingSessionRepository(this._storage);
