@@ -1,3 +1,4 @@
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 
 enum VoiceCaptureSessionStatus {
@@ -14,6 +15,7 @@ final class VoiceCaptureViewModel {
     required this.status,
     this.transcript = '',
     this.errorMessage,
+    this.selectedTemplate,
   });
 
   factory VoiceCaptureViewModel.fromState(VoiceCaptureState state) {
@@ -21,29 +23,49 @@ final class VoiceCaptureViewModel {
       VoiceCaptureInitial() => const VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.initializing,
         ),
-      VoiceCaptureReady(:final transcript) => VoiceCaptureViewModel(
+      VoiceCaptureReady(
+        :final transcript,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
           status: transcript.trim().isEmpty
               ? VoiceCaptureSessionStatus.ready
               : VoiceCaptureSessionStatus.ended,
           transcript: transcript,
+          selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureConsultationFinished(:final transcript) => VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.ended,
           transcript: transcript,
         ),
-      RecordingInProgress(:final transcript) => VoiceCaptureViewModel(
+      RecordingInProgress(
+        :final transcript,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           transcript: transcript,
+          selectedTemplate: selectedTemplate,
         ),
-      ListeningPaused(:final transcript) => VoiceCaptureViewModel(
+      ListeningPaused(
+        :final transcript,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.paused,
           transcript: transcript,
+          selectedTemplate: selectedTemplate,
         ),
-      VoiceCaptureFailure(:final message, :final transcript) =>
+      VoiceCaptureFailure(
+        :final message,
+        :final transcript,
+        :final selectedTemplate,
+      ) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.failure,
           transcript: transcript,
           errorMessage: message,
+          selectedTemplate: selectedTemplate,
         ),
     };
   }
@@ -51,6 +73,7 @@ final class VoiceCaptureViewModel {
   final VoiceCaptureSessionStatus status;
   final String transcript;
   final String? errorMessage;
+  final NoteTemplate? selectedTemplate;
 
   bool get isInitializing => status == VoiceCaptureSessionStatus.initializing;
 

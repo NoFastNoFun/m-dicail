@@ -10,6 +10,9 @@ import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/pages/settings_page.dart';
+import 'package:medicail/pages/template_editor_page.dart';
+import 'package:medicail/pages/templates_page.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/widget/app_text.dart';
 
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
@@ -70,6 +73,23 @@ class AppRouter {
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
           ),
+          GoRoute(
+            path: AppRoutes.settingsTemplates,
+            name: 'settings-templates',
+            builder: (context, state) => const TemplatesPage(),
+            routes: [
+              GoRoute(
+                path: ':templateId/edit',
+                name: 'template-editor',
+                builder: (context, state) => TemplateEditorPage(
+                  templateId: state.pathParameters['templateId'] ?? '',
+                  initialTemplate: state.extra is NoteTemplate
+                      ? state.extra! as NoteTemplate
+                      : null,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(
@@ -120,6 +140,8 @@ extension AppRouterNavigation on BuildContext {
   void goPatients() => go(AppRoutes.patients);
 
   void goSettings() => go(AppRoutes.settings);
+
+  void goTemplates() => pushNamed('settings-templates');
 
   void goPatientDetail(String patientId) => push('/patients/$patientId');
 

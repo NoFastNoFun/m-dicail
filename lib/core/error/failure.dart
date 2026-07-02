@@ -19,6 +19,12 @@ class Failure {
     if (error is PlatformException) {
       return Failure(error.message ?? error.code);
     }
-    return const Failure('Une erreur est survenue');
+    if (error is StateError) {
+      return Failure(error.message);
+    }
+    if (error is FormatException) {
+      return Failure(error.message);
+    }
+    return Failure(error.toString());
   }
 }

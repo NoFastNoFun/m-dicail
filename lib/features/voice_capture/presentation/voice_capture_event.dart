@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 
 sealed class VoiceCaptureEvent extends Equatable {
   const VoiceCaptureEvent();
@@ -47,4 +48,13 @@ final class VoiceCaptureTranscriptUpdated extends VoiceCaptureEvent {
 
   @override
   List<Object?> get props => [rawText];
+}
+
+final class VoiceCaptureTemplateSelected extends VoiceCaptureEvent {
+  const VoiceCaptureTemplateSelected(this.template);
+
+  final NoteTemplate? template;
+
+  @override
+  List<Object?> get props => [template];
 }
