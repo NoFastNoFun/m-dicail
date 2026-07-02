@@ -260,7 +260,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   }
 
   String _generateSessionId(DateTime startedAt) {
-    return 'recording_${startedAt.toUtc().microsecondsSinceEpoch}';
+    return 'local_recording_${startedAt.toUtc().microsecondsSinceEpoch}';
   }
 
   Future<void> _ensureActiveSessionStarted(
@@ -271,8 +271,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     if (existingSession != null &&
         existingSession.status == RecordingSessionStatus.recording) {
       final updated = existingSession.copyWith(transcript: transcript);
-      _activeSession = updated;
-      await _recordingSessionRepository.save(updated);
+      _activeSession = await _recordingSessionRepository.save(updated);
       return;
     }
 
@@ -284,8 +283,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transcript: transcript,
       status: RecordingSessionStatus.recording,
     );
-    _activeSession = session;
-    await _recordingSessionRepository.save(_activeSession!);
+    _activeSession = await _recordingSessionRepository.save(session);
   }
 
   Future<void> _completeActiveSession({
@@ -303,8 +301,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       soapNote: soapNote,
       status: RecordingSessionStatus.completed,
     );
-    _activeSession = completed;
-    await _recordingSessionRepository.save(completed);
+    _activeSession = await _recordingSessionRepository.save(completed);
   }
 
   Future<void> _failActiveSession(String transcript) async {
@@ -318,8 +315,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transcript: transcript,
       status: RecordingSessionStatus.failed,
     );
-    _activeSession = failed;
-    await _recordingSessionRepository.save(failed);
+    _activeSession = await _recordingSessionRepository.save(failed);
   }
 
   void _updateActiveSessionTranscriptInMemory(String transcript) {

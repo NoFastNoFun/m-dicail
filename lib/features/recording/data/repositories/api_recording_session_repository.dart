@@ -48,15 +48,22 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
   }
 
   @override
-  Future<void> save(RecordingSession session) async {
+  Future<RecordingSession> save(RecordingSession session) async {
     final model = RecordingSessionModel.fromEntity(session);
-    final payload = model.toJson()
-      ..remove('id')
-      ..remove('created_at')
-      ..remove('updated_at');
 
-    // Si l'id est vide ou généré en local (ne commence pas par recording_), c'est une création
-    if (session.id.isEmpty || !session.id.startsWith('recording_')) {
+    // Si l'id est vide ou généré en local (commence par local_), c'est une création
+    if (session.id.isEmpty || session.id.startsWith('local_')) {
+      final payload = <String, dynamic>{
+        'started_at': model.startedAt.toIso8601String(),
+        'status': model.status.name,
+      };
+      if (model.transcript.isNotEmpty) {
+        payload['transcript'] = model.transcript;
+      }
+      if (model.patientId != null && model.patientId!.isNotEmpty) {
+        payload['patient_id'] = model.patientId;
+      }
+
       final response = await _apiClient.post<Map<String, dynamic>>(
         '/recording-sessions',
         data: payload,
@@ -65,10 +72,24 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
       if (data == null) {
         throw const ServerException('Aucune donnee session retournee.');
       }
-      return;
+      return RecordingSessionModel.fromJson(data);
     }
 
-    // Sinon mise a jour
+    // Sinon mise a jour (PUT)
+    final payload = <String, dynamic>{
+      'status': model.status.name,
+      'transcript': model.transcript,
+    };
+    if (model.endedAt != null) {
+      payload['ended_at'] = model.endedAt!.toIso8601String();
+    }
+    if (model.soapNote != null) {
+      payload['soap_note'] = model.soapNote!.toJson();
+    }
+    if (model.patientId != null) {
+      payload['patient_id'] = model.patientId;
+    }
+
     final response = await _apiClient.put<Map<String, dynamic>>(
       '/recording-sessions/${session.id}',
       data: payload,
@@ -77,6 +98,7 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
     if (data == null) {
       throw const ServerException('Aucune donnee session retournee.');
     }
+    return RecordingSessionModel.fromJson(data);
   }
 
   @override

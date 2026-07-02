@@ -45,9 +45,9 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
   }
 
   @override
-  Future<void> save(RecordingSession session) async {
+  Future<RecordingSession> save(RecordingSession session) async {
     final repo = await _getRepository();
-    await repo.save(session);
+    return repo.save(session);
   }
 
   @override
