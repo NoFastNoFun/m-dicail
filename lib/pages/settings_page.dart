@@ -91,7 +91,7 @@ class SettingsPage extends StatelessWidget {
                     );
                   }
                   return AppButton(
-                    label: l10n.settingsSignIn,
+                    label: l10n.homeSignIn,
                     layout: AppButtonLayout.textWithIcon,
                     icon: Icons.login,
                     onPressed: () => context.push(AppRoutes.login),

@@ -230,7 +230,7 @@ class _DebugPageState extends State<DebugPage> {
               style: AppButtonStyle.error,
               onPressed: () => AppToast.show(
                 context,
-                message: l10n.debugToastError,
+                message: l10n.errorGeneric,
                 type: AppToastType.error,
               ),
             ),

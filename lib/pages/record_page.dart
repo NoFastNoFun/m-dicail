@@ -306,7 +306,7 @@ class _RecordViewState extends State<_RecordView> {
         ),
         AppButton(
           label: hasPatient
-              ? l10n.recordLeaveSave
+              ? l10n.buttonSave
               : l10n.recordLeaveSaveAndAssign,
           expanded: false,
           onPressed: () => Navigator.of(context).pop(_RecordLeaveAction.save),

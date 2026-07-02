@@ -121,13 +121,13 @@ class _MainShellState extends State<MainShell> {
         route: AppRoutes.home,
         icon: Icons.home_outlined,
         selectedIcon: Icons.home,
-        label: l10n.navHome,
+        label: l10n.homeTitle,
       ),
       AppBottomNavDestination(
         route: AppRoutes.patients,
         icon: Icons.folder_outlined,
         selectedIcon: Icons.folder,
-        label: l10n.navPatients,
+        label: l10n.patientsTitle,
         wrapper: (child) => Showcase(
           key: _patientsNavKey,
           title: l10n.tutorialHomePatientsTitle,
@@ -145,7 +145,7 @@ class _MainShellState extends State<MainShell> {
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,
-        label: l10n.navSettings,
+        label: l10n.settingsTitle,
       ),
     ];
 
@@ -191,7 +191,7 @@ class _MainShellState extends State<MainShell> {
                             actions: [
                               AppRadialAction(
                                 icon: Icons.folder_outlined,
-                                label: l10n.radialActionPatients,
+                                label: l10n.patientsSectionTitle,
                                 onTap: () => context.go(AppRoutes.patients),
                               ),
                               AppRadialAction(

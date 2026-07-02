@@ -48,9 +48,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelHistory => 'Historique';
 
   @override
-  String get navigateToPatients => 'Dossiers patients';
-
-  @override
   String get navigateToRecord => 'Nouvel enregistrement';
 
   @override
@@ -252,9 +249,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debugToastWarning => 'Attention requise';
 
   @override
-  String get debugToastError => 'Une erreur est survenue';
-
-  @override
   String get debugToastInfo => 'Information';
 
   @override
@@ -361,9 +355,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginPasswordLabel => 'Mot de passe';
 
   @override
-  String get loginSubmit => 'Se connecter';
-
-  @override
   String get loginCreateAccountButton => 'Creer un compte';
 
   @override
@@ -418,31 +409,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recordLeaveSaveAndAssign => 'Enregistrer et associer';
 
   @override
-  String get recordLeaveSave => 'Enregistrer';
-
-  @override
   String get recordLeaveDiscard => 'Quitter sans enregistrer';
 
   @override
   String get recordLeaveCancel => 'Continuer l\'enregistrement';
 
   @override
-  String get navHome => 'Accueil';
-
-  @override
-  String get navPatients => 'Patients';
-
-  @override
-  String get navSettings => 'Reglages';
-
-  @override
-  String get radialActionPatients => 'Dossiers patients';
-
-  @override
   String get radialActionNewRecord => 'Nouvel enregistrement';
 
   @override
-  String get settingsTitle => 'Reglages';
+  String get settingsTitle => 'Réglages';
 
   @override
   String get settingsTheme => 'Theme';
@@ -482,9 +458,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsLogout => 'Se deconnecter';
-
-  @override
-  String get settingsSignIn => 'Se connecter';
 
   @override
   String get tutorialIntroTitle => 'Decouvrir Medicail';

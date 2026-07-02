@@ -172,12 +172,6 @@ abstract class AppLocalizations {
   /// **'Historique'**
   String get labelHistory;
 
-  /// No description provided for @navigateToPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Dossiers patients'**
-  String get navigateToPatients;
-
   /// No description provided for @navigateToRecord.
   ///
   /// In fr, this message translates to:
@@ -574,12 +568,6 @@ abstract class AppLocalizations {
   /// **'Attention requise'**
   String get debugToastWarning;
 
-  /// No description provided for @debugToastError.
-  ///
-  /// In fr, this message translates to:
-  /// **'Une erreur est survenue'**
-  String get debugToastError;
-
   /// No description provided for @debugToastInfo.
   ///
   /// In fr, this message translates to:
@@ -790,12 +778,6 @@ abstract class AppLocalizations {
   /// **'Mot de passe'**
   String get loginPasswordLabel;
 
-  /// No description provided for @loginSubmit.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get loginSubmit;
-
   /// No description provided for @loginCreateAccountButton.
   ///
   /// In fr, this message translates to:
@@ -898,12 +880,6 @@ abstract class AppLocalizations {
   /// **'Enregistrer et associer'**
   String get recordLeaveSaveAndAssign;
 
-  /// No description provided for @recordLeaveSave.
-  ///
-  /// In fr, this message translates to:
-  /// **'Enregistrer'**
-  String get recordLeaveSave;
-
   /// No description provided for @recordLeaveDiscard.
   ///
   /// In fr, this message translates to:
@@ -916,30 +892,6 @@ abstract class AppLocalizations {
   /// **'Continuer l\'enregistrement'**
   String get recordLeaveCancel;
 
-  /// No description provided for @navHome.
-  ///
-  /// In fr, this message translates to:
-  /// **'Accueil'**
-  String get navHome;
-
-  /// No description provided for @navPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Patients'**
-  String get navPatients;
-
-  /// No description provided for @navSettings.
-  ///
-  /// In fr, this message translates to:
-  /// **'Reglages'**
-  String get navSettings;
-
-  /// No description provided for @radialActionPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Dossiers patients'**
-  String get radialActionPatients;
-
   /// No description provided for @radialActionNewRecord.
   ///
   /// In fr, this message translates to:
@@ -949,7 +901,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Reglages'**
+  /// **'Réglages'**
   String get settingsTitle;
 
   /// No description provided for @settingsTheme.
@@ -1029,12 +981,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se deconnecter'**
   String get settingsLogout;
-
-  /// No description provided for @settingsSignIn.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get settingsSignIn;
 
   /// No description provided for @tutorialIntroTitle.
   ///
