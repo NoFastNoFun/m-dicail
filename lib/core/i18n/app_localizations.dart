@@ -1035,6 +1035,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se connecter'**
   String get settingsSignIn;
+
+  /// No description provided for @punctuationWordPeriod.
+  ///
+  /// In fr, this message translates to:
+  /// **'point'**
+  String get punctuationWordPeriod;
+
+  /// No description provided for @punctuationWordComma.
+  ///
+  /// In fr, this message translates to:
+  /// **'virgule'**
+  String get punctuationWordComma;
+
+  /// No description provided for @punctuationTransitions.
+  ///
+  /// In fr, this message translates to:
+  /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
+  String get punctuationTransitions;
 }
 
 class _AppLocalizationsDelegate

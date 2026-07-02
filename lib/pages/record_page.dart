@@ -259,6 +259,9 @@ class _RecordViewState extends State<_RecordView> {
                         bloc.add(
                           VoiceCaptureStartRecording(
                             patientId: widget.patientId,
+                            wordPeriod: l10n.punctuationWordPeriod,
+                            wordComma: l10n.punctuationWordComma,
+                            transitions: l10n.punctuationTransitions.split(','),
                           ),
                         );
                       }

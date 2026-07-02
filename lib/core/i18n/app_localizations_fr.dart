@@ -485,4 +485,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsSignIn => 'Se connecter';
+
+  @override
+  String get punctuationWordPeriod => 'point';
+
+  @override
+  String get punctuationWordComma => 'virgule';
+
+  @override
+  String get punctuationTransitions =>
+      'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
 }

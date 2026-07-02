@@ -35,6 +35,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   String _segmentBase = '';
   RecordingSession? _activeSession;
 
+  List<String> _transitions = const [];
+  String _wordPeriod = '';
+  String _wordComma = '';
+
   Future<void> _onInitialize(
     VoiceCaptureInitializeRequested event,
     Emitter<VoiceCaptureState> emit,
@@ -58,6 +62,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     final currentTranscript = _currentTranscript;
     _segmentBase = currentTranscript;
+    _transitions = event.transitions;
+    _wordPeriod = event.wordPeriod;
+    _wordComma = event.wordComma;
     try {
       await _audioCaptureService.initialize();
       await _ensureActiveSessionStarted(
@@ -213,7 +220,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final punctuated = PunctuationHelper.applyHeuristics(anonymized);
+    final punctuated = PunctuationHelper.applyHeuristics(
+      text: anonymized,
+      wordPeriod: _wordPeriod,
+      wordComma: _wordComma,
+      transitionWords: _transitions,
+    );
 
     final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     _updateActiveSessionTranscriptInMemory(merged);

@@ -156,5 +156,8 @@
   "settingsRestartOnboarding": "Recommencer l'introduction",
   "settingsTbd": "TBD",
   "settingsLogout": "Se deconnecter",
-  "settingsSignIn": "Se connecter"
+  "settingsSignIn": "Se connecter",
+  "punctuationWordPeriod": "point",
+  "punctuationWordComma": "virgule",
+  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin"
 }

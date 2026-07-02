@@ -1,27 +1,37 @@
 class PunctuationHelper {
   /// Applique des heuristiques de ponctuation sur un texte reconnu
-  static String applyHeuristics(String text) {
+  static String applyHeuristics({
+    required String text,
+    String? wordPeriod,
+    String? wordComma,
+    List<String>? transitionWords,
+  }) {
     if (text.trim().isEmpty) return text;
 
     String formatted = text;
 
     // 1. Remplacement des mots de ponctuation explicites
-    formatted = formatted.replaceAll(RegExp(r'\bpoint\b', caseSensitive: false), '.');
-    formatted = formatted.replaceAll(RegExp(r'\bvirgule\b', caseSensitive: false), ',');
+    final period = wordPeriod?.trim().isNotEmpty == true ? wordPeriod!.trim() : 'point';
+    final comma = wordComma?.trim().isNotEmpty == true ? wordComma!.trim() : 'virgule';
+
+    formatted = formatted.replaceAll(RegExp('\\b$period\\b', caseSensitive: false), '.');
+    formatted = formatted.replaceAll(RegExp('\\b$comma\\b', caseSensitive: false), ',');
 
     // 2. Mots-clés de transition (insérer un point juste avant)
-    final transitions = [
-      r"\ble patient\b",
-      r"\bla patiente\b",
-      r"\bà l'examen\b",
-      r"\ba l'examen\b",
-      r"\bau niveau\b",
-      r"\bpour le traitement\b",
-      r"\bpour la suite\b",
-      r"\bmon diagnostic\b",
-      r"\bensuite\b",
-      r"\benfin\b",
-    ];
+    final transitions = (transitionWords != null && transitionWords.isNotEmpty)
+        ? transitionWords.map((t) => '\\b${RegExp.escape(t.trim())}\\b').toList()
+        : [
+            r"\ble patient\b",
+            r"\bla patiente\b",
+            r"\bà l'examen\b",
+            r"\ba l'examen\b",
+            r"\bau niveau\b",
+            r"\bpour le traitement\b",
+            r"\bpour la suite\b",
+            r"\bmon diagnostic\b",
+            r"\bensuite\b",
+            r"\benfin\b",
+          ];
 
     for (final t in transitions) {
       formatted = formatted.replaceAllMapped(
