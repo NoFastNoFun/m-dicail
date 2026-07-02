@@ -14,6 +14,7 @@ final class VoiceCaptureViewModel {
     required this.status,
     this.transcript = '',
     this.errorMessage,
+    this.isProcessing = false,
   });
 
   factory VoiceCaptureViewModel.fromState(VoiceCaptureState state) {
@@ -30,6 +31,11 @@ final class VoiceCaptureViewModel {
       VoiceCaptureConsultationFinished(:final transcript) => VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.ended,
           transcript: transcript,
+        ),
+      VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.paused,
+          transcript: transcript,
+          isProcessing: true,
         ),
       RecordingInProgress(:final transcript) => VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
@@ -51,6 +57,7 @@ final class VoiceCaptureViewModel {
   final VoiceCaptureSessionStatus status;
   final String transcript;
   final String? errorMessage;
+  final bool isProcessing;
 
   bool get isInitializing => status == VoiceCaptureSessionStatus.initializing;
 
@@ -63,14 +70,14 @@ final class VoiceCaptureViewModel {
   bool get hasTranscript => transcript.trim().isNotEmpty;
 
   bool get canStart =>
-      status == VoiceCaptureSessionStatus.ready ||
-      status == VoiceCaptureSessionStatus.paused;
+      (status == VoiceCaptureSessionStatus.ready ||
+      status == VoiceCaptureSessionStatus.paused) && !isProcessing;
 
-  bool get canStop => isListening;
+  bool get canStop => isListening && !isProcessing;
 
-  bool get canFinishConsultation => isConsultationOpen;
+  bool get canFinishConsultation => isConsultationOpen && !isProcessing;
 
-  bool get canClear => !isConsultationOpen && hasTranscript;
+  bool get canClear => !isConsultationOpen && hasTranscript && !isProcessing;
 
   bool get hasUnsavedWork =>
       isConsultationOpen ||

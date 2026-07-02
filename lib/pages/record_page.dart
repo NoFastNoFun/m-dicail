@@ -175,7 +175,8 @@ class _RecordViewState extends State<_RecordView> {
 
     final bloc = context.read<VoiceCaptureBloc>();
     if (action == _RecordLeaveAction.save) {
-      bloc.add(const VoiceCaptureFinishConsultation());
+      final language = Localizations.localeOf(context).languageCode;
+      bloc.add(VoiceCaptureFinishConsultation(language: language));
       return;
     }
 
@@ -219,20 +220,25 @@ class _RecordViewState extends State<_RecordView> {
         final theme = Theme.of(context);
 
         return PopScope(
-          canPop: !viewModel.hasUnsavedWork,
+          canPop: !viewModel.hasUnsavedWork && !viewModel.isProcessing,
           onPopInvokedWithResult: (didPop, _) {
             if (didPop) {
               return;
             }
+            if (viewModel.isProcessing) {
+              return;
+            }
             _handleLeaveRequest(context);
           },
-          child: Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.pagePadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Stack(
+            children: [
+              Scaffold(
+                backgroundColor: theme.scaffoldBackgroundColor,
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     AppRecordHeaderCard(
                       dateLabel: dateLabel,
@@ -261,9 +267,10 @@ class _RecordViewState extends State<_RecordView> {
                       AppRecordMenuItem(
                         label: l10n.buttonFinishConsultation,
                         enabled: viewModel.canFinishConsultation,
-                        onSelected: () => context
-                            .read<VoiceCaptureBloc>()
-                            .add(const VoiceCaptureFinishConsultation()),
+                        onSelected: () {
+                          final language = Localizations.localeOf(context).languageCode;
+                          context.read<VoiceCaptureBloc>().add(VoiceCaptureFinishConsultation(language: language));
+                        },
                       ),
                       AppRecordMenuItem(
                         label: l10n.buttonClear,
@@ -297,11 +304,33 @@ class _RecordViewState extends State<_RecordView> {
                   ),
                 ],
               ),
+              ),
             ),
-          ),
-        ),
-        );
-      },
+          ), // close Scaffold
+          if (viewModel.isProcessing)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(color: Colors.white),
+                      const SizedBox(height: AppSpacing.md),
+                      AppText(
+                        "Génération de la note SOAP par l'IA...",
+                        variant: AppTextVariant.body,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+      );
+    },
     );
   }
 }

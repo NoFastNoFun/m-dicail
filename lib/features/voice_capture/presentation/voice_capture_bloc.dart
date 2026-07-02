@@ -6,6 +6,7 @@ import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
+import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -15,6 +16,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   VoiceCaptureBloc(
     this._audioCaptureService,
     this._recordingSessionRepository,
+    this._noteProcessingRepository,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -28,6 +30,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   final AudioCaptureService _audioCaptureService;
   final RecordingSessionRepository _recordingSessionRepository;
+  final NoteProcessingRepository _noteProcessingRepository;
   String _segmentBase = '';
   RecordingSession? _activeSession;
 
@@ -98,19 +101,35 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     final transcript = _currentTranscript;
+    final sessionId = _activeSession?.id ?? '';
+    
+    if (sessionId.isEmpty) {
+      emit(VoiceCaptureFailure('Aucune session active', transcript: transcript));
+      return;
+    }
+
     try {
       await _audioCaptureService.stopListening();
-      final sessionId = _activeSession?.id ?? '';
-      await _completeActiveSession(
-        transcript: transcript,
+      emit(VoiceCaptureProcessing(transcript: transcript));
+
+      final result = await _noteProcessingRepository.process(
+        sessionId: sessionId,
+        rawText: transcript,
+        language: event.language,
       );
+
+      await _completeActiveSession(
+        transcript: result.processedText,
+        soapNote: result.soapNote,
+      );
+      
       _segmentBase = '';
+      _activeSession = null;
       emit(VoiceCaptureConsultationFinished(
         sessionId: sessionId,
-        transcript: transcript,
+        transcript: result.processedText,
       ));
     } catch (error) {
-      await _failActiveSession(transcript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
@@ -253,6 +272,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   Future<void> _completeActiveSession({
     required String transcript,
+    required SoapNote soapNote,
   }) async {
     final session = _activeSession;
     if (session == null) {
@@ -262,7 +282,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
-      soapNote: session.soapNote ?? _generateMockSoapNote(transcript),
+      soapNote: soapNote,
       status: RecordingSessionStatus.completed,
     );
     _activeSession = completed;
@@ -302,17 +322,5 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final updated = session.copyWith(transcript: transcript);
     _activeSession = updated;
     await _recordingSessionRepository.save(updated);
-  }
-
-  SoapNote _generateMockSoapNote(String transcript) {
-    final cleanTranscript = transcript.trim();
-    return SoapNote(
-      subjective: cleanTranscript.isEmpty
-          ? '- Motif de consultation :\n- Symptômes décrits :'
-          : cleanTranscript,
-      objective: '- Constantes :\n- Examen clinique :',
-      assessment: '- Diagnostics suspectés :',
-      plan: '- Traitement :\n- Examens complémentaires :\n- Suivi :',
-    );
   }
 }

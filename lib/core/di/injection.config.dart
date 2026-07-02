@@ -51,8 +51,12 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_blo
     as _i802;
 import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
+import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart'
+    as _i430;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
+import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
+    as _i341;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
 import 'package:medicail/features/settings/data/repositories/secure_user_preferences_repository.dart'
@@ -111,12 +115,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
     );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
-    );
     gh.lazySingleton<_i366.AudioPlaybackService>(
       () => _i475.JustAudioPlaybackService(),
     );
@@ -150,6 +148,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i341.NoteProcessingRepository>(
+      () => _i430.ApiNoteProcessingRepository(gh<_i1005.ApiClient>()),
+    );
     gh.lazySingleton<_i390.PatientRepository>(
       () => _i238.DynamicPatientRepository(
         gh<_i545.ApiPatientRepository>(),
@@ -172,6 +173,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i541.AuthNotifier>(),
         gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i814.RecordingSessionRepository>(),
+        gh<_i341.NoteProcessingRepository>(),
       ),
     );
     return this;
