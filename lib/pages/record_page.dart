@@ -66,8 +66,12 @@ class _RecordViewState extends State<_RecordView> {
   final _startedTutorialSteps = <TutorialStepId>{};
   final _recordToggleKey = GlobalKey();
   final _transcriptKey = GlobalKey();
+  final _menuKey = GlobalKey();
+  final _menuButtonKey = GlobalKey<PopupMenuButtonState<int>>();
   bool _returnHomeAfterTutorialConsultation = false;
   Timer? _transcriptTutorialTimer;
+  Timer? _debounceTimer;
+  String _lastTranscript = '';
 
   @override
   void initState() {
@@ -86,6 +90,7 @@ class _RecordViewState extends State<_RecordView> {
   void dispose() {
     _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -166,7 +171,13 @@ class _RecordViewState extends State<_RecordView> {
   };
 
   GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
-    return _isTranscriptTutorialStep(stepId) ? _transcriptKey : _recordToggleKey;
+    if (_isTranscriptTutorialStep(stepId)) {
+      return _transcriptKey;
+    }
+    if (stepId == TutorialStepId.recordFinishFromPatient || stepId == TutorialStepId.quickRecordFinish) {
+      return _menuKey;
+    }
+    return _recordToggleKey;
   }
 
   bool _isTranscriptTutorialStep(TutorialStepId stepId) {
@@ -363,8 +374,18 @@ class _RecordViewState extends State<_RecordView> {
 
         final viewModel = VoiceCaptureViewModel.fromState(state);
         _syncRecordingTimer(viewModel.isListening);
-        if (viewModel.transcript.trim().isNotEmpty) {
-          _completeTranscriptTutorialStep();
+        
+        final transcript = viewModel.transcript.trim();
+        if (transcript.isNotEmpty) {
+          if (transcript != _lastTranscript) {
+            _lastTranscript = transcript;
+            _transcriptTutorialTimer?.cancel();
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(const Duration(seconds: 2), () {
+              if (!mounted) return;
+              _completeTranscriptTutorialStep();
+            });
+          }
         }
       },
       builder: (context, state) {
@@ -434,6 +455,14 @@ class _RecordViewState extends State<_RecordView> {
                         },
                       ),
                       ],
+                      menuKey: _menuKey,
+                      menuButtonKey: _menuButtonKey,
+                      menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                      menuShowcaseDescription: _currentShowcaseDescription(l10n),
+                      onMenuShowcaseTargetClick: () {
+                        _menuButtonKey.currentState?.showButtonMenu();
+                        ShowcaseView.get().dismiss();
+                      },
                     ),
                   ),
                   if (viewModel.errorMessage != null) ...[
