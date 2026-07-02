@@ -25,15 +25,22 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     if (completed) {
       emit(const TutorialCompleted());
     } else {
-      emit(const TutorialInitial());
+      final currentStep = await _repository.getCurrentTutorialStep();
+      if (currentStep != null) {
+        emit(TutorialInProgress(currentStep));
+      } else {
+        emit(const TutorialInitial());
+      }
     }
   }
 
-  void _onStartRequested(
+  Future<void> _onStartRequested(
     TutorialStartRequested event,
     Emitter<TutorialState> emit,
-  ) {
-    emit(TutorialInProgress(TutorialFlow.firstStep));
+  ) async {
+    final firstStep = TutorialFlow.firstStep;
+    await _repository.setCurrentTutorialStep(firstStep);
+    emit(TutorialInProgress(firstStep));
   }
 
   Future<void> _onStepCompleted(
@@ -42,6 +49,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
   ) async {
     final nextStep = TutorialFlow.nextStepAfter(event.completedStep);
     if (nextStep != null) {
+      await _repository.setCurrentTutorialStep(nextStep);
       emit(TutorialInProgress(nextStep));
     } else {
       await _repository.setTutorialCompleted();
