@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
+import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
@@ -179,7 +180,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final transcript = _currentTranscript;
+    var transcript = _currentTranscript.trim();
+    if (transcript.isNotEmpty && !transcript.endsWith('.')) {
+      transcript += '. ';
+    }
     _segmentBase = transcript;
     try {
       await _saveActiveSessionTranscript(transcript);
@@ -209,7 +213,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final merged = TranscriptMergeHelper.merge(_segmentBase, anonymized);
+    final punctuated = PunctuationHelper.applyHeuristics(anonymized);
+
+    final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     _updateActiveSessionTranscriptInMemory(merged);
     emit(RecordingInProgress(transcript: merged));
   }
