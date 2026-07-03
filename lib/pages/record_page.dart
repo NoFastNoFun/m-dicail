@@ -10,6 +10,7 @@ import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
+import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -18,8 +19,10 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
+import 'package:medicail/widget/templates/template_picker_sheet.dart';
 
 enum _RecordLeaveAction { save, discard, cancel }
 
@@ -142,27 +145,28 @@ class _RecordViewState extends State<_RecordView> {
         hasPatient ? l10n.recordLeaveMessageWithPatient : l10n.recordLeaveMessage,
         variant: AppTextVariant.body,
       ),
-      actions: [
+      actionsBuilder: (dialogContext) => [
         AppButton(
           label: l10n.recordLeaveCancel,
           style: AppButtonStyle.secondary,
           expanded: false,
           onPressed: () =>
-              Navigator.of(context).pop(_RecordLeaveAction.cancel),
+              Navigator.of(dialogContext).pop(_RecordLeaveAction.cancel),
         ),
         AppButton(
           label: l10n.recordLeaveDiscard,
           style: AppButtonStyle.error,
           expanded: false,
           onPressed: () =>
-              Navigator.of(context).pop(_RecordLeaveAction.discard),
+              Navigator.of(dialogContext).pop(_RecordLeaveAction.discard),
         ),
         AppButton(
           label: hasPatient
               ? l10n.recordLeaveSave
               : l10n.recordLeaveSaveAndAssign,
           expanded: false,
-          onPressed: () => Navigator.of(context).pop(_RecordLeaveAction.save),
+          onPressed: () =>
+              Navigator.of(dialogContext).pop(_RecordLeaveAction.save),
         ),
       ],
     );
@@ -181,6 +185,40 @@ class _RecordViewState extends State<_RecordView> {
 
     setState(() => _pendingDiscardLeave = true);
     bloc.add(const VoiceCaptureDiscardConsultation());
+  }
+
+  Future<void> _pickTemplate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final templates = await getIt<NoteTemplateRepository>().getAll();
+    if (!context.mounted) {
+      return;
+    }
+
+    final currentState = context.read<VoiceCaptureBloc>().state;
+    final selectedTemplate = switch (currentState) {
+      VoiceCaptureReady(:final selectedTemplate) => selectedTemplate,
+      RecordingInProgress(:final selectedTemplate) => selectedTemplate,
+      ListeningPaused(:final selectedTemplate) => selectedTemplate,
+      VoiceCaptureFailure(:final selectedTemplate) => selectedTemplate,
+      _ => null,
+    };
+
+    final template = await TemplatePickerSheet.show(
+      context,
+      templates: templates,
+      selectedTemplateId: selectedTemplate?.id,
+    );
+    if (!context.mounted || template == null) {
+      return;
+    }
+
+    context.read<VoiceCaptureBloc>().add(
+          VoiceCaptureTemplateSelected(template),
+        );
+    AppToast.showSuccess(
+      context,
+      l10n.templateActiveLabel(template.name),
+    );
   }
 
   @override
@@ -237,6 +275,11 @@ class _RecordViewState extends State<_RecordView> {
                     AppRecordHeaderCard(
                       dateLabel: dateLabel,
                       sessionTitle: _patientName,
+                      templateLabel: viewModel.selectedTemplate == null
+                          ? l10n.templateNoneLabel
+                          : l10n.templateActiveLabel(
+                              viewModel.selectedTemplate!.name,
+                            ),
                       elapsedLabel: _formatElapsed(_elapsed),
                       isRecording: viewModel.isListening,
                       isInitializing: viewModel.isInitializing,
@@ -258,6 +301,11 @@ class _RecordViewState extends State<_RecordView> {
                       }
                       },
                       menuItems: [
+                      AppRecordMenuItem(
+                        label: l10n.templatePickerAction,
+                        enabled: !viewModel.isListening,
+                        onSelected: () => _pickTemplate(context),
+                      ),
                       AppRecordMenuItem(
                         label: l10n.buttonFinishConsultation,
                         enabled: viewModel.canFinishConsultation,

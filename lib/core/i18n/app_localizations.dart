@@ -1035,6 +1035,174 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se connecter'**
   String get settingsSignIn;
+
+  /// No description provided for @templatesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles de pathologie'**
+  String get templatesTitle;
+
+  /// No description provided for @templatesBuiltInSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles par defaut'**
+  String get templatesBuiltInSection;
+
+  /// No description provided for @templatesUserSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes variantes'**
+  String get templatesUserSection;
+
+  /// No description provided for @templatesUserEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune variante enregistree.'**
+  String get templatesUserEmpty;
+
+  /// No description provided for @templatesDefaultBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Defaut'**
+  String get templatesDefaultBadge;
+
+  /// No description provided for @templatesVariantBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Variante'**
+  String get templatesVariantBadge;
+
+  /// No description provided for @templateDuplicateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier en variante'**
+  String get templateDuplicateAction;
+
+  /// No description provided for @templateDuplicated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Variante creee.'**
+  String get templateDuplicated;
+
+  /// No description provided for @templateSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele enregistre.'**
+  String get templateSaved;
+
+  /// No description provided for @templateDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la variante ?'**
+  String get templateDeleteTitle;
+
+  /// No description provided for @templateDeleteMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le modele \"{name}\" ?'**
+  String templateDeleteMessage(String name);
+
+  /// No description provided for @templateDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get templateDeleteConfirm;
+
+  /// No description provided for @templateEditorTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Editer le modele'**
+  String get templateEditorTitle;
+
+  /// No description provided for @templateNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele introuvable.'**
+  String get templateNotFound;
+
+  /// No description provided for @templateSectionTitleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Titre de section'**
+  String get templateSectionTitleLabel;
+
+  /// No description provided for @templateSectionPromptLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Structure / puces'**
+  String get templateSectionPromptLabel;
+
+  /// No description provided for @templateAddSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une section'**
+  String get templateAddSection;
+
+  /// No description provided for @templateSaveAsVariant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer comme variante'**
+  String get templateSaveAsVariant;
+
+  /// No description provided for @templateUpdate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre a jour'**
+  String get templateUpdate;
+
+  /// No description provided for @templateReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reinitialiser depuis le parent'**
+  String get templateReset;
+
+  /// No description provided for @templatePickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un modele'**
+  String get templatePickerTitle;
+
+  /// No description provided for @templatePickerSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une pathologie'**
+  String get templatePickerSearch;
+
+  /// No description provided for @templatePickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele trouve.'**
+  String get templatePickerEmpty;
+
+  /// No description provided for @templatePickerAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un modele'**
+  String get templatePickerAction;
+
+  /// No description provided for @templateActiveLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele : {name}'**
+  String templateActiveLabel(String name);
+
+  /// No description provided for @templateNoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele selectionne'**
+  String get templateNoneLabel;
+
+  /// No description provided for @templateRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reessayer'**
+  String get templateRetry;
+
+  /// No description provided for @templatesBuiltInEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele par defaut disponible. Reinstallez l application.'**
+  String get templatesBuiltInEmpty;
 }
 
 class _AppLocalizationsDelegate

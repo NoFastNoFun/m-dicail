@@ -39,6 +39,14 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
     as _i250;
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
     as _i541;
+import 'package:medicail/features/note_template/data/datasources/asset_note_template_data_source.dart'
+    as _i564;
+import 'package:medicail/features/note_template/data/repositories/note_template_repository_impl.dart'
+    as _i93;
+import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart'
+    as _i144;
+import 'package:medicail/features/note_template/presentation/note_template_bloc.dart'
+    as _i297;
 import 'package:medicail/features/patient/data/repositories/api_patient_repository.dart'
     as _i545;
 import 'package:medicail/features/patient/data/repositories/dynamic_patient_repository.dart'
@@ -83,6 +91,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i945.LoggingInterceptor(),
     );
     gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
+    gh.lazySingleton<_i564.AssetNoteTemplateDataSource>(
+      () => _i564.AssetNoteTemplateDataSource(),
+    );
     gh.lazySingleton<_i713.SettingsNotifier>(() => _i713.SettingsNotifier());
     gh.lazySingleton<_i345.AppSessionStorage>(
       () => _i345.SecureAppSessionStorage(gh<_i558.FlutterSecureStorage>()),
@@ -126,8 +137,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1038.AppRouter>(
       () => _i1038.AppRouter(gh<_i541.AuthNotifier>()),
     );
+    gh.lazySingleton<_i144.NoteTemplateRepository>(
+      () => _i93.NoteTemplateRepositoryImpl(
+        gh<_i564.AssetNoteTemplateDataSource>(),
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.lazySingleton<_i583.GoRouter>(
       () => registerModule.goRouter(gh<_i1038.AppRouter>()),
+    );
+    gh.factory<_i297.NoteTemplateBloc>(
+      () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
