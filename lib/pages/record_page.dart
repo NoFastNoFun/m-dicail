@@ -30,18 +30,16 @@ import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launch
 enum _RecordLeaveAction { save, discard, cancel }
 
 class RecordPage extends StatelessWidget {
-  const RecordPage({
-    super.key,
-    this.patientId,
-  });
+  const RecordPage({super.key, this.patientId});
 
   final String? patientId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<VoiceCaptureBloc>()
-        ..add(const VoiceCaptureInitializeRequested()),
+      create: (_) =>
+          getIt<VoiceCaptureBloc>()
+            ..add(const VoiceCaptureInitializeRequested()),
       child: _RecordView(patientId: patientId),
     );
   }
@@ -80,7 +78,9 @@ class _RecordViewState extends State<_RecordView> {
     if (patientId != null && patientId.isNotEmpty) {
       _loadPatientName(patientId);
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await _skipDuplicateQuickRecordTutorialIfNeeded();
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
     });
@@ -136,11 +136,30 @@ class _RecordViewState extends State<_RecordView> {
         '${seconds.toString().padLeft(2, '0')}';
   }
 
+  Future<void> _skipDuplicateQuickRecordTutorialIfNeeded() async {
+    final hasPatient = widget.patientId != null && widget.patientId!.isNotEmpty;
+    if (hasPatient) return;
+
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.state.isAnyTutorialStep(
+      TutorialFlow.quickRecordPageDuplicateSteps,
+    )) {
+      return;
+    }
+    await tutorialBloc.skipQuickRecordPageTutorialSteps();
+  }
+
   void _handleTutorialState(TutorialState state) {
     final stepId = state.tutorialStepId;
     if (stepId == null || !_recordPageSteps.contains(stepId)) return;
     if (_startedTutorialSteps.contains(stepId)) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      if (widget.patientId == null &&
+          TutorialFlow.isQuickRecordPageDuplicate(stepId)) {
+        await _skipDuplicateQuickRecordTutorialIfNeeded();
+        return;
+      }
       final started = await TutorialShowcaseLauncher.startWhenReady(
         context: context,
         key: _showcaseKeyForStep(stepId),
@@ -159,22 +178,17 @@ class _RecordViewState extends State<_RecordView> {
     TutorialStepId.recordTranscriptFromPatient,
     TutorialStepId.recordStopFromPatient,
     TutorialStepId.recordFinishFromPatient,
-    TutorialStepId.quickRecordStart,
-    TutorialStepId.quickRecordTranscript,
-    TutorialStepId.quickRecordStop,
-    TutorialStepId.quickRecordFinish,
   };
 
   static const _transcriptTutorialSteps = {
     TutorialStepId.recordTranscriptFromPatient,
-    TutorialStepId.quickRecordTranscript,
   };
 
   GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
     if (_isTranscriptTutorialStep(stepId)) {
       return _transcriptKey;
     }
-    if (stepId == TutorialStepId.recordFinishFromPatient || stepId == TutorialStepId.quickRecordFinish) {
+    if (stepId == TutorialStepId.recordFinishFromPatient) {
       return _menuKey;
     }
     return _recordToggleKey;
@@ -208,8 +222,6 @@ class _RecordViewState extends State<_RecordView> {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFromPatient)) {
       tutorialBloc.completeStep(TutorialStepId.recordFromPatient);
-    } else if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordStart)) {
-      tutorialBloc.completeStep(TutorialStepId.quickRecordStart);
     }
     context.read<VoiceCaptureBloc>().add(
       VoiceCaptureStartRecording(patientId: widget.patientId),
@@ -220,8 +232,6 @@ class _RecordViewState extends State<_RecordView> {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordStopFromPatient)) {
       tutorialBloc.completeStep(TutorialStepId.recordStopFromPatient);
-    } else if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordStop)) {
-      tutorialBloc.completeStep(TutorialStepId.quickRecordStop);
     }
     context.read<VoiceCaptureBloc>().add(const VoiceCaptureStopRecording());
   }
@@ -231,19 +241,19 @@ class _RecordViewState extends State<_RecordView> {
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFinishFromPatient)) {
       _returnHomeAfterTutorialConsultation = true;
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
-    } else if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordFinish)) {
-      tutorialBloc.completeStep(TutorialStepId.quickRecordFinish);
     }
-    context.read<VoiceCaptureBloc>().add(const VoiceCaptureFinishConsultation());
+    context.read<VoiceCaptureBloc>().add(
+      const VoiceCaptureFinishConsultation(),
+    );
   }
 
   String _currentShowcaseTitle(AppLocalizations l10n) {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient || stepId == TutorialStepId.quickRecordStop) {
+    if (stepId == TutorialStepId.recordStopFromPatient) {
       return l10n.tutorialRecordStopTitle;
     }
-    if (stepId == TutorialStepId.recordFinishFromPatient || stepId == TutorialStepId.quickRecordFinish) {
+    if (stepId == TutorialStepId.recordFinishFromPatient) {
       return l10n.tutorialRecordFinishTitle;
     }
     return l10n.tutorialRecordTitle;
@@ -252,10 +262,10 @@ class _RecordViewState extends State<_RecordView> {
   String _currentShowcaseDescription(AppLocalizations l10n) {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient || stepId == TutorialStepId.quickRecordStop) {
+    if (stepId == TutorialStepId.recordStopFromPatient) {
       return l10n.tutorialRecordStopDesc;
     }
-    if (stepId == TutorialStepId.recordFinishFromPatient || stepId == TutorialStepId.quickRecordFinish) {
+    if (stepId == TutorialStepId.recordFinishFromPatient) {
       return l10n.tutorialRecordFinishDesc;
     }
     return l10n.tutorialRecordDesc;
@@ -264,9 +274,9 @@ class _RecordViewState extends State<_RecordView> {
   void _handleShowcaseTap() {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient || stepId == TutorialStepId.quickRecordStop) {
+    if (stepId == TutorialStepId.recordStopFromPatient) {
       _stopRecording();
-    } else if (stepId == TutorialStepId.recordFinishFromPatient || stepId == TutorialStepId.quickRecordFinish) {
+    } else if (stepId == TutorialStepId.recordFinishFromPatient) {
       _finishConsultation();
     } else {
       _startRecording();
@@ -289,15 +299,16 @@ class _RecordViewState extends State<_RecordView> {
 
   Future<void> _confirmLeave(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final hasPatient =
-        widget.patientId != null && widget.patientId!.isNotEmpty;
+    final hasPatient = widget.patientId != null && widget.patientId!.isNotEmpty;
 
     final action = await AppDialog.show<_RecordLeaveAction>(
       context,
       variant: AppDialogVariant.standard,
       title: l10n.recordLeaveTitle,
       body: AppText(
-        hasPatient ? l10n.recordLeaveMessageWithPatient : l10n.recordLeaveMessage,
+        hasPatient
+            ? l10n.recordLeaveMessageWithPatient
+            : l10n.recordLeaveMessage,
         variant: AppTextVariant.body,
       ),
       actions: [
@@ -305,8 +316,7 @@ class _RecordViewState extends State<_RecordView> {
           label: l10n.recordLeaveCancel,
           style: AppButtonStyle.secondary,
           expanded: false,
-          onPressed: () =>
-              Navigator.of(context).pop(_RecordLeaveAction.cancel),
+          onPressed: () => Navigator.of(context).pop(_RecordLeaveAction.cancel),
         ),
         AppButton(
           label: l10n.recordLeaveDiscard,
@@ -316,9 +326,7 @@ class _RecordViewState extends State<_RecordView> {
               Navigator.of(context).pop(_RecordLeaveAction.discard),
         ),
         AppButton(
-          label: hasPatient
-              ? l10n.buttonSave
-              : l10n.recordLeaveSaveAndAssign,
+          label: hasPatient ? l10n.buttonSave : l10n.recordLeaveSaveAndAssign,
           expanded: false,
           onPressed: () => Navigator.of(context).pop(_RecordLeaveAction.save),
         ),
@@ -362,10 +370,18 @@ class _RecordViewState extends State<_RecordView> {
             _returnHomeAfterTutorialConsultation = false;
             context.goHome();
           } else if (widget.patientId != null) {
-            if (context.canPop()) {
-              context.pop();
+            final tutorialBloc = context.read<TutorialBloc>();
+            final isDemoTutorialReturn =
+                widget.patientId == TutorialFlow.demoPatientId &&
+                tutorialBloc.state is TutorialInProgress;
+            if (isDemoTutorialReturn) {
+              context.goHome();
+            } else {
+              if (context.canPop()) {
+                context.pop();
+              }
+              context.goPatientDetail(widget.patientId!);
             }
-            context.goPatientDetail(widget.patientId!);
           } else {
             AssignPatientSheet.show(context, state.sessionId);
           }
@@ -374,7 +390,7 @@ class _RecordViewState extends State<_RecordView> {
 
         final viewModel = VoiceCaptureViewModel.fromState(state);
         _syncRecordingTimer(viewModel.isListening);
-        
+
         final transcript = viewModel.transcript.trim();
         if (transcript.isNotEmpty) {
           if (transcript != _lastTranscript) {
@@ -418,88 +434,90 @@ class _RecordViewState extends State<_RecordView> {
                         disableBarrierInteraction: true,
                         onTargetClick: _handleShowcaseTap,
                         child: AppRecordHeaderCard(
-                      dateLabel: dateLabel,
-                      sessionTitle: _patientName,
-                      elapsedLabel: _formatElapsed(_elapsed),
-                      isRecording: viewModel.isListening,
-                      isInitializing: viewModel.isInitializing,
-                      canStart: viewModel.canStart,
-                      canStop: viewModel.canStop,
-                      onBack: () => _handleLeaveRequest(context),
-                      onToggleRecording: () {
-                        if (viewModel.canStop) {
-                          _stopRecording();
-                          return;
-                        }
-                        if (viewModel.canStart) {
-                          _startRecording();
-                        }
-                      },
-                      menuItems: [
-                      AppRecordMenuItem(
-                        label: l10n.buttonFinishConsultation,
-                        enabled: viewModel.canFinishConsultation,
-                        onSelected: _finishConsultation,
+                          dateLabel: dateLabel,
+                          sessionTitle: _patientName,
+                          elapsedLabel: _formatElapsed(_elapsed),
+                          isRecording: viewModel.isListening,
+                          isInitializing: viewModel.isInitializing,
+                          canStart: viewModel.canStart,
+                          canStop: viewModel.canStop,
+                          onBack: () => _handleLeaveRequest(context),
+                          onToggleRecording: () {
+                            if (viewModel.canStop) {
+                              _stopRecording();
+                              return;
+                            }
+                            if (viewModel.canStart) {
+                              _startRecording();
+                            }
+                          },
+                          menuItems: [
+                            AppRecordMenuItem(
+                              label: l10n.buttonFinishConsultation,
+                              enabled: viewModel.canFinishConsultation,
+                              onSelected: _finishConsultation,
+                            ),
+                            AppRecordMenuItem(
+                              label: l10n.buttonClear,
+                              enabled: viewModel.canClear,
+                              onSelected: () {
+                                setState(() {
+                                  _elapsed = Duration.zero;
+                                  _recordingStartedAt = null;
+                                });
+                                context.read<VoiceCaptureBloc>().add(
+                                  const VoiceCaptureClearTranscript(),
+                                );
+                              },
+                            ),
+                          ],
+                          menuKey: _menuKey,
+                          menuButtonKey: _menuButtonKey,
+                          menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                          menuShowcaseDescription: _currentShowcaseDescription(
+                            l10n,
+                          ),
+                          onMenuShowcaseTargetClick: () {
+                            _menuButtonKey.currentState?.showButtonMenu();
+                            ShowcaseView.get().dismiss();
+                          },
+                        ),
                       ),
-                      AppRecordMenuItem(
-                        label: l10n.buttonClear,
-                        enabled: viewModel.canClear,
-                        onSelected: () {
-                          setState(() {
-                            _elapsed = Duration.zero;
-                            _recordingStartedAt = null;
-                          });
-                          context
-                              .read<VoiceCaptureBloc>()
-                              .add(const VoiceCaptureClearTranscript());
-                        },
-                      ),
+                      if (viewModel.errorMessage != null) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        AppText(
+                          viewModel.errorMessage!,
+                          variant: AppTextVariant.body,
+                          color: AppColors.error,
+                        ),
                       ],
-                      menuKey: _menuKey,
-                      menuButtonKey: _menuButtonKey,
-                      menuShowcaseTitle: _currentShowcaseTitle(l10n),
-                      menuShowcaseDescription: _currentShowcaseDescription(l10n),
-                      onMenuShowcaseTargetClick: () {
-                        _menuButtonKey.currentState?.showButtonMenu();
-                        ShowcaseView.get().dismiss();
-                      },
-                    ),
-                  ),
-                  if (viewModel.errorMessage != null) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    AppText(
-                      viewModel.errorMessage!,
-                      variant: AppTextVariant.body,
-                      color: AppColors.error,
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.lg),
-                  Expanded(
-                    child: Showcase(
-                        key: _transcriptKey,
-                        title: l10n.tutorialRecordTranscriptTitle,
-                        description: l10n.tutorialRecordTranscriptDesc,
-                        disposeOnTap: false,
-                        disableBarrierInteraction: true,
-                        onTargetClick: () {
-                          final tutorialBloc = context.read<TutorialBloc>();
-                          final stepId = tutorialBloc.state.tutorialStepId;
-                          if (stepId != null) {
-                            tutorialBloc.completeStep(stepId);
-                          }
-                        },
-                        child: AppRecordTranscriptView(
-                        transcript: viewModel.transcript,
-                        emptyHint: l10n.transcriptEmptyHint,
+                      const SizedBox(height: AppSpacing.lg),
+                      Expanded(
+                        child: Showcase(
+                          key: _transcriptKey,
+                          title: l10n.tutorialRecordTranscriptTitle,
+                          description: l10n.tutorialRecordTranscriptDesc,
+                          disposeOnTap: false,
+                          disableBarrierInteraction: true,
+                          onTargetClick: () {
+                            final tutorialBloc = context.read<TutorialBloc>();
+                            final stepId = tutorialBloc.state.tutorialStepId;
+                            if (stepId != null) {
+                              tutorialBloc.completeStep(stepId);
+                            }
+                          },
+                          child: AppRecordTranscriptView(
+                            transcript: viewModel.transcript,
+                            emptyHint: l10n.transcriptEmptyHint,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-          ),
-        ),
         );
       },
     );

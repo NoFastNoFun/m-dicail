@@ -10,6 +10,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/buttons/app_radial_action_button.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
@@ -18,10 +19,7 @@ import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class MainShell extends StatefulWidget {
-  const MainShell({
-    super.key,
-    required this.child,
-  });
+  const MainShell({super.key, required this.child});
 
   final Widget child;
 
@@ -39,6 +37,7 @@ class _MainShellState extends State<MainShell> {
   bool _didAskTutorialStart = false;
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
+  String? _lastLocation;
 
   @override
   void initState() {
@@ -74,7 +73,9 @@ class _MainShellState extends State<MainShell> {
               label: l10n.tutorialIntroStart,
               expanded: false,
               onPressed: () {
-                context.read<TutorialBloc>().add(const TutorialStartRequested());
+                context.read<TutorialBloc>().add(
+                  const TutorialStartRequested(),
+                );
                 Navigator.of(context).pop();
               },
             ),
@@ -87,8 +88,9 @@ class _MainShellState extends State<MainShell> {
     if (state is! TutorialInProgress) return;
 
     final currentStep = TutorialFlow.idFromIndex(state.currentStep);
-    
-    if (currentStep == TutorialStepId.homePatients && !_didStartPatientsShowcase) {
+
+    if (currentStep == TutorialStepId.homePatients &&
+        !_didStartPatientsShowcase) {
       TutorialShowcaseLauncher.startWhenReady(
         context: context,
         key: _patientsNavKey,
@@ -99,22 +101,55 @@ class _MainShellState extends State<MainShell> {
       });
     }
 
-    if (currentStep == TutorialStepId.homeQuickRecord && !_didStartQuickRecordShowcase) {
-      TutorialShowcaseLauncher.startWhenReady(
-        context: context,
-        key: _quickRecordKey,
-      ).then((started) {
-        if (mounted && started) {
-          _didStartQuickRecordShowcase = true;
-        }
-      });
+    if (currentStep == TutorialStepId.homeQuickRecord) {
+      if (GoRouterState.of(context).matchedLocation != AppRoutes.home) {
+        _didStartQuickRecordShowcase = false;
+        return;
+      }
+      if (!_didStartQuickRecordShowcase) {
+        TutorialShowcaseLauncher.startWhenReady(
+          context: context,
+          key: _quickRecordKey,
+        ).then((started) {
+          if (mounted && started) {
+            _didStartQuickRecordShowcase = true;
+          }
+        });
+      }
     }
+  }
+
+  Future<void> _handleHomeQuickRecordTutorialTap() async {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.isCurrentStep(TutorialStepId.homeQuickRecord)) {
+      return;
+    }
+    ShowcaseView.get().dismiss();
+    await tutorialBloc.completeHomeQuickRecordTutorial();
+  }
+
+  void _openQuickRecordIfAllowed() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.canOpenQuickRecordDuringTutorial) {
+      return;
+    }
+    context.goRecord();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final location = GoRouterState.of(context).matchedLocation;
+    if (_lastLocation != location) {
+      _lastLocation = location;
+      if (location == AppRoutes.home) {
+        _didStartQuickRecordShowcase = false;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _handleTutorialState(context.read<TutorialBloc>().state);
+      });
+    }
 
     final destinations = [
       AppBottomNavDestination(
@@ -135,7 +170,11 @@ class _MainShellState extends State<MainShell> {
           disposeOnTap: false,
           disableBarrierInteraction: true,
           onTargetClick: () {
-            context.read<TutorialBloc>().add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homePatients)));
+            context.read<TutorialBloc>().add(
+              TutorialStepCompleted(
+                TutorialFlow.indexOf(TutorialStepId.homePatients),
+              ),
+            );
             context.go(AppRoutes.patients);
           },
           child: child,
@@ -182,10 +221,7 @@ class _MainShellState extends State<MainShell> {
                           description: l10n.tutorialHomeRecordDesc,
                           disposeOnTap: false,
                           disableBarrierInteraction: true,
-                          onTargetClick: () {
-                            context.read<TutorialBloc>().add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homeQuickRecord)));
-                            context.goRecord();
-                          },
+                          onTargetClick: _handleHomeQuickRecordTutorialTap,
                           child: AppRadialActionButton(
                             anchor: AppRadialActionAnchor.end,
                             actions: [
@@ -197,12 +233,16 @@ class _MainShellState extends State<MainShell> {
                               AppRadialAction(
                                 icon: Icons.mic_outlined,
                                 label: l10n.radialActionNewRecord,
-                                onTap: () {
-                                  final tutorialBloc = context.read<TutorialBloc>();
-                                  if (tutorialBloc.state is TutorialInProgress && TutorialFlow.idFromIndex((tutorialBloc.state as TutorialInProgress).currentStep) == TutorialStepId.homeQuickRecord) {
-                                      tutorialBloc.add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homeQuickRecord)));
+                                onTap: () async {
+                                  final tutorialBloc = context
+                                      .read<TutorialBloc>();
+                                  if (tutorialBloc.isCurrentStep(
+                                    TutorialStepId.homeQuickRecord,
+                                  )) {
+                                    await _handleHomeQuickRecordTutorialTap();
+                                    return;
                                   }
-                                  context.goRecord();
+                                  _openQuickRecordIfAllowed();
                                 },
                               ),
                             ],
@@ -220,13 +260,25 @@ class _MainShellState extends State<MainShell> {
                           destinations: destinations,
                           selectedRoute: location,
                           onDestinationSelected: (route) {
-                              if (route == AppRoutes.patients) {
-                                  final tutorialBloc = context.read<TutorialBloc>();
-                                  if (tutorialBloc.state is TutorialInProgress && TutorialFlow.idFromIndex((tutorialBloc.state as TutorialInProgress).currentStep) == TutorialStepId.homePatients) {
-                                      tutorialBloc.add(TutorialStepCompleted(TutorialFlow.indexOf(TutorialStepId.homePatients)));
-                                  }
+                            if (route == AppRoutes.patients) {
+                              final tutorialBloc = context.read<TutorialBloc>();
+                              if (tutorialBloc.state is TutorialInProgress &&
+                                  TutorialFlow.idFromIndex(
+                                        (tutorialBloc.state
+                                                as TutorialInProgress)
+                                            .currentStep,
+                                      ) ==
+                                      TutorialStepId.homePatients) {
+                                tutorialBloc.add(
+                                  TutorialStepCompleted(
+                                    TutorialFlow.indexOf(
+                                      TutorialStepId.homePatients,
+                                    ),
+                                  ),
+                                );
                               }
-                              context.go(route);
+                            }
+                            context.go(route);
                           },
                         ),
                       ),

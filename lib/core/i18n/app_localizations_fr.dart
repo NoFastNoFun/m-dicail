@@ -498,28 +498,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialPatientMrnDesc =>
-      'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.\n\n👉 Saisissez le MRN pour continuer.';
+      'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
   String get tutorialPatientFirstNameTitle => 'Prenom du patient';
 
   @override
   String get tutorialPatientFirstNameDesc =>
-      'Saisissez le prenom du patient pour completer son dossier.\n\n👉 Saisissez le prenom pour continuer.';
+      'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
   String get tutorialPatientLastNameTitle => 'Nom du patient';
 
   @override
   String get tutorialPatientLastNameDesc =>
-      'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.\n\n👉 Saisissez le nom pour continuer.';
+      'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
   String get tutorialPatientCreateTitle => 'Creer le dossier';
 
   @override
   String get tutorialPatientCreateDesc =>
-      'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.\n\n👉 Appuyez sur \'Creer le dossier\' ci-dessous pour continuer.';
+      'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.';
 
   @override
   String get tutorialDetailConsultTitle => 'Nouvelle consultation';

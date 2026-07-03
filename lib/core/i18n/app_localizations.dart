@@ -1051,7 +1051,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientMrnDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Renseignez l\'identifiant unique du patient. Ce champ est obligatoire.\n\n👉 Saisissez le MRN pour continuer.'**
+  /// **'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientMrnDesc;
 
   /// No description provided for @tutorialPatientFirstNameTitle.
@@ -1063,7 +1063,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientFirstNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Saisissez le prenom du patient pour completer son dossier.\n\n👉 Saisissez le prenom pour continuer.'**
+  /// **'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientFirstNameDesc;
 
   /// No description provided for @tutorialPatientLastNameTitle.
@@ -1075,7 +1075,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientLastNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Saisissez le nom du patient. Les autres champs peuvent etre completes plus tard.\n\n👉 Saisissez le nom pour continuer.'**
+  /// **'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientLastNameDesc;
 
   /// No description provided for @tutorialPatientCreateTitle.
@@ -1087,7 +1087,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientCreateDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Une fois les champs obligatoires remplis, creez le dossier pour continuer vers la premiere consultation.\n\n👉 Appuyez sur \'Creer le dossier\' ci-dessous pour continuer.'**
+  /// **'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.'**
   String get tutorialPatientCreateDesc;
 
   /// No description provided for @tutorialDetailConsultTitle.

@@ -27,6 +27,8 @@ class TutorialStepDefinition {
 class TutorialFlow {
   const TutorialFlow._();
 
+  static const demoPatientId = '__tutorial_demo__';
+
   static const steps = <TutorialStepDefinition>[
     TutorialStepDefinition(index: 1, id: TutorialStepId.homePatients),
     TutorialStepDefinition(index: 2, id: TutorialStepId.patientsAdd),
@@ -36,15 +38,24 @@ class TutorialFlow {
     TutorialStepDefinition(index: 6, id: TutorialStepId.patientCreate),
     TutorialStepDefinition(index: 7, id: TutorialStepId.patientConsultation),
     TutorialStepDefinition(index: 8, id: TutorialStepId.recordFromPatient),
-    TutorialStepDefinition(index: 9, id: TutorialStepId.recordTranscriptFromPatient),
+    TutorialStepDefinition(
+      index: 9,
+      id: TutorialStepId.recordTranscriptFromPatient,
+    ),
     TutorialStepDefinition(index: 10, id: TutorialStepId.recordStopFromPatient),
-    TutorialStepDefinition(index: 11, id: TutorialStepId.recordFinishFromPatient),
+    TutorialStepDefinition(
+      index: 11,
+      id: TutorialStepId.recordFinishFromPatient,
+    ),
     TutorialStepDefinition(index: 12, id: TutorialStepId.homeQuickRecord),
     TutorialStepDefinition(index: 13, id: TutorialStepId.quickRecordStart),
     TutorialStepDefinition(index: 14, id: TutorialStepId.quickRecordTranscript),
     TutorialStepDefinition(index: 15, id: TutorialStepId.quickRecordStop),
     TutorialStepDefinition(index: 16, id: TutorialStepId.quickRecordFinish),
-    TutorialStepDefinition(index: 17, id: TutorialStepId.quickRecordAssignPatient),
+    TutorialStepDefinition(
+      index: 17,
+      id: TutorialStepId.quickRecordAssignPatient,
+    ),
   ];
 
   static int get firstStep => steps.first.index;
@@ -63,6 +74,18 @@ class TutorialFlow {
 
   static bool isStep(int currentStep, TutorialStepId id) {
     return currentStep == indexOf(id);
+  }
+
+  /// Record-page steps repeated on the quick-record path after demo consultation.
+  static const quickRecordPageDuplicateSteps = <TutorialStepId>{
+    TutorialStepId.quickRecordStart,
+    TutorialStepId.quickRecordTranscript,
+    TutorialStepId.quickRecordStop,
+    TutorialStepId.quickRecordFinish,
+  };
+
+  static bool isQuickRecordPageDuplicate(TutorialStepId id) {
+    return quickRecordPageDuplicateSteps.contains(id);
   }
 
   static int? nextStepAfter(int currentStep) {

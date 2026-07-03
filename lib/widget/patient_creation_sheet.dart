@@ -4,6 +4,7 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
@@ -11,7 +12,6 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'dart:async';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
@@ -47,7 +47,6 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   final GlobalKey _lastNameKey = GlobalKey();
   final GlobalKey _submitKey = GlobalKey();
   final Set<TutorialStepId> _startedTutorialSteps = <TutorialStepId>{};
-  final Map<TutorialStepId, Timer> _fieldCompletionTimers = {};
 
   static const _patientFormSteps = {
     TutorialStepId.patientMrn,
@@ -55,7 +54,6 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     TutorialStepId.patientLastName,
     TutorialStepId.patientCreate,
   };
-  static const _fieldCompletionDelay = Duration(milliseconds: 900);
 
   @override
   void initState() {
@@ -75,9 +73,6 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
-    for (final timer in _fieldCompletionTimers.values) {
-      timer.cancel();
-    }
     _mrnFocusNode.dispose();
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
@@ -95,7 +90,6 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       );
       if (started && mounted) {
         _startedTutorialSteps.add(stepId);
-        _focusNodeForStep(stepId)?.requestFocus();
       }
     });
   }
@@ -109,29 +103,23 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     };
   }
 
-  FocusNode? _focusNodeForStep(TutorialStepId stepId) {
-    return switch (stepId) {
-      TutorialStepId.patientMrn => _mrnFocusNode,
-      TutorialStepId.patientFirstName => _firstNameFocusNode,
-      TutorialStepId.patientLastName => _lastNameFocusNode,
-      _ => null,
-    };
-  }
-
-  void _completeTutorialStepAfterTyping(TutorialStepId stepId, String value) {
-    _fieldCompletionTimers.remove(stepId)?.cancel();
-    if (value.trim().isEmpty) return;
-    _fieldCompletionTimers[stepId] = Timer(_fieldCompletionDelay, () {
-      if (!mounted) return;
-      final tutorialBloc = context.read<TutorialBloc>();
-      if (!tutorialBloc.isCurrentStep(stepId)) return;
-      tutorialBloc.completeStep(stepId);
-    });
-  }
-
-  void _completeSubmitTutorialStep() {
+  void _completeTutorialFieldStep(TutorialStepId stepId) {
     final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.isCurrentStep(stepId)) return;
+    ShowcaseView.get().dismiss();
+    tutorialBloc.completeStep(stepId);
+  }
+
+  void _handleTutorialCreateSubmit() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.isCurrentStep(TutorialStepId.patientCreate)) {
+      _submit();
+      return;
+    }
+    ShowcaseView.get().dismiss();
     tutorialBloc.completeStep(TutorialStepId.patientCreate);
+    Navigator.of(context).pop();
+    context.go('/patients/${TutorialFlow.demoPatientId}');
   }
 
   void _submit() {
@@ -140,23 +128,26 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     final lastName = _lastNameController.text.trim();
 
     if (mrn.isEmpty || firstName.isEmpty || lastName.isEmpty) {
-      AppToast.showError(context, AppLocalizations.of(context).patientCreateErrorRequired);
+      AppToast.showError(
+        context,
+        AppLocalizations.of(context).patientCreateErrorRequired,
+      );
       return;
     }
 
     context.read<PatientBloc>().add(
-          PatientCreated(
-            mrn: mrn,
-            firstName: firstName,
-            lastName: lastName,
-            birthDate: _selectedBirthDate,
-            sex: _selectedSex,
-            email: _emailController.text.trim(),
-            phone: _phoneController.text.trim(),
-            address: _addressController.text.trim(),
-            notes: _notesController.text.trim(),
-          ),
-        );
+      PatientCreated(
+        mrn: mrn,
+        firstName: firstName,
+        lastName: lastName,
+        birthDate: _selectedBirthDate,
+        sex: _selectedSex,
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        address: _addressController.text.trim(),
+        notes: _notesController.text.trim(),
+      ),
+    );
   }
 
   Future<void> _pickDate() async {
@@ -192,195 +183,198 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
         listener: (context, state) => _handleTutorialState(state),
         child: Container(
           decoration: const BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.only(
-          bottom: AppSpacing.lg,
-          left: AppSpacing.lg,
-          right: AppSpacing.lg,
-          top: AppSpacing.lg,
-        ),
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppText(l10n.patientCreateTitle, variant: AppTextVariant.title),
-              const SizedBox(height: AppSpacing.lg),
-              Showcase(
-                key: _mrnKey,
-                title: l10n.tutorialPatientMrnTitle,
-                description: l10n.tutorialPatientMrnDesc,
-                disposeOnTap: false,
-                disableBarrierInteraction: true,
-                onTargetClick: () => _mrnFocusNode.requestFocus(),
-                child: AppInput(
-                  variant: AppInputVariant.text,
-                  label: l10n.patientMrnLabel,
-                  controller: _mrnController,
-                  focusNode: _mrnFocusNode,
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (_) => _firstNameFocusNode.requestFocus(),
-                  onChanged: (value) => _completeTutorialStepAfterTyping(
-                    TutorialStepId.patientMrn,
-                    value,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Row(
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.only(
+            bottom: AppSpacing.lg,
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: AppSpacing.lg,
+          ),
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: Showcase(
-                      key: _firstNameKey,
-                      title: l10n.tutorialPatientFirstNameTitle,
-                      description: l10n.tutorialPatientFirstNameDesc,
-                      disposeOnTap: false,
-                      disableBarrierInteraction: true,
-                      onTargetClick: () => _firstNameFocusNode.requestFocus(),
-                      child: AppInput(
-                        variant: AppInputVariant.text,
-                        label: l10n.patientFirstNameRequiredLabel,
-                        controller: _firstNameController,
-                        focusNode: _firstNameFocusNode,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) => _lastNameFocusNode.requestFocus(),
-                        onChanged: (value) => _completeTutorialStepAfterTyping(
-                          TutorialStepId.patientFirstName,
-                          value,
-                        ),
-                      ),
-                    ),
+                  AppText(
+                    l10n.patientCreateTitle,
+                    variant: AppTextVariant.title,
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Showcase(
-                      key: _lastNameKey,
-                      title: l10n.tutorialPatientLastNameTitle,
-                      description: l10n.tutorialPatientLastNameDesc,
-                      disposeOnTap: false,
-                      disableBarrierInteraction: true,
-                      onTargetClick: () => _lastNameFocusNode.requestFocus(),
-                      child: AppInput(
-                        variant: AppInputVariant.text,
-                        label: l10n.patientLastNameRequiredLabel,
-                        controller: _lastNameController,
-                        focusNode: _lastNameFocusNode,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-                        onChanged: (value) => _completeTutorialStepAfterTyping(
-                          TutorialStepId.patientLastName,
-                          value,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: _pickDate,
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: l10n.patientBirthDateLabel,
-                          border: OutlineInputBorder(
-                            borderRadius: AppRadius.mdBorder,
-                          ),
-                        ),
-                        child: Text(
-                          _selectedBirthDate != null
-                              ? '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}'
-                              : l10n.patientBirthDateSelect,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: l10n.patientSexLabel,
-                        border: OutlineInputBorder(
-                          borderRadius: AppRadius.mdBorder,
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedSex,
-                          isDense: true,
-                          items: [
-                            DropdownMenuItem(value: 'M', child: Text(l10n.patientSexMale)),
-                            DropdownMenuItem(value: 'F', child: Text(l10n.patientSexFemale)),
-                            DropdownMenuItem(value: 'Other', child: Text(l10n.patientSexOther)),
-                          ],
-                          onChanged: (val) => setState(() => _selectedSex = val),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppInput(
-                variant: AppInputVariant.email,
-                label: l10n.patientEmailLabel,
-                controller: _emailController,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientPhoneLabel,
-                controller: _phoneController,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientAddressLabel,
-                controller: _addressController,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppInput(
-                variant: AppInputVariant.text,
-                label: l10n.patientNotesLabel,
-                controller: _notesController,
-                maxLines: 3,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              BlocBuilder<PatientBloc, PatientState>(
-                builder: (context, state) {
-                  return Showcase(
-                    key: _submitKey,
-                    title: l10n.tutorialPatientCreateTitle,
-                    description: l10n.tutorialPatientCreateDesc,
+                  const SizedBox(height: AppSpacing.lg),
+                  Showcase(
+                    key: _mrnKey,
+                    title: l10n.tutorialPatientMrnTitle,
+                    description: l10n.tutorialPatientMrnDesc,
                     disposeOnTap: false,
                     disableBarrierInteraction: true,
-                    onTargetClick: () {
-                      _completeSubmitTutorialStep();
-                      _submit();
-                    },
-                    child: AppButton(
-                      label: l10n.patientCreateSubmit,
-                      isLoading: state is PatientLoading,
-                      onPressed: () {
-                        _completeSubmitTutorialStep();
-                        _submit();
-                      },
+                    onTargetClick: () =>
+                        _completeTutorialFieldStep(TutorialStepId.patientMrn),
+                    child: AppInput(
+                      variant: AppInputVariant.text,
+                      label: l10n.patientMrnLabel,
+                      controller: _mrnController,
+                      focusNode: _mrnFocusNode,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) =>
+                          _firstNameFocusNode.requestFocus(),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Showcase(
+                          key: _firstNameKey,
+                          title: l10n.tutorialPatientFirstNameTitle,
+                          description: l10n.tutorialPatientFirstNameDesc,
+                          disposeOnTap: false,
+                          disableBarrierInteraction: true,
+                          onTargetClick: () => _completeTutorialFieldStep(
+                            TutorialStepId.patientFirstName,
+                          ),
+                          child: AppInput(
+                            variant: AppInputVariant.text,
+                            label: l10n.patientFirstNameRequiredLabel,
+                            controller: _firstNameController,
+                            focusNode: _firstNameFocusNode,
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (_) =>
+                                _lastNameFocusNode.requestFocus(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Showcase(
+                          key: _lastNameKey,
+                          title: l10n.tutorialPatientLastNameTitle,
+                          description: l10n.tutorialPatientLastNameDesc,
+                          disposeOnTap: false,
+                          disableBarrierInteraction: true,
+                          onTargetClick: () => _completeTutorialFieldStep(
+                            TutorialStepId.patientLastName,
+                          ),
+                          child: AppInput(
+                            variant: AppInputVariant.text,
+                            label: l10n.patientLastNameRequiredLabel,
+                            controller: _lastNameController,
+                            focusNode: _lastNameFocusNode,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) =>
+                                FocusScope.of(context).unfocus(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: _pickDate,
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: l10n.patientBirthDateLabel,
+                              border: OutlineInputBorder(
+                                borderRadius: AppRadius.mdBorder,
+                              ),
+                            ),
+                            child: Text(
+                              _selectedBirthDate != null
+                                  ? '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}'
+                                  : l10n.patientBirthDateSelect,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: l10n.patientSexLabel,
+                            border: OutlineInputBorder(
+                              borderRadius: AppRadius.mdBorder,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: _selectedSex,
+                              isDense: true,
+                              items: [
+                                DropdownMenuItem(
+                                  value: 'M',
+                                  child: Text(l10n.patientSexMale),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'F',
+                                  child: Text(l10n.patientSexFemale),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Other',
+                                  child: Text(l10n.patientSexOther),
+                                ),
+                              ],
+                              onChanged: (val) =>
+                                  setState(() => _selectedSex = val),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppInput(
+                    variant: AppInputVariant.email,
+                    label: l10n.patientEmailLabel,
+                    controller: _emailController,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppInput(
+                    variant: AppInputVariant.text,
+                    label: l10n.patientPhoneLabel,
+                    controller: _phoneController,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppInput(
+                    variant: AppInputVariant.text,
+                    label: l10n.patientAddressLabel,
+                    controller: _addressController,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppInput(
+                    variant: AppInputVariant.text,
+                    label: l10n.patientNotesLabel,
+                    controller: _notesController,
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  BlocBuilder<PatientBloc, PatientState>(
+                    builder: (context, state) {
+                      return Showcase(
+                        key: _submitKey,
+                        title: l10n.tutorialPatientCreateTitle,
+                        description: l10n.tutorialPatientCreateDesc,
+                        disposeOnTap: false,
+                        disableBarrierInteraction: true,
+                        onTargetClick: _handleTutorialCreateSubmit,
+                        child: AppButton(
+                          label: l10n.patientCreateSubmit,
+                          isLoading: state is PatientLoading,
+                          onPressed: _handleTutorialCreateSubmit,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xl),
-            ],
+            ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }
