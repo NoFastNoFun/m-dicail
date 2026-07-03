@@ -48,9 +48,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelHistory => 'Historique';
 
   @override
-  String get navigateToPatients => 'Dossiers patients';
-
-  @override
   String get navigateToRecord => 'Nouvel enregistrement';
 
   @override
@@ -252,9 +249,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debugToastWarning => 'Attention requise';
 
   @override
-  String get debugToastError => 'Une erreur est survenue';
-
-  @override
   String get debugToastInfo => 'Information';
 
   @override
@@ -361,9 +355,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginPasswordLabel => 'Mot de passe';
 
   @override
-  String get loginSubmit => 'Se connecter';
-
-  @override
   String get loginCreateAccountButton => 'Creer un compte';
 
   @override
@@ -418,9 +409,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recordLeaveSaveAndAssign => 'Enregistrer et associer';
 
   @override
-  String get recordLeaveSave => 'Enregistrer';
-
-  @override
   String get recordLeaveDiscard => 'Quitter sans enregistrer';
 
   @override
@@ -445,7 +433,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get radialActionNewRecord => 'Nouvel enregistrement';
 
   @override
-  String get settingsTitle => 'Reglages';
+  String get settingsTitle => 'Réglages';
 
   @override
   String get settingsTheme => 'Theme';
@@ -487,6 +475,113 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLogout => 'Se deconnecter';
 
   @override
+  String get tutorialIntroTitle => 'Decouvrir Medicail';
+
+  @override
+  String get tutorialIntroDesc =>
+      'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.';
+
+  @override
+  String get tutorialIntroStart => 'Faire le tutoriel';
+
+  @override
+  String get tutorialIntroSkip => 'Passer';
+
+  @override
+  String get tutorialHomePatientsTitle => 'Dossiers Patients';
+
+  @override
+  String get tutorialHomePatientsDesc =>
+      'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.';
+
+  @override
+  String get tutorialHomeRecordTitle => 'Consultation Rapide';
+
+  @override
+  String get tutorialHomeRecordDesc =>
+      'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.';
+
+  @override
+  String get tutorialPatientAddTitle => 'Ajouter un patient';
+
+  @override
+  String get tutorialPatientAddDesc =>
+      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.';
+
+  @override
+  String get tutorialPatientMrnTitle => 'Numero de dossier';
+
+  @override
+  String get tutorialPatientMrnDesc =>
+      'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+
+  @override
+  String get tutorialPatientFirstNameTitle => 'Prenom du patient';
+
+  @override
+  String get tutorialPatientFirstNameDesc =>
+      'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+
+  @override
+  String get tutorialPatientLastNameTitle => 'Nom du patient';
+
+  @override
+  String get tutorialPatientLastNameDesc =>
+      'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+
+  @override
+  String get tutorialPatientCreateTitle => 'Creer le dossier';
+
+  @override
+  String get tutorialPatientCreateDesc =>
+      'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.';
+
+  @override
+  String get tutorialDetailConsultTitle => 'Nouvelle consultation';
+
+  @override
+  String get tutorialDetailConsultDesc =>
+      'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.';
+
+  @override
+  String get tutorialRecordTitle => 'La Dictee';
+
+  @override
+  String get tutorialRecordDesc =>
+      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.';
+
+  @override
+  String get tutorialRecordStopTitle => 'Arreter l\'ecoute';
+
+  @override
+  String get tutorialRecordStopDesc =>
+      'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.';
+
+  @override
+  String get tutorialRecordFinishTitle => 'Terminer la consultation';
+
+  @override
+  String get tutorialRecordFinishDesc =>
+      'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.';
+
+  @override
+  String get tutorialRecordTranscriptTitle => 'Transcription en temps reel';
+
+  @override
+  String get tutorialRecordTranscriptDesc =>
+      'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.';
+
+  @override
+  String get tutorialAssignPatientTitle => 'Associer a un patient';
+
+  @override
+  String get tutorialAssignPatientDesc =>
+      'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.';
+
+  @override
+  String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';
+
+  @override
   String get settingsSignIn => 'Se connecter';
 
   @override
@@ -518,4 +613,93 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
+
+  @override
+  String get templatesTitle => 'Modeles de pathologie';
+
+  @override
+  String get templatesBuiltInSection => 'Modeles par defaut';
+
+  @override
+  String get templatesUserSection => 'Mes variantes';
+
+  @override
+  String get templatesUserEmpty => 'Aucune variante enregistree.';
+
+  @override
+  String get templatesDefaultBadge => 'Defaut';
+
+  @override
+  String get templatesVariantBadge => 'Variante';
+
+  @override
+  String get templateDuplicateAction => 'Modifier en variante';
+
+  @override
+  String get templateDuplicated => 'Variante creee.';
+
+  @override
+  String get templateSaved => 'Modele enregistre.';
+
+  @override
+  String get templateDeleteTitle => 'Supprimer la variante ?';
+
+  @override
+  String templateDeleteMessage(String name) {
+    return 'Supprimer le modele \"$name\" ?';
+  }
+
+  @override
+  String get templateDeleteConfirm => 'Supprimer';
+
+  @override
+  String get templateEditorTitle => 'Editer le modele';
+
+  @override
+  String get templateNotFound => 'Modele introuvable.';
+
+  @override
+  String get templateSectionTitleLabel => 'Titre de section';
+
+  @override
+  String get templateSectionPromptLabel => 'Structure / puces';
+
+  @override
+  String get templateAddSection => 'Ajouter une section';
+
+  @override
+  String get templateSaveAsVariant => 'Enregistrer comme variante';
+
+  @override
+  String get templateUpdate => 'Mettre a jour';
+
+  @override
+  String get templateReset => 'Reinitialiser depuis le parent';
+
+  @override
+  String get templatePickerTitle => 'Choisir un modele';
+
+  @override
+  String get templatePickerSearch => 'Rechercher une pathologie';
+
+  @override
+  String get templatePickerEmpty => 'Aucun modele trouve.';
+
+  @override
+  String get templatePickerAction => 'Choisir un modele';
+
+  @override
+  String templateActiveLabel(String name) {
+    return 'Modele : $name';
+  }
+
+  @override
+  String get templateNoneLabel => 'Aucun modele selectionne';
+
+  @override
+  String get templateRetry => 'Reessayer';
+
+  @override
+  String get templatesBuiltInEmpty =>
+      'Aucun modele par defaut disponible. Reinstallez l application.';
 }
