@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/tutorial/domain/repositories/tutorial_repository.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
@@ -7,7 +8,10 @@ import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 
 @injectable
 class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
-  TutorialBloc(this._repository) : super(const TutorialInitial()) {
+  TutorialBloc(
+    this._repository,
+    this._recordingSessionRepository,
+  ) : super(const TutorialInitial()) {
     on<TutorialCheckRequested>(_onCheckRequested);
     on<TutorialStartRequested>(_onStartRequested);
     on<TutorialStepCompleted>(_onStepCompleted);
@@ -16,6 +20,11 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
   }
 
   final TutorialRepository _repository;
+  final RecordingSessionRepository _recordingSessionRepository;
+
+  Future<void> _purgeTutorialRecordings() {
+    return _recordingSessionRepository.purgeTutorialSessions();
+  }
 
   Future<void> _onCheckRequested(
     TutorialCheckRequested event,
@@ -38,6 +47,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     TutorialStartRequested event,
     Emitter<TutorialState> emit,
   ) async {
+    await _purgeTutorialRecordings();
     final firstStep = TutorialFlow.firstStep;
     await _repository.setCurrentTutorialStep(firstStep);
     emit(TutorialInProgress(firstStep));
@@ -52,6 +62,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
       await _repository.setCurrentTutorialStep(nextStep);
       emit(TutorialInProgress(nextStep));
     } else {
+      await _purgeTutorialRecordings();
       await _repository.setTutorialCompleted();
       emit(const TutorialCompleted());
     }
@@ -61,6 +72,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     TutorialSkipRequested event,
     Emitter<TutorialState> emit,
   ) async {
+    await _purgeTutorialRecordings();
     await _repository.setTutorialCompleted();
     emit(const TutorialCompleted());
   }
@@ -69,6 +81,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     TutorialResetRequested event,
     Emitter<TutorialState> emit,
   ) async {
+    await _purgeTutorialRecordings();
     await _repository.resetTutorial();
     emit(const TutorialInitial());
   }

@@ -10,6 +10,7 @@ import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
+import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
@@ -221,6 +222,39 @@ class _RecordViewState extends State<_RecordView> {
     tutorialBloc.completeStep(stepId);
   }
 
+  Future<void> _discardTutorialSession(String sessionId) async {
+    if (sessionId.isEmpty) return;
+    await getIt<RecordingSessionRepository>().delete(sessionId);
+  }
+
+  void _handleConsultationFinished(VoiceCaptureConsultationFinished state) {
+    final tutorialBloc = context.read<TutorialBloc>();
+    final isTutorial = tutorialBloc.state is TutorialInProgress;
+    final isDemoPatient =
+        widget.patientId == TutorialFlow.demoPatientId;
+
+    if (isTutorial && isDemoPatient) {
+      unawaited(_discardTutorialSession(state.sessionId));
+    }
+
+    if (_returnHomeAfterTutorialConsultation) {
+      _returnHomeAfterTutorialConsultation = false;
+      context.goHome();
+    } else if (widget.patientId != null) {
+      final isDemoTutorialReturn = isDemoPatient && isTutorial;
+      if (isDemoTutorialReturn) {
+        context.goHome();
+      } else {
+        if (context.canPop()) {
+          context.pop();
+        }
+        context.goPatientDetail(widget.patientId!);
+      }
+    } else {
+      AssignPatientSheet.show(context, state.sessionId);
+    }
+  }
+
   void _startRecording() {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFromPatient)) {
@@ -405,25 +439,7 @@ class _RecordViewState extends State<_RecordView> {
         }
 
         if (state is VoiceCaptureConsultationFinished) {
-          if (_returnHomeAfterTutorialConsultation) {
-            _returnHomeAfterTutorialConsultation = false;
-            context.goHome();
-          } else if (widget.patientId != null) {
-            final tutorialBloc = context.read<TutorialBloc>();
-            final isDemoTutorialReturn =
-                widget.patientId == TutorialFlow.demoPatientId &&
-                tutorialBloc.state is TutorialInProgress;
-            if (isDemoTutorialReturn) {
-              context.goHome();
-            } else {
-              if (context.canPop()) {
-                context.pop();
-              }
-              context.goPatientDetail(widget.patientId!);
-            }
-          } else {
-            AssignPatientSheet.show(context, state.sessionId);
-          }
+          _handleConsultationFinished(state);
           return;
         }
 

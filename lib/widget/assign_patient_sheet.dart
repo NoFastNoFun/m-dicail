@@ -32,6 +32,7 @@ class AssignPatientSheet extends StatefulWidget {
   static void show(BuildContext context, String sessionId) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
@@ -99,11 +100,28 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.quickRecordAssignPatient)) {
       tutorialBloc.completeStep(TutorialStepId.quickRecordAssignPatient);
+      unawaited(_discardTutorialSessionAndClose());
     }
   }
 
+  Future<void> _discardTutorialSessionAndClose() async {
+    final repo = getIt<RecordingSessionRepository>();
+    await repo.delete(widget.sessionId);
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    if (context.canPop()) {
+      context.pop();
+    }
+    context.goHome();
+  }
+
   Future<void> _assignAndNavigate(BuildContext context, String patientId) async {
-    _completeAssignPatientTutorialStep();
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (tutorialBloc.state is TutorialInProgress) {
+      _completeAssignPatientTutorialStep();
+      return;
+    }
+
     final l10n = AppLocalizations.of(context);
     try {
       final repo = getIt<RecordingSessionRepository>();

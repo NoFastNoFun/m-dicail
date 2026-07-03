@@ -18,9 +18,7 @@ class MainShellScope extends InheritedWidget {
   const MainShellScope({required super.child, super.key});
 
   static bool isActive(BuildContext context) {
-    return context
-            .getInheritedWidgetOfExactType<MainShellScope>() !=
-        null;
+    return context.getInheritedWidgetOfExactType<MainShellScope>() != null;
   }
 
   @override

@@ -24,6 +24,36 @@ class PatientCreationSheet extends StatefulWidget {
 
   final void Function(String patientId)? onSuccess;
 
+  static Future<void> show(
+    BuildContext context, {
+    void Function(String patientId)? onSuccess,
+  }) {
+    return showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+          ),
+          child: BlocProvider.value(
+            value: context.read<PatientBloc>(),
+            child: PatientCreationSheet(
+              onSuccess: onSuccess == null
+                  ? null
+                  : (patientId) {
+                      Navigator.of(sheetContext).pop();
+                      onSuccess(patientId);
+                    },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   State<PatientCreationSheet> createState() => _PatientCreationSheetState();
 }
@@ -123,6 +153,11 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   }
 
   void _submit() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (tutorialBloc.state is TutorialInProgress) {
+      return;
+    }
+
     final mrn = _mrnController.text.trim();
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();

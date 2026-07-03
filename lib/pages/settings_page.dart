@@ -17,7 +17,6 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
-import 'package:medicail/widget/app_tbd_pill.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/settings/app_settings_tile.dart';
@@ -44,9 +43,9 @@ class SettingsPage extends StatelessWidget {
                 title: l10n.settingsTheme,
                 child: _ThemeSelector(
                   selected: state.themeVariant,
-                  onChanged: (variant) => context
-                      .read<SettingsBloc>()
-                      .add(SettingsThemeChanged(variant)),
+                  onChanged: (variant) => context.read<SettingsBloc>().add(
+                    SettingsThemeChanged(variant),
+                  ),
                 ),
               ),
               const Divider(),
@@ -54,9 +53,9 @@ class SettingsPage extends StatelessWidget {
                 title: l10n.settingsFontSize,
                 child: _FontScaleSelector(
                   selected: state.fontScale,
-                  onChanged: (scale) => context
-                      .read<SettingsBloc>()
-                      .add(SettingsFontScaleChanged(scale)),
+                  onChanged: (scale) => context.read<SettingsBloc>().add(
+                    SettingsFontScaleChanged(scale),
+                  ),
                 ),
               ),
               const Divider(),
@@ -73,13 +72,13 @@ class SettingsPage extends StatelessWidget {
               const Divider(),
               InkWell(
                 onTap: () {
-                  context.read<TutorialBloc>().add(const TutorialResetRequested());
+                  context.read<TutorialBloc>().add(
+                    const TutorialResetRequested(),
+                  );
                   AppToast.showSuccess(context, l10n.tutorialRestarted);
                   context.go(AppRoutes.home);
                 },
-                child: AppSettingsTile(
-                  title: l10n.settingsRestartOnboarding,
-                ),
+                child: AppSettingsTile(title: l10n.settingsRestartOnboarding),
               ),
               const Divider(),
               const SizedBox(height: AppSpacing.lg),
@@ -91,9 +90,9 @@ class SettingsPage extends StatelessWidget {
                       style: AppButtonStyle.secondary,
                       layout: AppButtonLayout.textWithIcon,
                       icon: Icons.logout,
-                      onPressed: () => context
-                          .read<AuthBloc>()
-                          .add(const AuthLogoutRequested()),
+                      onPressed: () => context.read<AuthBloc>().add(
+                        const AuthLogoutRequested(),
+                      ),
                     );
                   }
                   return AppButton(
@@ -113,10 +112,7 @@ class SettingsPage extends StatelessWidget {
 }
 
 class _ThemeSelector extends StatelessWidget {
-  const _ThemeSelector({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _ThemeSelector({required this.selected, required this.onChanged});
 
   final AppThemeVariant selected;
   final ValueChanged<AppThemeVariant> onChanged;
@@ -150,10 +146,7 @@ class _ThemeSelector extends StatelessWidget {
 }
 
 class _FontScaleSelector extends StatelessWidget {
-  const _FontScaleSelector({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _FontScaleSelector({required this.selected, required this.onChanged});
 
   final AppFontScale selected;
   final ValueChanged<AppFontScale> onChanged;
