@@ -13,10 +13,12 @@ import 'package:medicail/features/settings/domain/entities/app_theme_variant.dar
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
-import 'package:medicail/widget/app_tbd_pill.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/settings/app_settings_tile.dart';
 import 'package:medicail/widget/settings/app_stepped_slider.dart';
 
@@ -41,9 +43,9 @@ class SettingsPage extends StatelessWidget {
                 title: l10n.settingsTheme,
                 child: _ThemeSelector(
                   selected: state.themeVariant,
-                  onChanged: (variant) => context
-                      .read<SettingsBloc>()
-                      .add(SettingsThemeChanged(variant)),
+                  onChanged: (variant) => context.read<SettingsBloc>().add(
+                    SettingsThemeChanged(variant),
+                  ),
                 ),
               ),
               const Divider(),
@@ -51,9 +53,9 @@ class SettingsPage extends StatelessWidget {
                 title: l10n.settingsFontSize,
                 child: _FontScaleSelector(
                   selected: state.fontScale,
-                  onChanged: (scale) => context
-                      .read<SettingsBloc>()
-                      .add(SettingsFontScaleChanged(scale)),
+                  onChanged: (scale) => context.read<SettingsBloc>().add(
+                    SettingsFontScaleChanged(scale),
+                  ),
                 ),
               ),
               const Divider(),
@@ -68,10 +70,15 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              AppSettingsTile(
-                title: l10n.settingsRestartOnboarding,
-                enabled: false,
-                trailing: AppTbdPill(label: l10n.settingsTbd),
+              InkWell(
+                onTap: () {
+                  context.read<TutorialBloc>().add(
+                    const TutorialResetRequested(),
+                  );
+                  AppToast.showSuccess(context, l10n.tutorialRestarted);
+                  context.go(AppRoutes.home);
+                },
+                child: AppSettingsTile(title: l10n.settingsRestartOnboarding),
               ),
               const Divider(),
               const SizedBox(height: AppSpacing.lg),
@@ -83,13 +90,13 @@ class SettingsPage extends StatelessWidget {
                       style: AppButtonStyle.secondary,
                       layout: AppButtonLayout.textWithIcon,
                       icon: Icons.logout,
-                      onPressed: () => context
-                          .read<AuthBloc>()
-                          .add(const AuthLogoutRequested()),
+                      onPressed: () => context.read<AuthBloc>().add(
+                        const AuthLogoutRequested(),
+                      ),
                     );
                   }
                   return AppButton(
-                    label: l10n.settingsSignIn,
+                    label: l10n.homeSignIn,
                     layout: AppButtonLayout.textWithIcon,
                     icon: Icons.login,
                     onPressed: () => context.push(AppRoutes.login),
@@ -105,10 +112,7 @@ class SettingsPage extends StatelessWidget {
 }
 
 class _ThemeSelector extends StatelessWidget {
-  const _ThemeSelector({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _ThemeSelector({required this.selected, required this.onChanged});
 
   final AppThemeVariant selected;
   final ValueChanged<AppThemeVariant> onChanged;
@@ -142,10 +146,7 @@ class _ThemeSelector extends StatelessWidget {
 }
 
 class _FontScaleSelector extends StatelessWidget {
-  const _FontScaleSelector({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _FontScaleSelector({required this.selected, required this.onChanged});
 
   final AppFontScale selected;
   final ValueChanged<AppFontScale> onChanged;

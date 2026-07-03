@@ -5,6 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/record/app_record_toggle_button.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class AppRecordHeaderCard extends StatelessWidget {
   const AppRecordHeaderCard({
@@ -20,6 +21,11 @@ class AppRecordHeaderCard extends StatelessWidget {
     required this.onBack,
     required this.onToggleRecording,
     required this.menuItems,
+    this.menuKey,
+    this.menuButtonKey,
+    this.menuShowcaseTitle,
+    this.menuShowcaseDescription,
+    this.onMenuShowcaseTargetClick,
   });
 
   final String dateLabel;
@@ -33,6 +39,11 @@ class AppRecordHeaderCard extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback onToggleRecording;
   final List<AppRecordMenuItem> menuItems;
+  final GlobalKey? menuKey;
+  final GlobalKey<PopupMenuButtonState<int>>? menuButtonKey;
+  final String? menuShowcaseTitle;
+  final String? menuShowcaseDescription;
+  final VoidCallback? onMenuShowcaseTargetClick;
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +113,26 @@ class AppRecordHeaderCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              _RecordMenuButton(
-                backgroundColor: controlSurface,
-                items: menuItems,
-              ),
+              if (menuKey != null)
+                Showcase(
+                  key: menuKey!,
+                  title: menuShowcaseTitle,
+                  description: menuShowcaseDescription,
+                  disposeOnTap: false,
+                  disableBarrierInteraction: true,
+                  onTargetClick: onMenuShowcaseTargetClick,
+                  child: _RecordMenuButton(
+                    menuButtonKey: menuButtonKey,
+                    backgroundColor: controlSurface,
+                    items: menuItems,
+                  ),
+                )
+              else
+                _RecordMenuButton(
+                  menuButtonKey: menuButtonKey,
+                  backgroundColor: controlSurface,
+                  items: menuItems,
+                ),
             ],
           ),
         ],
@@ -188,10 +215,12 @@ class _RecordMenuButton extends StatelessWidget {
   const _RecordMenuButton({
     required this.backgroundColor,
     required this.items,
+    this.menuButtonKey,
   });
 
   final Color backgroundColor;
   final List<AppRecordMenuItem> items;
+  final GlobalKey<PopupMenuButtonState<int>>? menuButtonKey;
 
   @override
   Widget build(BuildContext context) {
@@ -202,6 +231,7 @@ class _RecordMenuButton extends StatelessWidget {
       borderRadius: AppRadius.smBorder,
       clipBehavior: Clip.antiAlias,
       child: PopupMenuButton<int>(
+        key: menuButtonKey,
         enabled: enabledItems.isNotEmpty,
         icon: const Icon(Icons.more_vert, size: 20),
         padding: EdgeInsets.zero,

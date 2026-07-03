@@ -29,6 +29,7 @@ dependencies:
 
   bloc_concurrency: ^0.3.0
   rxdart: ^0.28.0
+  showcaseview: ^5.0.2
 
 dev_dependencies:
   flutter_test:

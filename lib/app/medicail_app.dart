@@ -8,11 +8,25 @@ import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class MedicailApp extends StatelessWidget {
+class MedicailApp extends StatefulWidget {
   const MedicailApp({super.key});
+
+  @override
+  State<MedicailApp> createState() => _MedicailAppState();
+}
+
+class _MedicailAppState extends State<MedicailApp> {
+  @override
+  void initState() {
+    super.initState();
+    ShowcaseView.register();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +59,14 @@ class MedicailApp extends StatelessWidget {
                     create: (_) =>
                         getIt<SettingsBloc>()..add(const SettingsLoadRequested()),
                   ),
+                  BlocProvider<TutorialBloc>(
+                    create: (_) =>
+                        getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
+                  ),
                 ],
-                child: AppToastHost(child: child ?? const SizedBox.shrink()),
+                child: AppToastHost(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             );
           },

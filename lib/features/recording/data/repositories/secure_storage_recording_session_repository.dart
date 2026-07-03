@@ -5,7 +5,7 @@ import 'package:medicail/features/recording/data/models/recording_session_model.
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 
-@LazySingleton(as: RecordingSessionRepository)
+@injectable
 class SecureStorageRecordingSessionRepository
     implements RecordingSessionRepository {
   const SecureStorageRecordingSessionRepository(this._storage);
@@ -68,6 +68,11 @@ class SecureStorageRecordingSessionRepository
   @override
   Future<void> clear() async {
     return _storage.delete(key: _sessionsKey);
+  }
+
+  @override
+  Future<void> purgeTutorialSessions() async {
+    // No-op: tutorial sessions are filtered by DynamicRecordingSessionRepository.
   }
 
   Future<List<RecordingSession>> _readSessions() async {
