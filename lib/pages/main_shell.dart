@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -23,14 +24,15 @@ class MainShell extends StatefulWidget {
 
   final Widget child;
 
+  static EdgeInsets scrollPadding(BuildContext context) {
+    return MainShellChrome.scrollPadding(context);
+  }
+
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
-  static const double _bottomOverlayHeight = 168;
-  static const double _navLift = AppSpacing.lg;
-
   final _patientsNavKey = GlobalKey();
   final _quickRecordKey = GlobalKey();
 
@@ -59,14 +61,14 @@ class _MainShellState extends State<MainShell> {
           variant: AppDialogVariant.lockScreen,
           title: l10n.tutorialIntroTitle,
           body: AppText(l10n.tutorialIntroDesc, variant: AppTextVariant.body),
-          actions: [
+          actionsBuilder: (dialogContext) => [
             AppButton(
               label: l10n.tutorialIntroSkip,
               style: AppButtonStyle.secondary,
               expanded: false,
               onPressed: () {
                 context.read<TutorialBloc>().add(const TutorialSkipRequested());
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
             AppButton(
@@ -76,7 +78,7 @@ class _MainShellState extends State<MainShell> {
                 context.read<TutorialBloc>().add(
                   const TutorialStartRequested(),
                 );
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
           ],
@@ -188,106 +190,109 @@ class _MainShellState extends State<MainShell> {
       ),
     ];
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: BlocListener<TutorialBloc, TutorialState>(
-        listener: (context, state) => _handleTutorialState(state),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: _bottomOverlayHeight),
-                child: widget.child,
+    return MainShellScope(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: BlocListener<TutorialBloc, TutorialState>(
+          listener: (context, state) => _handleTutorialState(state),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: widget.child,
+                ),
               ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: _navLift,
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.lg),
-                        child: Showcase(
-                          key: _quickRecordKey,
-                          title: l10n.tutorialHomeRecordTitle,
-                          description: l10n.tutorialHomeRecordDesc,
-                          disposeOnTap: false,
-                          disableBarrierInteraction: true,
-                          onTargetClick: _handleHomeQuickRecordTutorialTap,
-                          child: AppRadialActionButton(
-                            anchor: AppRadialActionAnchor.end,
-                            actions: [
-                              AppRadialAction(
-                                icon: Icons.folder_outlined,
-                                label: l10n.patientsSectionTitle,
-                                onTap: () => context.go(AppRoutes.patients),
-                              ),
-                              AppRadialAction(
-                                icon: Icons.mic_outlined,
-                                label: l10n.radialActionNewRecord,
-                                onTap: () async {
-                                  final tutorialBloc = context
-                                      .read<TutorialBloc>();
-                                  if (tutorialBloc.isCurrentStep(
-                                    TutorialStepId.homeQuickRecord,
-                                  )) {
-                                    await _handleHomeQuickRecordTutorialTap();
-                                    return;
-                                  }
-                                  _openQuickRecordIfAllowed();
-                                },
-                              ),
-                            ],
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: MainShellChrome.navLift,
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: AppSpacing.lg),
+                          child: Showcase(
+                            key: _quickRecordKey,
+                            title: l10n.tutorialHomeRecordTitle,
+                            description: l10n.tutorialHomeRecordDesc,
+                            disposeOnTap: false,
+                            disableBarrierInteraction: true,
+                            onTargetClick: _handleHomeQuickRecordTutorialTap,
+                            child: AppRadialActionButton(
+                              anchor: AppRadialActionAnchor.end,
+                              actions: [
+                                AppRadialAction(
+                                  icon: Icons.folder_outlined,
+                                  label: l10n.patientsSectionTitle,
+                                  onTap: () => context.go(AppRoutes.patients),
+                                ),
+                                AppRadialAction(
+                                  icon: Icons.mic_outlined,
+                                  label: l10n.radialActionNewRecord,
+                                  onTap: () async {
+                                    final tutorialBloc = context
+                                        .read<TutorialBloc>();
+                                    if (tutorialBloc.isCurrentStep(
+                                      TutorialStepId.homeQuickRecord,
+                                    )) {
+                                      await _handleHomeQuickRecordTutorialTap();
+                                      return;
+                                    }
+                                    _openQuickRecordIfAllowed();
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                      ),
-                      child: Center(
-                        child: AppBottomNavPill(
-                          destinations: destinations,
-                          selectedRoute: location,
-                          onDestinationSelected: (route) {
-                            if (route == AppRoutes.patients) {
-                              final tutorialBloc = context.read<TutorialBloc>();
-                              if (tutorialBloc.state is TutorialInProgress &&
-                                  TutorialFlow.idFromIndex(
-                                        (tutorialBloc.state
-                                                as TutorialInProgress)
-                                            .currentStep,
-                                      ) ==
-                                      TutorialStepId.homePatients) {
-                                tutorialBloc.add(
-                                  TutorialStepCompleted(
-                                    TutorialFlow.indexOf(
-                                      TutorialStepId.homePatients,
+                      const SizedBox(height: AppSpacing.sm),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                        ),
+                        child: Center(
+                          child: AppBottomNavPill(
+                            destinations: destinations,
+                            selectedRoute: location,
+                            onDestinationSelected: (route) {
+                              if (route == AppRoutes.patients) {
+                                final tutorialBloc = context.read<TutorialBloc>();
+                                if (tutorialBloc.state is TutorialInProgress &&
+                                    TutorialFlow.idFromIndex(
+                                          (tutorialBloc.state
+                                                  as TutorialInProgress)
+                                              .currentStep,
+                                        ) ==
+                                        TutorialStepId.homePatients) {
+                                  tutorialBloc.add(
+                                    TutorialStepCompleted(
+                                      TutorialFlow.indexOf(
+                                        TutorialStepId.homePatients,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               }
-                            }
-                            context.go(route);
-                          },
+                              context.go(route);
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

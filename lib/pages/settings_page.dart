@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_routes.dart';
@@ -61,8 +62,13 @@ class SettingsPage extends StatelessWidget {
               const Divider(),
               AppSettingsTile(
                 title: l10n.settingsTemplates,
-                enabled: false,
-                trailing: AppTbdPill(label: l10n.settingsTbd),
+                subtitle: l10n.templatesTitle,
+                trailing: const Icon(Icons.chevron_right),
+                child: AppButton(
+                  label: l10n.settingsTemplates,
+                  style: AppButtonStyle.secondary,
+                  onPressed: () => context.goTemplates(),
+                ),
               ),
               const Divider(),
               InkWell(

@@ -178,5 +178,48 @@
   "tutorialRecordTranscriptDesc": "Pendant l'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l'ecran pour continuer.",
   "tutorialAssignPatientTitle": "Associer a un patient",
   "tutorialAssignPatientDesc": "Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l'onglet Rechercher, ou creer un nouveau dossier avec l'onglet Nouveau patient.\n\n👉 Appuyez sur 'Associer a un patient' pour continuer.",
-  "tutorialRestarted": "Le tutoriel a ete reinitialise."
+  "tutorialRestarted": "Le tutoriel a ete reinitialise.",
+  "settingsSignIn": "Se connecter",
+  "templatesTitle": "Modeles de pathologie",
+  "templatesBuiltInSection": "Modeles par defaut",
+  "templatesUserSection": "Mes variantes",
+  "templatesUserEmpty": "Aucune variante enregistree.",
+  "templatesDefaultBadge": "Defaut",
+  "templatesVariantBadge": "Variante",
+  "templateDuplicateAction": "Modifier en variante",
+  "templateDuplicated": "Variante creee.",
+  "templateSaved": "Modele enregistre.",
+  "templateDeleteTitle": "Supprimer la variante ?",
+  "templateDeleteMessage": "Supprimer le modele \"{name}\" ?",
+  "@templateDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "templateDeleteConfirm": "Supprimer",
+  "templateEditorTitle": "Editer le modele",
+  "templateNotFound": "Modele introuvable.",
+  "templateSectionTitleLabel": "Titre de section",
+  "templateSectionPromptLabel": "Structure / puces",
+  "templateAddSection": "Ajouter une section",
+  "templateSaveAsVariant": "Enregistrer comme variante",
+  "templateUpdate": "Mettre a jour",
+  "templateReset": "Reinitialiser depuis le parent",
+  "templatePickerTitle": "Choisir un modele",
+  "templatePickerSearch": "Rechercher une pathologie",
+  "templatePickerEmpty": "Aucun modele trouve.",
+  "templatePickerAction": "Choisir un modele",
+  "templateActiveLabel": "Modele : {name}",
+  "@templateActiveLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "templateNoneLabel": "Aucun modele selectionne",
+  "templateRetry": "Reessayer",
+  "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application."
 }

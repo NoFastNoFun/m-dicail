@@ -134,6 +134,60 @@ flutter build web
 flutter build windows
 ```
 
+### APK Android allégés par appareil
+
+Par défaut, `flutter build apk` produit un **APK universel** qui embarque les
+bibliothèques natives de toutes les architectures (arm64, arm32, x86_64). Le
+fichier est plus lourd, mais compatible avec la plupart des appareils.
+
+Pour réduire la taille, préférez l'une des approches suivantes.
+
+#### 1. APK séparés par architecture (recommandé pour installation directe)
+
+Génère un APK par type de processeur. Chaque utilisateur installe uniquement
+celui qui correspond à son téléphone.
+
+```bash
+flutter build apk --release --split-per-abi
+```
+
+Fichiers produits dans `build/app/outputs/flutter-apk/` :
+
+| Fichier | Appareils typiques |
+|---|---|
+| `app-arm64-v8a-release.apk` | Smartphones récents (2017+) |
+| `app-armeabi-v7a-release.apk` | Anciens appareils 32 bits |
+| `app-x86_64-release.apk` | Émulateurs / quelques tablettes |
+
+La plupart des téléphones actuels utilisent **`arm64-v8a`**.
+
+#### 2. Cibler une seule architecture
+
+Utile si vous connaissez l'appareil cible (démo, test interne, flotte homogène).
+
+```bash
+# Smartphones Android récents
+flutter build apk --release --target-platform android-arm64
+
+# Appareils 32 bits
+flutter build apk --release --target-platform android-arm
+```
+
+#### 3. App Bundle pour Google Play (recommandé en production)
+
+Pour une publication sur le Play Store, utilisez un **AAB** : Google génère et
+distribue automatiquement l'APK adapté à chaque appareil.
+
+```bash
+flutter build appbundle --release
+```
+
+Le fichier est produit dans `build/app/outputs/bundle/release/`.
+
+> **Note** : la configuration de signature release doit être définie dans
+> `android/app/build.gradle.kts` avant une publication en production (actuellement
+> le build release utilise encore la clé debug).
+
 ## Structure du projet
 
 ```text

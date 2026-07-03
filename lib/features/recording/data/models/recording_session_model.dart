@@ -10,6 +10,8 @@ final class RecordingSessionModel extends RecordingSession {
     super.endedAt,
     super.transcript,
     super.soapNote,
+    super.templateId,
+    super.templateName,
   });
 
   factory RecordingSessionModel.fromEntity(RecordingSession session) {
@@ -21,6 +23,8 @@ final class RecordingSessionModel extends RecordingSession {
       transcript: session.transcript,
       soapNote: session.soapNote,
       status: session.status,
+      templateId: session.templateId,
+      templateName: session.templateName,
     );
   }
 
@@ -35,6 +39,8 @@ final class RecordingSessionModel extends RecordingSession {
           ? SoapNote.fromJson(json['soapNote'] as Map<String, dynamic>)
           : null,
       status: _parseStatus(json['status'] as String?),
+      templateId: json['templateId'] as String?,
+      templateName: json['templateName'] as String?,
     );
   }
 
@@ -47,6 +53,8 @@ final class RecordingSessionModel extends RecordingSession {
       'transcript': transcript,
       'soapNote': soapNote?.toJson(),
       'status': status.name,
+      'templateId': templateId,
+      'templateName': templateName,
     };
   }
 

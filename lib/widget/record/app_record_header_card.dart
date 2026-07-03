@@ -12,6 +12,7 @@ class AppRecordHeaderCard extends StatelessWidget {
     super.key,
     required this.dateLabel,
     this.sessionTitle,
+    this.templateLabel,
     required this.elapsedLabel,
     required this.isRecording,
     required this.isInitializing,
@@ -29,6 +30,7 @@ class AppRecordHeaderCard extends StatelessWidget {
 
   final String dateLabel;
   final String? sessionTitle;
+  final String? templateLabel;
   final String elapsedLabel;
   final bool isRecording;
   final bool isInitializing;
@@ -74,6 +76,14 @@ class AppRecordHeaderCard extends StatelessWidget {
                       AppText(
                         sessionTitle!,
                         variant: AppTextVariant.headline,
+                      ),
+                    ],
+                    if (templateLabel != null) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      AppText(
+                        templateLabel!,
+                        variant: AppTextVariant.caption,
+                        color: colorScheme.primary,
                       ),
                     ],
                   ],
