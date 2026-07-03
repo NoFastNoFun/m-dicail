@@ -39,6 +39,12 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
     as _i250;
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
     as _i541;
+import 'package:medicail/features/medical_watch/data/repositories/api_medical_watch_repository.dart'
+    as _i1006;
+import 'package:medicail/features/medical_watch/domain/repositories/medical_watch_repository.dart'
+    as _i1007;
+import 'package:medicail/features/medical_watch/presentation/medical_watch_bloc.dart'
+    as _i1008;
 import 'package:medicail/features/patient/data/repositories/api_patient_repository.dart'
     as _i545;
 import 'package:medicail/features/patient/data/repositories/dynamic_patient_repository.dart'
@@ -141,6 +147,9 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
+    gh.lazySingleton<_i1007.MedicalWatchRepository>(
+      () => _i1006.ApiMedicalWatchRepository(gh<_i1005.ApiClient>()),
+    );
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
     );
@@ -165,6 +174,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i301.PatientBloc>(
       () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
+    );
+    gh.factory<_i1008.MedicalWatchBloc>(
+      () => _i1008.MedicalWatchBloc(gh<_i1007.MedicalWatchRepository>()),
     );
     gh.factory<_i250.AuthBloc>(
       () => _i250.AuthBloc(
