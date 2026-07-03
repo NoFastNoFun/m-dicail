@@ -5,6 +5,8 @@ import 'package:medicail/features/patient/data/repositories/secure_storage_patie
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/core/config/app_config.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_demo_patient.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 
 @LazySingleton(as: PatientRepository)
 class DynamicPatientRepository implements PatientRepository {
@@ -34,18 +36,27 @@ class DynamicPatientRepository implements PatientRepository {
 
   @override
   Future<Patient?> getById(String id) async {
+    if (id == TutorialFlow.demoPatientId) {
+      return TutorialDemoPatient.patient;
+    }
     final repo = await _getRepository();
     return repo.getById(id);
   }
 
   @override
   Future<Patient> save(Patient patient) async {
+    if (patient.id == TutorialFlow.demoPatientId) {
+      return TutorialDemoPatient.patient;
+    }
     final repo = await _getRepository();
     return repo.save(patient);
   }
 
   @override
   Future<void> delete(String id) async {
+    if (id == TutorialFlow.demoPatientId) {
+      return;
+    }
     final repo = await _getRepository();
     await repo.delete(id);
   }
