@@ -1,0 +1,492 @@
+[
+  {
+    "id": "builtin_ankle_sprain",
+    "pathologyKey": "ankle_sprain",
+    "name": "Entorse de cheville",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Circonstances de l'entorse :\n- Localisation de la douleur :\n- EVA repos / effort :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Inspection : oedeme, ecchymose\n- Palpation ligamentaire\n- Amplitudes actives et passives\n- Deambulation",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Grade de l'entorse suspecte :\n- Limitation fonctionnelle :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (cryotherapie, drainage, renforcement) :\n- Protocole de reprise :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "ligament_tests",
+        "kind": "custom",
+        "title": "Tests ligamentaires",
+        "prompt": "- Tiroir anterieur :\n- Tiroir postérieur :\n- Bascule de cheville :",
+        "order": 4
+      },
+      {
+        "id": "balance",
+        "kind": "custom",
+        "title": "Equilibre",
+        "prompt": "- Appui unipodal yeux ouverts :\n- Appui unipodal yeux fermes :\n- Y balance test :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_low_back_pain",
+    "pathologyKey": "low_back_pain",
+    "name": "Lombalgie",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Duree et mode d'installation :\n- Irradiation membre inferieur :\n- EVA actuelle :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Posture et attitudes antalgiques\n- Amplitudes rachidiennes\n- Palpation paravertebrale\n- Tests neuro-moteurs",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Hypothese clinique :\n- Impact fonctionnel (lever, assis, marche) :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (mobilisations, stabilisation, education) :\n- Exercices a domicile :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "red_flags",
+        "kind": "custom",
+        "title": "Red flags",
+        "prompt": "- Fievre :\n- Perte de poids :\n- Troubles sphincteriens :\n- Deficit neurologique :",
+        "order": 4
+      },
+      {
+        "id": "eva_scale",
+        "kind": "custom",
+        "title": "Echelle EVA",
+        "prompt": "- EVA repos :\n- EVA effort :\n- EVA nuit :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_patellar_tendinopathy",
+    "pathologyKey": "patellar_tendinopathy",
+    "name": "Tendinopathie rotulienne",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Sport pratique et charge :\n- Localisation douleur (pole inferieur rotule) :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Palpation tendon rotulien\n- Squat / fentes douloureux\n- Amplitudes genou\n- Force quadriceps",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade tendinopathie :\n- Tolerance a la charge :\n- Objectifs sportifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Protocole charge progressive :\n- Exercices excentriques / isometriques :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "sport_load",
+        "kind": "custom",
+        "title": "Charge sportive",
+        "prompt": "- Volume hebdomadaire :\n- Intensite :\n- Surface de jeu :",
+        "order": 4
+      },
+      {
+        "id": "hamstring_tests",
+        "kind": "custom",
+        "title": "Tests ischio-jambiers",
+        "prompt": "- Angle deficit ischio :\n- Nordic test :\n- Palpation ischios :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_frozen_shoulder",
+    "pathologyKey": "frozen_shoulder",
+    "name": "Capsulite retractile",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Duree des symptomes :\n- Douleur nocturne :\n- Limitation des AVD :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes actives et passives\n- Capsule posterieure\n- Scapulo-humeral rhythm\n- Force periscapulaire",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Phase evolutive suspectee :\n- Deficit amplitudes principales :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (mobilisations, etirements, renforcement) :\n- Auto-exercices :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "rom",
+        "kind": "custom",
+        "title": "Amplitudes",
+        "prompt": "- Flexion :\n- Abduction :\n- Rotation externe :\n- Rotation interne :",
+        "order": 4
+      },
+      {
+        "id": "spadi",
+        "kind": "custom",
+        "title": "Echelle SPADI",
+        "prompt": "- Score douleur :\n- Score handicap :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_knee_osteoarthritis",
+    "pathologyKey": "knee_osteoarthritis",
+    "name": "Gonarthrose",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Douleur mecanique :\n- Raideur matinale :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Inspection genou (varus/valgus, epanchement)\n- Amplitudes\n- Force quadriceps\n- Marche",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Impact fonctionnel :\n- Compartiment le plus symptomatique :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Renforcement, etirements, education :\n- Aides techniques :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "gait",
+        "kind": "custom",
+        "title": "Marche",
+        "prompt": "- Distance maximale sans douleur :\n- Besoin d'une canne :\n- Temps de marche :",
+        "order": 4
+      },
+      {
+        "id": "womac",
+        "kind": "custom",
+        "title": "Echelle WOMAC",
+        "prompt": "- Score douleur :\n- Score raideur :\n- Score fonction :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_knee_sprain",
+    "pathologyKey": "knee_sprain",
+    "name": "Entorse du genou",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Mecanisme traumatique :\n- Instabilite ressentie :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Epanchement\n- Amplitudes\n- Palpation structures peri-genou\n- Deambulation",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Structures lesees suspectees :\n- Limitation fonctionnelle :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (drainage, proprioception, renforcement) :\n- Protocole reprise sport :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "acl_tests",
+        "kind": "custom",
+        "title": "Tests LCA",
+        "prompt": "- Lachman :\n- Tiroir anterieur :\n- Pivot shift :",
+        "order": 4
+      },
+      {
+        "id": "lcl_tests",
+        "kind": "custom",
+        "title": "Tests LLE",
+        "prompt": "- Varus stress 0 / 30 degres :\n- Palpation LLE :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_epicondylitis",
+    "pathologyKey": "epicondylitis",
+    "name": "Epicondylite",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Activite declenchante (prise, sport) :\n- Latéralite douloureuse :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Palpation epicondyle\n- Tests resistes poignet/coude\n- Amplitudes coude\n- Force prehension",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Tolerance aux AVD :\n- Irritabilite tissulaire :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (charge progressive, etirements, renforcement) :\n- Adaptation posturale :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "resisted_tests",
+        "kind": "custom",
+        "title": "Tests resistes",
+        "prompt": "- Extension poignet :\n- Supination :\n- Prise de force :",
+        "order": 4
+      },
+      {
+        "id": "ergonomics",
+        "kind": "custom",
+        "title": "Prise en charge",
+        "prompt": "- Poste de travail :\n- Materiel sportif :\n- Frequence des gestes repetitifs :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_neck_pain",
+    "pathologyKey": "neck_pain",
+    "name": "Cervicalgie",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Duree et facteurs declenchants :\n- Irradiation membre superieur :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes cervicales\n- Palpation musculaire\n- Tests neuro-dynamiques\n- Posture",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Hypothese clinique :\n- Limitation fonctionnelle :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement (mobilisations, renforcement profond, education) :\n- Exercices domicile :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "mobility",
+        "kind": "custom",
+        "title": "Mobilite",
+        "prompt": "- Flexion :\n- Extension :\n- Rotation droite / gauche :\n- Inclinaison :",
+        "order": 4
+      },
+      {
+        "id": "neck_red_flags",
+        "kind": "custom",
+        "title": "Red flags",
+        "prompt": "- Vertiges atypiques :\n- Troubles de la deglutition :\n- Deficit neurologique :\n- Traumatisme recent :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_acl_post_op",
+    "pathologyKey": "acl_post_op",
+    "name": "Reeducation post-op LCA",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Date chirurgie :\n- Protocole operateur :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Cicatrice et oedeme\n- Amplitudes genou\n- Force quadriceps / ischios\n- Deambulation",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Phase de reeducation :\n- Deficits principaux :\n- Objectifs de phase :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Protocole renforcement / proprioception :\n- Criteres de progression :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "phases",
+        "kind": "custom",
+        "title": "Phases",
+        "prompt": "- Phase actuelle :\n- Restrictions operateur :\n- Charge autorisee :",
+        "order": 4
+      },
+      {
+        "id": "return_criteria",
+        "kind": "custom",
+        "title": "Criteres reprise",
+        "prompt": "- Force quadriceps (% cote sain) :\n- Hop tests :\n- Confiance subjective :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_wrist_fracture",
+    "pathologyKey": "wrist_fracture",
+    "name": "Fracture de poignet",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Date fracture / immobilisation :\n- Raideur et douleur :\n- EVA :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Inspection poignet et main\n- Amplitudes poignet et doigts\n- Oedeme\n- Force prehension",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Limitation fonctionnelle :\n- Tolerance aux AVD :\n- Objectifs :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Mobilisation progressive :\n- Renforcement et proprioception :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "wrist_rom",
+        "kind": "custom",
+        "title": "Amplitudes",
+        "prompt": "- Flexion / extension :\n- Inclinaison radiale / cubitale :\n- Pronation / supination :",
+        "order": 4
+      },
+      {
+        "id": "grip_strength",
+        "kind": "custom",
+        "title": "Force de prehension",
+        "prompt": "- Dynamometre main droite :\n- Dynamometre main gauche :\n- Pince :",
+        "order": 5
+      }
+    ]
+  }
+]

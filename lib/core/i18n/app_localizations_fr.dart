@@ -485,4 +485,93 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsSignIn => 'Se connecter';
+
+  @override
+  String get templatesTitle => 'Modeles de pathologie';
+
+  @override
+  String get templatesBuiltInSection => 'Modeles par defaut';
+
+  @override
+  String get templatesUserSection => 'Mes variantes';
+
+  @override
+  String get templatesUserEmpty => 'Aucune variante enregistree.';
+
+  @override
+  String get templatesDefaultBadge => 'Defaut';
+
+  @override
+  String get templatesVariantBadge => 'Variante';
+
+  @override
+  String get templateDuplicateAction => 'Modifier en variante';
+
+  @override
+  String get templateDuplicated => 'Variante creee.';
+
+  @override
+  String get templateSaved => 'Modele enregistre.';
+
+  @override
+  String get templateDeleteTitle => 'Supprimer la variante ?';
+
+  @override
+  String templateDeleteMessage(String name) {
+    return 'Supprimer le modele \"$name\" ?';
+  }
+
+  @override
+  String get templateDeleteConfirm => 'Supprimer';
+
+  @override
+  String get templateEditorTitle => 'Editer le modele';
+
+  @override
+  String get templateNotFound => 'Modele introuvable.';
+
+  @override
+  String get templateSectionTitleLabel => 'Titre de section';
+
+  @override
+  String get templateSectionPromptLabel => 'Structure / puces';
+
+  @override
+  String get templateAddSection => 'Ajouter une section';
+
+  @override
+  String get templateSaveAsVariant => 'Enregistrer comme variante';
+
+  @override
+  String get templateUpdate => 'Mettre a jour';
+
+  @override
+  String get templateReset => 'Reinitialiser depuis le parent';
+
+  @override
+  String get templatePickerTitle => 'Choisir un modele';
+
+  @override
+  String get templatePickerSearch => 'Rechercher une pathologie';
+
+  @override
+  String get templatePickerEmpty => 'Aucun modele trouve.';
+
+  @override
+  String get templatePickerAction => 'Choisir un modele';
+
+  @override
+  String templateActiveLabel(String name) {
+    return 'Modele : $name';
+  }
+
+  @override
+  String get templateNoneLabel => 'Aucun modele selectionne';
+
+  @override
+  String get templateRetry => 'Reessayer';
+
+  @override
+  String get templatesBuiltInEmpty =>
+      'Aucun modele par defaut disponible. Reinstallez l application.';
 }

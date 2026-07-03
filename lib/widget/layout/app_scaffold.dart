@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/debug/debug_menu.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppScaffold extends StatelessWidget {
@@ -22,6 +23,9 @@ class AppScaffold extends StatelessWidget {
     final canPop = context.canPop();
 
     final theme = Theme.of(context);
+    final insideMainShell = MainShellScope.isActive(context);
+    final floatingBottomPadding =
+        insideMainShell ? MainShellChrome.bottomInset(context) : 0.0;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -44,8 +48,14 @@ class AppScaffold extends StatelessWidget {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
         child: SafeArea(
+          bottom: !insideMainShell,
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.pagePadding),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.pagePadding,
+              AppSpacing.pagePadding,
+              AppSpacing.pagePadding,
+              AppSpacing.pagePadding + floatingBottomPadding,
+            ),
             child: body,
           ),
         ),

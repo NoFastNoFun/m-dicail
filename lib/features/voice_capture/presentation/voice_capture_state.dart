@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 
 sealed class VoiceCaptureState extends Equatable {
   const VoiceCaptureState();
@@ -12,12 +13,16 @@ final class VoiceCaptureInitial extends VoiceCaptureState {
 }
 
 final class VoiceCaptureReady extends VoiceCaptureState {
-  const VoiceCaptureReady({this.transcript = ''});
+  const VoiceCaptureReady({
+    this.transcript = '',
+    this.selectedTemplate,
+  });
 
   final String transcript;
+  final NoteTemplate? selectedTemplate;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [transcript, selectedTemplate];
 }
 
 final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
@@ -34,29 +39,42 @@ final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
 }
 
 final class RecordingInProgress extends VoiceCaptureState {
-  const RecordingInProgress({required this.transcript});
+  const RecordingInProgress({
+    required this.transcript,
+    this.selectedTemplate,
+  });
 
   final String transcript;
+  final NoteTemplate? selectedTemplate;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [transcript, selectedTemplate];
 }
 
 final class ListeningPaused extends VoiceCaptureState {
-  const ListeningPaused({required this.transcript});
+  const ListeningPaused({
+    required this.transcript,
+    this.selectedTemplate,
+  });
 
   final String transcript;
+  final NoteTemplate? selectedTemplate;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [transcript, selectedTemplate];
 }
 
 final class VoiceCaptureFailure extends VoiceCaptureState {
-  const VoiceCaptureFailure(this.message, {this.transcript = ''});
+  const VoiceCaptureFailure(
+    this.message, {
+    this.transcript = '',
+    this.selectedTemplate,
+  });
 
   final String message;
   final String transcript;
+  final NoteTemplate? selectedTemplate;
 
   @override
-  List<Object?> get props => [message, transcript];
+  List<Object?> get props => [message, transcript, selectedTemplate];
 }

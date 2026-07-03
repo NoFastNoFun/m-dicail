@@ -17,6 +17,8 @@ class RecordingSession extends Equatable {
     this.endedAt,
     this.transcript = '',
     this.soapNote,
+    this.templateId,
+    this.templateName,
   });
 
   final String id;
@@ -26,6 +28,8 @@ class RecordingSession extends Equatable {
   final String transcript;
   final SoapNote? soapNote;
   final RecordingSessionStatus status;
+  final String? templateId;
+  final String? templateName;
 
   RecordingSession copyWith({
     String? id,
@@ -35,9 +39,13 @@ class RecordingSession extends Equatable {
     String? transcript,
     SoapNote? soapNote,
     RecordingSessionStatus? status,
+    String? templateId,
+    String? templateName,
     bool clearPatientId = false,
     bool clearEndedAt = false,
     bool clearSoapNote = false,
+    bool clearTemplateId = false,
+    bool clearTemplateName = false,
   }) {
     return RecordingSession(
       id: id ?? this.id,
@@ -47,6 +55,9 @@ class RecordingSession extends Equatable {
       transcript: transcript ?? this.transcript,
       soapNote: clearSoapNote ? null : soapNote ?? this.soapNote,
       status: status ?? this.status,
+      templateId: clearTemplateId ? null : templateId ?? this.templateId,
+      templateName:
+          clearTemplateName ? null : templateName ?? this.templateName,
     );
   }
 
@@ -59,5 +70,7 @@ class RecordingSession extends Equatable {
         transcript,
         soapNote,
         status,
+        templateId,
+        templateName,
       ];
 }

@@ -173,11 +173,11 @@ class _DebugPageState extends State<DebugPage> {
                   l10n.debugFullscreenBody,
                   variant: AppTextVariant.body,
                 ),
-                actions: [
+                actionsBuilder: (dialogContext) => [
                   AppButton(
                     label: l10n.debugClose,
                     expanded: false,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
                   ),
                 ],
               ),
@@ -193,11 +193,11 @@ class _DebugPageState extends State<DebugPage> {
                   l10n.debugLockBody,
                   variant: AppTextVariant.body,
                 ),
-                actions: [
+                actionsBuilder: (dialogContext) => [
                   AppButton(
                     label: l10n.debugLockDismiss,
                     expanded: false,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
                   ),
                 ],
               ),
