@@ -37,6 +37,12 @@ class MainShell extends StatelessWidget {
         label: l10n.navPatients,
       ),
       AppBottomNavDestination(
+        route: AppRoutes.medicalWatch,
+        icon: Icons.article_outlined,
+        selectedIcon: Icons.article,
+        label: l10n.navMedicalWatch,
+      ),
+      AppBottomNavDestination(
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,

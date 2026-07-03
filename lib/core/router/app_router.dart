@@ -6,6 +6,7 @@ import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
 import 'package:medicail/pages/main_shell.dart';
+import 'package:medicail/pages/medical_watch_page.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
@@ -66,6 +67,11 @@ class AppRouter {
             builder: (context, state) => const PatientsPage(),
           ),
           GoRoute(
+            path: AppRoutes.medicalWatch,
+            name: 'medical-watch',
+            builder: (context, state) => const MedicalWatchPage(),
+          ),
+          GoRoute(
             path: AppRoutes.settings,
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
@@ -118,6 +124,8 @@ extension AppRouterNavigation on BuildContext {
   }
 
   void goPatients() => go(AppRoutes.patients);
+
+  void goMedicalWatch() => go(AppRoutes.medicalWatch);
 
   void goSettings() => go(AppRoutes.settings);
 

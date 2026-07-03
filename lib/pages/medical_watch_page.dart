@@ -4,6 +4,7 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/medical_watch/domain/entities/medical_watch_article.dart';
 import 'package:medicail/features/medical_watch/domain/entities/medical_watch_specialty.dart';
 import 'package:medicail/features/medical_watch/presentation/medical_watch_bloc.dart';
@@ -37,14 +38,15 @@ class _MedicalWatchView extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        final l10n = AppLocalizations.of(context);
         final articles = _articlesFromState(state);
         final isLoading = state is MedicalWatchLoading;
 
         return AppScaffold(
-          title: 'Veille médicale',
+          title: l10n.medicalWatchTitle,
           actions: [
             IconButton(
-              tooltip: 'Actualiser',
+              tooltip: l10n.medicalWatchRefresh,
               icon: Icon(Icons.refresh, color: context.colorScheme.onSurface),
               onPressed: isLoading
                   ? null
@@ -60,9 +62,9 @@ class _MedicalWatchView extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: AppText(
-                      'Articles PubMed',
+                      l10n.medicalWatchSectionTitle,
                       variant: AppTextVariant.title,
                     ),
                   ),
@@ -77,7 +79,10 @@ class _MedicalWatchView extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: articles.isEmpty
-                    ? _EmptyMedicalWatch(isLoading: isLoading)
+                    ? _EmptyMedicalWatch(
+                        isLoading: isLoading,
+                        l10n: l10n,
+                      )
                     : ListView.separated(
                         itemCount: articles.length,
                         separatorBuilder: (context, index) =>
@@ -85,6 +90,7 @@ class _MedicalWatchView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return _MedicalWatchArticleItem(
                             article: articles[index],
+                            l10n: l10n,
                           );
                         },
                       ),
@@ -113,12 +119,14 @@ class _SpecialtyFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           _SpecialtyChip(
-            label: 'Toutes',
+            label: l10n.medicalWatchFilterAll,
             selected: selectedSpecialty == null,
             onSelected: () => context
                 .read<MedicalWatchBloc>()
@@ -127,7 +135,7 @@ class _SpecialtyFilter extends StatelessWidget {
           for (final specialty in MedicalWatchSpecialty.values) ...[
             const SizedBox(width: AppSpacing.sm),
             _SpecialtyChip(
-              label: _specialtyLabel(specialty),
+              label: _specialtyLabel(l10n, specialty),
               selected: selectedSpecialty == specialty,
               onSelected: () => context
                   .read<MedicalWatchBloc>()
@@ -164,17 +172,21 @@ class _SpecialtyChip extends StatelessWidget {
 }
 
 class _EmptyMedicalWatch extends StatelessWidget {
-  const _EmptyMedicalWatch({required this.isLoading});
+  const _EmptyMedicalWatch({
+    required this.isLoading,
+    required this.l10n,
+  });
 
   final bool isLoading;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: AppText(
         isLoading
-            ? 'Chargement des articles...'
-            : 'Aucun article de veille disponible.',
+            ? l10n.medicalWatchEmptyLoading
+            : l10n.medicalWatchEmpty,
         variant: AppTextVariant.body,
         color: context.secondaryTextColor,
         textAlign: TextAlign.center,
@@ -184,15 +196,19 @@ class _EmptyMedicalWatch extends StatelessWidget {
 }
 
 class _MedicalWatchArticleItem extends StatelessWidget {
-  const _MedicalWatchArticleItem({required this.article});
+  const _MedicalWatchArticleItem({
+    required this.article,
+    required this.l10n,
+  });
 
   final MedicalWatchArticle article;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final metadata = [
-      _specialtyLabel(article.specialty),
+      _specialtyLabel(l10n, article.specialty),
       if (article.publicationDate != null && article.publicationDate!.isNotEmpty)
         article.publicationDate!,
       if (article.authors.isNotEmpty) article.authors.take(3).join(', '),
@@ -256,11 +272,18 @@ class _MedicalWatchArticleItem extends StatelessWidget {
   }
 }
 
-String _specialtyLabel(MedicalWatchSpecialty specialty) {
+String _specialtyLabel(
+  AppLocalizations l10n,
+  MedicalWatchSpecialty specialty,
+) {
   return switch (specialty) {
-    MedicalWatchSpecialty.rehabilitation => 'Rééducation',
-    MedicalWatchSpecialty.musculoskeletal => 'Musculosquelettique',
-    MedicalWatchSpecialty.exerciseTherapy => 'Thérapie par exercice',
-    MedicalWatchSpecialty.manualTherapy => 'Thérapie manuelle',
+    MedicalWatchSpecialty.rehabilitation =>
+      l10n.medicalWatchSpecialtyRehabilitation,
+    MedicalWatchSpecialty.musculoskeletal =>
+      l10n.medicalWatchSpecialtyMusculoskeletal,
+    MedicalWatchSpecialty.exerciseTherapy =>
+      l10n.medicalWatchSpecialtyExerciseTherapy,
+    MedicalWatchSpecialty.manualTherapy =>
+      l10n.medicalWatchSpecialtyManualTherapy,
   };
 }

@@ -139,6 +139,7 @@
   "recordLeaveCancel": "Continuer l'enregistrement",
   "navHome": "Accueil",
   "navPatients": "Patients",
+  "navMedicalWatch": "Veille",
   "navSettings": "Reglages",
   "radialActionPatients": "Dossiers patients",
   "radialActionNewRecord": "Nouvel enregistrement",
@@ -156,5 +157,15 @@
   "settingsRestartOnboarding": "Recommencer l'introduction",
   "settingsTbd": "TBD",
   "settingsLogout": "Se deconnecter",
-  "settingsSignIn": "Se connecter"
+  "settingsSignIn": "Se connecter",
+  "medicalWatchTitle": "Veille medicale",
+  "medicalWatchRefresh": "Actualiser",
+  "medicalWatchSectionTitle": "Articles PubMed",
+  "medicalWatchFilterAll": "Toutes",
+  "medicalWatchEmptyLoading": "Chargement des articles...",
+  "medicalWatchEmpty": "Aucun article de veille disponible.",
+  "medicalWatchSpecialtyRehabilitation": "Reeducation",
+  "medicalWatchSpecialtyMusculoskeletal": "Musculosquelettique",
+  "medicalWatchSpecialtyExerciseTherapy": "Therapie par exercice",
+  "medicalWatchSpecialtyManualTherapy": "Therapie manuelle"
 }

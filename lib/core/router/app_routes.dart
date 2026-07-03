@@ -5,6 +5,7 @@ abstract final class AppRoutes {
   static const String record = '/record';
   static const String patients = '/patients';
   static const String patientDetail = '/patients/:patientId';
+  static const String medicalWatch = '/medical-watch';
   static const String settings = '/settings';
   static const String debug = '/debug';
 }
