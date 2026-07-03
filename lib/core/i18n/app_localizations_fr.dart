@@ -475,6 +475,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLogout => 'Se deconnecter';
 
   @override
+  String get settingsSignIn => 'Se connecter';
+
+  @override
+  String get medicalWatchTitle => 'Veille medicale';
+
+  @override
+  String get medicalWatchRefresh => 'Actualiser';
+
+  @override
+  String get medicalWatchSectionTitle => 'Articles PubMed';
+
+  @override
+  String get medicalWatchFilterAll => 'Toutes';
+
+  @override
+  String get medicalWatchEmptyLoading => 'Chargement des articles...';
+
+  @override
+  String get medicalWatchEmpty => 'Aucun article de veille disponible.';
+
+  @override
+  String get medicalWatchSpecialtyRehabilitation => 'Reeducation';
+
+  @override
+  String get medicalWatchSpecialtyMusculoskeletal => 'Musculosquelettique';
+
+  @override
+  String get medicalWatchSpecialtyExerciseTherapy => 'Therapie par exercice';
+
+  @override
+  String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
+
+  @override
   String get tutorialIntroTitle => 'Decouvrir Medicail';
 
   @override
@@ -580,39 +613,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';
-
-  @override
-  String get settingsSignIn => 'Se connecter';
-
-  @override
-  String get medicalWatchTitle => 'Veille medicale';
-
-  @override
-  String get medicalWatchRefresh => 'Actualiser';
-
-  @override
-  String get medicalWatchSectionTitle => 'Articles PubMed';
-
-  @override
-  String get medicalWatchFilterAll => 'Toutes';
-
-  @override
-  String get medicalWatchEmptyLoading => 'Chargement des articles...';
-
-  @override
-  String get medicalWatchEmpty => 'Aucun article de veille disponible.';
-
-  @override
-  String get medicalWatchSpecialtyRehabilitation => 'Reeducation';
-
-  @override
-  String get medicalWatchSpecialtyMusculoskeletal => 'Musculosquelettique';
-
-  @override
-  String get medicalWatchSpecialtyExerciseTherapy => 'Therapie par exercice';
-
-  @override
-  String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
 
   @override
   String get templatesTitle => 'Modeles de pathologie';

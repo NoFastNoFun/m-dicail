@@ -1012,6 +1012,72 @@ abstract class AppLocalizations {
   /// **'Se deconnecter'**
   String get settingsLogout;
 
+  /// No description provided for @settingsSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get settingsSignIn;
+
+  /// No description provided for @medicalWatchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille medicale'**
+  String get medicalWatchTitle;
+
+  /// No description provided for @medicalWatchRefresh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualiser'**
+  String get medicalWatchRefresh;
+
+  /// No description provided for @medicalWatchSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Articles PubMed'**
+  String get medicalWatchSectionTitle;
+
+  /// No description provided for @medicalWatchFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get medicalWatchFilterAll;
+
+  /// No description provided for @medicalWatchEmptyLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement des articles...'**
+  String get medicalWatchEmptyLoading;
+
+  /// No description provided for @medicalWatchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article de veille disponible.'**
+  String get medicalWatchEmpty;
+
+  /// No description provided for @medicalWatchSpecialtyRehabilitation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reeducation'**
+  String get medicalWatchSpecialtyRehabilitation;
+
+  /// No description provided for @medicalWatchSpecialtyMusculoskeletal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Musculosquelettique'**
+  String get medicalWatchSpecialtyMusculoskeletal;
+
+  /// No description provided for @medicalWatchSpecialtyExerciseTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie par exercice'**
+  String get medicalWatchSpecialtyExerciseTherapy;
+
+  /// No description provided for @medicalWatchSpecialtyManualTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie manuelle'**
+  String get medicalWatchSpecialtyManualTherapy;
+
   /// No description provided for @tutorialIntroTitle.
   ///
   /// In fr, this message translates to:
@@ -1198,12 +1264,6 @@ abstract class AppLocalizations {
   /// **'Le tutoriel a ete reinitialise.'**
   String get tutorialRestarted;
 
-  /// No description provided for @settingsSignIn.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get settingsSignIn;
-
   /// No description provided for @templatesTitle.
   ///
   /// In fr, this message translates to:
@@ -1371,66 +1431,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun modele par defaut disponible. Reinstallez l application.'**
   String get templatesBuiltInEmpty;
-
-  /// No description provided for @medicalWatchTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Veille medicale'**
-  String get medicalWatchTitle;
-
-  /// No description provided for @medicalWatchRefresh.
-  ///
-  /// In fr, this message translates to:
-  /// **'Actualiser'**
-  String get medicalWatchRefresh;
-
-  /// No description provided for @medicalWatchSectionTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Articles PubMed'**
-  String get medicalWatchSectionTitle;
-
-  /// No description provided for @medicalWatchFilterAll.
-  ///
-  /// In fr, this message translates to:
-  /// **'Toutes'**
-  String get medicalWatchFilterAll;
-
-  /// No description provided for @medicalWatchEmptyLoading.
-  ///
-  /// In fr, this message translates to:
-  /// **'Chargement des articles...'**
-  String get medicalWatchEmptyLoading;
-
-  /// No description provided for @medicalWatchEmpty.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucun article de veille disponible.'**
-  String get medicalWatchEmpty;
-
-  /// No description provided for @medicalWatchSpecialtyRehabilitation.
-  ///
-  /// In fr, this message translates to:
-  /// **'Reeducation'**
-  String get medicalWatchSpecialtyRehabilitation;
-
-  /// No description provided for @medicalWatchSpecialtyMusculoskeletal.
-  ///
-  /// In fr, this message translates to:
-  /// **'Musculosquelettique'**
-  String get medicalWatchSpecialtyMusculoskeletal;
-
-  /// No description provided for @medicalWatchSpecialtyExerciseTherapy.
-  ///
-  /// In fr, this message translates to:
-  /// **'Therapie par exercice'**
-  String get medicalWatchSpecialtyExerciseTherapy;
-
-  /// No description provided for @medicalWatchSpecialtyManualTherapy.
-  ///
-  /// In fr, this message translates to:
-  /// **'Therapie manuelle'**
-  String get medicalWatchSpecialtyManualTherapy;
 }
 
 class _AppLocalizationsDelegate
