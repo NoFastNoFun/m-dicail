@@ -316,6 +316,96 @@ abstract class AppLocalizations {
   /// **'Aucune consultation pour ce patient'**
   String get patientSessionsEmpty;
 
+  /// No description provided for @exoPatientSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exercices'**
+  String get exoPatientSectionTitle;
+
+  /// No description provided for @exoPatientEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun exercice assigne'**
+  String get exoPatientEmpty;
+
+  /// No description provided for @exoPatientAssignButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assigner un exercice'**
+  String get exoPatientAssignButton;
+
+  /// No description provided for @exoPatientPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un exercice'**
+  String get exoPatientPickerTitle;
+
+  /// No description provided for @exoPatientFrequencyLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Frequence (optionnel)'**
+  String get exoPatientFrequencyLabel;
+
+  /// No description provided for @exoPatientNotesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes (optionnel)'**
+  String get exoPatientNotesLabel;
+
+  /// No description provided for @exoPatientAssignConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assigner'**
+  String get exoPatientAssignConfirm;
+
+  /// No description provided for @exoPatientCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get exoPatientCancel;
+
+  /// No description provided for @exoPatientStatusAssigned.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assigne'**
+  String get exoPatientStatusAssigned;
+
+  /// No description provided for @exoPatientStatusInProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get exoPatientStatusInProgress;
+
+  /// No description provided for @exoPatientStatusCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Termine'**
+  String get exoPatientStatusCompleted;
+
+  /// No description provided for @exoPatientStatusDiscontinued.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrete'**
+  String get exoPatientStatusDiscontinued;
+
+  /// No description provided for @exoPatientUnassignAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get exoPatientUnassignAction;
+
+  /// No description provided for @exoPatientUnassignConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer l\'exercice ?'**
+  String get exoPatientUnassignConfirmTitle;
+
+  /// No description provided for @exoPatientUnassignConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cet exercice du plan du patient ?'**
+  String get exoPatientUnassignConfirmMessage;
+
   /// No description provided for @recordingStatusLabel.
   ///
   /// In fr, this message translates to:

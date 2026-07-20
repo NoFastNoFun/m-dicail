@@ -120,6 +120,52 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
 
   @override
+  String get exoPatientSectionTitle => 'Exercices';
+
+  @override
+  String get exoPatientEmpty => 'Aucun exercice assigne';
+
+  @override
+  String get exoPatientAssignButton => 'Assigner un exercice';
+
+  @override
+  String get exoPatientPickerTitle => 'Choisir un exercice';
+
+  @override
+  String get exoPatientFrequencyLabel => 'Frequence (optionnel)';
+
+  @override
+  String get exoPatientNotesLabel => 'Notes (optionnel)';
+
+  @override
+  String get exoPatientAssignConfirm => 'Assigner';
+
+  @override
+  String get exoPatientCancel => 'Annuler';
+
+  @override
+  String get exoPatientStatusAssigned => 'Assigne';
+
+  @override
+  String get exoPatientStatusInProgress => 'En cours';
+
+  @override
+  String get exoPatientStatusCompleted => 'Termine';
+
+  @override
+  String get exoPatientStatusDiscontinued => 'Arrete';
+
+  @override
+  String get exoPatientUnassignAction => 'Retirer';
+
+  @override
+  String get exoPatientUnassignConfirmTitle => 'Retirer l\'exercice ?';
+
+  @override
+  String get exoPatientUnassignConfirmMessage =>
+      'Retirer cet exercice du plan du patient ?';
+
+  @override
   String get recordingStatusLabel => 'Statut';
 
   @override

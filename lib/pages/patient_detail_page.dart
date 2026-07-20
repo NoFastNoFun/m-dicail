@@ -16,6 +16,7 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_sta
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/exo_patient/exo_patient_section.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -188,6 +189,8 @@ class _PatientDetailView extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: AppSpacing.xl),
+        ExoPatientSection(patientId: patient.id),
         const SizedBox(height: AppSpacing.xl),
         AppText(l10n.patientSessionsTitle, variant: AppTextVariant.title),
         const SizedBox(height: AppSpacing.sm),
