@@ -4,7 +4,7 @@ import 'package:medicail/core/network/api_client.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 
-@LazySingleton(as: NoteProcessingRepository)
+@injectable
 class ApiNoteProcessingRepository implements NoteProcessingRepository {
   ApiNoteProcessingRepository(this._apiClient);
 

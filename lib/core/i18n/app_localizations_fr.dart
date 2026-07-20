@@ -567,19 +567,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';
 
   @override
-  String get settingsSignIn => 'Se connecter';
-
-  @override
-  String get punctuationWordPeriod => 'point';
-
-  @override
-  String get punctuationWordComma => 'virgule';
-
-  @override
-  String get punctuationTransitions =>
-      'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
-
-  @override
   String get templatesTitle => 'Modeles de pathologie';
 
   @override
@@ -667,4 +654,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get templatesBuiltInEmpty =>
       'Aucun modele par defaut disponible. Reinstallez l application.';
+
+  @override
+  String get settingsSignIn => 'Se connecter';
+
+  @override
+  String get punctuationWordPeriod => 'point';
+
+  @override
+  String get punctuationWordComma => 'virgule';
+
+  @override
+  String get punctuationTransitions =>
+      'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
 }

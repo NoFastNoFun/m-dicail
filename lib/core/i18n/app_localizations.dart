@@ -1168,30 +1168,6 @@ abstract class AppLocalizations {
   /// **'Le tutoriel a ete reinitialise.'**
   String get tutorialRestarted;
 
-  /// No description provided for @settingsSignIn.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get settingsSignIn;
-
-  /// No description provided for @punctuationWordPeriod.
-  ///
-  /// In fr, this message translates to:
-  /// **'point'**
-  String get punctuationWordPeriod;
-
-  /// No description provided for @punctuationWordComma.
-  ///
-  /// In fr, this message translates to:
-  /// **'virgule'**
-  String get punctuationWordComma;
-
-  /// No description provided for @punctuationTransitions.
-  ///
-  /// In fr, this message translates to:
-  /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
-  String get punctuationTransitions;
-
   /// No description provided for @templatesTitle.
   ///
   /// In fr, this message translates to:
@@ -1359,6 +1335,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun modele par defaut disponible. Reinstallez l application.'**
   String get templatesBuiltInEmpty;
+
+  /// No description provided for @settingsSignIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get settingsSignIn;
+
+  /// No description provided for @punctuationWordPeriod.
+  ///
+  /// In fr, this message translates to:
+  /// **'point'**
+  String get punctuationWordPeriod;
+
+  /// No description provided for @punctuationWordComma.
+  ///
+  /// In fr, this message translates to:
+  /// **'virgule'**
+  String get punctuationWordComma;
+
+  /// No description provided for @punctuationTransitions.
+  ///
+  /// In fr, this message translates to:
+  /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
+  String get punctuationTransitions;
 }
 
 class _AppLocalizationsDelegate
