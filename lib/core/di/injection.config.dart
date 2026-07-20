@@ -39,6 +39,16 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
     as _i250;
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
     as _i541;
+import 'package:medicail/features/exo_patient/data/datasources/exercise_catalog_data_source.dart'
+    as _i1040;
+import 'package:medicail/features/exo_patient/data/repositories/exercise_repository_impl.dart'
+    as _i858;
+import 'package:medicail/features/exo_patient/data/repositories/patient_exercise_repository_impl.dart'
+    as _i993;
+import 'package:medicail/features/exo_patient/domain/repositories/exercise_repository.dart'
+    as _i643;
+import 'package:medicail/features/exo_patient/domain/repositories/patient_exercise_repository.dart'
+    as _i506;
 import 'package:medicail/features/note_template/data/datasources/asset_note_template_data_source.dart'
     as _i564;
 import 'package:medicail/features/note_template/data/repositories/note_template_repository_impl.dart'
@@ -99,6 +109,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i945.LoggingInterceptor(),
     );
     gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
+    gh.lazySingleton<_i1040.ExerciseCatalogDataSource>(
+      () => _i1040.ExerciseCatalogDataSource(),
+    );
     gh.lazySingleton<_i564.AssetNoteTemplateDataSource>(
       () => _i564.AssetNoteTemplateDataSource(),
     );
@@ -142,6 +155,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i79.TutorialRepository>(
       () => _i511.TutorialRepositoryImpl(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.lazySingleton<_i506.PatientExerciseRepository>(
+      () =>
+          _i993.PatientExerciseRepositoryImpl(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i144.NoteTemplateRepository>(
       () => _i93.NoteTemplateRepositoryImpl(
         gh<_i564.AssetNoteTemplateDataSource>(),
@@ -158,6 +175,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i932.DynamicRecordingSessionRepository(
         gh<_i913.SecureStorageRecordingSessionRepository>(),
       ),
+    );
+    gh.lazySingleton<_i643.ExerciseRepository>(
+      () =>
+          _i858.ExerciseRepositoryImpl(gh<_i1040.ExerciseCatalogDataSource>()),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
