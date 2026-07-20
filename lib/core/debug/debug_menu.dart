@@ -19,19 +19,19 @@ abstract final class DebugMenu {
       variant: AppDialogVariant.standard,
       title: l10n.debugShakeTitle,
       body: AppText(l10n.debugShakeMessage, variant: AppTextVariant.body),
-      actions: [
+      actionsBuilder: (dialogContext) => [
         AppButton(
           layout: AppButtonLayout.text,
           label: l10n.debugShakeCancel,
           style: AppButtonStyle.secondary,
           expanded: false,
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => Navigator.of(dialogContext).pop(false),
         ),
         AppButton(
           layout: AppButtonLayout.text,
           label: l10n.debugShakeConfirm,
           expanded: false,
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: () => Navigator.of(dialogContext).pop(true),
         ),
       ],
     );

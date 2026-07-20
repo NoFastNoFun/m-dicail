@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return AppButton(
-                        label: l10n.loginSubmit,
+                        label: l10n.homeSignIn,
                         onPressed: _submit,
                         isLoading: state is AuthLoading,
                       );

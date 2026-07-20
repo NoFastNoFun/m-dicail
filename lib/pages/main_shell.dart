@@ -1,109 +1,299 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/router/app_routes.dart';
+import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
+import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/buttons/app_radial_action_button.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
+import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class MainShell extends StatelessWidget {
-  const MainShell({
-    super.key,
-    required this.child,
-  });
+class MainShell extends StatefulWidget {
+  const MainShell({super.key, required this.child});
 
   final Widget child;
 
-  static const double _bottomOverlayHeight = 168;
-  static const double _navLift = AppSpacing.lg;
+  static EdgeInsets scrollPadding(BuildContext context) {
+    return MainShellChrome.scrollPadding(context);
+  }
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  final _patientsNavKey = GlobalKey();
+  final _quickRecordKey = GlobalKey();
+
+  bool _didAskTutorialStart = false;
+  bool _didStartPatientsShowcase = false;
+  bool _didStartQuickRecordShowcase = false;
+  String? _lastLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _handleTutorialState(context.read<TutorialBloc>().state);
+    });
+  }
+
+  void _handleTutorialState(TutorialState state) {
+    if (state is TutorialInitial && !_didAskTutorialStart) {
+      _didAskTutorialStart = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        AppDialog.show(
+          context,
+          variant: AppDialogVariant.lockScreen,
+          title: l10n.tutorialIntroTitle,
+          body: AppText(l10n.tutorialIntroDesc, variant: AppTextVariant.body),
+          actionsBuilder: (dialogContext) => [
+            AppButton(
+              label: l10n.tutorialIntroSkip,
+              style: AppButtonStyle.secondary,
+              expanded: false,
+              onPressed: () {
+                context.read<TutorialBloc>().add(const TutorialSkipRequested());
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            AppButton(
+              label: l10n.tutorialIntroStart,
+              expanded: false,
+              onPressed: () {
+                context.read<TutorialBloc>().add(
+                  const TutorialStartRequested(),
+                );
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      });
+      return;
+    }
+
+    if (state is! TutorialInProgress) return;
+
+    final currentStep = TutorialFlow.idFromIndex(state.currentStep);
+
+    if (currentStep == TutorialStepId.homePatients &&
+        !_didStartPatientsShowcase) {
+      TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _patientsNavKey,
+      ).then((started) {
+        if (mounted && started) {
+          _didStartPatientsShowcase = true;
+        }
+      });
+    }
+
+    if (currentStep == TutorialStepId.homeQuickRecord) {
+      if (GoRouterState.of(context).matchedLocation != AppRoutes.home) {
+        _didStartQuickRecordShowcase = false;
+        return;
+      }
+      if (!_didStartQuickRecordShowcase) {
+        TutorialShowcaseLauncher.startWhenReady(
+          context: context,
+          key: _quickRecordKey,
+        ).then((started) {
+          if (mounted && started) {
+            _didStartQuickRecordShowcase = true;
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> _handleHomeQuickRecordTutorialTap() async {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.isCurrentStep(TutorialStepId.homeQuickRecord)) {
+      return;
+    }
+    ShowcaseView.get().dismiss();
+    await tutorialBloc.completeHomeQuickRecordTutorial();
+  }
+
+  void _openQuickRecordIfAllowed() {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.canOpenQuickRecordDuringTutorial) {
+      return;
+    }
+    context.goRecord();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final location = GoRouterState.of(context).matchedLocation;
+    if (_lastLocation != location) {
+      _lastLocation = location;
+      if (location == AppRoutes.home) {
+        _didStartQuickRecordShowcase = false;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _handleTutorialState(context.read<TutorialBloc>().state);
+      });
+    }
 
     final destinations = [
       AppBottomNavDestination(
         route: AppRoutes.home,
         icon: Icons.home_outlined,
         selectedIcon: Icons.home,
-        label: l10n.navHome,
+        label: l10n.homeTitle,
       ),
       AppBottomNavDestination(
         route: AppRoutes.patients,
         icon: Icons.folder_outlined,
         selectedIcon: Icons.folder,
-        label: l10n.navPatients,
+        label: l10n.patientsTitle,
+        wrapper: (child) => Showcase(
+          key: _patientsNavKey,
+          title: l10n.tutorialHomePatientsTitle,
+          description: l10n.tutorialHomePatientsDesc,
+          disposeOnTap: false,
+          disableBarrierInteraction: true,
+          onTargetClick: () {
+            context.read<TutorialBloc>().add(
+              TutorialStepCompleted(
+                TutorialFlow.indexOf(TutorialStepId.homePatients),
+              ),
+            );
+            context.go(AppRoutes.patients);
+          },
+          child: child,
+        ),
       ),
       AppBottomNavDestination(
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,
-        label: l10n.navSettings,
+        label: l10n.settingsTitle,
       ),
     ];
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: _bottomOverlayHeight),
-              child: child,
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: _navLift,
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.lg),
-                      child: AppRadialActionButton(
-                        anchor: AppRadialActionAnchor.end,
-                        actions: [
-                          AppRadialAction(
-                            icon: Icons.folder_outlined,
-                            label: l10n.radialActionPatients,
-                            onTap: () => context.go(AppRoutes.patients),
-                          ),
-                          AppRadialAction(
-                            icon: Icons.mic_outlined,
-                            label: l10n.radialActionNewRecord,
-                            onTap: () => context.goRecord(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                    ),
-                    child: Center(
-                      child: AppBottomNavPill(
-                        destinations: destinations,
-                        selectedRoute: location,
-                        onDestinationSelected: (route) => context.go(route),
-                      ),
-                    ),
-                  ),
-                ],
+    return MainShellScope(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: BlocListener<TutorialBloc, TutorialState>(
+          listener: (context, state) => _handleTutorialState(state),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: widget.child,
+                ),
               ),
-            ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: MainShellChrome.navLift,
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: AppSpacing.lg),
+                          child: Showcase(
+                            key: _quickRecordKey,
+                            title: l10n.tutorialHomeRecordTitle,
+                            description: l10n.tutorialHomeRecordDesc,
+                            disposeOnTap: false,
+                            disableBarrierInteraction: true,
+                            onTargetClick: _handleHomeQuickRecordTutorialTap,
+                            child: AppRadialActionButton(
+                              anchor: AppRadialActionAnchor.end,
+                              actions: [
+                                AppRadialAction(
+                                  icon: Icons.folder_outlined,
+                                  label: l10n.patientsSectionTitle,
+                                  onTap: () => context.go(AppRoutes.patients),
+                                ),
+                                AppRadialAction(
+                                  icon: Icons.mic_outlined,
+                                  label: l10n.radialActionNewRecord,
+                                  onTap: () async {
+                                    final tutorialBloc = context
+                                        .read<TutorialBloc>();
+                                    if (tutorialBloc.isCurrentStep(
+                                      TutorialStepId.homeQuickRecord,
+                                    )) {
+                                      await _handleHomeQuickRecordTutorialTap();
+                                      return;
+                                    }
+                                    _openQuickRecordIfAllowed();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                        ),
+                        child: Center(
+                          child: AppBottomNavPill(
+                            destinations: destinations,
+                            selectedRoute: location,
+                            onDestinationSelected: (route) {
+                              if (route == AppRoutes.patients) {
+                                final tutorialBloc = context.read<TutorialBloc>();
+                                if (tutorialBloc.state is TutorialInProgress &&
+                                    TutorialFlow.idFromIndex(
+                                          (tutorialBloc.state
+                                                  as TutorialInProgress)
+                                              .currentStep,
+                                        ) ==
+                                        TutorialStepId.homePatients) {
+                                  tutorialBloc.add(
+                                    TutorialStepCompleted(
+                                      TutorialFlow.indexOf(
+                                        TutorialStepId.homePatients,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                              context.go(route);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -8,12 +8,16 @@ class AppBottomNavDestination {
     required this.icon,
     required this.selectedIcon,
     required this.label,
+    this.wrapper,
   });
 
   final String route;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
+
+  /// Optional callback that wraps the nav-item widget (e.g. with a Showcase).
+  final Widget Function(Widget child)? wrapper;
 }
 
 class AppBottomNavPill extends StatelessWidget {
@@ -47,16 +51,21 @@ class AppBottomNavPill extends StatelessWidget {
           children: [
             for (var i = 0; i < destinations.length; i++) ...[
               if (i > 0) const SizedBox(width: AppSpacing.xs),
-              _NavItem(
-                destination: destinations[i],
-                isSelected: destinations[i].route == selectedRoute,
-                onTap: () => onDestinationSelected(destinations[i].route),
-              ),
+              _buildNavItem(destinations[i]),
             ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildNavItem(AppBottomNavDestination dest) {
+    final item = _NavItem(
+      destination: dest,
+      isSelected: dest.route == selectedRoute,
+      onTap: () => onDestinationSelected(dest.route),
+    );
+    return dest.wrapper != null ? dest.wrapper!(item) : item;
   }
 }
 

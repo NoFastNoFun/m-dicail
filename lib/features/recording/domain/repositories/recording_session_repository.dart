@@ -12,4 +12,6 @@ abstract class RecordingSessionRepository {
   Future<void> delete(String id);
 
   Future<void> clear();
+
+  Future<void> purgeTutorialSessions();
 }

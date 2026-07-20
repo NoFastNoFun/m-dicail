@@ -172,12 +172,6 @@ abstract class AppLocalizations {
   /// **'Historique'**
   String get labelHistory;
 
-  /// No description provided for @navigateToPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Dossiers patients'**
-  String get navigateToPatients;
-
   /// No description provided for @navigateToRecord.
   ///
   /// In fr, this message translates to:
@@ -574,12 +568,6 @@ abstract class AppLocalizations {
   /// **'Attention requise'**
   String get debugToastWarning;
 
-  /// No description provided for @debugToastError.
-  ///
-  /// In fr, this message translates to:
-  /// **'Une erreur est survenue'**
-  String get debugToastError;
-
   /// No description provided for @debugToastInfo.
   ///
   /// In fr, this message translates to:
@@ -790,12 +778,6 @@ abstract class AppLocalizations {
   /// **'Mot de passe'**
   String get loginPasswordLabel;
 
-  /// No description provided for @loginSubmit.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get loginSubmit;
-
   /// No description provided for @loginCreateAccountButton.
   ///
   /// In fr, this message translates to:
@@ -898,12 +880,6 @@ abstract class AppLocalizations {
   /// **'Enregistrer et associer'**
   String get recordLeaveSaveAndAssign;
 
-  /// No description provided for @recordLeaveSave.
-  ///
-  /// In fr, this message translates to:
-  /// **'Enregistrer'**
-  String get recordLeaveSave;
-
   /// No description provided for @recordLeaveDiscard.
   ///
   /// In fr, this message translates to:
@@ -916,30 +892,6 @@ abstract class AppLocalizations {
   /// **'Continuer l\'enregistrement'**
   String get recordLeaveCancel;
 
-  /// No description provided for @navHome.
-  ///
-  /// In fr, this message translates to:
-  /// **'Accueil'**
-  String get navHome;
-
-  /// No description provided for @navPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Patients'**
-  String get navPatients;
-
-  /// No description provided for @navSettings.
-  ///
-  /// In fr, this message translates to:
-  /// **'Reglages'**
-  String get navSettings;
-
-  /// No description provided for @radialActionPatients.
-  ///
-  /// In fr, this message translates to:
-  /// **'Dossiers patients'**
-  String get radialActionPatients;
-
   /// No description provided for @radialActionNewRecord.
   ///
   /// In fr, this message translates to:
@@ -949,7 +901,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Reglages'**
+  /// **'Réglages'**
   String get settingsTitle;
 
   /// No description provided for @settingsTheme.
@@ -1030,6 +982,192 @@ abstract class AppLocalizations {
   /// **'Se deconnecter'**
   String get settingsLogout;
 
+  /// No description provided for @tutorialIntroTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Decouvrir Medicail'**
+  String get tutorialIntroTitle;
+
+  /// No description provided for @tutorialIntroDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.'**
+  String get tutorialIntroDesc;
+
+  /// No description provided for @tutorialIntroStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire le tutoriel'**
+  String get tutorialIntroStart;
+
+  /// No description provided for @tutorialIntroSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get tutorialIntroSkip;
+
+  /// No description provided for @tutorialHomePatientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers Patients'**
+  String get tutorialHomePatientsTitle;
+
+  /// No description provided for @tutorialHomePatientsDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.'**
+  String get tutorialHomePatientsDesc;
+
+  /// No description provided for @tutorialHomeRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultation Rapide'**
+  String get tutorialHomeRecordTitle;
+
+  /// No description provided for @tutorialHomeRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.'**
+  String get tutorialHomeRecordDesc;
+
+  /// No description provided for @tutorialPatientAddTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un patient'**
+  String get tutorialPatientAddTitle;
+
+  /// No description provided for @tutorialPatientAddDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.'**
+  String get tutorialPatientAddDesc;
+
+  /// No description provided for @tutorialPatientMrnTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numero de dossier'**
+  String get tutorialPatientMrnTitle;
+
+  /// No description provided for @tutorialPatientMrnDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  String get tutorialPatientMrnDesc;
+
+  /// No description provided for @tutorialPatientFirstNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenom du patient'**
+  String get tutorialPatientFirstNameTitle;
+
+  /// No description provided for @tutorialPatientFirstNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  String get tutorialPatientFirstNameDesc;
+
+  /// No description provided for @tutorialPatientLastNameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du patient'**
+  String get tutorialPatientLastNameTitle;
+
+  /// No description provided for @tutorialPatientLastNameDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  String get tutorialPatientLastNameDesc;
+
+  /// No description provided for @tutorialPatientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le dossier'**
+  String get tutorialPatientCreateTitle;
+
+  /// No description provided for @tutorialPatientCreateDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.'**
+  String get tutorialPatientCreateDesc;
+
+  /// No description provided for @tutorialDetailConsultTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle consultation'**
+  String get tutorialDetailConsultTitle;
+
+  /// No description provided for @tutorialDetailConsultDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.'**
+  String get tutorialDetailConsultDesc;
+
+  /// No description provided for @tutorialRecordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'La Dictee'**
+  String get tutorialRecordTitle;
+
+  /// No description provided for @tutorialRecordDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.'**
+  String get tutorialRecordDesc;
+
+  /// No description provided for @tutorialRecordStopTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arreter l\'ecoute'**
+  String get tutorialRecordStopTitle;
+
+  /// No description provided for @tutorialRecordStopDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.'**
+  String get tutorialRecordStopDesc;
+
+  /// No description provided for @tutorialRecordFinishTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer la consultation'**
+  String get tutorialRecordFinishTitle;
+
+  /// No description provided for @tutorialRecordFinishDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.'**
+  String get tutorialRecordFinishDesc;
+
+  /// No description provided for @tutorialRecordTranscriptTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription en temps reel'**
+  String get tutorialRecordTranscriptTitle;
+
+  /// No description provided for @tutorialRecordTranscriptDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.'**
+  String get tutorialRecordTranscriptDesc;
+
+  /// No description provided for @tutorialAssignPatientTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer a un patient'**
+  String get tutorialAssignPatientTitle;
+
+  /// No description provided for @tutorialAssignPatientDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.'**
+  String get tutorialAssignPatientDesc;
+
+  /// No description provided for @tutorialRestarted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le tutoriel a ete reinitialise.'**
+  String get tutorialRestarted;
+
   /// No description provided for @settingsSignIn.
   ///
   /// In fr, this message translates to:
@@ -1053,6 +1191,174 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
   String get punctuationTransitions;
+
+  /// No description provided for @templatesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles de pathologie'**
+  String get templatesTitle;
+
+  /// No description provided for @templatesBuiltInSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modeles par defaut'**
+  String get templatesBuiltInSection;
+
+  /// No description provided for @templatesUserSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes variantes'**
+  String get templatesUserSection;
+
+  /// No description provided for @templatesUserEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune variante enregistree.'**
+  String get templatesUserEmpty;
+
+  /// No description provided for @templatesDefaultBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Defaut'**
+  String get templatesDefaultBadge;
+
+  /// No description provided for @templatesVariantBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Variante'**
+  String get templatesVariantBadge;
+
+  /// No description provided for @templateDuplicateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier en variante'**
+  String get templateDuplicateAction;
+
+  /// No description provided for @templateDuplicated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Variante creee.'**
+  String get templateDuplicated;
+
+  /// No description provided for @templateSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele enregistre.'**
+  String get templateSaved;
+
+  /// No description provided for @templateDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la variante ?'**
+  String get templateDeleteTitle;
+
+  /// No description provided for @templateDeleteMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le modele \"{name}\" ?'**
+  String templateDeleteMessage(String name);
+
+  /// No description provided for @templateDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get templateDeleteConfirm;
+
+  /// No description provided for @templateEditorTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Editer le modele'**
+  String get templateEditorTitle;
+
+  /// No description provided for @templateNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele introuvable.'**
+  String get templateNotFound;
+
+  /// No description provided for @templateSectionTitleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Titre de section'**
+  String get templateSectionTitleLabel;
+
+  /// No description provided for @templateSectionPromptLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Structure / puces'**
+  String get templateSectionPromptLabel;
+
+  /// No description provided for @templateAddSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une section'**
+  String get templateAddSection;
+
+  /// No description provided for @templateSaveAsVariant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer comme variante'**
+  String get templateSaveAsVariant;
+
+  /// No description provided for @templateUpdate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre a jour'**
+  String get templateUpdate;
+
+  /// No description provided for @templateReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reinitialiser depuis le parent'**
+  String get templateReset;
+
+  /// No description provided for @templatePickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un modele'**
+  String get templatePickerTitle;
+
+  /// No description provided for @templatePickerSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une pathologie'**
+  String get templatePickerSearch;
+
+  /// No description provided for @templatePickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele trouve.'**
+  String get templatePickerEmpty;
+
+  /// No description provided for @templatePickerAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un modele'**
+  String get templatePickerAction;
+
+  /// No description provided for @templateActiveLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modele : {name}'**
+  String templateActiveLabel(String name);
+
+  /// No description provided for @templateNoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele selectionne'**
+  String get templateNoneLabel;
+
+  /// No description provided for @templateRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reessayer'**
+  String get templateRetry;
+
+  /// No description provided for @templatesBuiltInEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun modele par defaut disponible. Reinstallez l application.'**
+  String get templatesBuiltInEmpty;
 }
 
 class _AppLocalizationsDelegate

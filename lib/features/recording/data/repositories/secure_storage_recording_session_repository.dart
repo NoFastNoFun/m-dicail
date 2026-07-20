@@ -71,6 +71,11 @@ class SecureStorageRecordingSessionRepository
     return _storage.delete(key: _sessionsKey);
   }
 
+  @override
+  Future<void> purgeTutorialSessions() async {
+    // No-op: tutorial sessions are filtered by DynamicRecordingSessionRepository.
+  }
+
   Future<List<RecordingSession>> _readSessions() async {
     try {
       final raw = await _storage.read(key: _sessionsKey);

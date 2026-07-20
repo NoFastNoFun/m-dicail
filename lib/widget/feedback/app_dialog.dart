@@ -24,7 +24,7 @@ class AppDialog extends StatelessWidget {
     required AppDialogVariant variant,
     String? title,
     required Widget body,
-    List<Widget>? actions,
+    List<Widget> Function(BuildContext dialogContext)? actionsBuilder,
   }) {
     final barrierDismissible = variant != AppDialogVariant.lockScreen;
 
@@ -32,11 +32,11 @@ class AppDialog extends StatelessWidget {
       return showDialog<T>(
         context: context,
         barrierDismissible: barrierDismissible,
-        builder: (context) => AppDialog(
+        builder: (dialogContext) => AppDialog(
           variant: variant,
           title: title,
           body: body,
-          actions: actions,
+          actions: actionsBuilder?.call(dialogContext),
         ),
       );
     }
@@ -44,13 +44,13 @@ class AppDialog extends StatelessWidget {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (context) => PopScope(
+      builder: (dialogContext) => PopScope(
         canPop: variant != AppDialogVariant.lockScreen,
         child: AppDialog(
           variant: variant,
           title: title,
           body: body,
-          actions: actions,
+          actions: actionsBuilder?.call(dialogContext),
         ),
       ),
     );

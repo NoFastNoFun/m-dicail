@@ -5,6 +5,8 @@ import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
@@ -27,6 +29,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureDiscardConsultation>(_onDiscardConsultation);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
+    on<VoiceCaptureTemplateSelected>(_onTemplateSelected);
   }
 
   final AudioCaptureService _audioCaptureService;
@@ -51,6 +54,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: _currentTranscript,
+          selectedTemplate: _selectedTemplate,
         ),
       );
     }
@@ -72,13 +76,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         patientId: event.patientId,
       );
       await _startListeningSession();
-      emit(RecordingInProgress(transcript: currentTranscript));
+      emit(RecordingInProgress(
+        transcript: currentTranscript,
+        selectedTemplate: _selectedTemplate,
+      ));
     } catch (error) {
       await _failActiveSession(currentTranscript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: currentTranscript,
+          selectedTemplate: _selectedTemplate,
         ),
       );
     }
@@ -92,13 +100,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _audioCaptureService.stopListening();
       await _saveActiveSessionTranscript(_currentTranscript);
       _segmentBase = '';
-      emit(ListeningPaused(transcript: _currentTranscript));
+      emit(ListeningPaused(
+        transcript: _currentTranscript,
+        selectedTemplate: _selectedTemplate,
+      ));
     } catch (error) {
       await _failActiveSession(_currentTranscript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: _currentTranscript,
+          selectedTemplate: _selectedTemplate,
         ),
       );
     }
@@ -142,6 +154,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: transcript,
+          selectedTemplate: _selectedTemplate,
         ),
       );
     }
@@ -156,7 +169,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
     _segmentBase = '';
     _activeSession = null;
-    emit(const VoiceCaptureReady());
+    emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
 
   Future<void> _onDiscardConsultation(
@@ -176,7 +189,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     _segmentBase = '';
     _activeSession = null;
-    emit(const VoiceCaptureReady());
+    emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
 
   Future<void> _onListeningSessionEnded(
@@ -195,13 +208,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     try {
       await _saveActiveSessionTranscript(transcript);
       await _startListeningSession();
-      emit(RecordingInProgress(transcript: transcript));
+      emit(RecordingInProgress(
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+      ));
     } catch (error) {
       await _failActiveSession(transcript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
           transcript: transcript,
+          selectedTemplate: _selectedTemplate,
         ),
       );
     }
@@ -229,7 +246,54 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     _updateActiveSessionTranscriptInMemory(merged);
-    emit(RecordingInProgress(transcript: merged));
+    emit(RecordingInProgress(
+      transcript: merged,
+      selectedTemplate: _selectedTemplate,
+    ));
+  }
+
+  void _onTemplateSelected(
+    VoiceCaptureTemplateSelected event,
+    Emitter<VoiceCaptureState> emit,
+  ) {
+    _selectedTemplate = event.template;
+    final session = _activeSession;
+    if (session != null) {
+      _activeSession = session.copyWith(
+        templateId: _selectedTemplate?.id,
+        templateName: _selectedTemplate?.name,
+        clearTemplateId: _selectedTemplate == null,
+        clearTemplateName: _selectedTemplate == null,
+      );
+      _recordingSessionRepository.save(_activeSession!);
+    }
+    emit(_stateWithSelectedTemplate(_currentTranscript));
+  }
+
+  VoiceCaptureState _stateWithSelectedTemplate(String transcript) {
+    return switch (state) {
+      VoiceCaptureReady() => VoiceCaptureReady(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      RecordingInProgress() => RecordingInProgress(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      ListeningPaused() => ListeningPaused(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      VoiceCaptureFailure(:final message) => VoiceCaptureFailure(
+          message,
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      _ => VoiceCaptureReady(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+    };
   }
 
   Future<void> _startListeningSession() {
@@ -282,6 +346,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       startedAt: startedAt,
       transcript: transcript,
       status: RecordingSessionStatus.recording,
+      templateId: _selectedTemplate?.id,
+      templateName: _selectedTemplate?.name,
     );
     _activeSession = await _recordingSessionRepository.save(session);
   }
@@ -300,6 +366,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transcript: transcript,
       soapNote: soapNote,
       status: RecordingSessionStatus.completed,
+      templateId: _selectedTemplate?.id ?? session.templateId,
+      templateName: _selectedTemplate?.name ?? session.templateName,
     );
     _activeSession = await _recordingSessionRepository.save(completed);
   }
