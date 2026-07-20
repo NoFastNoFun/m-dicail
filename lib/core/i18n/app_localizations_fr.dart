@@ -508,6 +508,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
 
   @override
+  String get medicalWatchDetailsTitle => 'Detail de l\'article';
+
+  @override
+  String get medicalWatchSpecialtyLabel => 'Specialite';
+
+  @override
+  String get medicalWatchPublicationDate => 'Publication';
+
+  @override
+  String get medicalWatchAuthors => 'Auteurs';
+
+  @override
+  String get medicalWatchDoi => 'DOI';
+
+  @override
+  String get medicalWatchPmid => 'PMID';
+
+  @override
+  String get medicalWatchSearchQuery => 'Recherche PubMed';
+
+  @override
+  String get medicalWatchAbstract => 'Resume';
+
+  @override
   String get tutorialIntroTitle => 'Decouvrir Medicail';
 
   @override

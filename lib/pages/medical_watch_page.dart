@@ -12,6 +12,7 @@ import 'package:medicail/features/medical_watch/presentation/medical_watch_event
 import 'package:medicail/features/medical_watch/presentation/medical_watch_state.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 
 class MedicalWatchPage extends StatelessWidget {
@@ -214,59 +215,154 @@ class _MedicalWatchArticleItem extends StatelessWidget {
       if (article.authors.isNotEmpty) article.authors.take(3).join(', '),
     ].join(' - ');
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border.all(color: theme.dividerColor),
+    return Material(
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: AppRadius.mdBorder,
+        side: BorderSide(color: theme.dividerColor),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppText(article.title, variant: AppTextVariant.title),
-            const SizedBox(height: AppSpacing.sm),
-            AppText(
-              metadata,
-              variant: AppTextVariant.caption,
-              color: context.secondaryTextColor,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (article.abstractText.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _showArticleDetails(context, article, l10n),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppText(article.title, variant: AppTextVariant.title),
+              const SizedBox(height: AppSpacing.sm),
               AppText(
-                article.abstractText,
-                variant: AppTextVariant.body,
-                maxLines: 4,
+                metadata,
+                variant: AppTextVariant.caption,
+                color: context.secondaryTextColor,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-            ],
-            if (article.doi != null && article.doi!.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Icon(
-                    Icons.link,
-                    size: 16,
-                    color: context.secondaryTextColor,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: AppText(
-                      article.doi!,
-                      variant: AppTextVariant.caption,
+              if (article.abstractText.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.md),
+                AppText(
+                  article.abstractText,
+                  variant: AppTextVariant.body,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              if (article.doi != null && article.doi!.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.md),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.link,
+                      size: 16,
                       color: context.secondaryTextColor,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: AppText(
+                        article.doi!,
+                        variant: AppTextVariant.caption,
+                        color: context.secondaryTextColor,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+void _showArticleDetails(
+  BuildContext context,
+  MedicalWatchArticle article,
+  AppLocalizations l10n,
+) {
+  AppBottomSheet.show<void>(
+    context,
+    title: l10n.medicalWatchDetailsTitle,
+    heightFraction: 0.86,
+    child: _MedicalWatchArticleDetails(article: article, l10n: l10n),
+  );
+}
+
+class _MedicalWatchArticleDetails extends StatelessWidget {
+  const _MedicalWatchArticleDetails({
+    required this.article,
+    required this.l10n,
+  });
+
+  final MedicalWatchArticle article;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppText(article.title, variant: AppTextVariant.title),
+        const SizedBox(height: AppSpacing.md),
+        _ArticleDetailRow(
+          label: l10n.medicalWatchSpecialtyLabel,
+          value: _specialtyLabel(l10n, article.specialty),
+        ),
+        if (article.publicationDate != null &&
+            article.publicationDate!.isNotEmpty)
+          _ArticleDetailRow(
+            label: l10n.medicalWatchPublicationDate,
+            value: article.publicationDate!,
+          ),
+        if (article.authors.isNotEmpty)
+          _ArticleDetailRow(
+            label: l10n.medicalWatchAuthors,
+            value: article.authors.join(', '),
+          ),
+        if (article.doi != null && article.doi!.isNotEmpty)
+          _ArticleDetailRow(label: l10n.medicalWatchDoi, value: article.doi!),
+        _ArticleDetailRow(label: l10n.medicalWatchPmid, value: article.pmid),
+        _ArticleDetailRow(
+          label: l10n.medicalWatchSearchQuery,
+          value: article.searchQuery,
+        ),
+        if (article.abstractText.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          AppText(l10n.medicalWatchAbstract, variant: AppTextVariant.title),
+          const SizedBox(height: AppSpacing.sm),
+          AppText(article.abstractText, variant: AppTextVariant.body),
+        ],
+      ],
+    );
+  }
+}
+
+class _ArticleDetailRow extends StatelessWidget {
+  const _ArticleDetailRow({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppText(
+            label,
+            variant: AppTextVariant.caption,
+            color: context.secondaryTextColor,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          AppText(value, variant: AppTextVariant.body),
+        ],
       ),
     );
   }

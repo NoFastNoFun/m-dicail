@@ -1078,6 +1078,54 @@ abstract class AppLocalizations {
   /// **'Therapie manuelle'**
   String get medicalWatchSpecialtyManualTherapy;
 
+  /// No description provided for @medicalWatchDetailsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Detail de l'article'**
+  String get medicalWatchDetailsTitle;
+
+  /// No description provided for @medicalWatchSpecialtyLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Specialite'**
+  String get medicalWatchSpecialtyLabel;
+
+  /// No description provided for @medicalWatchPublicationDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publication'**
+  String get medicalWatchPublicationDate;
+
+  /// No description provided for @medicalWatchAuthors.
+  ///
+  /// In fr, this message translates to:
+  /// **'Auteurs'**
+  String get medicalWatchAuthors;
+
+  /// No description provided for @medicalWatchDoi.
+  ///
+  /// In fr, this message translates to:
+  /// **'DOI'**
+  String get medicalWatchDoi;
+
+  /// No description provided for @medicalWatchPmid.
+  ///
+  /// In fr, this message translates to:
+  /// **'PMID'**
+  String get medicalWatchPmid;
+
+  /// No description provided for @medicalWatchSearchQuery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche PubMed'**
+  String get medicalWatchSearchQuery;
+
+  /// No description provided for @medicalWatchAbstract.
+  ///
+  /// In fr, this message translates to:
+  /// **'Resume'**
+  String get medicalWatchAbstract;
+
   /// No description provided for @tutorialIntroTitle.
   ///
   /// In fr, this message translates to:
