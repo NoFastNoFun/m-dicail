@@ -160,19 +160,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i297.NoteTemplateBloc>(
       () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i932.DynamicRecordingSessionRepository(
-        gh<_i913.SecureStorageRecordingSessionRepository>(),
-      ),
-    );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
-    );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(

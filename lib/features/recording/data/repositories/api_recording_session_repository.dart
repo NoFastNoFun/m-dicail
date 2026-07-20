@@ -111,4 +111,9 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
   Future<void> clear() async {
     // Pas d'endpoint global.
   }
+
+  @override
+  Future<void> purgeTutorialSessions() async {
+    // L'API ne gère pas les sessions de tutoriel.
+  }
 }

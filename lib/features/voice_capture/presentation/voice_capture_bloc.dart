@@ -6,7 +6,6 @@ import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
-import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
@@ -37,6 +36,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   final NoteProcessingRepository _noteProcessingRepository;
   String _segmentBase = '';
   RecordingSession? _activeSession;
+  NoteTemplate? _selectedTemplate;
 
   List<String> _transitions = const [];
   String _wordPeriod = '';

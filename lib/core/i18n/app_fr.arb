@@ -179,7 +179,6 @@
   "tutorialAssignPatientTitle": "Associer a un patient",
   "tutorialAssignPatientDesc": "Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l'onglet Rechercher, ou creer un nouveau dossier avec l'onglet Nouveau patient.\n\n👉 Appuyez sur 'Associer a un patient' pour continuer.",
   "tutorialRestarted": "Le tutoriel a ete reinitialise.",
-  "settingsSignIn": "Se connecter",
   "templatesTitle": "Modeles de pathologie",
   "templatesBuiltInSection": "Modeles par defaut",
   "templatesUserSection": "Mes variantes",
@@ -221,7 +220,7 @@
   },
   "templateNoneLabel": "Aucun modele selectionne",
   "templateRetry": "Reessayer",
-  "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application."
+  "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application.",
   "settingsSignIn": "Se connecter",
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
