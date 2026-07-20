@@ -7,7 +7,7 @@ abstract class RecordingSessionRepository {
 
   Future<List<RecordingSession>> getByPatientId(String patientId);
 
-  Future<void> save(RecordingSession session);
+  Future<RecordingSession> save(RecordingSession session);
 
   Future<void> delete(String id);
 

@@ -256,12 +256,18 @@ class _RecordViewState extends State<_RecordView> {
   }
 
   void _startRecording() {
+    final l10n = AppLocalizations.of(context);
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFromPatient)) {
       tutorialBloc.completeStep(TutorialStepId.recordFromPatient);
     }
     context.read<VoiceCaptureBloc>().add(
-      VoiceCaptureStartRecording(patientId: widget.patientId),
+      VoiceCaptureStartRecording(
+        patientId: widget.patientId,
+        wordPeriod: l10n.punctuationWordPeriod,
+        wordComma: l10n.punctuationWordComma,
+        transitions: l10n.punctuationTransitions.split(','),
+      ),
     );
   }
 
@@ -279,8 +285,9 @@ class _RecordViewState extends State<_RecordView> {
       _returnHomeAfterTutorialConsultation = true;
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
     }
+    final language = Localizations.localeOf(context).languageCode;
     context.read<VoiceCaptureBloc>().add(
-      const VoiceCaptureFinishConsultation(),
+      VoiceCaptureFinishConsultation(language: language),
     );
   }
 
@@ -380,7 +387,7 @@ class _RecordViewState extends State<_RecordView> {
 
     final bloc = context.read<VoiceCaptureBloc>();
     if (action == _RecordLeaveAction.save) {
-      _finishConsultation();
+      bloc.add(const VoiceCaptureFinishConsultation());
       return;
     }
 
@@ -463,126 +470,153 @@ class _RecordViewState extends State<_RecordView> {
         final viewModel = VoiceCaptureViewModel.fromState(state);
         final theme = Theme.of(context);
 
-        return PopScope(
-          canPop: !viewModel.hasUnsavedWork,
-          onPopInvokedWithResult: (didPop, _) {
-            if (didPop) {
-              return;
-            }
-            _handleLeaveRequest(context);
-          },
-          child: Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: SafeArea(
-              child: BlocListener<TutorialBloc, TutorialState>(
-                listener: (context, state) => _handleTutorialState(state),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.pagePadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Showcase(
-                        key: _recordToggleKey,
-                        title: _currentShowcaseTitle(l10n),
-                        description: _currentShowcaseDescription(l10n),
-                        disposeOnTap: false,
-                        disableBarrierInteraction: true,
-                        onTargetClick: _handleShowcaseTap,
-                        child: AppRecordHeaderCard(
-                          dateLabel: dateLabel,
-                          sessionTitle: _patientName,
-                          templateLabel: viewModel.selectedTemplate == null
-                              ? l10n.templateNoneLabel
-                              : l10n.templateActiveLabel(
-                                  viewModel.selectedTemplate!.name,
+        return Stack(
+          children: [
+            PopScope(
+              canPop: !viewModel.hasUnsavedWork && !viewModel.isProcessing,
+              onPopInvokedWithResult: (didPop, _) {
+                if (didPop) {
+                  return;
+                }
+                if (viewModel.isProcessing) {
+                  return;
+                }
+                _handleLeaveRequest(context);
+              },
+              child: Scaffold(
+                backgroundColor: theme.scaffoldBackgroundColor,
+                body: SafeArea(
+                  child: BlocListener<TutorialBloc, TutorialState>(
+                    listener: (context, state) => _handleTutorialState(state),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Showcase(
+                            key: _recordToggleKey,
+                            title: _currentShowcaseTitle(l10n),
+                            description: _currentShowcaseDescription(l10n),
+                            disposeOnTap: false,
+                            disableBarrierInteraction: true,
+                            onTargetClick: _handleShowcaseTap,
+                            child: AppRecordHeaderCard(
+                              dateLabel: dateLabel,
+                              sessionTitle: _patientName,
+                              templateLabel: viewModel.selectedTemplate == null
+                                  ? l10n.templateNoneLabel
+                                  : l10n.templateActiveLabel(
+                                      viewModel.selectedTemplate!.name,
+                                    ),
+                              elapsedLabel: _formatElapsed(_elapsed),
+                              isRecording: viewModel.isListening,
+                              isInitializing: viewModel.isInitializing,
+                              canStart: viewModel.canStart,
+                              canStop: viewModel.canStop,
+                              onBack: () => _handleLeaveRequest(context),
+                              onToggleRecording: () {
+                                if (viewModel.canStop) {
+                                  _stopRecording();
+                                  return;
+                                }
+                                if (viewModel.canStart) {
+                                  _startRecording();
+                                }
+                              },
+                              menuItems: [
+                                AppRecordMenuItem(
+                                  label: l10n.templatePickerAction,
+                                  enabled: !viewModel.isListening,
+                                  onSelected: () => _pickTemplate(context),
                                 ),
-                          elapsedLabel: _formatElapsed(_elapsed),
-                          isRecording: viewModel.isListening,
-                          isInitializing: viewModel.isInitializing,
-                          canStart: viewModel.canStart,
-                          canStop: viewModel.canStop,
-                          onBack: () => _handleLeaveRequest(context),
-                          onToggleRecording: () {
-                            if (viewModel.canStop) {
-                              _stopRecording();
-                              return;
-                            }
-                            if (viewModel.canStart) {
-                              _startRecording();
-                            }
-                          },
-                          menuItems: [
-                            AppRecordMenuItem(
-                              label: l10n.templatePickerAction,
-                              enabled: !viewModel.isListening,
-                              onSelected: () => _pickTemplate(context),
-                            ),
-                            AppRecordMenuItem(
-                              label: l10n.buttonFinishConsultation,
-                              enabled: viewModel.canFinishConsultation,
-                              onSelected: _finishConsultation,
-                            ),
-                            AppRecordMenuItem(
-                              label: l10n.buttonClear,
-                              enabled: viewModel.canClear,
-                              onSelected: () {
-                                setState(() {
-                                  _elapsed = Duration.zero;
-                                  _recordingStartedAt = null;
-                                });
-                                context.read<VoiceCaptureBloc>().add(
-                                  const VoiceCaptureClearTranscript(),
-                                );
+                                AppRecordMenuItem(
+                                  label: l10n.buttonFinishConsultation,
+                                  enabled: viewModel.canFinishConsultation,
+                                  onSelected: _finishConsultation,
+                                ),
+                                AppRecordMenuItem(
+                                  label: l10n.buttonClear,
+                                  enabled: viewModel.canClear,
+                                  onSelected: () {
+                                    setState(() {
+                                      _elapsed = Duration.zero;
+                                      _recordingStartedAt = null;
+                                    });
+                                    context.read<VoiceCaptureBloc>().add(
+                                      const VoiceCaptureClearTranscript(),
+                                    );
+                                  },
+                                ),
+                              ],
+                              menuKey: _menuKey,
+                              menuButtonKey: _menuButtonKey,
+                              menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                              menuShowcaseDescription: _currentShowcaseDescription(
+                                l10n,
+                              ),
+                              onMenuShowcaseTargetClick: () {
+                                _menuButtonKey.currentState?.showButtonMenu();
+                                ShowcaseView.get().dismiss();
                               },
                             ),
+                          ),
+                          if (viewModel.errorMessage != null) ...[
+                            const SizedBox(height: AppSpacing.md),
+                            AppText(
+                              viewModel.errorMessage!,
+                              variant: AppTextVariant.body,
+                              color: AppColors.error,
+                            ),
                           ],
-                          menuKey: _menuKey,
-                          menuButtonKey: _menuButtonKey,
-                          menuShowcaseTitle: _currentShowcaseTitle(l10n),
-                          menuShowcaseDescription: _currentShowcaseDescription(
-                            l10n,
+                          const SizedBox(height: AppSpacing.lg),
+                          Expanded(
+                            child: Showcase(
+                              key: _transcriptKey,
+                              title: l10n.tutorialRecordTranscriptTitle,
+                              description: l10n.tutorialRecordTranscriptDesc,
+                              disposeOnTap: false,
+                              disableBarrierInteraction: true,
+                              onTargetClick: () {
+                                final tutorialBloc = context.read<TutorialBloc>();
+                                final stepId = tutorialBloc.state.tutorialStepId;
+                                if (stepId != null) {
+                                  tutorialBloc.completeStep(stepId);
+                                }
+                              },
+                              child: AppRecordTranscriptView(
+                                transcript: viewModel.transcript,
+                                emptyHint: l10n.transcriptEmptyHint,
+                              ),
+                            ),
                           ),
-                          onMenuShowcaseTargetClick: () {
-                            _menuButtonKey.currentState?.showButtonMenu();
-                            ShowcaseView.get().dismiss();
-                          },
-                        ),
+                        ],
                       ),
-                      if (viewModel.errorMessage != null) ...[
-                        const SizedBox(height: AppSpacing.md),
-                        AppText(
-                          viewModel.errorMessage!,
-                          variant: AppTextVariant.body,
-                          color: AppColors.error,
-                        ),
-                      ],
-                      const SizedBox(height: AppSpacing.lg),
-                      Expanded(
-                        child: Showcase(
-                          key: _transcriptKey,
-                          title: l10n.tutorialRecordTranscriptTitle,
-                          description: l10n.tutorialRecordTranscriptDesc,
-                          disposeOnTap: false,
-                          disableBarrierInteraction: true,
-                          onTargetClick: () {
-                            final tutorialBloc = context.read<TutorialBloc>();
-                            final stepId = tutorialBloc.state.tutorialStepId;
-                            if (stepId != null) {
-                              tutorialBloc.completeStep(stepId);
-                            }
-                          },
-                          child: AppRecordTranscriptView(
-                            transcript: viewModel.transcript,
-                            emptyHint: l10n.transcriptEmptyHint,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            if (viewModel.isProcessing)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(color: Colors.white),
+                        const SizedBox(height: AppSpacing.md),
+                        AppText(
+                          "Génération de la note SOAP par l'IA...",
+                          variant: AppTextVariant.body,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );

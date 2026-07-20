@@ -59,10 +59,18 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_blo
     as _i802;
 import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
+import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart'
+    as _i430;
+import 'package:medicail/features/recording/data/repositories/api_recording_session_repository.dart'
+    as _i962;
+import 'package:medicail/features/recording/data/repositories/dynamic_note_processing_repository.dart'
+    as _i668;
 import 'package:medicail/features/recording/data/repositories/dynamic_recording_session_repository.dart'
     as _i932;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
+import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
+    as _i341;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
 import 'package:medicail/features/settings/data/repositories/secure_user_preferences_repository.dart'
@@ -154,19 +162,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i297.NoteTemplateBloc>(
       () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i932.DynamicRecordingSessionRepository(
-        gh<_i913.SecureStorageRecordingSessionRepository>(),
-      ),
-    );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
-    );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(
@@ -176,15 +173,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i479.ErrorInterceptor>(),
       ),
     );
-    gh.factory<_i306.TutorialBloc>(
-      () => _i306.TutorialBloc(
-        gh<_i79.TutorialRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
-    );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
+    );
+    gh.factory<_i430.ApiNoteProcessingRepository>(
+      () => _i430.ApiNoteProcessingRepository(gh<_i1005.ApiClient>()),
+    );
+    gh.factory<_i962.ApiRecordingSessionRepository>(
+      () => _i962.ApiRecordingSessionRepository(gh<_i1005.ApiClient>()),
     );
     gh.lazySingleton<_i790.AuthRepository>(
       () => _i985.AuthRepositoryImpl(
@@ -199,14 +196,21 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i932.DynamicRecordingSessionRepository(
+        gh<_i962.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
       ),
     );
     gh.factory<_i301.PatientBloc>(
       () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
+    );
+    gh.lazySingleton<_i341.NoteProcessingRepository>(
+      () => _i668.DynamicNoteProcessingRepository(
+        gh<_i430.ApiNoteProcessingRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
     );
     gh.factory<_i250.AuthBloc>(
       () => _i250.AuthBloc(
@@ -214,6 +218,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i541.AuthNotifier>(),
         gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i814.RecordingSessionRepository>(),
+        gh<_i341.NoteProcessingRepository>(),
+      ),
+    );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(
+        gh<_i79.TutorialRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     return this;

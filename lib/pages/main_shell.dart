@@ -41,6 +41,8 @@ class _MainShellState extends State<MainShell> {
   bool _didStartQuickRecordShowcase = false;
   String? _lastLocation;
 
+  int? _lastSeenTutorialStep;
+
   @override
   void initState() {
     super.initState();
@@ -51,9 +53,14 @@ class _MainShellState extends State<MainShell> {
   }
 
   void _handleTutorialState(TutorialState state) {
-    if (state is TutorialInitial && !_didAskTutorialStart) {
-      _didAskTutorialStart = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (state is TutorialInitial) {
+      _didStartPatientsShowcase = false;
+      _didStartQuickRecordShowcase = false;
+      _lastSeenTutorialStep = null;
+      
+      if (!_didAskTutorialStart) {
+        _didAskTutorialStart = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
         AppDialog.show(
@@ -84,10 +91,24 @@ class _MainShellState extends State<MainShell> {
           ],
         );
       });
+      }
       return;
     }
 
-    if (state is! TutorialInProgress) return;
+    if (state is! TutorialInProgress) {
+      _didStartPatientsShowcase = false;
+      _didStartQuickRecordShowcase = false;
+      _lastSeenTutorialStep = null;
+      return;
+    }
+
+    if (_lastSeenTutorialStep != state.currentStep) {
+      if (state.currentStep == TutorialFlow.indexOf(TutorialStepId.homePatients)) {
+        _didStartPatientsShowcase = false;
+        _didStartQuickRecordShowcase = false;
+      }
+      _lastSeenTutorialStep = state.currentStep;
+    }
 
     final currentStep = TutorialFlow.idFromIndex(state.currentStep);
 

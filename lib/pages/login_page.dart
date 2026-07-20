@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
-          } else if (state is AuthGuest) {
+          } else if (state is AuthGuest || state is AuthAuthenticated) {
             context.go(AppRoutes.home);
           }
         },

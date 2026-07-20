@@ -46,3 +46,4 @@ app.*.map.json
 /future_feature/
 
 .env
+/future_feature/
