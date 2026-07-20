@@ -49,6 +49,8 @@ import 'package:medicail/features/exo_patient/domain/repositories/exercise_repos
     as _i643;
 import 'package:medicail/features/exo_patient/domain/repositories/patient_exercise_repository.dart'
     as _i506;
+import 'package:medicail/features/exo_patient/presentation/exo_patient_bloc.dart'
+    as _i1038;
 import 'package:medicail/features/note_template/data/datasources/asset_note_template_data_source.dart'
     as _i564;
 import 'package:medicail/features/note_template/data/repositories/note_template_repository_impl.dart'
@@ -179,6 +181,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i643.ExerciseRepository>(
       () =>
           _i858.ExerciseRepositoryImpl(gh<_i1040.ExerciseCatalogDataSource>()),
+    );
+    gh.factory<_i1038.ExoPatientBloc>(
+      () => _i1038.ExoPatientBloc(
+        gh<_i643.ExerciseRepository>(),
+        gh<_i506.PatientExerciseRepository>(),
+      ),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
