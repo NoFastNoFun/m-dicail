@@ -7,6 +7,7 @@ enum VoiceCaptureSessionStatus {
   listening,
   paused,
   ended,
+  processing,
   failure,
 }
 
@@ -56,6 +57,10 @@ final class VoiceCaptureViewModel {
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
+      VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.processing,
+          transcript: transcript,
+        ),
       VoiceCaptureFailure(
         :final message,
         :final transcript,
@@ -86,14 +91,16 @@ final class VoiceCaptureViewModel {
   bool get hasTranscript => transcript.trim().isNotEmpty;
 
   bool get canStart =>
-      status == VoiceCaptureSessionStatus.ready ||
-      status == VoiceCaptureSessionStatus.paused;
+      (status == VoiceCaptureSessionStatus.ready ||
+      status == VoiceCaptureSessionStatus.paused) && !isProcessing;
 
-  bool get canStop => isListening;
+  bool get canStop => isListening && !isProcessing;
 
-  bool get canFinishConsultation => isConsultationOpen;
+  bool get canFinishConsultation => isConsultationOpen && !isProcessing;
 
-  bool get canClear => !isConsultationOpen && hasTranscript;
+  bool get canClear => !isConsultationOpen && hasTranscript && !isProcessing;
+
+  bool get isProcessing => status == VoiceCaptureSessionStatus.processing;
 
   bool get hasUnsavedWork =>
       isConsultationOpen ||

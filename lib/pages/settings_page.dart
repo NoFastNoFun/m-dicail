@@ -73,7 +73,7 @@ class SettingsPage extends StatelessWidget {
               InkWell(
                 onTap: () {
                   context.read<TutorialBloc>().add(
-                    const TutorialResetRequested(),
+                    const TutorialStartRequested(),
                   );
                   AppToast.showSuccess(context, l10n.tutorialRestarted);
                   context.go(AppRoutes.home);

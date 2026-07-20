@@ -1,4 +1,7 @@
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/config/app_config.dart';
+import 'package:medicail/core/network/auth_token_storage.dart';
+import 'package:medicail/features/recording/data/repositories/api_recording_session_repository.dart';
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -6,9 +9,23 @@ import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 
 @LazySingleton(as: RecordingSessionRepository)
 class DynamicRecordingSessionRepository implements RecordingSessionRepository {
-  DynamicRecordingSessionRepository(this._localRepository);
+  DynamicRecordingSessionRepository(
+    this._apiRepository,
+    this._localRepository,
+    this._tokenStorage,
+  );
 
+  final ApiRecordingSessionRepository _apiRepository;
   final SecureStorageRecordingSessionRepository _localRepository;
+  final AuthTokenStorage _tokenStorage;
+
+  Future<RecordingSessionRepository> _getRepository() async {
+    final token = await _tokenStorage.readToken();
+    if (AppConfig.isOfflineMode(token)) {
+      return _localRepository;
+    }
+    return _apiRepository;
+  }
 
   bool _isTutorialSession(RecordingSession session) {
     return session.patientId == TutorialFlow.demoPatientId;
@@ -16,7 +33,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<List<RecordingSession>> getAll() async {
-    final sessions = await _localRepository.getAll();
+    final repo = await _getRepository();
+    final sessions = await repo.getAll();
     return [
       for (final session in sessions)
         if (!_isTutorialSession(session)) session,
@@ -25,7 +43,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<RecordingSession?> getById(String id) async {
-    final session = await _localRepository.getById(id);
+    final repo = await _getRepository();
+    final session = await repo.getById(id);
     if (session == null || _isTutorialSession(session)) {
       return null;
     }
@@ -37,25 +56,29 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     if (patientId == TutorialFlow.demoPatientId) {
       return const [];
     }
-    return _localRepository.getByPatientId(patientId);
+    final repo = await _getRepository();
+    return repo.getByPatientId(patientId);
   }
 
   @override
-  Future<void> save(RecordingSession session) async {
+  Future<RecordingSession> save(RecordingSession session) async {
     if (_isTutorialSession(session)) {
-      return;
+      return session;
     }
-    await _localRepository.save(session);
+    final repo = await _getRepository();
+    return repo.save(session);
   }
 
   @override
   Future<void> delete(String id) async {
-    await _localRepository.delete(id);
+    final repo = await _getRepository();
+    await repo.delete(id);
   }
 
   @override
   Future<void> clear() async {
-    await _localRepository.clear();
+    final repo = await _getRepository();
+    await repo.clear();
   }
 
   @override

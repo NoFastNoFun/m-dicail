@@ -44,7 +44,7 @@ final class PatientModel extends Patient {
           ? Contact.fromJson(json['contact'] as Map<String, dynamic>)
           : null,
       notes: json['notes'] as String?,
-      metadata: json['metadata'] as Map<String, dynamic>?,
+      metadata: json['patient_metadata'] as Map<String, dynamic>? ?? json['metadata'] as Map<String, dynamic>?,
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
       updatedAt: _parseDate(json['updated_at'] ?? json['updatedAt']),
     );
@@ -62,7 +62,7 @@ final class PatientModel extends Patient {
       'sex': sex,
       'contact': contact?.toJson(),
       'notes': notes,
-      'metadata': metadata,
+      'patient_metadata': metadata,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
