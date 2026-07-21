@@ -5,6 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
@@ -160,20 +161,53 @@ class _PatientsViewState extends State<_PatientsView> {
                             color: context.secondaryTextColor,
                           ),
                         )
-                      : ListView.separated(
+                      : _PatientList(
+                          patients: patients,
                           padding: MainShellScope.scrollPaddingOf(context),
-                          itemCount: patients.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: AppSpacing.md),
-                          itemBuilder: (context, index) {
-                            return _PatientListItem(patient: patients[index]);
-                          },
                         ),
                 ),
               ],
             ),
           ),
         );
+      },
+    );
+  }
+}
+
+class _PatientList extends StatelessWidget {
+  const _PatientList({required this.patients, required this.padding});
+
+  final List<Patient> patients;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final columns = AppLayout.gridColumnCount(context);
+
+    if (columns <= 1) {
+      return ListView.separated(
+        padding: padding,
+        itemCount: patients.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppSpacing.md),
+        itemBuilder: (context, index) {
+          return _PatientListItem(patient: patients[index]);
+        },
+      );
+    }
+
+    return GridView.builder(
+      padding: padding,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columns,
+        mainAxisSpacing: AppSpacing.md,
+        crossAxisSpacing: AppSpacing.md,
+        mainAxisExtent: 168,
+      ),
+      itemCount: patients.length,
+      itemBuilder: (context, index) {
+        return _PatientListItem(patient: patients[index]);
       },
     );
   }
@@ -201,7 +235,12 @@ class _PatientListItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppText(patient.displayName, variant: AppTextVariant.title),
+            AppText(
+              patient.displayName,
+              variant: AppTextVariant.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
@@ -222,7 +261,7 @@ class _PatientListItem extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            const Spacer(),
             AppButton(
               label: l10n.patientOpenButton,
               style: AppButtonStyle.secondary,

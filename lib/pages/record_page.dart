@@ -9,6 +9,8 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
+import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -232,8 +234,7 @@ class _RecordViewState extends State<_RecordView> {
   void _handleConsultationFinished(VoiceCaptureConsultationFinished state) {
     final tutorialBloc = context.read<TutorialBloc>();
     final isTutorial = tutorialBloc.state is TutorialInProgress;
-    final isDemoPatient =
-        widget.patientId == TutorialFlow.demoPatientId;
+    final isDemoPatient = widget.patientId == TutorialFlow.demoPatientId;
 
     if (isTutorial && isDemoPatient) {
       unawaited(_discardTutorialSession(state.sessionId));
@@ -423,12 +424,9 @@ class _RecordViewState extends State<_RecordView> {
     }
 
     context.read<VoiceCaptureBloc>().add(
-          VoiceCaptureTemplateSelected(template),
-        );
-    AppToast.showSuccess(
-      context,
-      l10n.templateActiveLabel(template.name),
+      VoiceCaptureTemplateSelected(template),
     );
+    AppToast.showSuccess(context, l10n.templateActiveLabel(template.name));
   }
 
   @override
@@ -490,8 +488,9 @@ class _RecordViewState extends State<_RecordView> {
                 body: SafeArea(
                   child: BlocListener<TutorialBloc, TutorialState>(
                     listener: (context, state) => _handleTutorialState(state),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                    child: AppContentConstraint(
+                      maxWidth: AppBreakpoints.wideContentMaxWidth,
+                      applyPagePadding: true,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -563,11 +562,14 @@ class _RecordViewState extends State<_RecordView> {
                                   ],
                                   menuKey: _menuKey,
                                   menuButtonKey: _menuButtonKey,
-                                  menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                                  menuShowcaseTitle: _currentShowcaseTitle(
+                                    l10n,
+                                  ),
                                   menuShowcaseDescription:
                                       _currentShowcaseDescription(l10n),
                                   onMenuShowcaseTargetClick: () {
-                                    _menuButtonKey.currentState?.showButtonMenu();
+                                    _menuButtonKey.currentState
+                                        ?.showButtonMenu();
                                     ShowcaseView.get().dismiss();
                                   },
                                 ),
@@ -591,8 +593,10 @@ class _RecordViewState extends State<_RecordView> {
                               disposeOnTap: false,
                               disableBarrierInteraction: true,
                               onTargetClick: () {
-                                final tutorialBloc = context.read<TutorialBloc>();
-                                final stepId = tutorialBloc.state.tutorialStepId;
+                                final tutorialBloc = context
+                                    .read<TutorialBloc>();
+                                final stepId =
+                                    tutorialBloc.state.tutorialStepId;
                                 if (stepId != null) {
                                   tutorialBloc.completeStep(stepId);
                                 }

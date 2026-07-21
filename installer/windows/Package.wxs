@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Medicail Windows MSI package.
+  Wizard: WixUI_InstallDir (welcome → license → choose folder → install).
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!--
+    UpgradeCode must stay stable across releases so Windows treats newer MSIs
+    as upgrades of the same product. Do not regenerate this GUID.
+  -->
+  <Package
+      Name="Medicail"
+      Manufacturer="Medicail"
+      Version="$(var.ProductVersion)"
+      UpgradeCode="A7C3E9F1-4B2D-4E8A-9C61-0D5F8A2B7E34"
+      Language="1036"
+      Scope="perMachine">
+
+    <SummaryInformation
+        Description="Assistant clinique local-first pour kinesitherapeutes"
+        Manufacturer="Medicail" />
+
+    <MajorUpgrade
+        DowngradeErrorMessage="Une version plus recente de [ProductName] est deja installee. Desinstallez-la avant d'installer cette version."
+        Schedule="afterInstallInitialize" />
+
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <!-- Icon shown in Apps & Features -->
+    <Icon Id="AppIcon.ico" SourceFile="!(bindpath.ProjectRoot)\windows\runner\resources\app_icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+
+    <Feature Id="ProductFeature" Title="Medicail" Level="1" ConfigurableDirectory="INSTALLFOLDER">
+      <ComponentGroupRef Id="AppComponents" />
+      <ComponentGroupRef Id="ShortcutComponents" />
+    </Feature>
+
+    <!-- Wizard with install-directory picker -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+  </Package>
+</Wix>
