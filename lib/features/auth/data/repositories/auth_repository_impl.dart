@@ -6,7 +6,6 @@ import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/config/app_config.dart';
 
-
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._apiClient, this._tokenStorage);
@@ -37,9 +36,8 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final data = response.data;
-    if (data != null && data['accessToken'] != null) {
-      final token = data['accessToken'] as String;
-      await _tokenStorage.writeToken(token);
+    if (data != null) {
+      await _persistAuthResponse(data);
     }
 
     return getMe();
@@ -61,9 +59,8 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final data = response.data;
-    if (data != null && data['accessToken'] != null) {
-      final token = data['accessToken'] as String;
-      await _tokenStorage.writeToken(token);
+    if (data != null) {
+      await _persistAuthResponse(data);
     }
 
     return getMe();
@@ -89,12 +86,34 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
+    final token = await _tokenStorage.readToken();
+    if (token != null && token != AppConfig.mockAdminToken) {
+      try {
+        await _apiClient.post<void>('/auth/logout');
+      } catch (_) {
+        // Best-effort server logout; always clear local tokens.
+      }
+    }
     await _tokenStorage.clearToken();
+  }
+
+  Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
+    final accessToken = data['accessToken'];
+    final refreshToken = data['refreshToken'];
+    if (accessToken is String &&
+        refreshToken is String &&
+        accessToken.isNotEmpty &&
+        refreshToken.isNotEmpty) {
+      await _tokenStorage.writeTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+    }
   }
 
   User _mapUser(Map<String, dynamic> json) {
     return User(
-      id: int.tryParse(json['id'].toString()) ?? 0, // id is string in DTO
+      id: int.tryParse(json['id'].toString()) ?? 0,
       email: json['email'] as String,
       fullName: json['fullName'] as String?,
     );

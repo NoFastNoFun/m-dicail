@@ -1,11 +1,12 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
-import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/network/interceptors/auth_interceptor.dart';
 import 'package:medicail/core/network/interceptors/error_interceptor.dart';
 import 'package:medicail/core/network/interceptors/logging_interceptor.dart';
+import 'package:medicail/core/network/interceptors/token_refresh_interceptor.dart';
+import 'package:medicail/core/config/app_config.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/router/app_router.dart';
 
 @module
@@ -19,6 +20,7 @@ abstract class RegisterModule {
     AuthInterceptor authInterceptor,
     LoggingInterceptor loggingInterceptor,
     ErrorInterceptor errorInterceptor,
+    TokenRefreshInterceptor tokenRefreshInterceptor,
   ) {
     final dio = Dio(
       BaseOptions(
@@ -32,7 +34,9 @@ abstract class RegisterModule {
       authInterceptor,
       loggingInterceptor,
       errorInterceptor,
+      tokenRefreshInterceptor,
     ]);
+    tokenRefreshInterceptor.attachDio(dio);
     return dio;
   }
 

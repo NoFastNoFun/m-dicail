@@ -5,11 +5,13 @@ import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -64,8 +66,18 @@ class _MedicailAppState extends State<MedicailApp> {
                         getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
                   ),
                 ],
-                child: AppToastHost(
-                  child: child ?? const SizedBox.shrink(),
+                child: BlocListener<AuthBloc, AuthState>(
+                  listenWhen: (previous, current) =>
+                      current is AuthSessionExpiredState,
+                  listener: (context, state) {
+                    if (state is AuthSessionExpiredState) {
+                      final l10n = AppLocalizations.of(context);
+                      AppToast.showError(context, l10n.sessionExpiredMessage);
+                    }
+                  },
+                  child: AppToastHost(
+                    child: child ?? const SizedBox.shrink(),
+                  ),
                 ),
               ),
             );

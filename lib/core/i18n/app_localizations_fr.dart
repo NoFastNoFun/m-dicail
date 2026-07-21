@@ -659,6 +659,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSignIn => 'Se connecter';
 
   @override
+  String get sessionExpiredMessage =>
+      'Session expiree, veuillez vous reconnecter';
+
+  @override
   String get punctuationWordPeriod => 'point';
 
   @override
