@@ -31,12 +31,12 @@ final class RecordingSessionModel extends RecordingSession {
   factory RecordingSessionModel.fromJson(Map<String, dynamic> json) {
     return RecordingSessionModel(
       id: json['id'] as String,
-      patientId: json['patientId'] as String?,
-      startedAt: DateTime.parse(json['startedAt'] as String),
-      endedAt: _parseNullableDate(json['endedAt']),
+      patientId: json['patient_id'] as String? ?? json['patientId'] as String?,
+      startedAt: DateTime.parse(json['started_at'] as String? ?? json['startedAt'] as String),
+      endedAt: _parseNullableDate(json['ended_at'] ?? json['endedAt']),
       transcript: json['transcript'] as String? ?? '',
-      soapNote: json['soapNote'] != null
-          ? SoapNote.fromJson(json['soapNote'] as Map<String, dynamic>)
+      soapNote: (json['soap_note'] != null || json['soapNote'] != null)
+          ? SoapNote.fromJson((json['soap_note'] ?? json['soapNote']) as Map<String, dynamic>)
           : null,
       status: _parseStatus(json['status'] as String?),
       templateId: json['templateId'] as String?,
@@ -47,11 +47,11 @@ final class RecordingSessionModel extends RecordingSession {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'patientId': patientId,
-      'startedAt': startedAt.toIso8601String(),
-      'endedAt': endedAt?.toIso8601String(),
+      'patient_id': patientId,
+      'started_at': startedAt.toIso8601String(),
+      'ended_at': endedAt?.toIso8601String(),
       'transcript': transcript,
-      'soapNote': soapNote?.toJson(),
+      'soap_note': soapNote?.toJson(),
       'status': status.name,
       'templateId': templateId,
       'templateName': templateName,

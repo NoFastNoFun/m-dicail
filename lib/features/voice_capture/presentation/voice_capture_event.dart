@@ -13,12 +13,20 @@ final class VoiceCaptureInitializeRequested extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureStartRecording extends VoiceCaptureEvent {
-  const VoiceCaptureStartRecording({this.patientId});
+  const VoiceCaptureStartRecording({
+    this.patientId,
+    this.transitions = const [],
+    this.wordPeriod = '',
+    this.wordComma = '',
+  });
 
   final String? patientId;
+  final List<String> transitions;
+  final String wordPeriod;
+  final String wordComma;
 
   @override
-  List<Object?> get props => [patientId];
+  List<Object?> get props => [patientId, transitions, wordPeriod, wordComma];
 }
 
 final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
@@ -26,7 +34,12 @@ final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
-  const VoiceCaptureFinishConsultation();
+  const VoiceCaptureFinishConsultation({this.language = 'fr'});
+
+  final String language;
+
+  @override
+  List<Object?> get props => [language];
 }
 
 final class VoiceCaptureClearTranscript extends VoiceCaptureEvent {

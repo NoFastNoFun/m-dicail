@@ -40,7 +40,7 @@ class SecureStorageRecordingSessionRepository
   }
 
   @override
-  Future<void> save(RecordingSession session) async {
+  Future<RecordingSession> save(RecordingSession session) async {
     final sessions = await _readSessions();
     final nextSessions = <RecordingSession>[
       for (final current in sessions)
@@ -49,6 +49,7 @@ class SecureStorageRecordingSessionRepository
     ]..sort((a, b) => b.startedAt.compareTo(a.startedAt));
 
     await _writeSessions(nextSessions);
+    return session;
   }
 
   @override

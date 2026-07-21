@@ -3,10 +3,12 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
+import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
-import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/soap_note.dart';
+import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -16,6 +18,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   VoiceCaptureBloc(
     this._audioCaptureService,
     this._recordingSessionRepository,
+    this._noteProcessingRepository,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -30,9 +33,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   final AudioCaptureService _audioCaptureService;
   final RecordingSessionRepository _recordingSessionRepository;
+  final NoteProcessingRepository _noteProcessingRepository;
   String _segmentBase = '';
   RecordingSession? _activeSession;
   NoteTemplate? _selectedTemplate;
+
+  List<String> _transitions = const [];
+  String _wordPeriod = '';
+  String _wordComma = '';
 
   Future<void> _onInitialize(
     VoiceCaptureInitializeRequested event,
@@ -58,6 +66,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     final currentTranscript = _currentTranscript;
     _segmentBase = currentTranscript;
+    _transitions = event.transitions;
+    _wordPeriod = event.wordPeriod;
+    _wordComma = event.wordComma;
     try {
       await _audioCaptureService.initialize();
       await _ensureActiveSessionStarted(
@@ -110,19 +121,35 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     final transcript = _currentTranscript;
+    final sessionId = _activeSession?.id ?? '';
+    
+    if (sessionId.isEmpty) {
+      emit(VoiceCaptureFailure('Aucune session active', transcript: transcript));
+      return;
+    }
+
     try {
       await _audioCaptureService.stopListening();
-      final sessionId = _activeSession?.id ?? '';
-      await _completeActiveSession(
-        transcript: transcript,
+      emit(VoiceCaptureProcessing(transcript: transcript));
+
+      final result = await _noteProcessingRepository.process(
+        sessionId: sessionId,
+        rawText: transcript,
+        language: event.language,
       );
+
+      await _completeActiveSession(
+        transcript: result.processedText,
+        soapNote: result.soapNote,
+      );
+      
       _segmentBase = '';
+      _activeSession = null;
       emit(VoiceCaptureConsultationFinished(
         sessionId: sessionId,
-        transcript: transcript,
+        transcript: result.processedText,
       ));
     } catch (error) {
-      await _failActiveSession(transcript);
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
@@ -173,7 +200,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final transcript = _currentTranscript;
+    var transcript = _currentTranscript.trim();
+    if (transcript.isNotEmpty && !transcript.endsWith('.')) {
+      transcript += '. ';
+    }
     _segmentBase = transcript;
     try {
       await _saveActiveSessionTranscript(transcript);
@@ -207,7 +237,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
-    final merged = TranscriptMergeHelper.merge(_segmentBase, anonymized);
+    final punctuated = PunctuationHelper.applyHeuristics(
+      text: anonymized,
+      wordPeriod: _wordPeriod,
+      wordComma: _wordComma,
+      transitionWords: _transitions,
+    );
+
+    final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     _updateActiveSessionTranscriptInMemory(merged);
     emit(RecordingInProgress(
       transcript: merged,
@@ -287,7 +324,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   }
 
   String _generateSessionId(DateTime startedAt) {
-    return 'recording_${startedAt.toUtc().microsecondsSinceEpoch}';
+    return 'local_recording_${startedAt.toUtc().microsecondsSinceEpoch}';
   }
 
   Future<void> _ensureActiveSessionStarted(
@@ -298,8 +335,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     if (existingSession != null &&
         existingSession.status == RecordingSessionStatus.recording) {
       final updated = existingSession.copyWith(transcript: transcript);
-      _activeSession = updated;
-      await _recordingSessionRepository.save(updated);
+      _activeSession = await _recordingSessionRepository.save(updated);
       return;
     }
 
@@ -313,12 +349,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       templateId: _selectedTemplate?.id,
       templateName: _selectedTemplate?.name,
     );
-    _activeSession = session;
-    await _recordingSessionRepository.save(_activeSession!);
+    _activeSession = await _recordingSessionRepository.save(session);
   }
 
   Future<void> _completeActiveSession({
     required String transcript,
+    required SoapNote soapNote,
   }) async {
     final session = _activeSession;
     if (session == null) {
@@ -328,17 +364,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
-      soapNote: session.soapNote ??
-          NoteTemplateApplicator.apply(
-            template: _selectedTemplate,
-            transcript: transcript,
-          ),
+      soapNote: soapNote,
       status: RecordingSessionStatus.completed,
       templateId: _selectedTemplate?.id ?? session.templateId,
       templateName: _selectedTemplate?.name ?? session.templateName,
     );
-    _activeSession = completed;
-    await _recordingSessionRepository.save(completed);
+    _activeSession = await _recordingSessionRepository.save(completed);
   }
 
   Future<void> _failActiveSession(String transcript) async {
@@ -352,8 +383,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transcript: transcript,
       status: RecordingSessionStatus.failed,
     );
-    _activeSession = failed;
-    await _recordingSessionRepository.save(failed);
+    _activeSession = await _recordingSessionRepository.save(failed);
   }
 
   void _updateActiveSessionTranscriptInMemory(String transcript) {

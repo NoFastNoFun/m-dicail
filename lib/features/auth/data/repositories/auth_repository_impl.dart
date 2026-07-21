@@ -37,8 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final data = response.data;
-    if (data != null && data['access_token'] != null) {
-      final token = data['access_token'] as String;
+    if (data != null && data['accessToken'] != null) {
+      final token = data['accessToken'] as String;
       await _tokenStorage.writeToken(token);
     }
 
@@ -56,16 +56,14 @@ class AuthRepositoryImpl implements AuthRepository {
       data: {
         'email': email,
         'password': password,
-        'full_name': fullName,
+        'fullName': fullName,
       },
     );
 
     final data = response.data;
-    if (data != null && data['access_token'] != null) {
-      final token = data['access_token'] as String;
+    if (data != null && data['accessToken'] != null) {
+      final token = data['accessToken'] as String;
       await _tokenStorage.writeToken(token);
-      final userJson = data['user'] as Map<String, dynamic>;
-      return _mapUser(userJson);
     }
 
     return getMe();
@@ -96,9 +94,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   User _mapUser(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
+      id: int.tryParse(json['id'].toString()) ?? 0, // id is string in DTO
       email: json['email'] as String,
-      fullName: json['full_name'] as String?,
+      fullName: json['fullName'] as String?,
     );
   }
 }
