@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/appointment/presentation/appointment_bloc.dart';
+import 'package:medicail/features/appointment/presentation/appointment_change_notifier.dart';
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
 import 'package:medicail/widget/app_button.dart';
@@ -24,8 +26,8 @@ class AppointmentsDayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final day = initialDate ?? DateTime.now();
     return BlocProvider(
-      create: (_) => getIt<AppointmentBloc>()
-        ..add(AppointmentsDayRequested(day)),
+      create: (_) =>
+          getIt<AppointmentBloc>()..add(AppointmentsDayRequested(day)),
       child: _AppointmentsDayView(initialDay: day),
     );
   }
@@ -51,6 +53,18 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
       widget.initialDay.month,
       widget.initialDay.day,
     );
+    appointmentChangeNotifier.addListener(_onAppointmentsChanged);
+  }
+
+  @override
+  void dispose() {
+    appointmentChangeNotifier.removeListener(_onAppointmentsChanged);
+    super.dispose();
+  }
+
+  void _onAppointmentsChanged() {
+    if (!mounted) return;
+    context.read<AppointmentBloc>().add(AppointmentsDayRequested(_day));
   }
 
   void _changeDay(int delta) {
@@ -74,13 +88,9 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
         if (state is AppointmentFailure) {
           AppToast.showError(context, state.message);
         }
-        if (state is AppointmentSaveSuccess) {
-          AppToast.showSuccess(context, l10n.appointmentSaved);
-        }
       },
       builder: (context, state) {
-        final items =
-            state is AppointmentDayLoaded ? state.items : const [];
+        final items = state is AppointmentDayLoaded ? state.items : const [];
         final isLoading = state is AppointmentLoading;
 
         return AppScaffold(
@@ -125,46 +135,38 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : items.isEmpty
-                        ? Center(
-                            child: AppText(
-                              l10n.appointmentsEmpty,
-                              variant: AppTextVariant.body,
+                    ? Center(
+                        child: AppText(
+                          l10n.appointmentsEmpty,
+                          variant: AppTextVariant.body,
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: MainShellScope.scrollPaddingOf(context),
+                        itemCount: items.length,
+                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return AppointmentListRow(
+                            item: item,
+                            showMenu: true,
+                            onTap: () => context.goPatientDetail(
+                              item.appointment.patientId,
                             ),
-                          )
-                        : ListView.separated(
-                            itemCount: items.length,
-                            separatorBuilder: (_, _) =>
-                                const Divider(height: 1),
-                            itemBuilder: (context, index) {
-                              final item = items[index];
-                              return AppointmentListRow(
-                                item: item,
-                                showMenu: true,
-                                onTap: () => context.goPatientDetail(
-                                  item.appointment.patientId,
-                                ),
-                                onEdit: () => AppointmentFormSheet.show(
-                                  context,
-                                  existing: item.appointment,
-                                  initialDay: _day,
-                                ),
-                                onCancel: () => context
-                                    .read<AppointmentBloc>()
-                                    .add(
-                                      AppointmentCancelled(
-                                        item.appointment.id,
-                                      ),
-                                    ),
-                                onDelete: () => context
-                                    .read<AppointmentBloc>()
-                                    .add(
-                                      AppointmentDeleted(
-                                        item.appointment.id,
-                                      ),
-                                    ),
-                              );
-                            },
-                          ),
+                            onEdit: () => AppointmentFormSheet.show(
+                              context,
+                              existing: item.appointment,
+                              initialDay: _day,
+                            ),
+                            onCancel: () => context.read<AppointmentBloc>().add(
+                              AppointmentCancelled(item.appointment.id),
+                            ),
+                            onDelete: () => context.read<AppointmentBloc>().add(
+                              AppointmentDeleted(item.appointment.id),
+                            ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

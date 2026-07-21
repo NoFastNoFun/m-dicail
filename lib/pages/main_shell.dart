@@ -26,7 +26,8 @@ class MainShell extends StatefulWidget {
   final Widget child;
 
   static EdgeInsets scrollPadding(BuildContext context) {
-    return MainShellChrome.scrollPadding(context);
+    return MainShellScope.maybeOf(context)?.scrollPadding(context) ??
+        EdgeInsets.zero;
   }
 
   @override
@@ -41,6 +42,7 @@ class _MainShellState extends State<MainShell> {
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
   String? _lastLocation;
+  bool _navLabelsVisible = true;
 
   int? _lastSeenTutorialStep;
 
@@ -160,12 +162,36 @@ class _MainShellState extends State<MainShell> {
     context.goRecord();
   }
 
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification ||
+        notification is ScrollEndNotification) {
+      final metrics = notification.metrics;
+      if (!metrics.hasPixels) {
+        return false;
+      }
+
+      final atTop = metrics.pixels <= metrics.minScrollExtent + 8;
+      if (atTop != _navLabelsVisible) {
+        setState(() => _navLabelsVisible = atTop);
+      }
+    }
+
+    return false;
+  }
+
+  void _resetNavLabels() {
+    if (!_navLabelsVisible) {
+      setState(() => _navLabelsVisible = true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final location = GoRouterState.of(context).matchedLocation;
     if (_lastLocation != location) {
       _lastLocation = location;
+      _resetNavLabels();
       if (location == AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
       }
@@ -181,6 +207,12 @@ class _MainShellState extends State<MainShell> {
         icon: Icons.home_outlined,
         selectedIcon: Icons.home,
         label: l10n.homeTitle,
+      ),
+      AppBottomNavDestination(
+        route: AppRoutes.appointments,
+        icon: Icons.event_outlined,
+        selectedIcon: Icons.event,
+        label: l10n.appointmentsDayTitle,
       ),
       AppBottomNavDestination(
         route: AppRoutes.patients,
@@ -213,7 +245,10 @@ class _MainShellState extends State<MainShell> {
     ];
 
     return MainShellScope(
+      navLabelsVisible: _navLabelsVisible,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
         resizeToAvoidBottomInset: false,
         body: BlocListener<TutorialBloc, TutorialState>(
           listener: (context, state) => _handleTutorialState(state),
@@ -221,9 +256,8 @@ class _MainShellState extends State<MainShell> {
             fit: StackFit.expand,
             children: [
               Positioned.fill(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: true,
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
                   child: widget.child,
                 ),
               ),
@@ -293,6 +327,7 @@ class _MainShellState extends State<MainShell> {
                           child: AppBottomNavPill(
                             destinations: destinations,
                             selectedRoute: location,
+                            showLabels: _navLabelsVisible,
                             onDestinationSelected: (route) {
                               if (route == AppRoutes.patients) {
                                 final tutorialBloc = context.read<TutorialBloc>();

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
+import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
 
 sealed class SettingsEvent extends Equatable {
@@ -29,4 +30,13 @@ final class SettingsFontScaleChanged extends SettingsEvent {
 
   @override
   List<Object?> get props => [scale];
+}
+
+final class SettingsDefaultSessionLengthChanged extends SettingsEvent {
+  const SettingsDefaultSessionLengthChanged(this.length);
+
+  final AppSessionLength length;
+
+  @override
+  List<Object?> get props => [length];
 }

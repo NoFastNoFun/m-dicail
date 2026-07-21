@@ -125,8 +125,99 @@ void main() {
     },
     skip: 2,
     expect: () => [
-      isA<AppointmentSaveSuccess>(),
       isA<AppointmentDayLoaded>().having((s) => s.items.length, 'items', 1),
+      isA<AppointmentSaveSuccess>(),
+    ],
+  );
+
+  blocTest<AppointmentBloc, AppointmentState>(
+    'loads upcoming including same-minute starts',
+    build: () {
+      final now = DateTime.now();
+      final startsAt = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        now.hour,
+        now.minute,
+      );
+      appointmentRepository.store['a1'] = Appointment(
+        id: 'a1',
+        patientId: 'patient_1',
+        startsAt: startsAt,
+        endsAt: startsAt.add(const Duration(hours: 1)),
+        createdAt: startsAt,
+        updatedAt: startsAt,
+      );
+      return bloc;
+    },
+    act: (bloc) => bloc.add(const AppointmentsUpcomingRequested()),
+    expect: () => [
+      const AppointmentLoading(),
+      isA<AppointmentDayLoaded>().having((s) => s.items.length, 'items', 1),
+    ],
+  );
+
+  blocTest<AppointmentBloc, AppointmentState>(
+    'loads today first then falls back to future days',
+    build: () {
+      final now = DateTime.now();
+      final tomorrow = DateTime(now.year, now.month, now.day + 1, 10);
+      appointmentRepository.store['future'] = Appointment(
+        id: 'future',
+        patientId: 'patient_1',
+        startsAt: tomorrow,
+        endsAt: tomorrow.add(const Duration(hours: 1)),
+        createdAt: tomorrow,
+        updatedAt: tomorrow,
+      );
+      return bloc;
+    },
+    act: (bloc) => bloc.add(const AppointmentsUpcomingRequested()),
+    expect: () => [
+      const AppointmentLoading(),
+      isA<AppointmentDayLoaded>()
+          .having((s) => s.items.length, 'items', 1)
+          .having(
+            (s) => s.items.first.appointment.id,
+            'id',
+            'future',
+          ),
+    ],
+  );
+
+  blocTest<AppointmentBloc, AppointmentState>(
+    'prefers remaining today over future days',
+    build: () {
+      final now = DateTime.now();
+      final todayLater = now.add(const Duration(minutes: 30));
+      final tomorrow = DateTime(now.year, now.month, now.day + 1, 10);
+      appointmentRepository.store['today'] = Appointment(
+        id: 'today',
+        patientId: 'patient_1',
+        startsAt: todayLater,
+        endsAt: todayLater.add(const Duration(hours: 1)),
+        createdAt: todayLater,
+        updatedAt: todayLater,
+      );
+      appointmentRepository.store['future'] = Appointment(
+        id: 'future',
+        patientId: 'patient_1',
+        startsAt: tomorrow,
+        endsAt: tomorrow.add(const Duration(hours: 1)),
+        createdAt: tomorrow,
+        updatedAt: tomorrow,
+      );
+      return bloc;
+    },
+    act: (bloc) => bloc.add(const AppointmentsUpcomingRequested()),
+    expect: () => [
+      const AppointmentLoading(),
+      isA<AppointmentDayLoaded>().having(
+        (s) => s.items.first.appointment.id,
+        'id',
+        'today',
+      ),
     ],
   );
 
