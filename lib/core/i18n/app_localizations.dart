@@ -244,6 +244,12 @@ abstract class AppLocalizations {
   /// **'Rendez-vous du jour'**
   String get appointmentsTodayTitle;
 
+  /// No description provided for @appointmentsUpcomingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochains rendez-vous'**
+  String get appointmentsUpcomingTitle;
+
   /// No description provided for @appointmentsDayTitle.
   ///
   /// In fr, this message translates to:
@@ -261,6 +267,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun rendez-vous pour cette journee'**
   String get appointmentsEmpty;
+
+  /// No description provided for @appointmentsUpcomingEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prochain rendez-vous'**
+  String get appointmentsUpcomingEmpty;
 
   /// No description provided for @appointmentCreateTitle.
   ///
@@ -1083,6 +1095,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Tres grand'**
   String get settingsFontSizeExtraLarge;
+
+  /// No description provided for @settingsDefaultSessionLength.
+  ///
+  /// In fr, this message translates to:
+  /// **'Duree de seance par defaut'**
+  String get settingsDefaultSessionLength;
+
+  /// No description provided for @settingsSessionLength30m.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 min'**
+  String get settingsSessionLength30m;
+
+  /// No description provided for @settingsSessionLength45m.
+  ///
+  /// In fr, this message translates to:
+  /// **'45 min'**
+  String get settingsSessionLength45m;
+
+  /// No description provided for @settingsSessionLength1h.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 h'**
+  String get settingsSessionLength1h;
+
+  /// No description provided for @settingsSessionLength1h30.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 h 30'**
+  String get settingsSessionLength1h30;
+
+  /// No description provided for @settingsSessionLength2h.
+  ///
+  /// In fr, this message translates to:
+  /// **'2 h'**
+  String get settingsSessionLength2h;
 
   /// No description provided for @settingsTemplates.
   ///

@@ -30,12 +30,16 @@ class AppointmentListRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final appointment = item.appointment;
     final muted = appointment.isCancelled;
+    final isToday = DateUtils.isSameDay(appointment.startsAt, DateTime.now());
     final timeFormat = DateFormat.Hm();
     final start = timeFormat.format(appointment.startsAt);
     final end = appointment.endsAt != null
         ? timeFormat.format(appointment.endsAt!)
         : null;
-    final timeLabel = end == null ? start : '$start – $end';
+    final timeRange = end == null ? start : '$start – $end';
+    final timeLabel = isToday
+        ? timeRange
+        : '${DateFormat.MMMd().format(appointment.startsAt)}\n$timeRange';
 
     final statusLabel = switch (appointment.status) {
       AppointmentStatus.cancelled => l10n.appointmentStatusCancelled,
@@ -52,7 +56,7 @@ class AppointmentListRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 72,
+              width: 88,
               child: AppText(
                 timeLabel,
                 variant: AppTextVariant.body,

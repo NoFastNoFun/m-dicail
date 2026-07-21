@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/appointment/presentation/appointment_bloc.dart';
+import 'package:medicail/features/appointment/presentation/appointment_change_notifier.dart';
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
 import 'package:medicail/widget/app_button.dart';
@@ -20,15 +22,41 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<AppointmentBloc>()
-        ..add(AppointmentsDayRequested(DateTime.now())),
+      create: (_) =>
+          getIt<AppointmentBloc>()..add(const AppointmentsUpcomingRequested()),
       child: const _HomeView(),
     );
   }
 }
 
-class _HomeView extends StatelessWidget {
+class _HomeView extends StatefulWidget {
   const _HomeView();
+
+  @override
+  State<_HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<_HomeView> {
+  List<AppointmentListItem> _lastItems = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    appointmentChangeNotifier.addListener(_onAppointmentsChanged);
+  }
+
+  @override
+  void dispose() {
+    appointmentChangeNotifier.removeListener(_onAppointmentsChanged);
+    super.dispose();
+  }
+
+  void _onAppointmentsChanged() {
+    if (!mounted) return;
+    context.read<AppointmentBloc>().add(
+      const AppointmentsUpcomingRequested(showLoading: false),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +67,13 @@ class _HomeView extends StatelessWidget {
         if (state is AppointmentFailure) {
           AppToast.showError(context, state.message);
         }
-        if (state is AppointmentSaveSuccess) {
-          AppToast.showSuccess(context, l10n.appointmentSaved);
-        }
       },
       builder: (context, state) {
-        final items =
-            state is AppointmentDayLoaded ? state.items : const [];
-        final isLoading = state is AppointmentLoading;
+        if (state is AppointmentDayLoaded) {
+          _lastItems = state.items;
+        }
+        final items = state is AppointmentDayLoaded ? state.items : _lastItems;
+        final isLoading = state is AppointmentLoading && _lastItems.isEmpty;
         final preview = items.take(5).toList();
 
         return AppScaffold(
@@ -58,7 +85,7 @@ class _HomeView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AppText(
-                      l10n.appointmentsTodayTitle,
+                      l10n.appointmentsUpcomingTitle,
                       variant: AppTextVariant.title,
                     ),
                   ),
@@ -85,26 +112,26 @@ class _HomeView extends StatelessWidget {
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : preview.isEmpty
-                        ? Center(
-                            child: AppText(
-                              l10n.appointmentsEmpty,
-                              variant: AppTextVariant.body,
+                    ? Center(
+                        child: AppText(
+                          l10n.appointmentsUpcomingEmpty,
+                          variant: AppTextVariant.body,
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: MainShellScope.scrollPaddingOf(context),
+                        itemCount: preview.length,
+                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final item = preview[index];
+                          return AppointmentListRow(
+                            item: item,
+                            onTap: () => context.goPatientDetail(
+                              item.appointment.patientId,
                             ),
-                          )
-                        : ListView.separated(
-                            itemCount: preview.length,
-                            separatorBuilder: (_, _) =>
-                                const Divider(height: 1),
-                            itemBuilder: (context, index) {
-                              final item = preview[index];
-                              return AppointmentListRow(
-                                item: item,
-                                onTap: () => context.goPatientDetail(
-                                  item.appointment.patientId,
-                                ),
-                              );
-                            },
-                          ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

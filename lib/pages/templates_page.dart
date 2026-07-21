@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -123,6 +124,7 @@ class _TemplatesList extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return ListView(
+      padding: MainShellScope.scrollPaddingOf(context),
       children: [
         AppText(
           l10n.templatesBuiltInSection,

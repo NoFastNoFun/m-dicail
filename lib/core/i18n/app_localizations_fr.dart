@@ -84,6 +84,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appointmentsTodayTitle => 'Rendez-vous du jour';
 
   @override
+  String get appointmentsUpcomingTitle => 'Prochains rendez-vous';
+
+  @override
   String get appointmentsDayTitle => 'Agenda';
 
   @override
@@ -91,6 +94,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get appointmentsEmpty => 'Aucun rendez-vous pour cette journee';
+
+  @override
+  String get appointmentsUpcomingEmpty => 'Aucun prochain rendez-vous';
 
   @override
   String get appointmentCreateTitle => 'Nouveau rendez-vous';
@@ -515,6 +521,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsFontSizeExtraLarge => 'Tres grand';
+
+  @override
+  String get settingsDefaultSessionLength => 'Duree de seance par defaut';
+
+  @override
+  String get settingsSessionLength30m => '30 min';
+
+  @override
+  String get settingsSessionLength45m => '45 min';
+
+  @override
+  String get settingsSessionLength1h => '1 h';
+
+  @override
+  String get settingsSessionLength1h30 => '1 h 30';
+
+  @override
+  String get settingsSessionLength2h => '2 h';
 
   @override
   String get settingsTemplates => 'Modeles';

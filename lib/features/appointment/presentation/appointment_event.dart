@@ -17,6 +17,21 @@ final class AppointmentsDayRequested extends AppointmentEvent {
   List<Object?> get props => [day];
 }
 
+final class AppointmentsUpcomingRequested extends AppointmentEvent {
+  const AppointmentsUpcomingRequested({
+    this.limit = 5,
+    this.horizonDays = 30,
+    this.showLoading = true,
+  });
+
+  final int limit;
+  final int horizonDays;
+  final bool showLoading;
+
+  @override
+  List<Object?> get props => [limit, horizonDays, showLoading];
+}
+
 final class AppointmentSaved extends AppointmentEvent {
   const AppointmentSaved({
     this.id = '',

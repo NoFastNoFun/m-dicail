@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -9,6 +10,7 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
+import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
@@ -38,6 +40,7 @@ class SettingsPage extends StatelessWidget {
           }
 
           return ListView(
+            padding: MainShellScope.scrollPaddingOf(context),
             children: [
               AppSettingsTile(
                 title: l10n.settingsTheme,
@@ -55,6 +58,16 @@ class SettingsPage extends StatelessWidget {
                   selected: state.fontScale,
                   onChanged: (scale) => context.read<SettingsBloc>().add(
                     SettingsFontScaleChanged(scale),
+                  ),
+                ),
+              ),
+              const Divider(),
+              AppSettingsTile(
+                title: l10n.settingsDefaultSessionLength,
+                child: _SessionLengthSelector(
+                  selected: state.defaultSessionLength,
+                  onChanged: (length) => context.read<SettingsBloc>().add(
+                    SettingsDefaultSessionLengthChanged(length),
                   ),
                 ),
               ),
@@ -168,6 +181,37 @@ class _FontScaleSelector extends StatelessWidget {
       minLabel: l10n.settingsFontSizeSmall,
       maxLabel: l10n.settingsFontSizeExtraLarge,
       onChanged: (index) => onChanged(AppFontScale.values[index]),
+    );
+  }
+}
+
+class _SessionLengthSelector extends StatelessWidget {
+  const _SessionLengthSelector({
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final AppSessionLength selected;
+  final ValueChanged<AppSessionLength> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    final stepLabels = [
+      l10n.settingsSessionLength30m,
+      l10n.settingsSessionLength45m,
+      l10n.settingsSessionLength1h,
+      l10n.settingsSessionLength1h30,
+      l10n.settingsSessionLength2h,
+    ];
+
+    return AppSteppedSlider(
+      steps: stepLabels,
+      value: selected.index,
+      minLabel: l10n.settingsSessionLength30m,
+      maxLabel: l10n.settingsSessionLength2h,
+      onChanged: (index) => onChanged(AppSessionLength.values[index]),
     );
   }
 }
