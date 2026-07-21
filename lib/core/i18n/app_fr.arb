@@ -24,6 +24,41 @@
   "recordStatusPaused": "Ecoute en pause",
   "recordStatusEnded": "Session terminee",
   "historyEmpty": "Aucune note pour le moment",
+  "appointmentsTodayTitle": "Rendez-vous du jour",
+  "appointmentsDayTitle": "Agenda",
+  "appointmentsSeeAll": "Voir tout",
+  "appointmentsEmpty": "Aucun rendez-vous pour cette journee",
+  "appointmentCreateTitle": "Nouveau rendez-vous",
+  "appointmentEditTitle": "Modifier le rendez-vous",
+  "appointmentCreateSubmit": "Creer le rendez-vous",
+  "appointmentSaveChanges": "Enregistrer",
+  "appointmentSaved": "Rendez-vous enregistre",
+  "appointmentEdit": "Modifier",
+  "appointmentCancel": "Annuler",
+  "appointmentDelete": "Supprimer",
+  "appointmentNotesLabel": "Notes",
+  "appointmentPatientRequired": "Selectionnez un patient",
+  "appointmentEndBeforeStart": "L'heure de fin doit etre apres l'heure de debut",
+  "appointmentKeepPatientHint": "Laissez le patient actuel, ou choisissez-en un autre ci-dessous.",
+  "appointmentStatusScheduled": "Planifie",
+  "appointmentStatusCancelled": "Annule",
+  "appointmentStatusCompleted": "Termine",
+  "appointmentStartTime": "Debut {time}",
+  "@appointmentStartTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "appointmentEndTime": "Fin {time}",
+  "@appointmentEndTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "patientsTitle": "Patients",
   "patientsSectionTitle": "Dossiers patients",
   "patientsEmpty": "Aucun patient pour le moment",

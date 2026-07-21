@@ -81,6 +81,75 @@ class AppLocalizationsFr extends AppLocalizations {
   String get historyEmpty => 'Aucune note pour le moment';
 
   @override
+  String get appointmentsTodayTitle => 'Rendez-vous du jour';
+
+  @override
+  String get appointmentsDayTitle => 'Agenda';
+
+  @override
+  String get appointmentsSeeAll => 'Voir tout';
+
+  @override
+  String get appointmentsEmpty => 'Aucun rendez-vous pour cette journee';
+
+  @override
+  String get appointmentCreateTitle => 'Nouveau rendez-vous';
+
+  @override
+  String get appointmentEditTitle => 'Modifier le rendez-vous';
+
+  @override
+  String get appointmentCreateSubmit => 'Creer le rendez-vous';
+
+  @override
+  String get appointmentSaveChanges => 'Enregistrer';
+
+  @override
+  String get appointmentSaved => 'Rendez-vous enregistre';
+
+  @override
+  String get appointmentEdit => 'Modifier';
+
+  @override
+  String get appointmentCancel => 'Annuler';
+
+  @override
+  String get appointmentDelete => 'Supprimer';
+
+  @override
+  String get appointmentNotesLabel => 'Notes';
+
+  @override
+  String get appointmentPatientRequired => 'Selectionnez un patient';
+
+  @override
+  String get appointmentEndBeforeStart =>
+      'L\'heure de fin doit etre apres l\'heure de debut';
+
+  @override
+  String get appointmentKeepPatientHint =>
+      'Laissez le patient actuel, ou choisissez-en un autre ci-dessous.';
+
+  @override
+  String get appointmentStatusScheduled => 'Planifie';
+
+  @override
+  String get appointmentStatusCancelled => 'Annule';
+
+  @override
+  String get appointmentStatusCompleted => 'Termine';
+
+  @override
+  String appointmentStartTime(String time) {
+    return 'Debut $time';
+  }
+
+  @override
+  String appointmentEndTime(String time) {
+    return 'Fin $time';
+  }
+
+  @override
   String get patientsTitle => 'Patients';
 
   @override
