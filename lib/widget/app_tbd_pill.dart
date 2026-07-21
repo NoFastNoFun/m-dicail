@@ -22,7 +22,7 @@ class AppTbdPill extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: AppRadius.smBorder,
+        borderRadius: AppRadius.pillBorder,
         border: Border.all(color: theme.dividerColor),
       ),
       child: AppText(

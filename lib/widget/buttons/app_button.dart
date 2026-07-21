@@ -183,7 +183,7 @@ class AppButton extends StatelessWidget {
         return resolved;
       }
     }
-    return RoundedRectangleBorder(borderRadius: AppRadius.mdBorder);
+    return AppRadius.pillShape;
   }
 
   ButtonStyle _buttonStyle(

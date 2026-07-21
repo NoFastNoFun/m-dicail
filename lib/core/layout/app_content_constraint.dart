@@ -31,12 +31,18 @@ class AppContentConstraint extends StatelessWidget {
       );
     }
 
-    return Align(
-      alignment: alignment,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: cappedWidth),
-        child: SizedBox(width: double.infinity, child: content),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxW = constraints.maxWidth;
+        final width = !maxW.isFinite || maxW <= 0
+            ? cappedWidth
+            : maxW.clamp(0.0, cappedWidth);
+
+        return Align(
+          alignment: alignment,
+          child: SizedBox(width: width, child: content),
+        );
+      },
     );
   }
 }

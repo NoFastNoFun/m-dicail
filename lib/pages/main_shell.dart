@@ -19,6 +19,7 @@ import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
+import 'package:medicail/widget/layout/app_side_nav_rail.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -190,6 +191,14 @@ class _MainShellState extends State<MainShell> {
     }
   }
 
+  void _scheduleNavLabelReset() {
+    if (_navLabelsVisible) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _resetNavLabels();
+    });
+  }
+
   void _onDestinationSelected(String route) {
     if (route == AppRoutes.patients) {
       final tutorialBloc = context.read<TutorialBloc>();
@@ -292,55 +301,6 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  Widget _buildSideRail({
-    required ThemeData theme,
-    required List<AppBottomNavDestination> destinations,
-    required String location,
-  }) {
-    final selectedIndex = destinations.indexWhere((d) => d.route == location);
-    final safeIndex = selectedIndex < 0 ? 0 : selectedIndex;
-
-    return Material(
-      color: theme.colorScheme.surface,
-      child: SafeArea(
-        right: false,
-        child: SizedBox(
-          width: MainShellChrome.sideRailWidth,
-          child: NavigationRail(
-            selectedIndex: safeIndex,
-            backgroundColor: theme.colorScheme.surface,
-            indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.16),
-            selectedIconTheme: IconThemeData(color: theme.colorScheme.primary),
-            unselectedIconTheme: IconThemeData(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-            ),
-            selectedLabelTextStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelTextStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-            ),
-            labelType: NavigationRailLabelType.all,
-            onDestinationSelected: (index) {
-              _onDestinationSelected(destinations[index].route);
-            },
-            destinations: [
-              for (final dest in destinations)
-                NavigationRailDestination(
-                  icon: dest.wrapper != null
-                      ? dest.wrapper!(Icon(dest.icon))
-                      : Icon(dest.icon),
-                  selectedIcon: Icon(dest.selectedIcon),
-                  label: Text(dest.label),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -351,7 +311,8 @@ class _MainShellState extends State<MainShell> {
 
     if (_lastLocation != location) {
       _lastLocation = location;
-      _resetNavLabels();
+      // Never setState during build — it corrupts mouse tracking on desktop.
+      _scheduleNavLabelReset();
       if (location == AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
       }
@@ -375,10 +336,10 @@ class _MainShellState extends State<MainShell> {
         ? Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildSideRail(
-                theme: theme,
+              AppSideNavRail(
                 destinations: destinations,
-                location: location,
+                selectedRoute: location,
+                onDestinationSelected: _onDestinationSelected,
               ),
               VerticalDivider(
                 width: 1,
@@ -389,7 +350,7 @@ class _MainShellState extends State<MainShell> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    pageBody,
+                    Positioned.fill(child: pageBody),
                     Positioned(
                       right: AppSpacing.xl,
                       bottom: AppSpacing.xl,
@@ -403,7 +364,7 @@ class _MainShellState extends State<MainShell> {
         : Stack(
             fit: StackFit.expand,
             children: [
-              pageBody,
+              Positioned.fill(child: pageBody),
               Positioned(
                 left: 0,
                 right: 0,
