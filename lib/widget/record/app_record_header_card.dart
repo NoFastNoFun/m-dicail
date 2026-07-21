@@ -5,7 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/record/app_record_toggle_button.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 
 class AppRecordHeaderCard extends StatelessWidget {
   const AppRecordHeaderCard({
@@ -26,6 +26,8 @@ class AppRecordHeaderCard extends StatelessWidget {
     this.menuShowcaseTitle,
     this.menuShowcaseDescription,
     this.onMenuShowcaseTargetClick,
+    this.cardBorderRadius = AppRadius.mdBorder,
+    this.controlBorderRadius = AppRadius.smBorder,
   });
 
   final String dateLabel;
@@ -44,6 +46,8 @@ class AppRecordHeaderCard extends StatelessWidget {
   final String? menuShowcaseTitle;
   final String? menuShowcaseDescription;
   final VoidCallback? onMenuShowcaseTargetClick;
+  final BorderRadius cardBorderRadius;
+  final BorderRadius controlBorderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +58,7 @@ class AppRecordHeaderCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: AppRadius.mdBorder,
+        borderRadius: cardBorderRadius,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,6 +105,7 @@ class AppRecordHeaderCard extends StatelessWidget {
               _SideControlButton(
                 icon: Icons.logout,
                 backgroundColor: controlSurface,
+                borderRadius: controlBorderRadius,
                 onPressed: onBack,
               ),
               const SizedBox(width: AppSpacing.md),
@@ -114,7 +119,7 @@ class AppRecordHeaderCard extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.md),
               if (menuKey != null)
-                Showcase(
+                AppShowcase(
                   key: menuKey!,
                   title: menuShowcaseTitle,
                   description: menuShowcaseDescription,
@@ -124,6 +129,7 @@ class AppRecordHeaderCard extends StatelessWidget {
                   child: _RecordMenuButton(
                     menuButtonKey: menuButtonKey,
                     backgroundColor: controlSurface,
+                    borderRadius: controlBorderRadius,
                     items: menuItems,
                   ),
                 )
@@ -131,6 +137,7 @@ class AppRecordHeaderCard extends StatelessWidget {
                 _RecordMenuButton(
                   menuButtonKey: menuButtonKey,
                   backgroundColor: controlSurface,
+                  borderRadius: controlBorderRadius,
                   items: menuItems,
                 ),
             ],
@@ -185,22 +192,24 @@ class _SideControlButton extends StatelessWidget {
   const _SideControlButton({
     required this.icon,
     required this.backgroundColor,
+    required this.borderRadius,
     required this.onPressed,
   });
 
   final IconData icon;
   final Color backgroundColor;
+  final BorderRadius borderRadius;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: backgroundColor,
-      borderRadius: AppRadius.smBorder,
+      borderRadius: borderRadius,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: AppRadius.smBorder,
+        borderRadius: borderRadius,
         child: SizedBox(
           width: AppSpacing.minTouchTarget,
           height: AppSpacing.minTouchTarget,
@@ -214,11 +223,13 @@ class _SideControlButton extends StatelessWidget {
 class _RecordMenuButton extends StatelessWidget {
   const _RecordMenuButton({
     required this.backgroundColor,
+    required this.borderRadius,
     required this.items,
     this.menuButtonKey,
   });
 
   final Color backgroundColor;
+  final BorderRadius borderRadius;
   final List<AppRecordMenuItem> items;
   final GlobalKey<PopupMenuButtonState<int>>? menuButtonKey;
 
@@ -228,7 +239,7 @@ class _RecordMenuButton extends StatelessWidget {
 
     return Material(
       color: backgroundColor,
-      borderRadius: AppRadius.smBorder,
+      borderRadius: borderRadius,
       clipBehavior: Clip.antiAlias,
       child: PopupMenuButton<int>(
         key: menuButtonKey,

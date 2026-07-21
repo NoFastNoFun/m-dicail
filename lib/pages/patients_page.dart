@@ -17,7 +17,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -109,7 +109,7 @@ class _PatientsViewState extends State<_PatientsView> {
         return AppScaffold(
           title: l10n.patientsTitle,
           actions: [
-            Showcase(
+            AppShowcase(
               key: _addPatientKey,
               title: l10n.tutorialPatientAddTitle,
               description: l10n.tutorialPatientAddDesc,

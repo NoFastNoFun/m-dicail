@@ -18,6 +18,7 @@ import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class MainShell extends StatefulWidget {
@@ -219,7 +220,7 @@ class _MainShellState extends State<MainShell> {
         icon: Icons.folder_outlined,
         selectedIcon: Icons.folder,
         label: l10n.patientsTitle,
-        wrapper: (child) => Showcase(
+        wrapper: (child) => AppShowcase(
           key: _patientsNavKey,
           title: l10n.tutorialHomePatientsTitle,
           description: l10n.tutorialHomePatientsDesc,
@@ -275,7 +276,7 @@ class _MainShellState extends State<MainShell> {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.only(right: AppSpacing.lg),
-                          child: Showcase(
+                          child: AppShowcase(
                             key: _quickRecordKey,
                             title: l10n.tutorialHomeRecordTitle,
                             description: l10n.tutorialHomeRecordDesc,

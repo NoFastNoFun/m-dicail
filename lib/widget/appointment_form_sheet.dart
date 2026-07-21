@@ -234,7 +234,7 @@ class _AppointmentFormSheetState extends State<AppointmentFormSheet> {
       listener: _onAppointmentStateChanged,
       child: Material(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: AppRadius.lgBorder,
         child: SafeArea(
           top: false,
           child: Padding(

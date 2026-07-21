@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 
 enum AppRadialActionAnchor { center, end }
@@ -162,7 +163,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             elevation: 6,
-            shape: const CircleBorder(),
+            shape: AppRadius.stadiumBorder,
             child: AnimatedRotation(
               turns: _isOpen ? 0.125 : 0,
               duration: const Duration(milliseconds: 200),
@@ -205,10 +206,10 @@ class _SatelliteButton extends StatelessWidget {
         elevation: 4,
         shadowColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
         color: theme.colorScheme.surface,
-        shape: const CircleBorder(),
+        shape: AppRadius.stadiumBorder,
         child: InkWell(
           onTap: onTap,
-          customBorder: const CircleBorder(),
+          customBorder: AppRadius.stadiumBorder,
           child: SizedBox(
             width: 48,
             height: 48,

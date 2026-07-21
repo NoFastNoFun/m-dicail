@@ -17,7 +17,7 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -168,7 +168,7 @@ class _PatientDetailView extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppSpacing.lg),
-        Showcase(
+        AppShowcase(
           key: consultKey,
           title: l10n.tutorialDetailConsultTitle,
           description: l10n.tutorialDetailConsultDesc,

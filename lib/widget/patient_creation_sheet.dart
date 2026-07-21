@@ -12,6 +12,7 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
@@ -202,6 +203,12 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isTutorial =
+        context.watch<TutorialBloc>().state is TutorialInProgress;
+    final sheetBorderRadius =
+        isTutorial ? AppRadius.onboardingLgBorder : AppRadius.lgBorder;
+    final fieldBorderRadius =
+        isTutorial ? AppRadius.onboardingMdBorder : AppRadius.mdBorder;
 
     return BlocListener<PatientBloc, PatientState>(
       listener: (context, state) {
@@ -217,9 +224,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       child: BlocListener<TutorialBloc, TutorialState>(
         listener: (context, state) => _handleTutorialState(state),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: sheetBorderRadius,
           ),
           padding: const EdgeInsets.only(
             bottom: AppSpacing.lg,
@@ -239,7 +246,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                     variant: AppTextVariant.title,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Showcase(
+                  AppShowcase(
                     key: _mrnKey,
                     title: l10n.tutorialPatientMrnTitle,
                     description: l10n.tutorialPatientMrnDesc,
@@ -261,7 +268,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                   Row(
                     children: [
                       Expanded(
-                        child: Showcase(
+                        child: AppShowcase(
                           key: _firstNameKey,
                           title: l10n.tutorialPatientFirstNameTitle,
                           description: l10n.tutorialPatientFirstNameDesc,
@@ -283,7 +290,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                       ),
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
-                        child: Showcase(
+                        child: AppShowcase(
                           key: _lastNameKey,
                           title: l10n.tutorialPatientLastNameTitle,
                           description: l10n.tutorialPatientLastNameDesc,
@@ -315,7 +322,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                             decoration: InputDecoration(
                               labelText: l10n.patientBirthDateLabel,
                               border: OutlineInputBorder(
-                                borderRadius: AppRadius.mdBorder,
+                                borderRadius: fieldBorderRadius,
                               ),
                             ),
                             child: Text(
@@ -332,7 +339,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                           decoration: InputDecoration(
                             labelText: l10n.patientSexLabel,
                             border: OutlineInputBorder(
-                              borderRadius: AppRadius.mdBorder,
+                              borderRadius: fieldBorderRadius,
                             ),
                           ),
                           child: DropdownButtonHideUnderline(
@@ -389,7 +396,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                   const SizedBox(height: AppSpacing.lg),
                   BlocBuilder<PatientBloc, PatientState>(
                     builder: (context, state) {
-                      return Showcase(
+                      return AppShowcase(
                         key: _submitKey,
                         title: l10n.tutorialPatientCreateTitle,
                         description: l10n.tutorialPatientCreateDesc,
