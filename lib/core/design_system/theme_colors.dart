@@ -30,7 +30,7 @@ extension MedicailHighContrastTheme on ThemeData {
     );
   }
 
-  /// Squircle radii for tutorial/onboarding UI that should not use global pills.
+  /// Softened radii for tutorial/onboarding UI (buttons stay rectangular here).
   ThemeData get withOnboardingShapes {
     final inputTheme = inputDecorationTheme;
     final borderSide = inputTheme.enabledBorder?.borderSide ??

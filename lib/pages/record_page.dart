@@ -511,7 +511,7 @@ class _RecordViewState extends State<_RecordView> {
                                       : AppRadius.mdBorder,
                                   controlBorderRadius: isTutorial
                                       ? AppRadius.onboardingSmBorder
-                                      : AppRadius.smBorder,
+                                      : AppRadius.pillBorder,
                                   dateLabel: dateLabel,
                                   sessionTitle: _patientName,
                                   templateLabel:

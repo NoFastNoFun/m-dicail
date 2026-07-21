@@ -53,6 +53,11 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
       parent: _controller,
       curve: Curves.easeOutBack,
     );
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed && mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -109,55 +114,55 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     final theme = Theme.of(context);
     final actionCount = widget.actions.length;
     final arc = _arcAngles;
+    final showSatellites = _isOpen || _controller.value > 0;
 
     return SizedBox(
       width: _width,
-      height: _isOpen ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
+      height: showSatellites ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: _stackAlignment,
         children: [
-          if (_isOpen)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: _close,
-                behavior: HitTestBehavior.translucent,
-                child: const SizedBox.expand(),
-              ),
-            ),
-          for (var i = 0; i < actionCount; i++)
-            AnimatedBuilder(
-              animation: _expandAnimation,
-              builder: (context, child) {
-                final progress = _expandAnimation.value;
-                final motionProgress = progress.clamp(0.0, 1.0);
-                final angle = arc.startAngle +
-                    (arc.endAngle - arc.startAngle) *
-                        (i / (actionCount - 1).clamp(1, 999));
-                final dx = math.cos(angle) * _orbitRadius * motionProgress;
-                final dy = math.sin(angle) * _orbitRadius * motionProgress;
-                final edgeInset = (_fabSize - _satelliteSize) / 2;
+          if (showSatellites)
+            for (var i = 0; i < actionCount; i++)
+              AnimatedBuilder(
+                animation: _expandAnimation,
+                builder: (context, child) {
+                  final progress = _expandAnimation.value;
+                  final motionProgress = progress.clamp(0.0, 1.0);
+                  final angle = arc.startAngle +
+                      (arc.endAngle - arc.startAngle) *
+                          (i / (actionCount - 1).clamp(1, 999));
+                  final dx = math.cos(angle) * _orbitRadius * motionProgress;
+                  final dy = math.sin(angle) * _orbitRadius * motionProgress;
+                  final edgeInset = (_fabSize - _satelliteSize) / 2;
+                  final interactive = progress > 0.05;
 
-                return switch (widget.anchor) {
-                  AppRadialActionAnchor.center => Positioned(
-                      bottom: edgeInset - dy,
-                      left: (_orbitRadius + _fabSize / 2) +
-                          dx -
-                          _satelliteSize / 2,
-                      child: _animatedSatellite(progress, child),
-                    ),
-                  AppRadialActionAnchor.end => Positioned(
-                      bottom: edgeInset - dy,
-                      right: edgeInset - dx,
-                      child: _animatedSatellite(progress, child),
-                    ),
-                };
-              },
-              child: _SatelliteButton(
-                action: widget.actions[i],
-                onTap: () => _onActionTap(widget.actions[i].onTap),
+                  final satellite = IgnorePointer(
+                    ignoring: !interactive,
+                    child: _animatedSatellite(progress, child),
+                  );
+
+                  return switch (widget.anchor) {
+                    AppRadialActionAnchor.center => Positioned(
+                        bottom: edgeInset - dy,
+                        left: (_orbitRadius + _fabSize / 2) +
+                            dx -
+                            _satelliteSize / 2,
+                        child: satellite,
+                      ),
+                    AppRadialActionAnchor.end => Positioned(
+                        bottom: edgeInset - dy,
+                        right: edgeInset - dx,
+                        child: satellite,
+                      ),
+                  };
+                },
+                child: _SatelliteButton(
+                  action: widget.actions[i],
+                  onTap: () => _onActionTap(widget.actions[i].onTap),
+                ),
               ),
-            ),
           FloatingActionButton(
             onPressed: _toggle,
             backgroundColor: theme.colorScheme.primary,

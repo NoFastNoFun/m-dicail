@@ -25,11 +25,11 @@ class AppRecordToggleButton extends StatelessWidget {
 
     return Material(
       color: AppColors.error,
-      borderRadius: AppRadius.mdBorder,
+      borderRadius: AppRadius.pillBorder,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: effectiveOnPressed,
-        borderRadius: AppRadius.mdBorder,
+        borderRadius: AppRadius.pillBorder,
         child: SizedBox(
           height: _height,
           child: Center(
