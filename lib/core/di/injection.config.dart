@@ -31,6 +31,16 @@ import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
+import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
+    as _i587;
+import 'package:medicail/features/appointment/data/repositories/dynamic_appointment_repository.dart'
+    as _i800;
+import 'package:medicail/features/appointment/data/repositories/secure_storage_appointment_repository.dart'
+    as _i326;
+import 'package:medicail/features/appointment/domain/repositories/appointment_repository.dart'
+    as _i885;
+import 'package:medicail/features/appointment/presentation/appointment_bloc.dart'
+    as _i54;
 import 'package:medicail/features/auth/data/repositories/auth_repository_impl.dart'
     as _i985;
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
@@ -119,6 +129,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
+    gh.factory<_i326.SecureStorageAppointmentRepository>(
+      () => _i326.SecureStorageAppointmentRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.factory<_i830.SecureStoragePatientRepository>(
       () => _i830.SecureStoragePatientRepository(
         gh<_i558.FlutterSecureStorage>(),
@@ -174,6 +189,9 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i587.ApiAppointmentRepository>(
+      () => _i587.ApiAppointmentRepository(gh<_i1005.ApiClient>()),
+    );
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
     );
@@ -186,6 +204,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i790.AuthRepository>(
       () => _i985.AuthRepositoryImpl(
         gh<_i1005.ApiClient>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i885.AppointmentRepository>(
+      () => _i800.DynamicAppointmentRepository(
+        gh<_i587.ApiAppointmentRepository>(),
+        gh<_i326.SecureStorageAppointmentRepository>(),
         gh<_i760.AuthTokenStorage>(),
       ),
     );
@@ -231,6 +256,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i306.TutorialBloc(
         gh<_i79.TutorialRepository>(),
         gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
+    gh.factory<_i54.AppointmentBloc>(
+      () => _i54.AppointmentBloc(
+        gh<_i885.AppointmentRepository>(),
+        gh<_i390.PatientRepository>(),
       ),
     );
     gh.factory<_i802.PatientDetailBloc>(
