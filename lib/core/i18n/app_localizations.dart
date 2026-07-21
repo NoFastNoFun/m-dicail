@@ -238,6 +238,144 @@ abstract class AppLocalizations {
   /// **'Aucune note pour le moment'**
   String get historyEmpty;
 
+  /// No description provided for @appointmentsTodayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendez-vous du jour'**
+  String get appointmentsTodayTitle;
+
+  /// No description provided for @appointmentsUpcomingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochains rendez-vous'**
+  String get appointmentsUpcomingTitle;
+
+  /// No description provided for @appointmentsDayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agenda'**
+  String get appointmentsDayTitle;
+
+  /// No description provided for @appointmentsSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tout'**
+  String get appointmentsSeeAll;
+
+  /// No description provided for @appointmentsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun rendez-vous pour cette journee'**
+  String get appointmentsEmpty;
+
+  /// No description provided for @appointmentsUpcomingEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prochain rendez-vous'**
+  String get appointmentsUpcomingEmpty;
+
+  /// No description provided for @appointmentCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau rendez-vous'**
+  String get appointmentCreateTitle;
+
+  /// No description provided for @appointmentEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le rendez-vous'**
+  String get appointmentEditTitle;
+
+  /// No description provided for @appointmentCreateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le rendez-vous'**
+  String get appointmentCreateSubmit;
+
+  /// No description provided for @appointmentSaveChanges.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get appointmentSaveChanges;
+
+  /// No description provided for @appointmentSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendez-vous enregistre'**
+  String get appointmentSaved;
+
+  /// No description provided for @appointmentEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get appointmentEdit;
+
+  /// No description provided for @appointmentCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get appointmentCancel;
+
+  /// No description provided for @appointmentDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get appointmentDelete;
+
+  /// No description provided for @appointmentNotesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get appointmentNotesLabel;
+
+  /// No description provided for @appointmentPatientRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Selectionnez un patient'**
+  String get appointmentPatientRequired;
+
+  /// No description provided for @appointmentEndBeforeStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'heure de fin doit etre apres l\'heure de debut'**
+  String get appointmentEndBeforeStart;
+
+  /// No description provided for @appointmentKeepPatientHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Laissez le patient actuel, ou choisissez-en un autre ci-dessous.'**
+  String get appointmentKeepPatientHint;
+
+  /// No description provided for @appointmentStatusScheduled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifie'**
+  String get appointmentStatusScheduled;
+
+  /// No description provided for @appointmentStatusCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annule'**
+  String get appointmentStatusCancelled;
+
+  /// No description provided for @appointmentStatusCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Termine'**
+  String get appointmentStatusCompleted;
+
+  /// No description provided for @appointmentStartTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Debut {time}'**
+  String appointmentStartTime(String time);
+
+  /// No description provided for @appointmentEndTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin {time}'**
+  String appointmentEndTime(String time);
+
   /// No description provided for @patientsTitle.
   ///
   /// In fr, this message translates to:
@@ -957,6 +1095,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Tres grand'**
   String get settingsFontSizeExtraLarge;
+
+  /// No description provided for @settingsDefaultSessionLength.
+  ///
+  /// In fr, this message translates to:
+  /// **'Duree de seance par defaut'**
+  String get settingsDefaultSessionLength;
+
+  /// No description provided for @settingsSessionLength30m.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 min'**
+  String get settingsSessionLength30m;
+
+  /// No description provided for @settingsSessionLength45m.
+  ///
+  /// In fr, this message translates to:
+  /// **'45 min'**
+  String get settingsSessionLength45m;
+
+  /// No description provided for @settingsSessionLength1h.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 h'**
+  String get settingsSessionLength1h;
+
+  /// No description provided for @settingsSessionLength1h30.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 h 30'**
+  String get settingsSessionLength1h30;
+
+  /// No description provided for @settingsSessionLength2h.
+  ///
+  /// In fr, this message translates to:
+  /// **'2 h'**
+  String get settingsSessionLength2h;
 
   /// No description provided for @settingsTemplates.
   ///

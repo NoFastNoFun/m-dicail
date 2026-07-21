@@ -14,9 +14,11 @@ import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/buttons/app_radial_action_button.dart';
+import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class MainShell extends StatefulWidget {
@@ -25,7 +27,8 @@ class MainShell extends StatefulWidget {
   final Widget child;
 
   static EdgeInsets scrollPadding(BuildContext context) {
-    return MainShellChrome.scrollPadding(context);
+    return MainShellScope.maybeOf(context)?.scrollPadding(context) ??
+        EdgeInsets.zero;
   }
 
   @override
@@ -40,6 +43,7 @@ class _MainShellState extends State<MainShell> {
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
   String? _lastLocation;
+  bool _navLabelsVisible = true;
 
   int? _lastSeenTutorialStep;
 
@@ -159,12 +163,36 @@ class _MainShellState extends State<MainShell> {
     context.goRecord();
   }
 
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification ||
+        notification is ScrollEndNotification) {
+      final metrics = notification.metrics;
+      if (!metrics.hasPixels) {
+        return false;
+      }
+
+      final atTop = metrics.pixels <= metrics.minScrollExtent + 8;
+      if (atTop != _navLabelsVisible) {
+        setState(() => _navLabelsVisible = atTop);
+      }
+    }
+
+    return false;
+  }
+
+  void _resetNavLabels() {
+    if (!_navLabelsVisible) {
+      setState(() => _navLabelsVisible = true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final location = GoRouterState.of(context).matchedLocation;
     if (_lastLocation != location) {
       _lastLocation = location;
+      _resetNavLabels();
       if (location == AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
       }
@@ -182,11 +210,17 @@ class _MainShellState extends State<MainShell> {
         label: l10n.homeTitle,
       ),
       AppBottomNavDestination(
+        route: AppRoutes.appointments,
+        icon: Icons.event_outlined,
+        selectedIcon: Icons.event,
+        label: l10n.appointmentsDayTitle,
+      ),
+      AppBottomNavDestination(
         route: AppRoutes.patients,
         icon: Icons.folder_outlined,
         selectedIcon: Icons.folder,
         label: l10n.patientsTitle,
-        wrapper: (child) => Showcase(
+        wrapper: (child) => AppShowcase(
           key: _patientsNavKey,
           title: l10n.tutorialHomePatientsTitle,
           description: l10n.tutorialHomePatientsDesc,
@@ -212,7 +246,10 @@ class _MainShellState extends State<MainShell> {
     ];
 
     return MainShellScope(
+      navLabelsVisible: _navLabelsVisible,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
         resizeToAvoidBottomInset: false,
         body: BlocListener<TutorialBloc, TutorialState>(
           listener: (context, state) => _handleTutorialState(state),
@@ -220,9 +257,8 @@ class _MainShellState extends State<MainShell> {
             fit: StackFit.expand,
             children: [
               Positioned.fill(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: true,
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
                   child: widget.child,
                 ),
               ),
@@ -240,7 +276,7 @@ class _MainShellState extends State<MainShell> {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.only(right: AppSpacing.lg),
-                          child: Showcase(
+                          child: AppShowcase(
                             key: _quickRecordKey,
                             title: l10n.tutorialHomeRecordTitle,
                             description: l10n.tutorialHomeRecordDesc,
@@ -250,6 +286,14 @@ class _MainShellState extends State<MainShell> {
                             child: AppRadialActionButton(
                               anchor: AppRadialActionAnchor.end,
                               actions: [
+                                AppRadialAction(
+                                  icon: Icons.event_outlined,
+                                  label: l10n.appointmentCreateTitle,
+                                  onTap: () => AppointmentFormSheet.show(
+                                    context,
+                                    initialDay: DateTime.now(),
+                                  ),
+                                ),
                                 AppRadialAction(
                                   icon: Icons.folder_outlined,
                                   label: l10n.patientsSectionTitle,
@@ -284,6 +328,7 @@ class _MainShellState extends State<MainShell> {
                           child: AppBottomNavPill(
                             destinations: destinations,
                             selectedRoute: location,
+                            showLabels: _navLabelsVisible,
                             onDestinationSelected: (route) {
                               if (route == AppRoutes.patients) {
                                 final tutorialBloc = context.read<TutorialBloc>();

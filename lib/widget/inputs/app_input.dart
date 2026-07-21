@@ -55,15 +55,26 @@ class AppInput extends StatefulWidget {
 class _AppInputState extends State<AppInput> {
   bool _obscurePassword = true;
 
-  static final _errorBorder = OutlineInputBorder(
-    borderRadius: AppRadius.mdBorder,
-    borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-  );
+  OutlineInputBorder _errorBorder(BorderRadius borderRadius) =>
+      OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+      );
 
-  static final _focusedErrorBorder = OutlineInputBorder(
-    borderRadius: AppRadius.mdBorder,
-    borderSide: const BorderSide(color: AppColors.error, width: 2),
-  );
+  OutlineInputBorder _focusedErrorBorder(BorderRadius borderRadius) =>
+      OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: const BorderSide(color: AppColors.error, width: 2),
+      );
+
+  BorderRadius _inputBorderRadius(BuildContext context) {
+    final enabledBorder =
+        Theme.of(context).inputDecorationTheme.enabledBorder;
+    if (enabledBorder is OutlineInputBorder) {
+      return enabledBorder.borderRadius;
+    }
+    return AppRadius.mdBorder;
+  }
 
   String? _defaultValidator(String? value) {
     final key = switch (widget.variant) {
@@ -81,6 +92,7 @@ class _AppInputState extends State<AppInput> {
   Widget build(BuildContext context) {
     final secondaryColor = context.secondaryTextColor;
     final errorColor = Theme.of(context).colorScheme.error;
+    final borderRadius = _inputBorderRadius(context);
 
     final effectiveValidator = widget.validator ?? _defaultValidator;
     final isPassword = widget.variant == AppInputVariant.password;
@@ -110,8 +122,8 @@ class _AppInputState extends State<AppInput> {
         hintText: widget.hint,
         errorText: widget.errorText,
         errorStyle: AppTypography.caption.copyWith(color: errorColor),
-        errorBorder: _errorBorder,
-        focusedErrorBorder: _focusedErrorBorder,
+        errorBorder: _errorBorder(borderRadius),
+        focusedErrorBorder: _focusedErrorBorder(borderRadius),
         prefixIcon: widget.prefixIcon != null
             ? Icon(widget.prefixIcon, color: secondaryColor)
             : null,
