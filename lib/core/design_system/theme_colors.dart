@@ -60,13 +60,13 @@ extension MedicailHighContrastTheme on ThemeData {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSpacing.minTouchTarget),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
           shape: AppRadius.onboardingMdShape,
         ).merge(filledButtonTheme.style),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSpacing.minTouchTarget),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
           shape: AppRadius.onboardingMdShape,
         ).merge(outlinedButtonTheme.style),
       ),

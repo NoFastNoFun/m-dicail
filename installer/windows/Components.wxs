@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!--
+      Harvest the full Flutter Windows release tree into INSTALLFOLDER,
+      preserving the data/ layout required at runtime.
+      AppPayload bind path is set by scripts/build_windows_msi.ps1.
+    -->
+    <ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
+      <Files Include="!(bindpath.AppPayload)\**">
+        <Exclude Files="**\*.pdb" />
+        <Exclude Files="**\*.exp" />
+        <Exclude Files="**\*.lib" />
+      </Files>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ShortcutComponents">
+      <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Guid="*">
+        <Shortcut
+            Id="ApplicationStartMenuShortcut"
+            Name="Medicail"
+            Description="Assistant clinique pour kinesitherapeutes"
+            Target="[INSTALLFOLDER]medicail.exe"
+            WorkingDirectory="INSTALLFOLDER"
+            Icon="AppIcon.ico" />
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue
+            Root="HKCU"
+            Key="Software\Medicail"
+            Name="StartMenuShortcut"
+            Type="integer"
+            Value="1"
+            KeyPath="yes" />
+      </Component>
+
+      <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="*">
+        <Shortcut
+            Id="ApplicationDesktopShortcut"
+            Name="Medicail"
+            Description="Assistant clinique pour kinesitherapeutes"
+            Target="[INSTALLFOLDER]medicail.exe"
+            WorkingDirectory="INSTALLFOLDER"
+            Icon="AppIcon.ico" />
+        <RegistryValue
+            Root="HKCU"
+            Key="Software\Medicail"
+            Name="DesktopShortcut"
+            Type="integer"
+            Value="1"
+            KeyPath="yes" />
+      </Component>
+
+      <!-- Remember chosen install path for upgrades / support -->
+      <Component Id="InstallPathRegistry" Directory="INSTALLFOLDER" Guid="*">
+        <RegistryValue
+            Root="HKLM"
+            Key="Software\Medicail"
+            Name="InstallDir"
+            Type="string"
+            Value="[INSTALLFOLDER]"
+            KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

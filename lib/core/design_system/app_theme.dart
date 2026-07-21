@@ -216,9 +216,10 @@ abstract final class AppTheme {
         hintStyle: textTheme.bodyLarge?.copyWith(color: textDisabled),
         errorStyle: textTheme.bodySmall?.copyWith(color: error),
       ),
+      // Size.fromHeight sets width to infinity and breaks TextButton + Expanded rows.
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSpacing.minTouchTarget),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
           backgroundColor: primary,
           foregroundColor: onPrimary,
           disabledBackgroundColor: disabled,
@@ -229,7 +230,7 @@ abstract final class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSpacing.minTouchTarget),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
           foregroundColor: primary,
           disabledForegroundColor: textDisabled,
           side: BorderSide(color: primary),
@@ -239,7 +240,7 @@ abstract final class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSpacing.minTouchTarget),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
           foregroundColor: primary,
           disabledForegroundColor: textDisabled,
           textStyle: textTheme.labelLarge,

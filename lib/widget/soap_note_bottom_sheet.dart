@@ -6,6 +6,7 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class SoapNoteBottomSheet extends StatefulWidget {
@@ -30,6 +31,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),
+      constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) => Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,

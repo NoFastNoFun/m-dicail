@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppBottomSheet extends StatelessWidget {
@@ -17,6 +18,13 @@ class AppBottomSheet extends StatelessWidget {
   final Widget child;
   final List<Widget>? actions;
   final bool showDragHandle;
+
+  static BoxConstraints sheetConstraints(BuildContext context) {
+    return BoxConstraints(
+      maxWidth: AppBreakpoints.sheetMaxWidth,
+      maxHeight: MediaQuery.sizeOf(context).height * 0.92,
+    );
+  }
 
   static Future<T?> show<T>(
     BuildContext context, {
@@ -36,6 +44,7 @@ class AppBottomSheet extends StatelessWidget {
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgBorder),
       isScrollControlled: heightFraction != null,
+      constraints: sheetConstraints(context),
       builder: (context) {
         if (builder != null) {
           return builder(context);
