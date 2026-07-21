@@ -18,9 +18,11 @@ import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
 import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
 import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
+import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/di/register_module.dart' as _i91;
 import 'package:medicail/core/network/api_client.dart' as _i1005;
+import 'package:medicail/core/network/auth_token_refresh_client.dart' as _i124;
 import 'package:medicail/core/network/auth_token_storage.dart' as _i760;
 import 'package:medicail/core/network/interceptors/auth_interceptor.dart'
     as _i737;
@@ -28,6 +30,8 @@ import 'package:medicail/core/network/interceptors/error_interceptor.dart'
     as _i479;
 import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
     as _i945;
+import 'package:medicail/core/network/interceptors/token_refresh_interceptor.dart'
+    as _i987;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
@@ -150,6 +154,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i79.TutorialRepository>(
       () => _i511.TutorialRepositoryImpl(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.lazySingleton<_i712.AuthSessionCoordinator>(
+      () => _i712.AuthSessionCoordinator(
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i541.AuthNotifier>(),
+      ),
+      dispose: (i) => i.dispose(),
+    );
     gh.lazySingleton<_i144.NoteTemplateRepository>(
       () => _i93.NoteTemplateRepositoryImpl(
         gh<_i564.AssetNoteTemplateDataSource>(),
@@ -162,8 +173,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i297.NoteTemplateBloc>(
       () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
     );
+    gh.lazySingleton<_i124.AuthTokenRefreshClient>(
+      () => _i124.AuthTokenRefreshClient(gh<_i155.AppConfig>()),
+    );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
+    );
+    gh.lazySingleton<_i987.TokenRefreshInterceptor>(
+      () => _i987.TokenRefreshInterceptor(
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i124.AuthTokenRefreshClient>(),
+        gh<_i712.AuthSessionCoordinator>(),
+      ),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(
@@ -171,6 +192,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i737.AuthInterceptor>(),
         gh<_i945.LoggingInterceptor>(),
         gh<_i479.ErrorInterceptor>(),
+        gh<_i987.TokenRefreshInterceptor>(),
       ),
     );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
@@ -187,6 +209,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i985.AuthRepositoryImpl(
         gh<_i1005.ApiClient>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i250.AuthBloc>(
+      () => _i250.AuthBloc(
+        gh<_i790.AuthRepository>(),
+        gh<_i541.AuthNotifier>(),
+        gh<_i345.AppSessionStorage>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i712.AuthSessionCoordinator>(),
       ),
     );
     gh.lazySingleton<_i390.PatientRepository>(
@@ -209,14 +240,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i341.NoteProcessingRepository>(
       () => _i668.DynamicNoteProcessingRepository(
         gh<_i430.ApiNoteProcessingRepository>(),
-        gh<_i760.AuthTokenStorage>(),
-      ),
-    );
-    gh.factory<_i250.AuthBloc>(
-      () => _i250.AuthBloc(
-        gh<_i790.AuthRepository>(),
-        gh<_i541.AuthNotifier>(),
-        gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
       ),
     );
