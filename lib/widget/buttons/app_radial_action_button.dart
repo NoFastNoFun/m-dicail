@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
-import 'package:medicail/widget/app_text.dart';
 
 enum AppRadialActionAnchor { center, end }
 
@@ -36,7 +36,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     with SingleTickerProviderStateMixin {
   static const double _fabSize = 56;
   static const double _satelliteSize = 48;
-  static const double _orbitRadius = 80;
+  static const double _orbitRadius = 100;
 
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
@@ -163,7 +163,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             elevation: 6,
-            shape: const CircleBorder(),
+            shape: AppRadius.stadiumBorder,
             child: AnimatedRotation(
               turns: _isOpen ? 0.125 : 0,
               duration: const Duration(milliseconds: 200),
@@ -199,35 +199,28 @@ class _SatelliteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Material(
-          elevation: 4,
-          shadowColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-          color: theme.colorScheme.surface,
-          shape: const CircleBorder(),
-          child: InkWell(
-            onTap: onTap,
-            customBorder: const CircleBorder(),
-            child: SizedBox(
-              width: 48,
-              height: 48,
-              child: Icon(
-                action.icon,
-                color: theme.colorScheme.onSurface,
-                size: 22,
-              ),
+    return Tooltip(
+      message: action.label,
+      triggerMode: TooltipTriggerMode.longPress,
+      child: Material(
+        elevation: 4,
+        shadowColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+        color: theme.colorScheme.surface,
+        shape: AppRadius.stadiumBorder,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: AppRadius.stadiumBorder,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(
+              action.icon,
+              color: theme.colorScheme.onSurface,
+              size: 22,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
-        AppText(
-          action.label,
-          variant: AppTextVariant.caption,
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
     );
   }
 }

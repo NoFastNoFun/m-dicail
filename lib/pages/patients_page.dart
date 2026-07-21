@@ -5,6 +5,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
@@ -16,7 +17,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -108,7 +109,7 @@ class _PatientsViewState extends State<_PatientsView> {
         return AppScaffold(
           title: l10n.patientsTitle,
           actions: [
-            Showcase(
+            AppShowcase(
               key: _addPatientKey,
               title: l10n.tutorialPatientAddTitle,
               description: l10n.tutorialPatientAddDesc,
@@ -160,6 +161,7 @@ class _PatientsViewState extends State<_PatientsView> {
                           ),
                         )
                       : ListView.separated(
+                          padding: MainShellScope.scrollPaddingOf(context),
                           itemCount: patients.length,
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: AppSpacing.md),

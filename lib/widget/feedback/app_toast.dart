@@ -98,7 +98,7 @@ class AppToastWidget extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: accent,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(AppRadius.pill),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
