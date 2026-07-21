@@ -1,4 +1,5 @@
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
+import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
 
 abstract class UserPreferencesRepository {
@@ -9,4 +10,8 @@ abstract class UserPreferencesRepository {
   Future<AppFontScale> readFontScale();
 
   Future<void> writeFontScale(AppFontScale scale);
+
+  Future<AppSessionLength> readDefaultSessionLength();
+
+  Future<void> writeDefaultSessionLength(AppSessionLength length);
 }

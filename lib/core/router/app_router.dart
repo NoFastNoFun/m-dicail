@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
+import 'package:medicail/pages/appointments_day_page.dart';
 import 'package:medicail/pages/main_shell.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
@@ -68,6 +69,18 @@ class AppRouter {
             path: AppRoutes.home,
             name: 'home',
             builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.appointments,
+            name: 'appointments',
+            builder: (context, state) {
+              final dateParam = state.uri.queryParameters['date'];
+              DateTime? initialDate;
+              if (dateParam != null && dateParam.isNotEmpty) {
+                initialDate = DateTime.tryParse(dateParam);
+              }
+              return AppointmentsDayPage(initialDate: initialDate);
+            },
           ),
           GoRoute(
             path: AppRoutes.patients,
@@ -144,6 +157,20 @@ extension AppRouterNavigation on BuildContext {
   }
 
   void goPatients() => go(AppRoutes.patients);
+
+  void goAppointments({DateTime? date}) {
+    if (date == null) {
+      push(AppRoutes.appointments);
+      return;
+    }
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    push(Uri(
+      path: AppRoutes.appointments,
+      queryParameters: {'date': '$y-$m-$d'},
+    ).toString());
+  }
 
   void goSettings() => go(AppRoutes.settings);
 

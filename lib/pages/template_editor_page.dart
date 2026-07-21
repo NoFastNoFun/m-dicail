@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -250,6 +251,7 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
       children: [
         Expanded(
           child: ListView(
+            padding: MainShellScope.scrollPaddingOf(context),
             children: [
               for (var index = 0; index < _sections.length; index++)
                 AppTemplateSectionEditor(

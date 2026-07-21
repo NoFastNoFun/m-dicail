@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -24,6 +25,7 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
 import 'package:medicail/widget/templates/template_picker_sheet.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
@@ -493,72 +495,84 @@ class _RecordViewState extends State<_RecordView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Showcase(
-                            key: _recordToggleKey,
-                            title: _currentShowcaseTitle(l10n),
-                            description: _currentShowcaseDescription(l10n),
-                            disposeOnTap: false,
-                            disableBarrierInteraction: true,
-                            onTargetClick: _handleShowcaseTap,
-                            child: AppRecordHeaderCard(
-                              dateLabel: dateLabel,
-                              sessionTitle: _patientName,
-                              templateLabel: viewModel.selectedTemplate == null
-                                  ? l10n.templateNoneLabel
-                                  : l10n.templateActiveLabel(
-                                      viewModel.selectedTemplate!.name,
+                          BlocBuilder<TutorialBloc, TutorialState>(
+                            builder: (context, tutorialState) {
+                              final isTutorial =
+                                  tutorialState is TutorialInProgress;
+                              return AppShowcase(
+                                key: _recordToggleKey,
+                                title: _currentShowcaseTitle(l10n),
+                                description: _currentShowcaseDescription(l10n),
+                                disposeOnTap: false,
+                                disableBarrierInteraction: true,
+                                onTargetClick: _handleShowcaseTap,
+                                child: AppRecordHeaderCard(
+                                  cardBorderRadius: isTutorial
+                                      ? AppRadius.onboardingMdBorder
+                                      : AppRadius.mdBorder,
+                                  controlBorderRadius: isTutorial
+                                      ? AppRadius.onboardingSmBorder
+                                      : AppRadius.smBorder,
+                                  dateLabel: dateLabel,
+                                  sessionTitle: _patientName,
+                                  templateLabel:
+                                      viewModel.selectedTemplate == null
+                                      ? l10n.templateNoneLabel
+                                      : l10n.templateActiveLabel(
+                                          viewModel.selectedTemplate!.name,
+                                        ),
+                                  elapsedLabel: _formatElapsed(_elapsed),
+                                  isRecording: viewModel.isListening,
+                                  isInitializing: viewModel.isInitializing,
+                                  canStart: viewModel.canStart,
+                                  canStop: viewModel.canStop,
+                                  onBack: () => _handleLeaveRequest(context),
+                                  onToggleRecording: () {
+                                    if (viewModel.canStop) {
+                                      _stopRecording();
+                                      return;
+                                    }
+                                    if (viewModel.canStart) {
+                                      _startRecording();
+                                    }
+                                  },
+                                  menuItems: [
+                                    AppRecordMenuItem(
+                                      label: l10n.templatePickerAction,
+                                      enabled: !viewModel.isListening,
+                                      onSelected: () => _pickTemplate(context),
                                     ),
-                              elapsedLabel: _formatElapsed(_elapsed),
-                              isRecording: viewModel.isListening,
-                              isInitializing: viewModel.isInitializing,
-                              canStart: viewModel.canStart,
-                              canStop: viewModel.canStop,
-                              onBack: () => _handleLeaveRequest(context),
-                              onToggleRecording: () {
-                                if (viewModel.canStop) {
-                                  _stopRecording();
-                                  return;
-                                }
-                                if (viewModel.canStart) {
-                                  _startRecording();
-                                }
-                              },
-                              menuItems: [
-                                AppRecordMenuItem(
-                                  label: l10n.templatePickerAction,
-                                  enabled: !viewModel.isListening,
-                                  onSelected: () => _pickTemplate(context),
-                                ),
-                                AppRecordMenuItem(
-                                  label: l10n.buttonFinishConsultation,
-                                  enabled: viewModel.canFinishConsultation,
-                                  onSelected: _finishConsultation,
-                                ),
-                                AppRecordMenuItem(
-                                  label: l10n.buttonClear,
-                                  enabled: viewModel.canClear,
-                                  onSelected: () {
-                                    setState(() {
-                                      _elapsed = Duration.zero;
-                                      _recordingStartedAt = null;
-                                    });
-                                    context.read<VoiceCaptureBloc>().add(
-                                      const VoiceCaptureClearTranscript(),
-                                    );
+                                    AppRecordMenuItem(
+                                      label: l10n.buttonFinishConsultation,
+                                      enabled: viewModel.canFinishConsultation,
+                                      onSelected: _finishConsultation,
+                                    ),
+                                    AppRecordMenuItem(
+                                      label: l10n.buttonClear,
+                                      enabled: viewModel.canClear,
+                                      onSelected: () {
+                                        setState(() {
+                                          _elapsed = Duration.zero;
+                                          _recordingStartedAt = null;
+                                        });
+                                        context.read<VoiceCaptureBloc>().add(
+                                          const VoiceCaptureClearTranscript(),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                  menuKey: _menuKey,
+                                  menuButtonKey: _menuButtonKey,
+                                  menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                                  menuShowcaseDescription:
+                                      _currentShowcaseDescription(l10n),
+                                  onMenuShowcaseTargetClick: () {
+                                    _menuButtonKey.currentState?.showButtonMenu();
+                                    ShowcaseView.get().dismiss();
                                   },
                                 ),
-                              ],
-                              menuKey: _menuKey,
-                              menuButtonKey: _menuButtonKey,
-                              menuShowcaseTitle: _currentShowcaseTitle(l10n),
-                              menuShowcaseDescription: _currentShowcaseDescription(
-                                l10n,
-                              ),
-                              onMenuShowcaseTargetClick: () {
-                                _menuButtonKey.currentState?.showButtonMenu();
-                                ShowcaseView.get().dismiss();
-                              },
-                            ),
+                              );
+                            },
                           ),
                           if (viewModel.errorMessage != null) ...[
                             const SizedBox(height: AppSpacing.md),
@@ -570,7 +584,7 @@ class _RecordViewState extends State<_RecordView> {
                           ],
                           const SizedBox(height: AppSpacing.lg),
                           Expanded(
-                            child: Showcase(
+                            child: AppShowcase(
                               key: _transcriptKey,
                               title: l10n.tutorialRecordTranscriptTitle,
                               description: l10n.tutorialRecordTranscriptDesc,
@@ -599,17 +613,19 @@ class _RecordViewState extends State<_RecordView> {
             if (viewModel.isProcessing)
               Positioned.fill(
                 child: Container(
-                  color: Colors.black54,
+                  color: AppColors.highContrastBlack.withValues(alpha: 0.54),
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(color: Colors.white),
+                        const CircularProgressIndicator(
+                          color: AppColors.highContrastWhite,
+                        ),
                         const SizedBox(height: AppSpacing.md),
                         AppText(
                           "Génération de la note SOAP par l'IA...",
                           variant: AppTextVariant.body,
-                          color: Colors.white,
+                          color: AppColors.highContrastWhite,
                         ),
                       ],
                     ),

@@ -63,7 +63,7 @@ class _RecordIcon extends StatelessWidget {
         height: AppRecordToggleButton._iconSize,
         decoration: BoxDecoration(
           color: AppColors.onError.withValues(alpha: 0.85),
-          borderRadius: BorderRadius.circular(3),
+          borderRadius: BorderRadius.circular(AppRecordToggleButton._iconSize / 2),
         ),
       );
     }

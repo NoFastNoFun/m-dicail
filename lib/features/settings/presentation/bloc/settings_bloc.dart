@@ -14,6 +14,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsLoadRequested>(_onLoadRequested);
     on<SettingsThemeChanged>(_onThemeChanged);
     on<SettingsFontScaleChanged>(_onFontScaleChanged);
+    on<SettingsDefaultSessionLengthChanged>(_onDefaultSessionLengthChanged);
   }
 
   final UserPreferencesRepository _repository;
@@ -27,13 +28,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     final themeVariant = await _repository.readThemeVariant();
     final fontScale = await _repository.readFontScale();
+    final defaultSessionLength = await _repository.readDefaultSessionLength();
 
     _settingsNotifier.setThemeVariant(themeVariant);
     _settingsNotifier.setFontScale(fontScale);
+    _settingsNotifier.setDefaultSessionLength(defaultSessionLength);
 
     emit(SettingsLoaded(
       themeVariant: themeVariant,
       fontScale: fontScale,
+      defaultSessionLength: defaultSessionLength,
     ));
   }
 
@@ -60,6 +64,19 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final current = state;
     if (current is SettingsLoaded) {
       emit(current.copyWith(fontScale: event.scale));
+    }
+  }
+
+  Future<void> _onDefaultSessionLengthChanged(
+    SettingsDefaultSessionLengthChanged event,
+    Emitter<SettingsState> emit,
+  ) async {
+    await _repository.writeDefaultSessionLength(event.length);
+    _settingsNotifier.setDefaultSessionLength(event.length);
+
+    final current = state;
+    if (current is SettingsLoaded) {
+      emit(current.copyWith(defaultSessionLength: event.length));
     }
   }
 }

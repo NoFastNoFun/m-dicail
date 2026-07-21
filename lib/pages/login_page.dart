@@ -57,8 +57,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return AppScaffold(
-      body: BlocListener<AuthBloc, AuthState>(
+    return Theme(
+      data: Theme.of(context).highContrastSurface,
+      child: AppScaffold(
+        body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
             AppToast.showError(context, state.message);
@@ -139,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    ),
     );
   }
 }

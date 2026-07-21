@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:medicail/core/debug/debug_menu.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
+import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppScaffold extends StatelessWidget {
@@ -18,14 +19,32 @@ class AppScaffold extends StatelessWidget {
   final Widget body;
   final List<Widget>? actions;
 
+  static const _shellRootRoutes = {
+    AppRoutes.home,
+    AppRoutes.appointments,
+    AppRoutes.patients,
+    AppRoutes.settings,
+  };
+
+  bool _shouldShowBack(BuildContext context) {
+    if (!context.canPop()) {
+      return false;
+    }
+    if (MainShellScope.isActive(context)) {
+      final location = GoRouterState.of(context).matchedLocation;
+      if (_shellRootRoutes.contains(location)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final canPop = context.canPop();
+    final showBack = _shouldShowBack(context);
 
     final theme = Theme.of(context);
     final insideMainShell = MainShellScope.isActive(context);
-    final floatingBottomPadding =
-        insideMainShell ? MainShellChrome.bottomInset(context) : 0.0;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -34,7 +53,7 @@ class AppScaffold extends StatelessWidget {
         foregroundColor: theme.colorScheme.onSurface,
         title: title != null ? _AppBarTitle(title: title!) : null,
         automaticallyImplyLeading: false,
-        leading: canPop
+        leading: showBack
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
                 color: theme.colorScheme.onSurface,
@@ -50,12 +69,7 @@ class AppScaffold extends StatelessWidget {
         child: SafeArea(
           bottom: !insideMainShell,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.pagePadding,
-              AppSpacing.pagePadding,
-              AppSpacing.pagePadding,
-              AppSpacing.pagePadding + floatingBottomPadding,
-            ),
+            padding: const EdgeInsets.all(AppSpacing.pagePadding),
             child: body,
           ),
         ),
