@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
@@ -27,7 +28,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: AppRadius.lgBorder,
       ),
       builder: (context) => Padding(
         padding: EdgeInsets.only(

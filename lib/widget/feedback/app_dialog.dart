@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 
 enum AppDialogVariant { standard, fullscreen, lockScreen }
@@ -56,32 +58,53 @@ class AppDialog extends StatelessWidget {
     );
   }
 
+  bool get _usesHighContrast =>
+      variant == AppDialogVariant.lockScreen ||
+      variant == AppDialogVariant.fullscreen;
+
+  Color get _backgroundColor =>
+      _usesHighContrast ? AppColors.highContrastWhite : AppColors.background;
+
+  Widget _wrapContent(BuildContext context, Widget content) {
+    if (!_usesHighContrast) {
+      return content;
+    }
+
+    return Theme(
+      data: Theme.of(context).highContrastSurface,
+      child: content,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final content = Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (title != null) ...[
-          AppText(title!, variant: AppTextVariant.title),
-          const SizedBox(height: AppSpacing.md),
+    final content = _wrapContent(
+      context,
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (title != null) ...[
+            AppText(title!, variant: AppTextVariant.title),
+            const SizedBox(height: AppSpacing.md),
+          ],
+          body,
+          if (actions != null && actions!.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.lg),
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: actions!,
+            ),
+          ],
         ],
-        body,
-        if (actions != null && actions!.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: actions!,
-          ),
-        ],
-      ],
+      ),
     );
 
     if (variant == AppDialogVariant.fullscreen) {
       return Dialog.fullscreen(
-        backgroundColor: AppColors.background,
+        backgroundColor: _backgroundColor,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -92,7 +115,10 @@ class AppDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      backgroundColor: AppColors.background,
+      backgroundColor: _backgroundColor,
+      shape: variant == AppDialogVariant.lockScreen
+          ? AppRadius.onboardingMdShape
+          : null,
       contentPadding: const EdgeInsets.all(AppSpacing.lg),
       content: content,
     );

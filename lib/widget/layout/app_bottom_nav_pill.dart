@@ -26,11 +26,13 @@ class AppBottomNavPill extends StatelessWidget {
     required this.destinations,
     required this.selectedRoute,
     required this.onDestinationSelected,
+    this.showLabels = true,
   });
 
   final List<AppBottomNavDestination> destinations;
   final String selectedRoute;
   final ValueChanged<String> onDestinationSelected;
+  final bool showLabels;
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +43,19 @@ class AppBottomNavPill extends StatelessWidget {
       shadowColor: theme.colorScheme.onSurface.withValues(alpha: 0.15),
       shape: const StadiumBorder(),
       color: theme.colorScheme.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          vertical: showLabels ? AppSpacing.sm : AppSpacing.xs,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             for (var i = 0; i < destinations.length; i++) ...[
               if (i > 0) const SizedBox(width: AppSpacing.xs),
-              _buildNavItem(destinations[i]),
+              _buildNavItem(destinations[i], showLabels),
             ],
           ],
         ),
@@ -59,10 +63,11 @@ class AppBottomNavPill extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(AppBottomNavDestination dest) {
+  Widget _buildNavItem(AppBottomNavDestination dest, bool showLabels) {
     final item = _NavItem(
       destination: dest,
       isSelected: dest.route == selectedRoute,
+      showLabel: showLabels,
       onTap: () => onDestinationSelected(dest.route),
     );
     return dest.wrapper != null ? dest.wrapper!(item) : item;
@@ -73,11 +78,13 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
     required this.isSelected,
+    required this.showLabel,
     required this.onTap,
   });
 
   final AppBottomNavDestination destination;
   final bool isSelected;
+  final bool showLabel;
   final VoidCallback onTap;
 
   @override
@@ -99,10 +106,11 @@ class _NavItem extends StatelessWidget {
         customBorder: const StadiumBorder(),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          constraints: const BoxConstraints(minWidth: 72),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+          curve: Curves.easeInOut,
+          constraints: BoxConstraints(minWidth: showLabel ? 72 : 44),
+          padding: EdgeInsets.symmetric(
+            horizontal: showLabel ? AppSpacing.md : AppSpacing.sm,
+            vertical: showLabel ? AppSpacing.sm : AppSpacing.xs,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -112,15 +120,17 @@ class _NavItem extends StatelessWidget {
                 color: isSelected ? foregroundColor : mutedColor,
                 size: 22,
               ),
-              const SizedBox(height: AppSpacing.xs),
-              AppText(
-                destination.label,
-                variant: AppTextVariant.caption,
-                color: isSelected ? foregroundColor : mutedColor,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              if (showLabel) ...[
+                const SizedBox(height: AppSpacing.xs),
+                AppText(
+                  destination.label,
+                  variant: AppTextVariant.caption,
+                  color: isSelected ? foregroundColor : mutedColor,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ],
           ),
         ),

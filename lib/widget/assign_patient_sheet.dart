@@ -17,6 +17,7 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'dart:async';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
+import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
@@ -148,11 +149,15 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
     final l10n = AppLocalizations.of(context);
 
     final theme = Theme.of(context);
+    final isTutorial =
+        context.watch<TutorialBloc>().state is TutorialInProgress;
+    final sheetBorderRadius =
+        isTutorial ? AppRadius.onboardingLgBorder : AppRadius.lgBorder;
 
     return Container(
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: sheetBorderRadius,
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -167,7 +172,7 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: BlocListener<TutorialBloc, TutorialState>(
                 listener: (context, state) => _handleTutorialState(state),
-                child: Showcase(
+                child: AppShowcase(
                   key: _assignPatientTutorialKey,
                   title: l10n.tutorialAssignPatientTitle,
                   description: l10n.tutorialAssignPatientDesc,

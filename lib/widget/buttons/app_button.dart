@@ -66,7 +66,7 @@ class AppButton extends StatelessWidget {
           )
         : _buildContent(colorScheme);
 
-    final buttonStyle = _buttonStyle(colorScheme, expanded: expanded);
+    final buttonStyle = _buttonStyle(context, colorScheme, expanded: expanded);
 
     return switch (layout) {
       AppButtonLayout.text => _wrapSized(
@@ -172,7 +172,25 @@ class AppButton extends StatelessWidget {
       style == AppButtonStyle.error ||
       style == AppButtonStyle.info;
 
-  ButtonStyle _buttonStyle(ColorScheme colorScheme, {required bool expanded}) {
+  RoundedRectangleBorder _resolveButtonShape(BuildContext context) {
+    final themeStyle = _isFilledStyle
+        ? Theme.of(context).filledButtonTheme.style
+        : Theme.of(context).outlinedButtonTheme.style;
+    final resolved = themeStyle?.shape?.resolve(const {});
+    if (resolved is RoundedRectangleBorder) {
+      final radius = resolved.borderRadius.resolve(Directionality.of(context));
+      if (radius.topLeft.x < AppRadius.pill) {
+        return resolved;
+      }
+    }
+    return RoundedRectangleBorder(borderRadius: AppRadius.mdBorder);
+  }
+
+  ButtonStyle _buttonStyle(
+    BuildContext context,
+    ColorScheme colorScheme, {
+    required bool expanded,
+  }) {
     const minimumSize = Size(0, AppSpacing.minTouchTarget);
     final tapTarget = expanded
         ? MaterialTapTargetSize.padded
@@ -208,13 +226,15 @@ class AppButton extends StatelessWidget {
         ),
     };
 
+    final shape = _resolveButtonShape(context);
+
     if (_isFilledStyle) {
       return FilledButton.styleFrom(
         backgroundColor: background,
         foregroundColor: foreground,
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+        shape: shape,
         textStyle: labelStyle,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         minimumSize: minimumSize,
@@ -226,7 +246,7 @@ class AppButton extends StatelessWidget {
       foregroundColor: foreground,
       disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
       side: BorderSide(color: border),
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+      shape: shape,
       textStyle: labelStyle,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       minimumSize: minimumSize,
