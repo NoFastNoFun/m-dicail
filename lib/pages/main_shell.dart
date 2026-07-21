@@ -14,6 +14,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/buttons/app_radial_action_button.dart';
+import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
@@ -250,6 +251,14 @@ class _MainShellState extends State<MainShell> {
                             child: AppRadialActionButton(
                               anchor: AppRadialActionAnchor.end,
                               actions: [
+                                AppRadialAction(
+                                  icon: Icons.event_outlined,
+                                  label: l10n.appointmentCreateTitle,
+                                  onTap: () => AppointmentFormSheet.show(
+                                    context,
+                                    initialDay: DateTime.now(),
+                                  ),
+                                ),
                                 AppRadialAction(
                                   icon: Icons.folder_outlined,
                                   label: l10n.patientsSectionTitle,
