@@ -33,6 +33,14 @@ class AppointmentFormSheet extends StatefulWidget {
     Appointment? existing,
     DateTime? initialDay,
   }) {
+    final day = initialDay ?? existing?.startsAt ?? DateTime.now();
+    AppointmentBloc? parentBloc;
+    try {
+      parentBloc = context.read<AppointmentBloc>();
+    } catch (_) {
+      parentBloc = null;
+    }
+
     return showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
@@ -45,7 +53,13 @@ class AppointmentFormSheet extends StatefulWidget {
           ),
           child: MultiBlocProvider(
             providers: [
-              BlocProvider.value(value: context.read<AppointmentBloc>()),
+              if (parentBloc != null)
+                BlocProvider<AppointmentBloc>.value(value: parentBloc)
+              else
+                BlocProvider(
+                  create: (_) => getIt<AppointmentBloc>()
+                    ..add(AppointmentsDayRequested(day)),
+                ),
               BlocProvider(
                 create: (_) =>
                     getIt<PatientBloc>()..add(const PatientsRequested()),
@@ -53,7 +67,7 @@ class AppointmentFormSheet extends StatefulWidget {
             ],
             child: AppointmentFormSheet(
               existing: existing,
-              initialDay: initialDay,
+              initialDay: day,
             ),
           ),
         );
