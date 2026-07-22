@@ -232,6 +232,36 @@ abstract class AppLocalizations {
   /// **'Session terminee'**
   String get recordStatusEnded;
 
+  /// No description provided for @recordNotificationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en cours'**
+  String get recordNotificationTitle;
+
+  /// No description provided for @recordNotificationBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez pour revenir a Medicail'**
+  String get recordNotificationBody;
+
+  /// No description provided for @recordNotificationBackgroundTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement en arriere-plan'**
+  String get recordNotificationBackgroundTitle;
+
+  /// No description provided for @recordNotificationBackgroundBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'ecoute continue pendant que l\'ecran est eteint'**
+  String get recordNotificationBackgroundBody;
+
+  /// No description provided for @recordStatusTranscribingBackground.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription du passage en veille…'**
+  String get recordStatusTranscribingBackground;
+
   /// No description provided for @historyEmpty.
   ///
   /// In fr, this message translates to:
