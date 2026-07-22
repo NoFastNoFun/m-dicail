@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
+import 'package:medicail/core/audio/background_audio_recorder.dart';
+import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
+import 'package:medicail/core/audio/recording_notification_service.dart';
 import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
@@ -19,6 +24,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     this._audioCaptureService,
     this._recordingSessionRepository,
     this._noteProcessingRepository,
+    this._recordingNotificationService,
+    this._backgroundAudioRecorder,
+    this._offlineAudioTranscriptionService,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -29,18 +37,33 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
     on<VoiceCaptureTranscriptUpdated>(_onTranscriptUpdated);
     on<VoiceCaptureTemplateSelected>(_onTemplateSelected);
+    on<VoiceCaptureAppBackgrounded>(_onAppBackgrounded);
+    on<VoiceCaptureAppForegrounded>(_onAppForegrounded);
   }
 
   final AudioCaptureService _audioCaptureService;
   final RecordingSessionRepository _recordingSessionRepository;
   final NoteProcessingRepository _noteProcessingRepository;
+  final RecordingNotificationService _recordingNotificationService;
+  final BackgroundAudioRecorder _backgroundAudioRecorder;
+  final OfflineAudioTranscriptionService _offlineAudioTranscriptionService;
+
   String _segmentBase = '';
   RecordingSession? _activeSession;
   NoteTemplate? _selectedTemplate;
+  bool _isBackgroundCapture = false;
+  bool _isHandlingLifecycle = false;
 
   List<String> _transitions = const [];
   String _wordPeriod = '';
   String _wordComma = '';
+
+  static const _notificationTitle = 'Ecoute en cours';
+  static const _notificationBody = 'Touchez pour revenir a Medicail';
+  static const _notificationBackgroundTitle =
+      'Enregistrement en arriere-plan';
+  static const _notificationBackgroundBody =
+      "L'ecoute continue pendant que l'ecran est eteint";
 
   Future<void> _onInitialize(
     VoiceCaptureInitializeRequested event,
@@ -48,6 +71,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     try {
       await _audioCaptureService.initialize();
+      await _recordingNotificationService.ensureInitialized();
       emit(const VoiceCaptureReady());
     } catch (error) {
       emit(
@@ -75,13 +99,19 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         currentTranscript,
         patientId: event.patientId,
       );
+      await _recordingNotificationService.start(
+        title: _notificationTitle,
+        body: _notificationBody,
+      );
       await _startListeningSession();
+      _isBackgroundCapture = false;
       emit(RecordingInProgress(
         transcript: currentTranscript,
         selectedTemplate: _selectedTemplate,
       ));
     } catch (error) {
       await _failActiveSession(currentTranscript);
+      await _stopRecordingInfrastructure();
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
@@ -97,7 +127,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     try {
-      await _audioCaptureService.stopListening();
+      await _stopCaptureForUserPause();
       await _saveActiveSessionTranscript(_currentTranscript);
       _segmentBase = '';
       emit(ListeningPaused(
@@ -122,14 +152,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     final transcript = _currentTranscript;
     final sessionId = _activeSession?.id ?? '';
-    
+
     if (sessionId.isEmpty) {
       emit(VoiceCaptureFailure('Aucune session active', transcript: transcript));
       return;
     }
 
     try {
-      await _audioCaptureService.stopListening();
+      await _stopCaptureForUserPause();
       emit(VoiceCaptureProcessing(transcript: transcript));
 
       final result = await _noteProcessingRepository.process(
@@ -142,7 +172,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         transcript: result.processedText,
         soapNote: result.soapNote,
       );
-      
+
       _segmentBase = '';
       _activeSession = null;
       emit(VoiceCaptureConsultationFinished(
@@ -164,7 +194,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureClearTranscript event,
     Emitter<VoiceCaptureState> emit,
   ) {
-    if (state is RecordingInProgress) {
+    if (state is RecordingInProgress ||
+        state is VoiceCaptureTranscribingBackground) {
       return;
     }
     _segmentBase = '';
@@ -177,7 +208,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     try {
-      await _audioCaptureService.stopListening();
+      await _stopCaptureForUserPause();
     } catch (_) {
       // Best effort when abandoning an in-progress session.
     }
@@ -196,7 +227,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureListeningSessionEnded event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    if (state is! RecordingInProgress) {
+    if (state is! RecordingInProgress || _isBackgroundCapture) {
       return;
     }
 
@@ -214,6 +245,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       ));
     } catch (error) {
       await _failActiveSession(transcript);
+      await _stopRecordingInfrastructure();
       emit(
         VoiceCaptureFailure(
           Failure.fromException(error).message,
@@ -228,7 +260,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureTranscriptUpdated event,
     Emitter<VoiceCaptureState> emit,
   ) {
-    if (state is! RecordingInProgress) {
+    if (state is! RecordingInProgress || _isBackgroundCapture) {
       return;
     }
 
@@ -270,13 +302,131 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     emit(_stateWithSelectedTemplate(_currentTranscript));
   }
 
+  Future<void> _onAppBackgrounded(
+    VoiceCaptureAppBackgrounded event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    if (_isHandlingLifecycle || _isBackgroundCapture) {
+      return;
+    }
+    if (state is! RecordingInProgress) {
+      return;
+    }
+
+    _isHandlingLifecycle = true;
+    try {
+      await _audioCaptureService.stopListening();
+      final sessionId = _activeSession?.id ?? 'anonymous';
+      await _backgroundAudioRecorder.start(sessionId: sessionId);
+      _isBackgroundCapture = true;
+      await _recordingNotificationService.update(
+        title: _notificationBackgroundTitle,
+        body: _notificationBackgroundBody,
+      );
+      emit(RecordingInProgress(
+        transcript: _currentTranscript,
+        selectedTemplate: _selectedTemplate,
+        isBackgroundCapture: true,
+      ));
+    } catch (error) {
+      _isBackgroundCapture = false;
+      await _failActiveSession(_currentTranscript);
+      await _stopRecordingInfrastructure();
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: _currentTranscript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
+    } finally {
+      _isHandlingLifecycle = false;
+    }
+  }
+
+  Future<void> _onAppForegrounded(
+    VoiceCaptureAppForegrounded event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    if (_isHandlingLifecycle || !_isBackgroundCapture) {
+      return;
+    }
+    if (state is! RecordingInProgress &&
+        state is! VoiceCaptureTranscribingBackground) {
+      return;
+    }
+
+    _isHandlingLifecycle = true;
+    final baseTranscript = _currentTranscript;
+    try {
+      emit(VoiceCaptureTranscribingBackground(
+        transcript: baseTranscript,
+        selectedTemplate: _selectedTemplate,
+      ));
+
+      final audioPath = await _backgroundAudioRecorder.stop();
+      _isBackgroundCapture = false;
+
+      var mergedTranscript = baseTranscript;
+      if (audioPath != null) {
+        try {
+          final offlineText = await _offlineAudioTranscriptionService
+              .transcribeFile(audioPath);
+          if (offlineText.isNotEmpty) {
+            final anonymized = AnonymizationHelper.anonymize(offlineText);
+            final punctuated = PunctuationHelper.applyHeuristics(
+              text: anonymized,
+              wordPeriod: _wordPeriod,
+              wordComma: _wordComma,
+              transitionWords: _transitions,
+            );
+            mergedTranscript =
+                TranscriptMergeHelper.merge(baseTranscript, punctuated);
+            _segmentBase = mergedTranscript;
+            await _saveActiveSessionTranscript(mergedTranscript);
+          }
+        } finally {
+          await _deleteAudioFile(audioPath);
+        }
+      }
+
+      await _recordingNotificationService.update(
+        title: _notificationTitle,
+        body: _notificationBody,
+      );
+      await _startListeningSession();
+      emit(RecordingInProgress(
+        transcript: mergedTranscript,
+        selectedTemplate: _selectedTemplate,
+      ));
+    } catch (error) {
+      _isBackgroundCapture = false;
+      await _failActiveSession(baseTranscript);
+      await _stopRecordingInfrastructure();
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: baseTranscript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
+    } finally {
+      _isHandlingLifecycle = false;
+    }
+  }
+
   VoiceCaptureState _stateWithSelectedTemplate(String transcript) {
     return switch (state) {
       VoiceCaptureReady() => VoiceCaptureReady(
           transcript: transcript,
           selectedTemplate: _selectedTemplate,
         ),
-      RecordingInProgress() => RecordingInProgress(
+      RecordingInProgress(:final isBackgroundCapture) => RecordingInProgress(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+          isBackgroundCapture: isBackgroundCapture,
+        ),
+      VoiceCaptureTranscribingBackground() => VoiceCaptureTranscribingBackground(
           transcript: transcript,
           selectedTemplate: _selectedTemplate,
         ),
@@ -299,13 +449,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   Future<void> _startListeningSession() {
     return _audioCaptureService.startListening(
       onResult: (text) {
-        if (isClosed) {
+        if (isClosed || _isBackgroundCapture) {
           return;
         }
         add(VoiceCaptureTranscriptUpdated(text));
       },
       onListeningEnded: () {
-        if (isClosed) {
+        if (isClosed || _isBackgroundCapture) {
           return;
         }
         add(const VoiceCaptureListeningSessionEnded());
@@ -313,12 +463,49 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     );
   }
 
+  Future<void> _stopCaptureForUserPause() async {
+    await _audioCaptureService.stopListening();
+    if (_backgroundAudioRecorder.isRecording || _isBackgroundCapture) {
+      final path = await _backgroundAudioRecorder.stop();
+      _isBackgroundCapture = false;
+      if (path != null) {
+        await _deleteAudioFile(path);
+      }
+    }
+    await _recordingNotificationService.stop();
+  }
+
+  Future<void> _stopRecordingInfrastructure() async {
+    try {
+      await _audioCaptureService.stopListening();
+    } catch (_) {}
+    try {
+      await _backgroundAudioRecorder.cancel();
+    } catch (_) {}
+    _isBackgroundCapture = false;
+    try {
+      await _recordingNotificationService.stop();
+    } catch (_) {}
+  }
+
+  Future<void> _deleteAudioFile(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (_) {}
+  }
+
   String get _currentTranscript {
     return switch (state) {
       VoiceCaptureReady(:final transcript) => transcript,
       RecordingInProgress(:final transcript) => transcript,
+      VoiceCaptureTranscribingBackground(:final transcript) => transcript,
       ListeningPaused(:final transcript) => transcript,
       VoiceCaptureFailure(:final transcript) => transcript,
+      VoiceCaptureProcessing(:final transcript) => transcript,
+      VoiceCaptureConsultationFinished(:final transcript) => transcript,
       _ => '',
     };
   }
@@ -404,5 +591,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final updated = session.copyWith(transcript: transcript);
     _activeSession = updated;
     await _recordingSessionRepository.save(updated);
+  }
+
+  @override
+  Future<void> close() async {
+    await _stopRecordingInfrastructure();
+    return super.close();
   }
 }

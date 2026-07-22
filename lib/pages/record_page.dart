@@ -62,7 +62,7 @@ class _RecordView extends StatefulWidget {
   State<_RecordView> createState() => _RecordViewState();
 }
 
-class _RecordViewState extends State<_RecordView> {
+class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   String? _patientName;
   Duration _elapsed = Duration.zero;
   DateTime? _recordingStartedAt;
@@ -82,6 +82,7 @@ class _RecordViewState extends State<_RecordView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final patientId = widget.patientId;
     if (patientId != null && patientId.isNotEmpty) {
       _loadPatientName(patientId);
@@ -96,10 +97,29 @@ class _RecordViewState extends State<_RecordView> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
     _debounceTimer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!mounted) {
+      return;
+    }
+    final bloc = context.read<VoiceCaptureBloc>();
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        bloc.add(const VoiceCaptureAppBackgrounded());
+      case AppLifecycleState.resumed:
+        bloc.add(const VoiceCaptureAppForegrounded());
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   Future<void> _loadPatientName(String patientId) async {
@@ -451,7 +471,9 @@ class _RecordViewState extends State<_RecordView> {
         }
 
         final viewModel = VoiceCaptureViewModel.fromState(state);
-        _syncRecordingTimer(viewModel.isListening);
+        _syncRecordingTimer(
+          viewModel.isListening || viewModel.isTranscribingBackground,
+        );
 
         final transcript = viewModel.transcript.trim();
         if (transcript.isNotEmpty) {
@@ -627,7 +649,9 @@ class _RecordViewState extends State<_RecordView> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppText(
-                          "Génération de la note SOAP par l'IA...",
+                          viewModel.isTranscribingBackground
+                              ? l10n.recordStatusTranscribingBackground
+                              : "Génération de la note SOAP par l'IA...",
                           variant: AppTextVariant.body,
                           color: AppColors.highContrastWhite,
                         ),
