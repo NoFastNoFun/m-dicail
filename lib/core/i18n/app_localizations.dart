@@ -742,6 +742,54 @@ abstract class AppLocalizations {
   /// **'Fermer'**
   String get debugClose;
 
+  /// No description provided for @debugSectionBackend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Backend (debug)'**
+  String get debugSectionBackend;
+
+  /// No description provided for @debugBackendUrlSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surcharge l\'URL de l\'API. Disponible uniquement en debug sur bureau.'**
+  String get debugBackendUrlSubtitle;
+
+  /// No description provided for @debugBackendUrlLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL de l\'API'**
+  String get debugBackendUrlLabel;
+
+  /// No description provided for @debugBackendUrlHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'http://localhost:3000/api/v1'**
+  String get debugBackendUrlHint;
+
+  /// No description provided for @debugBackendUrlSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get debugBackendUrlSave;
+
+  /// No description provided for @debugBackendUrlReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reinitialiser'**
+  String get debugBackendUrlReset;
+
+  /// No description provided for @debugBackendUrlSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL backend mise a jour'**
+  String get debugBackendUrlSaved;
+
+  /// No description provided for @debugBackendUrlInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL invalide (http ou https requis)'**
+  String get debugBackendUrlInvalid;
+
   /// No description provided for @soapNoteTitle.
   ///
   /// In fr, this message translates to:

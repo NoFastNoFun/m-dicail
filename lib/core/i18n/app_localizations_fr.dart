@@ -342,6 +342,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debugClose => 'Fermer';
 
   @override
+  String get debugSectionBackend => 'Backend (debug)';
+
+  @override
+  String get debugBackendUrlSubtitle =>
+      'Surcharge l\'URL de l\'API. Disponible uniquement en debug sur bureau.';
+
+  @override
+  String get debugBackendUrlLabel => 'URL de l\'API';
+
+  @override
+  String get debugBackendUrlHint => 'http://localhost:3000/api/v1';
+
+  @override
+  String get debugBackendUrlSave => 'Enregistrer';
+
+  @override
+  String get debugBackendUrlReset => 'Reinitialiser';
+
+  @override
+  String get debugBackendUrlSaved => 'URL backend mise a jour';
+
+  @override
+  String get debugBackendUrlInvalid => 'URL invalide (http ou https requis)';
+
+  @override
   String get soapNoteTitle => 'Note SOAP';
 
   @override
