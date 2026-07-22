@@ -19,6 +19,8 @@ import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
 import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/config/app_config.dart' as _i155;
+import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
+    as _i882;
 import 'package:medicail/core/di/register_module.dart' as _i91;
 import 'package:medicail/core/network/api_client.dart' as _i1005;
 import 'package:medicail/core/network/auth_token_storage.dart' as _i760;
@@ -111,6 +113,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i155.AppConfig>(() => _i155.AppConfig());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
+    );
+    gh.lazySingleton<_i882.DesktopDebugBackendUrlStore>(
+      () => _i882.DesktopDebugBackendUrlStore(
+        gh<_i558.FlutterSecureStorage>(),
+        gh<_i155.AppConfig>(),
+      ),
     );
     gh.lazySingleton<_i479.ErrorInterceptor>(() => _i479.ErrorInterceptor());
     gh.lazySingleton<_i945.LoggingInterceptor>(
