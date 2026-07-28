@@ -43,3 +43,7 @@ class AuthLogoutRequested extends AuthEvent {
 class AuthGuestContinueRequested extends AuthEvent {
   const AuthGuestContinueRequested();
 }
+
+class AuthSessionExpired extends AuthEvent {
+  const AuthSessionExpired();
+}

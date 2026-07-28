@@ -1594,6 +1594,12 @@ abstract class AppLocalizations {
   /// **'Se connecter'**
   String get settingsSignIn;
 
+  /// No description provided for @sessionExpiredMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Session expiree, veuillez vous reconnecter'**
+  String get sessionExpiredMessage;
+
   /// No description provided for @punctuationWordPeriod.
   ///
   /// In fr, this message translates to:

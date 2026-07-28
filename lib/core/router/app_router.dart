@@ -35,6 +35,12 @@ class AppRouter {
       final isAuthRoute = state.uri.toString() == AppRoutes.login ||
           state.uri.toString() == AppRoutes.register;
 
+      if (_authNotifier.hasCompletedOnboarding &&
+          !_authNotifier.canAccessApp &&
+          !isAuthRoute) {
+        return AppRoutes.login;
+      }
+
       if (!hasCompletedOnboarding && !isAuthRoute) {
         return AppRoutes.login;
       }
