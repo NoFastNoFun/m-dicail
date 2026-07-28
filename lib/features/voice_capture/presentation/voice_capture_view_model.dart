@@ -8,6 +8,7 @@ enum VoiceCaptureSessionStatus {
   paused,
   ended,
   processing,
+  transcribingBackground,
   failure,
 }
 
@@ -35,7 +36,8 @@ final class VoiceCaptureViewModel {
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
-      VoiceCaptureConsultationFinished(:final transcript) => VoiceCaptureViewModel(
+      VoiceCaptureConsultationFinished(:final transcript) =>
+        VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.ended,
           transcript: transcript,
         ),
@@ -45,6 +47,15 @@ final class VoiceCaptureViewModel {
       ) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
+          transcript: transcript,
+          selectedTemplate: selectedTemplate,
+        ),
+      VoiceCaptureTranscribingBackground(
+        :final transcript,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.transcribingBackground,
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
@@ -86,13 +97,15 @@ final class VoiceCaptureViewModel {
 
   bool get isConsultationOpen =>
       status == VoiceCaptureSessionStatus.listening ||
-      status == VoiceCaptureSessionStatus.paused;
+      status == VoiceCaptureSessionStatus.paused ||
+      status == VoiceCaptureSessionStatus.transcribingBackground;
 
   bool get hasTranscript => transcript.trim().isNotEmpty;
 
   bool get canStart =>
       (status == VoiceCaptureSessionStatus.ready ||
-      status == VoiceCaptureSessionStatus.paused) && !isProcessing;
+          status == VoiceCaptureSessionStatus.paused) &&
+      !isProcessing;
 
   bool get canStop => isListening && !isProcessing;
 
@@ -100,7 +113,12 @@ final class VoiceCaptureViewModel {
 
   bool get canClear => !isConsultationOpen && hasTranscript && !isProcessing;
 
-  bool get isProcessing => status == VoiceCaptureSessionStatus.processing;
+  bool get isProcessing =>
+      status == VoiceCaptureSessionStatus.processing ||
+      status == VoiceCaptureSessionStatus.transcribingBackground;
+
+  bool get isTranscribingBackground =>
+      status == VoiceCaptureSessionStatus.transcribingBackground;
 
   bool get hasUnsavedWork =>
       isConsultationOpen ||
