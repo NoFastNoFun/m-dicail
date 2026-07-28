@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
 
 abstract final class MainShellChrome {
   static const double fabHeight = 56;
@@ -7,6 +8,7 @@ abstract final class MainShellChrome {
   static const double navPillHeightWithLabels = 72;
   static const double navPillHeightCompact = 44;
   static const double navLift = AppSpacing.xl;
+  static const double sideRailWidth = 88;
 
   static double navPillHeight({required bool labelsVisible}) {
     return labelsVisible ? navPillHeightWithLabels : navPillHeightCompact;
@@ -20,6 +22,9 @@ abstract final class MainShellChrome {
     BuildContext context, {
     required bool labelsVisible,
   }) {
+    if (AppLayout.useSideNavigation(context)) {
+      return AppSpacing.xl + fabHeight + AppSpacing.lg;
+    }
     final viewPadding = MediaQuery.viewPaddingOf(context).bottom;
     return navLift +
         navPillHeight(labelsVisible: labelsVisible) +

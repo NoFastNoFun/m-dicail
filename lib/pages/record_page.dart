@@ -9,6 +9,8 @@ import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
+import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -60,7 +62,7 @@ class _RecordView extends StatefulWidget {
   State<_RecordView> createState() => _RecordViewState();
 }
 
-class _RecordViewState extends State<_RecordView> {
+class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   String? _patientName;
   Duration _elapsed = Duration.zero;
   DateTime? _recordingStartedAt;
@@ -80,6 +82,7 @@ class _RecordViewState extends State<_RecordView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final patientId = widget.patientId;
     if (patientId != null && patientId.isNotEmpty) {
       _loadPatientName(patientId);
@@ -94,10 +97,29 @@ class _RecordViewState extends State<_RecordView> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
     _debounceTimer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!mounted) {
+      return;
+    }
+    final bloc = context.read<VoiceCaptureBloc>();
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        bloc.add(const VoiceCaptureAppBackgrounded());
+      case AppLifecycleState.resumed:
+        bloc.add(const VoiceCaptureAppForegrounded());
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   Future<void> _loadPatientName(String patientId) async {
@@ -232,8 +254,7 @@ class _RecordViewState extends State<_RecordView> {
   void _handleConsultationFinished(VoiceCaptureConsultationFinished state) {
     final tutorialBloc = context.read<TutorialBloc>();
     final isTutorial = tutorialBloc.state is TutorialInProgress;
-    final isDemoPatient =
-        widget.patientId == TutorialFlow.demoPatientId;
+    final isDemoPatient = widget.patientId == TutorialFlow.demoPatientId;
 
     if (isTutorial && isDemoPatient) {
       unawaited(_discardTutorialSession(state.sessionId));
@@ -423,12 +444,9 @@ class _RecordViewState extends State<_RecordView> {
     }
 
     context.read<VoiceCaptureBloc>().add(
-          VoiceCaptureTemplateSelected(template),
-        );
-    AppToast.showSuccess(
-      context,
-      l10n.templateActiveLabel(template.name),
+      VoiceCaptureTemplateSelected(template),
     );
+    AppToast.showSuccess(context, l10n.templateActiveLabel(template.name));
   }
 
   @override
@@ -453,7 +471,9 @@ class _RecordViewState extends State<_RecordView> {
         }
 
         final viewModel = VoiceCaptureViewModel.fromState(state);
-        _syncRecordingTimer(viewModel.isListening);
+        _syncRecordingTimer(
+          viewModel.isListening || viewModel.isTranscribingBackground,
+        );
 
         final transcript = viewModel.transcript.trim();
         if (transcript.isNotEmpty) {
@@ -490,8 +510,9 @@ class _RecordViewState extends State<_RecordView> {
                 body: SafeArea(
                   child: BlocListener<TutorialBloc, TutorialState>(
                     listener: (context, state) => _handleTutorialState(state),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                    child: AppContentConstraint(
+                      maxWidth: AppBreakpoints.wideContentMaxWidth,
+                      applyPagePadding: true,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -512,7 +533,7 @@ class _RecordViewState extends State<_RecordView> {
                                       : AppRadius.mdBorder,
                                   controlBorderRadius: isTutorial
                                       ? AppRadius.onboardingSmBorder
-                                      : AppRadius.smBorder,
+                                      : AppRadius.pillBorder,
                                   dateLabel: dateLabel,
                                   sessionTitle: _patientName,
                                   templateLabel:
@@ -563,11 +584,14 @@ class _RecordViewState extends State<_RecordView> {
                                   ],
                                   menuKey: _menuKey,
                                   menuButtonKey: _menuButtonKey,
-                                  menuShowcaseTitle: _currentShowcaseTitle(l10n),
+                                  menuShowcaseTitle: _currentShowcaseTitle(
+                                    l10n,
+                                  ),
                                   menuShowcaseDescription:
                                       _currentShowcaseDescription(l10n),
                                   onMenuShowcaseTargetClick: () {
-                                    _menuButtonKey.currentState?.showButtonMenu();
+                                    _menuButtonKey.currentState
+                                        ?.showButtonMenu();
                                     ShowcaseView.get().dismiss();
                                   },
                                 ),
@@ -591,8 +615,10 @@ class _RecordViewState extends State<_RecordView> {
                               disposeOnTap: false,
                               disableBarrierInteraction: true,
                               onTargetClick: () {
-                                final tutorialBloc = context.read<TutorialBloc>();
-                                final stepId = tutorialBloc.state.tutorialStepId;
+                                final tutorialBloc = context
+                                    .read<TutorialBloc>();
+                                final stepId =
+                                    tutorialBloc.state.tutorialStepId;
                                 if (stepId != null) {
                                   tutorialBloc.completeStep(stepId);
                                 }
@@ -623,7 +649,9 @@ class _RecordViewState extends State<_RecordView> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppText(
-                          "Génération de la note SOAP par l'IA...",
+                          viewModel.isTranscribingBackground
+                              ? l10n.recordStatusTranscribingBackground
+                              : "Génération de la note SOAP par l'IA...",
                           variant: AppTextVariant.body,
                           color: AppColors.highContrastWhite,
                         ),

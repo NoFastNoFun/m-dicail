@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppRadius {
-  /// Large radius that produces pill-shaped corners on any practical widget size.
+  /// Large radius that produces pill-shaped corners on buttons and chips.
   static const double pill = 999;
 
-  static const double sm = pill;
-  static const double md = pill;
-  static const double lg = pill;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
 
-  /// Pre-pill radii retained for onboarding/tutorial surfaces.
+  /// Softened radii for onboarding/tutorial surfaces.
   static const double onboardingSm = 12;
   static const double onboardingMd = 16;
   static const double onboardingLg = 24;
 
-  static const BorderRadius smBorder = BorderRadius.all(Radius.circular(pill));
-  static const BorderRadius mdBorder = BorderRadius.all(Radius.circular(pill));
+  static const BorderRadius smBorder = BorderRadius.all(Radius.circular(sm));
+  static const BorderRadius mdBorder = BorderRadius.all(Radius.circular(md));
   static const BorderRadius lgBorder = BorderRadius.vertical(
-    top: Radius.circular(pill),
+    top: Radius.circular(lg),
+  );
+  static const BorderRadius pillBorder = BorderRadius.all(
+    Radius.circular(pill),
   );
 
   static const BorderRadius onboardingSmBorder = BorderRadius.all(
@@ -31,7 +34,7 @@ abstract final class AppRadius {
 
   static const StadiumBorder stadiumBorder = StadiumBorder();
   static const RoundedRectangleBorder pillShape = RoundedRectangleBorder(
-    borderRadius: mdBorder,
+    borderRadius: pillBorder,
   );
   static const RoundedRectangleBorder onboardingMdShape =
       RoundedRectangleBorder(borderRadius: onboardingMdBorder);

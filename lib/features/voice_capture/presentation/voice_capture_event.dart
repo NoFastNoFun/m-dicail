@@ -71,3 +71,11 @@ final class VoiceCaptureTemplateSelected extends VoiceCaptureEvent {
   @override
   List<Object?> get props => [template];
 }
+
+final class VoiceCaptureAppBackgrounded extends VoiceCaptureEvent {
+  const VoiceCaptureAppBackgrounded();
+}
+
+final class VoiceCaptureAppForegrounded extends VoiceCaptureEvent {
+  const VoiceCaptureAppForegrounded();
+}

@@ -16,10 +16,17 @@ import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
 import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
+import 'package:medicail/core/audio/background_audio_recorder.dart' as _i162;
 import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
+import 'package:medicail/core/audio/offline_audio_transcription_service.dart'
+    as _i356;
+import 'package:medicail/core/audio/recording_notification_service.dart'
+    as _i117;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
 import 'package:medicail/core/config/app_config.dart' as _i155;
+import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
+    as _i367;
 import 'package:medicail/core/di/register_module.dart' as _i91;
 import 'package:medicail/core/network/api_client.dart' as _i1005;
 import 'package:medicail/core/network/auth_token_refresh_client.dart' as _i124;
@@ -125,6 +132,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i564.AssetNoteTemplateDataSource(),
     );
     gh.lazySingleton<_i713.SettingsNotifier>(() => _i713.SettingsNotifier());
+    gh.lazySingleton<_i117.RecordingNotificationService>(
+      () => _i117.RecordingNotificationServiceImpl(),
+    );
     gh.lazySingleton<_i345.AppSessionStorage>(
       () => _i345.SecureAppSessionStorage(gh<_i558.FlutterSecureStorage>()),
     );
@@ -132,6 +142,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i104.SecureUserPreferencesRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
+    );
+    gh.lazySingleton<_i162.BackgroundAudioRecorder>(
+      () => _i162.BackgroundAudioRecorderImpl(),
     );
     gh.factory<_i326.SecureStorageAppointmentRepository>(
       () => _i326.SecureStorageAppointmentRepository(
@@ -154,6 +167,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i713.SettingsNotifier>(),
       ),
     );
+    gh.lazySingleton<_i356.OfflineAudioTranscriptionService>(
+      () => _i356.WhisperOfflineAudioTranscriptionService(),
+    );
     gh.lazySingleton<_i21.AudioCaptureService>(
       () => _i439.SpeechToTextServiceImpl(),
     );
@@ -162,6 +178,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i760.AuthTokenStorage>(
       () => _i249.SecureStorageAuthToken(gh<_i558.FlutterSecureStorage>()),
+    );
+    gh.lazySingleton<_i124.AuthTokenRefreshClient>(
+      () => _i124.AuthTokenRefreshClient(gh<_i155.AppConfig>()),
     );
     gh.lazySingleton<_i1038.AppRouter>(
       () => _i1038.AppRouter(gh<_i541.AuthNotifier>()),
@@ -188,8 +207,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i297.NoteTemplateBloc>(
       () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
     );
-    gh.lazySingleton<_i124.AuthTokenRefreshClient>(
-      () => _i124.AuthTokenRefreshClient(gh<_i155.AppConfig>()),
+    gh.lazySingleton<_i367.DesktopDebugBackendUrlStore>(
+      () => _i367.DesktopDebugBackendUrlStore(
+        gh<_i558.FlutterSecureStorage>(),
+        gh<_i155.AppConfig>(),
+      ),
     );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
@@ -229,6 +251,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i885.AppointmentRepository>(
+      () => _i800.DynamicAppointmentRepository(
+        gh<_i587.ApiAppointmentRepository>(),
+        gh<_i326.SecureStorageAppointmentRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i250.AuthBloc>(
       () => _i250.AuthBloc(
         gh<_i790.AuthRepository>(),
@@ -236,13 +265,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
         gh<_i712.AuthSessionCoordinator>(),
-      ),
-    );
-    gh.lazySingleton<_i885.AppointmentRepository>(
-      () => _i800.DynamicAppointmentRepository(
-        gh<_i587.ApiAppointmentRepository>(),
-        gh<_i326.SecureStorageAppointmentRepository>(),
-        gh<_i760.AuthTokenStorage>(),
       ),
     );
     gh.lazySingleton<_i390.PatientRepository>(
@@ -268,17 +290,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(
+        gh<_i79.TutorialRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
         gh<_i814.RecordingSessionRepository>(),
         gh<_i341.NoteProcessingRepository>(),
-      ),
-    );
-    gh.factory<_i306.TutorialBloc>(
-      () => _i306.TutorialBloc(
-        gh<_i79.TutorialRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+        gh<_i117.RecordingNotificationService>(),
+        gh<_i162.BackgroundAudioRecorder>(),
+        gh<_i356.OfflineAudioTranscriptionService>(),
       ),
     );
     gh.factory<_i54.AppointmentBloc>(

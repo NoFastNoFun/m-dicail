@@ -78,6 +78,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recordStatusEnded => 'Session terminee';
 
   @override
+  String get recordNotificationTitle => 'Ecoute en cours';
+
+  @override
+  String get recordNotificationBody => 'Touchez pour revenir a Medicail';
+
+  @override
+  String get recordNotificationBackgroundTitle =>
+      'Enregistrement en arriere-plan';
+
+  @override
+  String get recordNotificationBackgroundBody =>
+      'L\'ecoute continue pendant que l\'ecran est eteint';
+
+  @override
+  String get recordStatusTranscribingBackground =>
+      'Transcription du passage en veille…';
+
+  @override
   String get historyEmpty => 'Aucune note pour le moment';
 
   @override
@@ -340,6 +358,31 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debugClose => 'Fermer';
+
+  @override
+  String get debugSectionBackend => 'Backend (debug)';
+
+  @override
+  String get debugBackendUrlSubtitle =>
+      'Surcharge l\'URL de l\'API. Disponible uniquement en debug sur bureau.';
+
+  @override
+  String get debugBackendUrlLabel => 'URL de l\'API';
+
+  @override
+  String get debugBackendUrlHint => 'http://localhost:3000/api/v1';
+
+  @override
+  String get debugBackendUrlSave => 'Enregistrer';
+
+  @override
+  String get debugBackendUrlReset => 'Reinitialiser';
+
+  @override
+  String get debugBackendUrlSaved => 'URL backend mise a jour';
+
+  @override
+  String get debugBackendUrlInvalid => 'URL invalide (http ou https requis)';
 
   @override
   String get soapNoteTitle => 'Note SOAP';

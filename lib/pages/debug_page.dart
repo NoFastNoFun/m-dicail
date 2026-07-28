@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medicail/core/config/app_platform.dart';
+import 'package:medicail/core/debug/desktop_debug_backend_url_section.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -55,6 +57,10 @@ class _DebugPageState extends State<DebugPage> {
         child: ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
+            if (isDesktopDebugBackendUrlEnabled) ...[
+              const DesktopDebugBackendUrlSection(),
+              const SizedBox(height: AppSpacing.xl),
+            ],
             _sectionTitle(l10n.debugSectionButtons),
             const SizedBox(height: AppSpacing.sm),
             AppButton(

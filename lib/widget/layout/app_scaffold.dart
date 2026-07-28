@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/debug/debug_menu.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
+import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -13,11 +15,19 @@ class AppScaffold extends StatelessWidget {
     this.title,
     required this.body,
     this.actions,
+    this.contentMaxWidth,
+    this.constrainBody = true,
   });
 
   final String? title;
   final Widget body;
   final List<Widget>? actions;
+
+  /// Override the default content cap (see [AppBreakpoints.contentMaxWidth]).
+  final double? contentMaxWidth;
+
+  /// When false, [body] spans the full width (rare; prefer default).
+  final bool constrainBody;
 
   static const _shellRootRoutes = {
     AppRoutes.home,
@@ -45,6 +55,16 @@ class AppScaffold extends StatelessWidget {
 
     final theme = Theme.of(context);
     final insideMainShell = MainShellScope.isActive(context);
+    final padding = AppLayout.pagePadding(context);
+
+    Widget bodyChild = Padding(padding: padding, child: body);
+
+    if (constrainBody) {
+      bodyChild = AppContentConstraint(
+        maxWidth: contentMaxWidth,
+        child: bodyChild,
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -52,6 +72,7 @@ class AppScaffold extends StatelessWidget {
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: theme.colorScheme.onSurface,
         title: title != null ? _AppBarTitle(title: title!) : null,
+        centerTitle: !AppLayout.isExpanded(context),
         automaticallyImplyLeading: false,
         leading: showBack
             ? IconButton(
@@ -66,13 +87,7 @@ class AppScaffold extends StatelessWidget {
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
-        child: SafeArea(
-          bottom: !insideMainShell,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.pagePadding),
-            child: body,
-          ),
-        ),
+        child: SafeArea(bottom: !insideMainShell, child: bodyChild),
       ),
     );
   }

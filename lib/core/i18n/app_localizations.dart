@@ -232,6 +232,36 @@ abstract class AppLocalizations {
   /// **'Session terminee'**
   String get recordStatusEnded;
 
+  /// No description provided for @recordNotificationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecoute en cours'**
+  String get recordNotificationTitle;
+
+  /// No description provided for @recordNotificationBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez pour revenir a Medicail'**
+  String get recordNotificationBody;
+
+  /// No description provided for @recordNotificationBackgroundTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement en arriere-plan'**
+  String get recordNotificationBackgroundTitle;
+
+  /// No description provided for @recordNotificationBackgroundBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'ecoute continue pendant que l\'ecran est eteint'**
+  String get recordNotificationBackgroundBody;
+
+  /// No description provided for @recordStatusTranscribingBackground.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription du passage en veille…'**
+  String get recordStatusTranscribingBackground;
+
   /// No description provided for @historyEmpty.
   ///
   /// In fr, this message translates to:
@@ -741,6 +771,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Fermer'**
   String get debugClose;
+
+  /// No description provided for @debugSectionBackend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Backend (debug)'**
+  String get debugSectionBackend;
+
+  /// No description provided for @debugBackendUrlSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surcharge l\'URL de l\'API. Disponible uniquement en debug sur bureau.'**
+  String get debugBackendUrlSubtitle;
+
+  /// No description provided for @debugBackendUrlLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL de l\'API'**
+  String get debugBackendUrlLabel;
+
+  /// No description provided for @debugBackendUrlHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'http://localhost:3000/api/v1'**
+  String get debugBackendUrlHint;
+
+  /// No description provided for @debugBackendUrlSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get debugBackendUrlSave;
+
+  /// No description provided for @debugBackendUrlReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reinitialiser'**
+  String get debugBackendUrlReset;
+
+  /// No description provided for @debugBackendUrlSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL backend mise a jour'**
+  String get debugBackendUrlSaved;
+
+  /// No description provided for @debugBackendUrlInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL invalide (http ou https requis)'**
+  String get debugBackendUrlInvalid;
 
   /// No description provided for @soapNoteTitle.
   ///

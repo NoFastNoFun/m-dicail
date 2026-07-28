@@ -51,6 +51,21 @@ final class RecordingInProgress extends VoiceCaptureState {
   const RecordingInProgress({
     required this.transcript,
     this.selectedTemplate,
+    this.isBackgroundCapture = false,
+  });
+
+  final String transcript;
+  final NoteTemplate? selectedTemplate;
+  final bool isBackgroundCapture;
+
+  @override
+  List<Object?> get props => [transcript, selectedTemplate, isBackgroundCapture];
+}
+
+final class VoiceCaptureTranscribingBackground extends VoiceCaptureState {
+  const VoiceCaptureTranscribingBackground({
+    required this.transcript,
+    this.selectedTemplate,
   });
 
   final String transcript;

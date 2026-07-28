@@ -234,10 +234,10 @@ class _ChoiceChip extends StatelessWidget {
 
     return Material(
       color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
-      borderRadius: AppRadius.mdBorder,
+      borderRadius: AppRadius.pillBorder,
       child: InkWell(
         onTap: onTap,
-        borderRadius: AppRadius.mdBorder,
+        borderRadius: AppRadius.pillBorder,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
