@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/auth/auth_session_coordinator.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/core/storage/app_session_storage.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
@@ -15,18 +19,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._authNotifier,
     this._sessionStorage,
     this._tokenStorage,
+    this._sessionCoordinator,
   ) : super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthGuestContinueRequested>(_onAuthGuestContinueRequested);
+    on<AuthSessionExpired>(_onAuthSessionExpired);
+
+    _sessionExpiredSubscription =
+        _sessionCoordinator.onSessionExpired.listen((_) {
+      add(const AuthSessionExpired());
+    });
   }
 
   final AuthRepository _authRepository;
   final AuthNotifier _authNotifier;
   final AppSessionStorage _sessionStorage;
   final AuthTokenStorage _tokenStorage;
+  final AuthSessionCoordinator _sessionCoordinator;
+  late final StreamSubscription<void> _sessionExpiredSubscription;
 
   Future<void> _onAuthCheckRequested(
     AuthCheckRequested event,
@@ -56,8 +69,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.getMe();
       _authNotifier.setAuthenticated(true);
       emit(AuthAuthenticated(user));
-    } catch (_) {
-      await _tokenStorage.clearToken();
+    } catch (error) {
+      if (error is ServerException && error.statusCode == 401) {
+        await _tokenStorage.clearToken();
+        _authNotifier.setAuthenticated(false);
+        _authNotifier.setGuest(false);
+        emit(const AuthUnauthenticated());
+        return;
+      }
+
       _authNotifier.setGuest(true);
       emit(const AuthGuest());
     }
@@ -125,5 +145,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _authRepository.logout();
     _authNotifier.setGuest(true);
     emit(const AuthGuest());
+  }
+
+  Future<void> _onAuthSessionExpired(
+    AuthSessionExpired event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthSessionExpiredState());
+    emit(const AuthUnauthenticated());
+  }
+
+  @override
+  Future<void> close() {
+    _sessionExpiredSubscription.cancel();
+    return super.close();
   }
 }

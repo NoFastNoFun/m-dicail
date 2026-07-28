@@ -278,6 +278,7 @@
   "templateRetry": "Reessayer",
   "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application.",
   "settingsSignIn": "Se connecter",
+  "sessionExpiredMessage": "Session expiree, veuillez vous reconnecter",
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
   "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin"
