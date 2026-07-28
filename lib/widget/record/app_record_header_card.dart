@@ -27,7 +27,7 @@ class AppRecordHeaderCard extends StatelessWidget {
     this.menuShowcaseDescription,
     this.onMenuShowcaseTargetClick,
     this.cardBorderRadius = AppRadius.mdBorder,
-    this.controlBorderRadius = AppRadius.smBorder,
+    this.controlBorderRadius = AppRadius.pillBorder,
   });
 
   final String dateLabel;

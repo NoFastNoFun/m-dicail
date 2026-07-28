@@ -13,6 +13,7 @@ import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'dart:async';
 import 'package:medicail/widget/inputs/app_input.dart';
@@ -36,6 +37,7 @@ class AssignPatientSheet extends StatefulWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      constraints: AppBottomSheet.sheetConstraints(context),
       builder: (_) {
         return BlocProvider(
           create: (_) => getIt<PatientBloc>()..add(const PatientsRequested()),

@@ -6,6 +6,7 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template_source.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class TemplatePickerSheet extends StatefulWidget {
@@ -32,6 +33,7 @@ class TemplatePickerSheet extends StatefulWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),
+      constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) => TemplatePickerSheet(
         templates: templates,
         selectedTemplateId: selectedTemplateId,

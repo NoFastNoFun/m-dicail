@@ -10,6 +10,7 @@ import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
@@ -34,6 +35,7 @@ class PatientCreationSheet extends StatefulWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      constraints: AppBottomSheet.sheetConstraints(context),
       builder: (sheetContext) {
         return Padding(
           padding: EdgeInsets.only(

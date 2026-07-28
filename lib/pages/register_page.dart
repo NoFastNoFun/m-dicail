@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
+import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
@@ -63,81 +64,83 @@ class _RegisterPageState extends State<RegisterPage> {
       data: Theme.of(context).highContrastSurface,
       child: AppScaffold(
         body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthError) {
-            AppToast.showError(context, state.message);
-          } else if (state is AuthGuest || state is AuthAuthenticated) {
-            context.go(AppRoutes.home);
-          }
-        },
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppText(
-                    l10n.registerTitle,
-                    variant: AppTextVariant.headline,
-                    textAlign: TextAlign.center,
+          listener: (context, state) {
+            if (state is AuthError) {
+              AppToast.showError(context, state.message);
+            } else if (state is AuthGuest || state is AuthAuthenticated) {
+              context.go(AppRoutes.home);
+            }
+          },
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: AppFormConstraint(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppText(
+                        l10n.registerTitle,
+                        variant: AppTextVariant.headline,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        l10n.registerSubtitle,
+                        variant: AppTextVariant.body,
+                        color: context.secondaryTextColor,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.xxl),
+                      AppInput(
+                        variant: AppInputVariant.text,
+                        label: l10n.registerFullNameLabel,
+                        controller: _fullNameController,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      AppInput(
+                        variant: AppInputVariant.email,
+                        label: l10n.registerEmailLabel,
+                        controller: _emailController,
+                        messageResolver: _messageResolver,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      AppInput(
+                        variant: AppInputVariant.password,
+                        label: l10n.registerPasswordLabel,
+                        controller: _passwordController,
+                        messageResolver: _messageResolver,
+                      ),
+                      const SizedBox(height: AppSpacing.xxl),
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          return AppButton(
+                            label: l10n.registerSubmit,
+                            onPressed: _submit,
+                            isLoading: state is AuthLoading,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      AppButton(
+                        label: l10n.loginContinueWithoutAccount,
+                        style: AppButtonStyle.secondary,
+                        onPressed: () {
+                          context.read<AuthBloc>().add(
+                            const AuthGuestContinueRequested(),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  AppText(
-                    l10n.registerSubtitle,
-                    variant: AppTextVariant.body,
-                    color: context.secondaryTextColor,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  AppInput(
-                    variant: AppInputVariant.text,
-                    label: l10n.registerFullNameLabel,
-                    controller: _fullNameController,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  AppInput(
-                    variant: AppInputVariant.email,
-                    label: l10n.registerEmailLabel,
-                    controller: _emailController,
-                    messageResolver: _messageResolver,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  AppInput(
-                    variant: AppInputVariant.password,
-                    label: l10n.registerPasswordLabel,
-                    controller: _passwordController,
-                    messageResolver: _messageResolver,
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return AppButton(
-                        label: l10n.registerSubmit,
-                        onPressed: _submit,
-                        isLoading: state is AuthLoading,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppButton(
-                    label: l10n.loginContinueWithoutAccount,
-                    style: AppButtonStyle.secondary,
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                        const AuthGuestContinueRequested(),
-                      );
-                    },
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }

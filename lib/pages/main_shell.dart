@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/app_breakpoints.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/router/app_routes.dart';
@@ -18,6 +19,7 @@ import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
+import 'package:medicail/widget/layout/app_side_nav_rail.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -61,40 +63,42 @@ class _MainShellState extends State<MainShell> {
       _didStartPatientsShowcase = false;
       _didStartQuickRecordShowcase = false;
       _lastSeenTutorialStep = null;
-      
+
       if (!_didAskTutorialStart) {
         _didAskTutorialStart = true;
         WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final l10n = AppLocalizations.of(context);
-        AppDialog.show(
-          context,
-          variant: AppDialogVariant.lockScreen,
-          title: l10n.tutorialIntroTitle,
-          body: AppText(l10n.tutorialIntroDesc, variant: AppTextVariant.body),
-          actionsBuilder: (dialogContext) => [
-            AppButton(
-              label: l10n.tutorialIntroSkip,
-              style: AppButtonStyle.secondary,
-              expanded: false,
-              onPressed: () {
-                context.read<TutorialBloc>().add(const TutorialSkipRequested());
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            AppButton(
-              label: l10n.tutorialIntroStart,
-              expanded: false,
-              onPressed: () {
-                context.read<TutorialBloc>().add(
-                  const TutorialStartRequested(),
-                );
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-          ],
-        );
-      });
+          if (!mounted) return;
+          final l10n = AppLocalizations.of(context);
+          AppDialog.show(
+            context,
+            variant: AppDialogVariant.lockScreen,
+            title: l10n.tutorialIntroTitle,
+            body: AppText(l10n.tutorialIntroDesc, variant: AppTextVariant.body),
+            actionsBuilder: (dialogContext) => [
+              AppButton(
+                label: l10n.tutorialIntroSkip,
+                style: AppButtonStyle.secondary,
+                expanded: false,
+                onPressed: () {
+                  context.read<TutorialBloc>().add(
+                    const TutorialSkipRequested(),
+                  );
+                  Navigator.of(dialogContext).pop();
+                },
+              ),
+              AppButton(
+                label: l10n.tutorialIntroStart,
+                expanded: false,
+                onPressed: () {
+                  context.read<TutorialBloc>().add(
+                    const TutorialStartRequested(),
+                  );
+                  Navigator.of(dialogContext).pop();
+                },
+              ),
+            ],
+          );
+        });
       }
       return;
     }
@@ -107,7 +111,8 @@ class _MainShellState extends State<MainShell> {
     }
 
     if (_lastSeenTutorialStep != state.currentStep) {
-      if (state.currentStep == TutorialFlow.indexOf(TutorialStepId.homePatients)) {
+      if (state.currentStep ==
+          TutorialFlow.indexOf(TutorialStepId.homePatients)) {
         _didStartPatientsShowcase = false;
         _didStartQuickRecordShowcase = false;
       }
@@ -186,23 +191,34 @@ class _MainShellState extends State<MainShell> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final location = GoRouterState.of(context).matchedLocation;
-    if (_lastLocation != location) {
-      _lastLocation = location;
+  void _scheduleNavLabelReset() {
+    if (_navLabelsVisible) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _resetNavLabels();
-      if (location == AppRoutes.home) {
-        _didStartQuickRecordShowcase = false;
-      }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _handleTutorialState(context.read<TutorialBloc>().state);
-      });
-    }
+    });
+  }
 
-    final destinations = [
+  void _onDestinationSelected(String route) {
+    if (route == AppRoutes.patients) {
+      final tutorialBloc = context.read<TutorialBloc>();
+      if (tutorialBloc.state is TutorialInProgress &&
+          TutorialFlow.idFromIndex(
+                (tutorialBloc.state as TutorialInProgress).currentStep,
+              ) ==
+              TutorialStepId.homePatients) {
+        tutorialBloc.add(
+          TutorialStepCompleted(
+            TutorialFlow.indexOf(TutorialStepId.homePatients),
+          ),
+        );
+      }
+    }
+    context.go(route);
+  }
+
+  List<AppBottomNavDestination> _destinations(AppLocalizations l10n) {
+    return [
       AppBottomNavDestination(
         route: AppRoutes.home,
         icon: Icons.home_outlined,
@@ -244,24 +260,111 @@ class _MainShellState extends State<MainShell> {
         label: l10n.settingsTitle,
       ),
     ];
+  }
 
-    return MainShellScope(
-      navLabelsVisible: _navLabelsVisible,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true,
-        resizeToAvoidBottomInset: false,
-        body: BlocListener<TutorialBloc, TutorialState>(
-          listener: (context, state) => _handleTutorialState(state),
-          child: Stack(
-            fit: StackFit.expand,
+  Widget _buildQuickRecordFab(AppLocalizations l10n) {
+    return AppShowcase(
+      key: _quickRecordKey,
+      title: l10n.tutorialHomeRecordTitle,
+      description: l10n.tutorialHomeRecordDesc,
+      disposeOnTap: false,
+      disableBarrierInteraction: true,
+      onTargetClick: _handleHomeQuickRecordTutorialTap,
+      child: AppRadialActionButton(
+        anchor: AppRadialActionAnchor.end,
+        actions: [
+          AppRadialAction(
+            icon: Icons.event_outlined,
+            label: l10n.appointmentCreateTitle,
+            onTap: () =>
+                AppointmentFormSheet.show(context, initialDay: DateTime.now()),
+          ),
+          AppRadialAction(
+            icon: Icons.folder_outlined,
+            label: l10n.patientsSectionTitle,
+            onTap: () => context.go(AppRoutes.patients),
+          ),
+          AppRadialAction(
+            icon: Icons.mic_outlined,
+            label: l10n.radialActionNewRecord,
+            onTap: () async {
+              final tutorialBloc = context.read<TutorialBloc>();
+              if (tutorialBloc.isCurrentStep(TutorialStepId.homeQuickRecord)) {
+                await _handleHomeQuickRecordTutorialTap();
+                return;
+              }
+              _openQuickRecordIfAllowed();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final location = GoRouterState.of(context).matchedLocation;
+    final useSideNav = AppLayout.useSideNavigation(context);
+    final destinations = _destinations(l10n);
+
+    if (_lastLocation != location) {
+      _lastLocation = location;
+      // Never setState during build — it corrupts mouse tracking on desktop.
+      _scheduleNavLabelReset();
+      if (location == AppRoutes.home) {
+        _didStartQuickRecordShowcase = false;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _handleTutorialState(context.read<TutorialBloc>().state);
+      });
+    }
+
+    final pageBody = BlocListener<TutorialBloc, TutorialState>(
+      listener: (context, state) => _handleTutorialState(state),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: _handleScrollNotification,
+        child: widget.child,
+      ),
+    );
+
+    final quickRecordFab = _buildQuickRecordFab(l10n);
+
+    final shellBody = useSideNav
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Positioned.fill(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: _handleScrollNotification,
-                  child: widget.child,
+              AppSideNavRail(
+                destinations: destinations,
+                selectedRoute: location,
+                onDestinationSelected: _onDestinationSelected,
+              ),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: theme.dividerColor,
+              ),
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned.fill(child: pageBody),
+                    Positioned(
+                      right: AppSpacing.xl,
+                      bottom: AppSpacing.xl,
+                      child: quickRecordFab,
+                    ),
+                  ],
                 ),
               ),
+            ],
+          )
+        : Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(child: pageBody),
               Positioned(
                 left: 0,
                 right: 0,
@@ -276,47 +379,7 @@ class _MainShellState extends State<MainShell> {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.only(right: AppSpacing.lg),
-                          child: AppShowcase(
-                            key: _quickRecordKey,
-                            title: l10n.tutorialHomeRecordTitle,
-                            description: l10n.tutorialHomeRecordDesc,
-                            disposeOnTap: false,
-                            disableBarrierInteraction: true,
-                            onTargetClick: _handleHomeQuickRecordTutorialTap,
-                            child: AppRadialActionButton(
-                              anchor: AppRadialActionAnchor.end,
-                              actions: [
-                                AppRadialAction(
-                                  icon: Icons.event_outlined,
-                                  label: l10n.appointmentCreateTitle,
-                                  onTap: () => AppointmentFormSheet.show(
-                                    context,
-                                    initialDay: DateTime.now(),
-                                  ),
-                                ),
-                                AppRadialAction(
-                                  icon: Icons.folder_outlined,
-                                  label: l10n.patientsSectionTitle,
-                                  onTap: () => context.go(AppRoutes.patients),
-                                ),
-                                AppRadialAction(
-                                  icon: Icons.mic_outlined,
-                                  label: l10n.radialActionNewRecord,
-                                  onTap: () async {
-                                    final tutorialBloc = context
-                                        .read<TutorialBloc>();
-                                    if (tutorialBloc.isCurrentStep(
-                                      TutorialStepId.homeQuickRecord,
-                                    )) {
-                                      await _handleHomeQuickRecordTutorialTap();
-                                      return;
-                                    }
-                                    _openQuickRecordIfAllowed();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          child: quickRecordFab,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sm),
@@ -325,31 +388,16 @@ class _MainShellState extends State<MainShell> {
                           horizontal: AppSpacing.lg,
                         ),
                         child: Center(
-                          child: AppBottomNavPill(
-                            destinations: destinations,
-                            selectedRoute: location,
-                            showLabels: _navLabelsVisible,
-                            onDestinationSelected: (route) {
-                              if (route == AppRoutes.patients) {
-                                final tutorialBloc = context.read<TutorialBloc>();
-                                if (tutorialBloc.state is TutorialInProgress &&
-                                    TutorialFlow.idFromIndex(
-                                          (tutorialBloc.state
-                                                  as TutorialInProgress)
-                                              .currentStep,
-                                        ) ==
-                                        TutorialStepId.homePatients) {
-                                  tutorialBloc.add(
-                                    TutorialStepCompleted(
-                                      TutorialFlow.indexOf(
-                                        TutorialStepId.homePatients,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                              context.go(route);
-                            },
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth: AppBreakpoints.contentMaxWidth,
+                            ),
+                            child: AppBottomNavPill(
+                              destinations: destinations,
+                              selectedRoute: location,
+                              showLabels: _navLabelsVisible,
+                              onDestinationSelected: _onDestinationSelected,
+                            ),
                           ),
                         ),
                       ),
@@ -358,8 +406,15 @@ class _MainShellState extends State<MainShell> {
                 ),
               ),
             ],
-          ),
-        ),
+          );
+
+    return MainShellScope(
+      navLabelsVisible: _navLabelsVisible,
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        extendBody: !useSideNav,
+        resizeToAvoidBottomInset: false,
+        body: shellBody,
       ),
     );
   }

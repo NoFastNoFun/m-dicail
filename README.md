@@ -134,6 +134,24 @@ flutter build web
 flutter build windows
 ```
 
+### Installateur Windows (.msi)
+
+Le packaging Windows produit un **fichier `.msi`** avec un assistant d'installation
+classique : bienvenue, licence, **choix du dossier d'installation**, puis
+installation. Emplacement par defaut : `C:\Program Files\Medicail`.
+
+Pre-requis : [WiX Toolset CLI](https://wixtoolset.org/) v7
+(`winget install WiXToolset.WiXCLI`). Le script l'installe automatiquement si
+besoin.
+
+```powershell
+.\scripts\build_windows_msi.ps1
+```
+
+Sortie : `build\windows\msi\Medicail-<version>-x64.msi`
+
+Details : [`installer/windows/README.md`](installer/windows/README.md).
+
 ### APK Android allégés par appareil
 
 Par défaut, `flutter build apk` produit un **APK universel** qui embarque les

@@ -30,6 +30,10 @@
 	<string>Medicail utilise le microphone pour la dictée vocale pendant les séances.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Medicail convertit votre voix en texte localement sur l'appareil.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
