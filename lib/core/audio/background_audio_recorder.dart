@@ -38,7 +38,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
 
     final directory = await getTemporaryDirectory();
     final path =
-        '${directory.path}/medicail_bg_${sessionId}_${DateTime.now().microsecondsSinceEpoch}.wav';
+        '${directory.path}/medicail_session_${sessionId}_${DateTime.now().microsecondsSinceEpoch}.wav';
 
     await _recorder.start(
       const RecordConfig(
