@@ -651,7 +651,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                         AppText(
                           viewModel.isTranscribingBackground
                               ? l10n.recordStatusTranscribingBackground
-                              : "Génération de la note SOAP par l'IA...",
+                              : viewModel.isEnhancing
+                                  ? 'Amelioration de la transcription...'
+                                  : "Génération de la note SOAP par l'IA...",
                           variant: AppTextVariant.body,
                           color: AppColors.highContrastWhite,
                         ),
