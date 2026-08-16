@@ -47,4 +47,17 @@ class AppConfig {
   Duration get connectTimeout => const Duration(seconds: 15);
 
   Duration get receiveTimeout => const Duration(seconds: 30);
+
+  Duration get enhanceUploadTimeout => const Duration(minutes: 2);
+
+  Duration get enhanceReceiveTimeout => const Duration(minutes: 10);
+
+  /// AI service base URL (`…/ai/v1`), derived from [baseUrl] (`…/api/v1`).
+  String get aiBaseUrl {
+    final api = baseUrl;
+    if (api.contains('/api/v1')) {
+      return api.replaceFirst('/api/v1', '/ai/v1');
+    }
+    return api.replaceFirst('/api/', '/ai/');
+  }
 }
