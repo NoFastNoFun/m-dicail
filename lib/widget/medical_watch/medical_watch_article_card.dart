@@ -135,24 +135,6 @@ class _MedicalWatchArticleCardState extends State<MedicalWatchArticleCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (article.specialty != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                      vertical: AppSpacing.xs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: AppRadius.pillBorder,
-                    ),
-                    child: AppText(
-                      article.specialty!.label(l10n),
-                      variant: AppTextVariant.caption,
-                      color: theme.colorScheme.primary,
-                    ),
-                  )
-                else
-                  const SizedBox.shrink(),
                 AppButton(
                   label: l10n.medicalWatchOpenPubmed,
                   icon: Icons.open_in_new,
@@ -161,6 +143,31 @@ class _MedicalWatchArticleCardState extends State<MedicalWatchArticleCard> {
                   expanded: false,
                   onPressed: _openPubmed,
                 ),
+                if (article.specialty != null)
+                  const SizedBox(width: AppSpacing.sm),
+                if (article.specialty != null)
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: AppRadius.pillBorder,
+                        ),
+                        child: AppText(
+                          article.specialty!.label(l10n),
+                          variant: AppTextVariant.caption,
+                          color: theme.colorScheme.primary,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
