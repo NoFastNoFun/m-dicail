@@ -27,10 +27,9 @@ class ApiEnhancedTranscriptionRepository
 
     try {
       final response = await _dio.post<Map<String, dynamic>>(
-        '/transcriptions',
+        '${_config.aiBaseUrl}/transcriptions',
         data: formData,
         options: Options(
-          baseUrl: _config.aiBaseUrl,
           contentType: Headers.multipartFormDataContentType,
           sendTimeout: _config.enhanceUploadTimeout,
           receiveTimeout: _config.enhanceReceiveTimeout,

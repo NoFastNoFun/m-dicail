@@ -281,5 +281,25 @@
   "sessionExpiredMessage": "Session expiree, veuillez vous reconnecter",
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
-  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin"
+  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
+
+  "homeGreeting": "Bonjour, {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingGuest": "Bienvenue",
+  "homeQuickRecord": "Enregistrement rapide",
+  "homeNewPatient": "Nouveau patient",
+  "homeViewAgenda": "Agenda",
+  "homeRecentConsultationsTitle": "Consultations récentes",
+  "homeRecentConsultationsEmpty": "Aucune consultation pour le moment",
+  "homeRecentConsultationsSeeAll": "Voir tout",
+  "homeEmptyTitle": "Bienvenue sur Medicail",
+  "homeEmptySubtitle": "Planifiez votre premiere consultation ou démarrez un enregistrement rapide",
+  "homeConsultationsToday": "{count, plural, =0{Aucune consultation aujourd'hui} =1{1 consultation prévue} other{{count} consultations prévues}}"
 }
+

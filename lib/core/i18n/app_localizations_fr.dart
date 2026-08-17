@@ -807,4 +807,50 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get punctuationTransitions =>
       'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Bonjour, $name';
+  }
+
+  @override
+  String get homeGreetingGuest => 'Bienvenue';
+
+  @override
+  String get homeQuickRecord => 'Enregistrement rapide';
+
+  @override
+  String get homeNewPatient => 'Nouveau patient';
+
+  @override
+  String get homeViewAgenda => 'Agenda';
+
+  @override
+  String get homeRecentConsultationsTitle => 'Consultations récentes';
+
+  @override
+  String get homeRecentConsultationsEmpty =>
+      'Aucune consultation pour le moment';
+
+  @override
+  String get homeRecentConsultationsSeeAll => 'Voir tout';
+
+  @override
+  String get homeEmptyTitle => 'Bienvenue sur Medicail';
+
+  @override
+  String get homeEmptySubtitle =>
+      'Planifiez votre premiere consultation ou démarrez un enregistrement rapide';
+
+  @override
+  String homeConsultationsToday(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count consultations prévues',
+      one: '1 consultation prévue',
+      zero: 'Aucune consultation aujourd\'hui',
+    );
+    return '$_temp0';
+  }
 }
