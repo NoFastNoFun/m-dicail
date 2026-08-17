@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
-import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
@@ -12,17 +9,13 @@ import 'package:medicail/features/appointment/presentation/appointment_bloc.dart
 import 'package:medicail/features/appointment/presentation/appointment_change_notifier.dart';
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
-import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
-import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/appointment_list_row.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
-import 'package:medicail/widget/patient_creation_sheet.dart';
 
 import 'package:medicail/widget/home/home_greeting_header.dart';
 import 'package:medicail/widget/home/home_hero_actions.dart';
