@@ -60,6 +60,16 @@ import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart'
     as _i250;
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart'
     as _i541;
+import 'package:medicail/features/medical_watch/data/repositories/api_medical_watch_repository.dart'
+    as _i8;
+import 'package:medicail/features/medical_watch/data/repositories/dynamic_medical_watch_repository.dart'
+    as _i436;
+import 'package:medicail/features/medical_watch/data/repositories/secure_storage_medical_watch_repository.dart'
+    as _i599;
+import 'package:medicail/features/medical_watch/domain/repositories/medical_watch_repository.dart'
+    as _i348;
+import 'package:medicail/features/medical_watch/presentation/medical_watch_bloc.dart'
+    as _i435;
 import 'package:medicail/features/note_template/data/datasources/asset_note_template_data_source.dart'
     as _i564;
 import 'package:medicail/features/note_template/data/repositories/note_template_repository_impl.dart'
@@ -151,6 +161,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
+    gh.factory<_i599.SecureStorageMedicalWatchRepository>(
+      () => _i599.SecureStorageMedicalWatchRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.factory<_i830.SecureStoragePatientRepository>(
       () => _i830.SecureStoragePatientRepository(
         gh<_i558.FlutterSecureStorage>(),
@@ -236,6 +251,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i587.ApiAppointmentRepository>(
       () => _i587.ApiAppointmentRepository(gh<_i1005.ApiClient>()),
     );
+    gh.factory<_i8.ApiMedicalWatchRepository>(
+      () => _i8.ApiMedicalWatchRepository(gh<_i1005.ApiClient>()),
+    );
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
     );
@@ -281,8 +299,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i348.MedicalWatchRepository>(
+      () => _i436.DynamicMedicalWatchRepository(
+        gh<_i8.ApiMedicalWatchRepository>(),
+        gh<_i599.SecureStorageMedicalWatchRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i301.PatientBloc>(
       () => _i301.PatientBloc(gh<_i390.PatientRepository>()),
+    );
+    gh.factory<_i435.MedicalWatchBloc>(
+      () => _i435.MedicalWatchBloc(gh<_i348.MedicalWatchRepository>()),
     );
     gh.lazySingleton<_i341.NoteProcessingRepository>(
       () => _i668.DynamicNoteProcessingRepository(

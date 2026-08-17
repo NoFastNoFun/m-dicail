@@ -11,6 +11,7 @@ import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/pages/settings_page.dart';
+import 'package:medicail/pages/medical_watch_page.dart';
 import 'package:medicail/pages/template_editor_page.dart';
 import 'package:medicail/pages/templates_page.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
@@ -91,6 +92,10 @@ class AppRouter {
             path: AppRoutes.settings,
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.medicalWatch,
+            builder: (context, state) => const MedicalWatchPage(),
           ),
           GoRoute(
             path: AppRoutes.settingsTemplates,

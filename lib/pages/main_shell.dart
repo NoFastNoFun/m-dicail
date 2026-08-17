@@ -254,6 +254,12 @@ class _MainShellState extends State<MainShell> {
         ),
       ),
       AppBottomNavDestination(
+        route: AppRoutes.medicalWatch,
+        icon: Icons.newspaper_outlined,
+        selectedIcon: Icons.newspaper,
+        label: l10n.medicalWatchTitle,
+      ),
+      AppBottomNavDestination(
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,
