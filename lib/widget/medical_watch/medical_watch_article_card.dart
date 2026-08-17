@@ -135,13 +135,20 @@ class _MedicalWatchArticleCardState extends State<MedicalWatchArticleCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppButton(
-                  label: l10n.medicalWatchOpenPubmed,
-                  icon: Icons.open_in_new,
-                  layout: AppButtonLayout.textWithIcon,
-                  style: AppButtonStyle.primary,
-                  expanded: false,
+                TextButton.icon(
                   onPressed: _openPubmed,
+                  icon: const Icon(Icons.open_in_new, size: 16),
+                  label: AppText(
+                    l10n.medicalWatchOpenPubmed,
+                    variant: AppTextVariant.caption,
+                    color: theme.colorScheme.primary,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                 ),
                 if (article.specialty != null)
                   const SizedBox(width: AppSpacing.sm),
