@@ -156,7 +156,7 @@ void main() {
 
   group('VoiceCaptureBloc dual capture', () {
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'starts continuous session audio with STT',
+      'starts live STT without session WAV so the microphone stays exclusive',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -170,9 +170,9 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(
+        verifyNever(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        ).called(1);
+        );
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
@@ -183,12 +183,12 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'keeps session audio and only stops STT when app backgrounds',
+      'stops STT and starts session WAV when app backgrounds',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
         clearInteractions(backgroundRecorder);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        clearInteractions(audioCapture);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
           (state) =>
@@ -210,24 +210,36 @@ void main() {
       ],
       verify: (_) {
         verify(() => audioCapture.stopListening()).called(greaterThan(0));
-        verifyNever(
+        verify(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        );
+        ).called(1);
         verifyNever(() => backgroundRecorder.stop());
       },
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'resumes STT on foreground without offline whisper merge',
+      'merges offline whisper then resumes STT on foreground',
       build: buildBloc,
+      setUp: () {
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/bg.wav';
+        });
+        when(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer((_) async => 'texte hors ligne');
+      },
       act: (bloc) async {
         await seedListening(bloc);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
           (state) =>
               state is RecordingInProgress && state.isBackgroundCapture,
         );
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
         clearInteractions(audioCapture);
         clearInteractions(offlineTranscription);
         clearInteractions(backgroundRecorder);
@@ -245,15 +257,25 @@ void main() {
           'isBackgroundCapture',
           true,
         ),
+        isA<VoiceCaptureTranscribingBackground>(),
         isA<RecordingInProgress>().having(
           (s) => s.isBackgroundCapture,
           'isBackgroundCapture',
           false,
+        ).having(
+          (s) => s.transcript,
+          'transcript',
+          contains('texte hors ligne'),
         ),
       ],
       verify: (_) {
-        verifyNever(() => backgroundRecorder.stop());
-        verifyNever(() => offlineTranscription.transcribeFile(any()));
+        verify(() => backgroundRecorder.stop()).called(1);
+        verify(
+          () => offlineTranscription.transcribeFile(
+            '/tmp/bg.wav',
+            language: any(named: 'language'),
+          ),
+        ).called(1);
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
@@ -369,7 +391,7 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'cleans up notification on stop but keeps session audio',
+      'cleans up notification and session audio on pause',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -386,7 +408,7 @@ void main() {
       verify: (_) {
         verify(() => audioCapture.stopListening()).called(greaterThan(0));
         verify(() => notificationService.stop()).called(greaterThan(0));
-        verifyNever(() => backgroundRecorder.stop());
+        verify(() => backgroundRecorder.cancel()).called(greaterThan(0));
       },
     );
 
