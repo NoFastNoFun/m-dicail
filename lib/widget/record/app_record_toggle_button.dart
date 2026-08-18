@@ -21,10 +21,15 @@ class AppRecordToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final effectiveOnPressed = enabled && !isLoading ? onPressed : null;
+    
+    final backgroundColor = enabled 
+        ? AppColors.error 
+        : theme.colorScheme.surfaceContainerHighest;
 
     return Material(
-      color: AppColors.error,
+      color: backgroundColor,
       borderRadius: AppRadius.pillBorder,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -42,7 +47,7 @@ class AppRecordToggleButton extends StatelessWidget {
                       color: AppColors.onError,
                     ),
                   )
-                : _RecordIcon(isRecording: isRecording),
+                : _RecordIcon(isRecording: isRecording, enabled: enabled),
           ),
         ),
       ),
@@ -51,9 +56,10 @@ class AppRecordToggleButton extends StatelessWidget {
 }
 
 class _RecordIcon extends StatelessWidget {
-  const _RecordIcon({required this.isRecording});
+  const _RecordIcon({required this.isRecording, this.enabled = true});
 
   final bool isRecording;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +68,9 @@ class _RecordIcon extends StatelessWidget {
         width: AppRecordToggleButton._iconSize,
         height: AppRecordToggleButton._iconSize,
         decoration: BoxDecoration(
-          color: AppColors.onError.withValues(alpha: 0.85),
+          color: enabled 
+              ? AppColors.onError.withValues(alpha: 0.85)
+              : Theme.of(context).disabledColor,
           borderRadius: BorderRadius.circular(AppRecordToggleButton._iconSize / 2),
         ),
       );
@@ -71,8 +79,8 @@ class _RecordIcon extends StatelessWidget {
     return Container(
       width: AppRecordToggleButton._iconSize,
       height: AppRecordToggleButton._iconSize,
-      decoration: const BoxDecoration(
-        color: AppColors.onError,
+      decoration: BoxDecoration(
+        color: enabled ? AppColors.onError : Theme.of(context).disabledColor,
         shape: BoxShape.circle,
       ),
     );

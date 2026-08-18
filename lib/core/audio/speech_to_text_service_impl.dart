@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/exceptions.dart';
@@ -39,6 +40,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
   }
 
   void _onSpeechStatus(String status) {
+    debugPrint('STT Status: $status');
     if (status != SpeechToText.doneStatus) {
       return;
     }
@@ -49,6 +51,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
   }
 
   void _onSpeechError(Object error) {
+    debugPrint('STT Error: $error');
     _isListening = false;
     if (_keepListening) {
       _onListeningEnded?.call();
@@ -76,13 +79,12 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
           onResult(result.recognizedWords);
         }
       },
-      localeId: 'fr_FR',
-      pauseFor: _pauseFor,
-      listenFor: _listenFor,
       listenOptions: SpeechListenOptions(
         cancelOnError: false,
         partialResults: true,
         listenMode: ListenMode.dictation,
+        pauseFor: _pauseFor,
+        listenFor: _listenFor,
       ),
     );
     _isListening = true;

@@ -46,6 +46,9 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
         sampleRate: 16000,
         numChannels: 1,
         bitRate: 256000,
+        androidConfig: AndroidRecordConfig(
+          audioSource: AndroidAudioSource.voiceRecognition,
+        ),
       ),
       path: path,
     );
