@@ -103,7 +103,7 @@ class AppRecordHeaderCard extends StatelessWidget {
           Row(
             children: [
               _SideControlButton(
-                icon: Icons.logout,
+                icon: Icons.close,
                 backgroundColor: controlSurface,
                 borderRadius: controlBorderRadius,
                 onPressed: onBack,

@@ -102,12 +102,17 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         currentTranscript,
         patientId: event.patientId,
       );
-      await _ensureSessionAudioStarted();
+      await _tryStartListeningSession();
+      // Petite pause pour s'assurer que STT a bien pris le lock du micro
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      // Temporarily commented out to test if 'record' is still locking the mic
+      // await _ensureSessionAudioStarted();
+      
       await _recordingNotificationService.start(
         title: _notificationTitle,
         body: _notificationBody,
       );
-      await _tryStartListeningSession();
       _isBackgroundCapture = false;
       emit(RecordingInProgress(
         transcript: currentTranscript,
@@ -180,7 +185,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
             filePath: audioPath,
             sessionId: sessionId,
             language: event.language,
-          );
+          ).timeout(const Duration(minutes: 2));
           if (enhanced.isNotEmpty) {
             transcriptForProcess = AnonymizationHelper.anonymize(enhanced);
             await _saveActiveSessionTranscript(transcriptForProcess);
@@ -205,7 +210,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         sessionId: sessionId,
         rawText: transcriptForProcess,
         language: event.language,
-      );
+      ).timeout(const Duration(minutes: 1));
 
       await _completeActiveSession(
         transcript: result.processedText,

@@ -18,7 +18,6 @@ import 'package:medicail/widget/appointment_list_row.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 
 import 'package:medicail/widget/home/home_greeting_header.dart';
-import 'package:medicail/widget/home/home_hero_actions.dart';
 import 'package:medicail/widget/home/home_recent_session_tile.dart';
 import 'package:medicail/widget/layout/app_empty_state.dart';
 
@@ -115,10 +114,6 @@ class _HomeViewState extends State<_HomeView> {
               // ── Greeting Section ──
               const HomeGreetingHeader(),
               const SizedBox(height: AppSpacing.xl),
-
-              // ── Hero Actions ──
-              const HomeHeroActions(),
-              const SizedBox(height: AppSpacing.xxl),
 
               // ── Upcoming Appointments ──
               Row(
