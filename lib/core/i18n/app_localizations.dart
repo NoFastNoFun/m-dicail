@@ -484,6 +484,36 @@ abstract class AppLocalizations {
   /// **'Aucune consultation pour ce patient'**
   String get patientSessionsEmpty;
 
+  /// No description provided for @sessionStatusDraft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get sessionStatusDraft;
+
+  /// No description provided for @sessionStatusRecording.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get sessionStatusRecording;
+
+  /// No description provided for @sessionStatusCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminée'**
+  String get sessionStatusCompleted;
+
+  /// No description provided for @sessionStatusFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échec'**
+  String get sessionStatusFailed;
+
+  /// No description provided for @patientAgeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Âge'**
+  String get patientAgeLabel;
+
   /// No description provided for @recordingStatusLabel.
   ///
   /// In fr, this message translates to:

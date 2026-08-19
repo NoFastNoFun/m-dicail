@@ -213,6 +213,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
 
   @override
+  String get sessionStatusDraft => 'Brouillon';
+
+  @override
+  String get sessionStatusRecording => 'En cours';
+
+  @override
+  String get sessionStatusCompleted => 'Terminée';
+
+  @override
+  String get sessionStatusFailed => 'Échec';
+
+  @override
+  String get patientAgeLabel => 'Âge';
+
+  @override
   String get recordingStatusLabel => 'Statut';
 
   @override
