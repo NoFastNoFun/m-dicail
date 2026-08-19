@@ -281,5 +281,32 @@
   "sessionExpiredMessage": "Session expiree, veuillez vous reconnecter",
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
-  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin"
+  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
+
+  "medicalWatchTitle": "Veille medicale",
+  "medicalWatchSearchPlaceholder": "Rechercher sur PubMed…",
+  "medicalWatchFilterAll": "Tous",
+  "medicalWatchSpecialtyRehabilitation": "Reeducation",
+  "medicalWatchSpecialtyMusculoskeletal": "Musculo-squelettique",
+  "medicalWatchSpecialtyExerciseTherapy": "Therapie par l'exercice",
+  "medicalWatchSpecialtyManualTherapy": "Therapie manuelle",
+  "medicalWatchEmpty": "Aucun article pour le moment",
+  "medicalWatchSearchEmpty": "Aucun resultat pour cette recherche",
+  "medicalWatchErrorLoad": "Impossible de charger les articles",
+  "medicalWatchErrorSearch": "Erreur lors de la recherche PubMed",
+  "medicalWatchReadMore": "Lire la suite",
+  "medicalWatchReadLess": "Reduire",
+  "medicalWatchOpenPubmed": "Ouvrir dans PubMed",
+  "medicalWatchCopyReference": "Copier la reference",
+  "medicalWatchReferenceCopied": "Reference copiee",
+  "medicalWatchArticleCount": "{count, plural, =0{Aucun article} =1{1 article} other{{count} articles}}",
+  "@medicalWatchArticleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "medicalWatchSyncSuccess": "Veille synchronisee",
+  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)"
 }
