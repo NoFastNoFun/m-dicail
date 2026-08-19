@@ -12,7 +12,6 @@ import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
-import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
@@ -218,56 +217,101 @@ class _PatientListItem extends StatelessWidget {
 
   final Patient patient;
 
+  int _calculateAge(DateTime birthDate) {
+    final now = DateTime.now();
+    int age = now.year - birthDate.year;
+    if (now.month < birthDate.month || (now.month == birthDate.month && now.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-
     final theme = Theme.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border.all(color: theme.dividerColor),
-        borderRadius: AppRadius.mdBorder,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppText(
-              patient.displayName,
-              variant: AppTextVariant.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Icon(
-                  Icons.badge_outlined,
-                  size: 16,
-                  color: context.secondaryTextColor,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Expanded(
-                  child: AppText(
-                    'MRN: ${patient.mrn}',
-                    variant: AppTextVariant.caption,
+    return InkWell(
+      onTap: () => context.goPatientDetail(patient.id),
+      borderRadius: AppRadius.mdBorder,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border.all(color: theme.dividerColor),
+          borderRadius: AppRadius.mdBorder,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppText(
+                patient.displayName,
+                variant: AppTextVariant.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Icon(
+                    Icons.badge_outlined,
+                    size: 16,
                     color: context.secondaryTextColor,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: AppText(
+                      'MRN: ${patient.mrn}',
+                      variant: AppTextVariant.caption,
+                      color: context.secondaryTextColor,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              if (patient.birthDate != null || patient.sex != null) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    if (patient.birthDate != null) ...[
+                      Icon(Icons.cake_outlined, size: 16, color: context.secondaryTextColor),
+                      const SizedBox(width: AppSpacing.xs),
+                      AppText(
+                        '${_calculateAge(patient.birthDate!)} ans',
+                        variant: AppTextVariant.caption,
+                        color: context.secondaryTextColor,
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                    ],
+                    if (patient.sex != null) ...[
+                      Icon(Icons.person_outline, size: 16, color: context.secondaryTextColor),
+                      const SizedBox(width: AppSpacing.xs),
+                      AppText(
+                        patient.sex!,
+                        variant: AppTextVariant.caption,
+                        color: context.secondaryTextColor,
+                      ),
+                    ],
+                  ],
                 ),
               ],
-            ),
-            const Spacer(),
-            AppButton(
-              label: l10n.patientOpenButton,
-              style: AppButtonStyle.secondary,
-              onPressed: () => context.goPatientDetail(patient.id),
-            ),
-          ],
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  AppText(
+                    l10n.patientOpenButton,
+                    variant: AppTextVariant.label,
+                    color: context.colorScheme.primary,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Icon(Icons.arrow_forward, size: 16, color: context.colorScheme.primary),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

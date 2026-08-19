@@ -37,11 +37,16 @@ class ErrorInterceptor extends Interceptor {
   ServerException _mapResponseException(DioException err) {
     final statusCode = err.response?.statusCode;
     final extracted = _extractMessage(err.response?.data);
+    
+    if (statusCode != null && statusCode >= 500) {
+      return ServerException(
+        'Le service est temporairement indisponible (Erreur $statusCode)', 
+        statusCode: statusCode,
+      );
+    }
+
     final message = extracted ?? err.message ?? 'Erreur serveur';
 
-    if (statusCode != null && statusCode >= 500) {
-      return ServerException(message, statusCode: statusCode);
-    }
     if (statusCode == 401) {
       return ServerException(
         extracted ?? 'Email ou mot de passe incorrect',
@@ -69,6 +74,13 @@ class ErrorInterceptor extends Interceptor {
       }
     }
     if (data is String && data.isNotEmpty) {
+      final text = data.trim().toLowerCase();
+      if (text.startsWith('<html') || text.startsWith('<!doctype') || text.contains('<body')) {
+        return null;
+      }
+      if (data.length > 150) {
+        return null;
+      }
       return data;
     }
     return null;

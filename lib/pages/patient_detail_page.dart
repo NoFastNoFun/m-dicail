@@ -151,6 +151,15 @@ class _PatientDetailView extends StatelessWidget {
   final GlobalKey consultKey;
   final VoidCallback onRefresh;
 
+  int _calculateAge(DateTime birthDate) {
+    final now = DateTime.now();
+    int age = now.year - birthDate.year;
+    if (now.month < birthDate.month || (now.month == birthDate.month && now.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -161,12 +170,98 @@ class _PatientDetailView extends StatelessWidget {
         AppText(patient.displayName, variant: AppTextVariant.headline),
         const SizedBox(height: AppSpacing.sm),
         AppText(
-          patient.id,
+          'MRN: ${patient.mrn}',
           variant: AppTextVariant.caption,
           color: context.secondaryTextColor,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        const SizedBox(height: AppSpacing.md),
+        if (patient.birthDate != null || patient.sex != null) ...[
+          Row(
+            children: [
+              if (patient.birthDate != null) ...[
+                Icon(Icons.cake_outlined, size: 16, color: context.secondaryTextColor),
+                const SizedBox(width: AppSpacing.xs),
+                AppText(
+                  '${DateFormat.yMd(l10n.localeName).format(patient.birthDate!)} (${_calculateAge(patient.birthDate!)} ans)',
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+                const SizedBox(width: AppSpacing.md),
+              ],
+              if (patient.sex != null) ...[
+                Icon(Icons.person_outline, size: 16, color: context.secondaryTextColor),
+                const SizedBox(width: AppSpacing.xs),
+                AppText(
+                  patient.sex!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
+        if (patient.contact?.phone != null || patient.contact?.email != null) ...[
+          Row(
+            children: [
+              if (patient.contact?.phone != null) ...[
+                Icon(Icons.phone_outlined, size: 16, color: context.secondaryTextColor),
+                const SizedBox(width: AppSpacing.xs),
+                AppText(
+                  patient.contact!.phone!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+                const SizedBox(width: AppSpacing.md),
+              ],
+              if (patient.contact?.email != null) ...[
+                Icon(Icons.email_outlined, size: 16, color: context.secondaryTextColor),
+                const SizedBox(width: AppSpacing.xs),
+                AppText(
+                  patient.contact!.email!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
+        if (patient.contact?.address != null) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.home_outlined, size: 16, color: context.secondaryTextColor),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: AppText(
+                  patient.contact!.address!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
+        if (patient.notes != null && patient.notes!.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.note_alt_outlined, size: 16, color: context.secondaryTextColor),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: AppText(
+                  patient.notes!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: AppSpacing.lg),
         AppShowcase(
           key: consultKey,
@@ -230,74 +325,82 @@ class _RecordingSessionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final hasSoap = session.soapNote != null;
-
     final theme = Theme.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border.all(color: theme.dividerColor),
-        borderRadius: AppRadius.mdBorder,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        '${l10n.recordingDateLabel}: ${DateFormat('dd/MM/yyyy HH:mm').format(session.startedAt.toLocal())}',
-                        variant: AppTextVariant.label,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      AppText(
-                        '${l10n.recordingStatusLabel}: ${session.status.name}',
-                        variant: AppTextVariant.caption,
-                        color: context.secondaryTextColor,
-                      ),
-                    ],
-                  ),
-                ),
-                if (hasSoap)
-                  IconButton(
-                    icon: Icon(
-                      Icons.edit_document,
-                      color: context.colorScheme.primary,
+    final statusLabel = switch (session.status) {
+      RecordingSessionStatus.draft => l10n.sessionStatusDraft,
+      RecordingSessionStatus.recording => l10n.sessionStatusRecording,
+      RecordingSessionStatus.completed => l10n.sessionStatusCompleted,
+      RecordingSessionStatus.failed => l10n.sessionStatusFailed,
+    };
+
+    return InkWell(
+      onTap: () {
+        if (hasSoap) {
+          SoapNoteBottomSheet.show(
+            context,
+            initialNote: session.soapNote!,
+            onSave: (updatedNote) async {
+              final repo = getIt<RecordingSessionRepository>();
+              await repo.save(
+                session.copyWith(soapNote: updatedNote),
+              );
+              onRefresh();
+            },
+          );
+        }
+      },
+      borderRadius: AppRadius.mdBorder,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border.all(color: theme.dividerColor),
+          borderRadius: AppRadius.mdBorder,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          '${l10n.recordingDateLabel}: ${DateFormat('dd/MM/yyyy HH:mm').format(session.startedAt.toLocal())}',
+                          variant: AppTextVariant.label,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppText(
+                          '${l10n.recordingStatusLabel}: $statusLabel',
+                          variant: AppTextVariant.caption,
+                          color: context.secondaryTextColor,
+                        ),
+                      ],
                     ),
-                    tooltip: l10n.soapNoteViewAction,
-                    onPressed: () {
-                      SoapNoteBottomSheet.show(
-                        context,
-                        initialNote: session.soapNote!,
-                        onSave: (updatedNote) async {
-                          final repo = getIt<RecordingSessionRepository>();
-                          await repo.save(
-                            session.copyWith(soapNote: updatedNote),
-                          );
-                          onRefresh();
-                        },
-                      );
-                    },
                   ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            AppText(
-              session.transcript.isEmpty
-                  ? l10n.transcriptEmptyFallback
-                  : session.transcript,
-              variant: AppTextVariant.body,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+                  if (hasSoap)
+                    Icon(
+                      Icons.chevron_right,
+                      color: context.secondaryTextColor,
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppText(
+                session.transcript.isEmpty
+                    ? l10n.transcriptEmptyFallback
+                    : session.transcript,
+                variant: AppTextVariant.body,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

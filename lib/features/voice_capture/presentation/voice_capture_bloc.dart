@@ -51,11 +51,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   final BackgroundAudioRecorder _backgroundAudioRecorder;
   final OfflineAudioTranscriptionService _offlineAudioTranscriptionService;
 
-  String _segmentBase = '';
   RecordingSession? _activeSession;
-  NoteTemplate? _selectedTemplate;
-  bool _isBackgroundCapture = false;
   bool _isHandlingLifecycle = false;
+  bool _isBackgroundCapture = false;
+  String _segmentBase = '';
+  String _lastRawText = '';
+  NoteTemplate? _selectedTemplate;
 
   List<String> _transitions = const [];
   String _wordPeriod = '';
@@ -138,7 +139,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     try {
       await _stopListeningAndNotification();
       await _saveActiveSessionTranscript(_currentTranscript);
-      _segmentBase = '';
+      var transcript = _currentTranscript.trim();
+      if (transcript.isNotEmpty && !transcript.endsWith('.')) {
+        transcript += '. ';
+      } else if (transcript.isNotEmpty) {
+        transcript += ' ';
+      }
+      _segmentBase = transcript;
+      _lastRawText = '';
       emit(ListeningPaused(
         transcript: _currentTranscript,
         selectedTemplate: _selectedTemplate,
@@ -218,6 +226,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
 
       _segmentBase = '';
+    _lastRawText = '';
       _activeSession = null;
       emit(VoiceCaptureConsultationFinished(
         sessionId: sessionId,
@@ -248,6 +257,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
     _segmentBase = '';
+    _lastRawText = '';
     _activeSession = null;
     emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
@@ -268,6 +278,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
 
     _segmentBase = '';
+    _lastRawText = '';
     _activeSession = null;
     emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
@@ -283,8 +294,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     var transcript = _currentTranscript.trim();
     if (transcript.isNotEmpty && !transcript.endsWith('.')) {
       transcript += '. ';
+    } else if (transcript.isNotEmpty) {
+      transcript += ' ';
     }
     _segmentBase = transcript;
+    _lastRawText = '';
     try {
       await _saveActiveSessionTranscript(transcript);
       await _tryStartListeningSession();
@@ -325,8 +339,49 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transitionWords: _transitions,
     );
 
+    if (_lastRawText.isNotEmpty && event.rawText.isNotEmpty) {
+      final maxOverlap = _lastRawText.length < event.rawText.length
+          ? _lastRawText.length
+          : event.rawText.length;
+      
+      bool hasOverlap = false;
+      if (event.rawText.startsWith(_lastRawText) || _lastRawText.startsWith(event.rawText)) {
+        hasOverlap = true;
+      } else {
+        for (var overlap = maxOverlap; overlap > 0; overlap--) {
+          if (_lastRawText.endsWith(event.rawText.substring(0, overlap))) {
+            hasOverlap = true;
+            break;
+          }
+        }
+      }
+
+      if (!hasOverlap) {
+        var currentTranscript = _currentTranscript.trim();
+        if (currentTranscript.isNotEmpty && !currentTranscript.endsWith('.')) {
+          currentTranscript += '. ';
+        } else if (currentTranscript.isNotEmpty) {
+          currentTranscript += ' ';
+        }
+        _segmentBase = currentTranscript;
+      }
+    }
+    _lastRawText = event.rawText;
+
     final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     _updateActiveSessionTranscriptInMemory(merged);
+    
+    if (event.isFinal) {
+      var finalTranscript = merged.trim();
+      if (finalTranscript.isNotEmpty && !finalTranscript.endsWith('.')) {
+        finalTranscript += '. ';
+      } else if (finalTranscript.isNotEmpty) {
+        finalTranscript += ' ';
+      }
+      _segmentBase = finalTranscript;
+      _lastRawText = ''; // Reset so the next text doesn't overlap with nothing
+    }
+
     emit(RecordingInProgress(
       transcript: merged,
       selectedTemplate: _selectedTemplate,
@@ -469,11 +524,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   Future<void> _tryStartListeningSession() async {
     try {
       await _audioCaptureService.startListening(
-        onResult: (text) {
+        onResult: (text, {bool isFinal = false}) {
           if (isClosed || _isBackgroundCapture) {
             return;
           }
-          add(VoiceCaptureTranscriptUpdated(text));
+          add(VoiceCaptureTranscriptUpdated(text, isFinal: isFinal));
         },
         onListeningEnded: () {
           if (isClosed || _isBackgroundCapture) {
