@@ -807,4 +807,71 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get punctuationTransitions =>
       'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
+
+  @override
+  String get medicalWatchTitle => 'Veille medicale';
+
+  @override
+  String get medicalWatchSearchPlaceholder => 'Rechercher sur PubMed…';
+
+  @override
+  String get medicalWatchFilterAll => 'Tous';
+
+  @override
+  String get medicalWatchSpecialtyRehabilitation => 'Reeducation';
+
+  @override
+  String get medicalWatchSpecialtyMusculoskeletal => 'Musculo-squelettique';
+
+  @override
+  String get medicalWatchSpecialtyExerciseTherapy => 'Therapie par l\'exercice';
+
+  @override
+  String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
+
+  @override
+  String get medicalWatchEmpty => 'Aucun article pour le moment';
+
+  @override
+  String get medicalWatchSearchEmpty => 'Aucun resultat pour cette recherche';
+
+  @override
+  String get medicalWatchErrorLoad => 'Impossible de charger les articles';
+
+  @override
+  String get medicalWatchErrorSearch => 'Erreur lors de la recherche PubMed';
+
+  @override
+  String get medicalWatchReadMore => 'Lire la suite';
+
+  @override
+  String get medicalWatchReadLess => 'Reduire';
+
+  @override
+  String get medicalWatchOpenPubmed => 'Ouvrir dans PubMed';
+
+  @override
+  String get medicalWatchCopyReference => 'Copier la reference';
+
+  @override
+  String get medicalWatchReferenceCopied => 'Reference copiee';
+
+  @override
+  String medicalWatchArticleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles',
+      one: '1 article',
+      zero: 'Aucun article',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get medicalWatchSyncSuccess => 'Veille synchronisee';
+
+  @override
+  String get medicalWatchOfflineHint =>
+      'Resultats hors-ligne (derniere synchronisation)';
 }

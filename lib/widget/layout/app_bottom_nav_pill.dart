@@ -55,7 +55,7 @@ class AppBottomNavPill extends StatelessWidget {
           children: [
             for (var i = 0; i < destinations.length; i++) ...[
               if (i > 0) const SizedBox(width: AppSpacing.xs),
-              _buildNavItem(destinations[i], showLabels),
+              Flexible(child: _buildNavItem(destinations[i], showLabels)),
             ],
           ],
         ),

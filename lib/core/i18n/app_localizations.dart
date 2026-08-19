@@ -1617,6 +1617,120 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
   String get punctuationTransitions;
+
+  /// No description provided for @medicalWatchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille medicale'**
+  String get medicalWatchTitle;
+
+  /// No description provided for @medicalWatchSearchPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher sur PubMed…'**
+  String get medicalWatchSearchPlaceholder;
+
+  /// No description provided for @medicalWatchFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get medicalWatchFilterAll;
+
+  /// No description provided for @medicalWatchSpecialtyRehabilitation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reeducation'**
+  String get medicalWatchSpecialtyRehabilitation;
+
+  /// No description provided for @medicalWatchSpecialtyMusculoskeletal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Musculo-squelettique'**
+  String get medicalWatchSpecialtyMusculoskeletal;
+
+  /// No description provided for @medicalWatchSpecialtyExerciseTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie par l\'exercice'**
+  String get medicalWatchSpecialtyExerciseTherapy;
+
+  /// No description provided for @medicalWatchSpecialtyManualTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie manuelle'**
+  String get medicalWatchSpecialtyManualTherapy;
+
+  /// No description provided for @medicalWatchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article pour le moment'**
+  String get medicalWatchEmpty;
+
+  /// No description provided for @medicalWatchSearchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun resultat pour cette recherche'**
+  String get medicalWatchSearchEmpty;
+
+  /// No description provided for @medicalWatchErrorLoad.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les articles'**
+  String get medicalWatchErrorLoad;
+
+  /// No description provided for @medicalWatchErrorSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de la recherche PubMed'**
+  String get medicalWatchErrorSearch;
+
+  /// No description provided for @medicalWatchReadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire la suite'**
+  String get medicalWatchReadMore;
+
+  /// No description provided for @medicalWatchReadLess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reduire'**
+  String get medicalWatchReadLess;
+
+  /// No description provided for @medicalWatchOpenPubmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir dans PubMed'**
+  String get medicalWatchOpenPubmed;
+
+  /// No description provided for @medicalWatchCopyReference.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier la reference'**
+  String get medicalWatchCopyReference;
+
+  /// No description provided for @medicalWatchReferenceCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reference copiee'**
+  String get medicalWatchReferenceCopied;
+
+  /// No description provided for @medicalWatchArticleCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun article} =1{1 article} other{{count} articles}}'**
+  String medicalWatchArticleCount(int count);
+
+  /// No description provided for @medicalWatchSyncSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille synchronisee'**
+  String get medicalWatchSyncSuccess;
+
+  /// No description provided for @medicalWatchOfflineHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Resultats hors-ligne (derniere synchronisation)'**
+  String get medicalWatchOfflineHint;
 }
 
 class _AppLocalizationsDelegate

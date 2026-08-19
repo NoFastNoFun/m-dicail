@@ -6,7 +6,7 @@ import 'package:medicail/core/design_system/app_typography.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 
-enum AppButtonStyle { primary, secondary, warning, error, info }
+enum AppButtonStyle { primary, secondary, tertiary, warning, error, info }
 
 enum AppButtonLayout { text, icon, textWithIcon }
 
@@ -140,6 +140,13 @@ class AppButton extends StatelessWidget {
         child: child,
       );
     }
+    if (style == AppButtonStyle.tertiary) {
+      return TextButton(
+        onPressed: onPressed,
+        style: buttonStyle,
+        child: child,
+      );
+    }
     return OutlinedButton(
       onPressed: onPressed,
       style: buttonStyle,
@@ -154,6 +161,13 @@ class AppButton extends StatelessWidget {
   ) {
     if (_isFilledStyle) {
       return FilledButton(
+        onPressed: onPressed,
+        style: buttonStyle,
+        child: child,
+      );
+    }
+    if (style == AppButtonStyle.tertiary) {
+      return TextButton(
         onPressed: onPressed,
         style: buttonStyle,
         child: child,
@@ -175,7 +189,9 @@ class AppButton extends StatelessWidget {
   RoundedRectangleBorder _resolveButtonShape(BuildContext context) {
     final themeStyle = _isFilledStyle
         ? Theme.of(context).filledButtonTheme.style
-        : Theme.of(context).outlinedButtonTheme.style;
+        : style == AppButtonStyle.tertiary 
+            ? Theme.of(context).textButtonTheme.style
+            : Theme.of(context).outlinedButtonTheme.style;
     final resolved = themeStyle?.shape?.resolve(const {});
     if (resolved is RoundedRectangleBorder) {
       final radius = resolved.borderRadius.resolve(Directionality.of(context));
@@ -209,6 +225,11 @@ class AppButton extends StatelessWidget {
           colorScheme.primary,
           colorScheme.primary,
         ),
+      AppButtonStyle.tertiary => (
+          Colors.transparent,
+          colorScheme.primary,
+          Colors.transparent,
+        ),
       AppButtonStyle.warning => (
           AppColors.warning,
           AppColors.onWarning,
@@ -241,6 +262,18 @@ class AppButton extends StatelessWidget {
         tapTargetSize: tapTarget,
       );
     }
+    
+    if (style == AppButtonStyle.tertiary) {
+      return TextButton.styleFrom(
+        foregroundColor: foreground,
+        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+        shape: shape,
+        textStyle: labelStyle,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+        minimumSize: minimumSize,
+        tapTargetSize: tapTarget,
+      );
+    }
 
     return OutlinedButton.styleFrom(
       foregroundColor: foreground,
@@ -263,6 +296,7 @@ class AppButton extends StatelessWidget {
     return switch (style) {
       AppButtonStyle.primary => colorScheme.onPrimary,
       AppButtonStyle.secondary => colorScheme.primary,
+      AppButtonStyle.tertiary => colorScheme.primary,
       AppButtonStyle.warning => AppColors.onWarning,
       AppButtonStyle.error => colorScheme.onError,
       AppButtonStyle.info => AppColors.onInfo,
@@ -276,6 +310,7 @@ class AppButton extends StatelessWidget {
       AppButtonStyle.error => colorScheme.onError,
       AppButtonStyle.info => AppColors.onInfo,
       AppButtonStyle.secondary => colorScheme.primary,
+      AppButtonStyle.tertiary => colorScheme.primary,
     };
   }
 }
