@@ -1,4 +1,4 @@
-package com.example.medicail
+package dev.nf2.medicail
 
 import android.os.Bundle
 import androidx.core.view.WindowCompat
