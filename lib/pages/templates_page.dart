@@ -37,6 +37,13 @@ class _TemplatesView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.templatesTitle,
+      actions: [
+        IconButton(
+          tooltip: l10n.templateCreateAction,
+          onPressed: () => context.pushNamed('template-create'),
+          icon: const Icon(Icons.add),
+        ),
+      ],
       body: BlocConsumer<NoteTemplateBloc, NoteTemplateState>(
         listener: (context, state) {
           if (state is NoteTemplateFailure) {
@@ -155,6 +162,14 @@ class _TemplatesList extends StatelessWidget {
           variant: AppTextVariant.title,
         ),
         const SizedBox(height: AppSpacing.sm),
+        AppButton(
+          label: l10n.templateCreateAction,
+          style: AppButtonStyle.secondary,
+          layout: AppButtonLayout.textWithIcon,
+          icon: Icons.add,
+          onPressed: () => context.pushNamed('template-create'),
+        ),
+        const SizedBox(height: AppSpacing.sm),
         if (userVariants.isEmpty)
           AppText(
             l10n.templatesUserEmpty,
@@ -164,7 +179,9 @@ class _TemplatesList extends StatelessWidget {
           ...userVariants.map(
             (template) => _TemplateListTile(
               template: template,
-              badge: l10n.templatesVariantBadge,
+              badge: template.parentTemplateId == null
+                  ? l10n.templatesCustomBadge
+                  : l10n.templatesVariantBadge,
               onTap: () => context.pushNamed(
                 'template-editor',
                 pathParameters: {'templateId': template.id},

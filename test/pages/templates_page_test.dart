@@ -93,6 +93,7 @@ void main() {
 
     expect(find.textContaining('Pathologie'), findsNWidgets(10));
     expect(find.text('Modeles par defaut'), findsOneWidget);
+    expect(find.text('Creer un modele'), findsWidgets);
 
     addTearDown(() => tester.binding.setSurfaceSize(null));
   });
