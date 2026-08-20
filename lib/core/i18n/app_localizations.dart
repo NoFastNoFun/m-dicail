@@ -1600,6 +1600,18 @@ abstract class AppLocalizations {
   /// **'Session expiree, veuillez vous reconnecter'**
   String get sessionExpiredMessage;
 
+  /// No description provided for @errorToastCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Details de l\'erreur copies'**
+  String get errorToastCopied;
+
+  /// No description provided for @errorToastReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler l\'erreur'**
+  String get errorToastReport;
+
   /// No description provided for @punctuationWordPeriod.
   ///
   /// In fr, this message translates to:

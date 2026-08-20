@@ -799,6 +799,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Session expiree, veuillez vous reconnecter';
 
   @override
+  String get errorToastCopied => 'Details de l\'erreur copies';
+
+  @override
+  String get errorToastReport => 'Signaler l\'erreur';
+
+  @override
   String get punctuationWordPeriod => 'point';
 
   @override
