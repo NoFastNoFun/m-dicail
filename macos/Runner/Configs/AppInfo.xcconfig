@@ -8,7 +8,7 @@
 PRODUCT_NAME = medicail
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.medicail
+PRODUCT_BUNDLE_IDENTIFIER = dev.nf2.medicail
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.

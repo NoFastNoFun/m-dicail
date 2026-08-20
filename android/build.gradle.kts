@@ -24,8 +24,12 @@ subprojects {
 
 fun Project.pinWorkingNdk() {
     extensions.findByType(BaseExtension::class.java)?.apply {
+        // AGP forbids ndk.abiFilters when ABI splits are enabled (--split-per-abi).
+        val splitPerAbi = findProperty("split-per-abi")?.toString()?.toBoolean() == true
         defaultConfig.ndk.abiFilters.clear()
-        defaultConfig.ndk.abiFilters.add("arm64-v8a")
+        if (!splitPerAbi) {
+            defaultConfig.ndk.abiFilters.add("arm64-v8a")
+        }
         if (name == "whisper_kit") {
             ndkVersion = "27.0.12077973"
         }
