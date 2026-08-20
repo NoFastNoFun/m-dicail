@@ -27,7 +27,12 @@ class AppRouter {
 
   final AuthNotifier _authNotifier;
 
+  /// Root navigator key for overlays shown from [MaterialApp.router] builder.
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   late final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.home,
     refreshListenable: _authNotifier,
     redirect: (context, state) {

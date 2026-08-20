@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/error/bug_report_launcher.dart';
 import 'package:medicail/core/error/last_api_error_report.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class AppToastHost extends StatefulWidget {
   const AppToastHost({
@@ -91,15 +91,7 @@ class AppToastHostState extends State<AppToastHost> {
     String message,
     String? details,
   ) async {
-    final text = LastApiErrorReport.buildClipboardText(
-      message: message,
-      details: details,
-    );
-    await Clipboard.setData(ClipboardData(text: text));
-    await launchUrlString(
-      AppToast.errorReportFormUrl,
-      mode: LaunchMode.externalApplication,
-    );
+    await BugReportLauncher.report(message: message, details: details);
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context);
     show(

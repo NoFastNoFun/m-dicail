@@ -1648,6 +1648,24 @@ abstract class AppLocalizations {
   /// **'Signaler l\'erreur'**
   String get errorToastReport;
 
+  /// No description provided for @screenshotBugTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un bug détecté ?'**
+  String get screenshotBugTitle;
+
+  /// No description provided for @screenshotBugReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler le bug'**
+  String get screenshotBugReport;
+
+  /// No description provided for @screenshotBugReportMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Screenshot bug report'**
+  String get screenshotBugReportMessage;
+
   /// No description provided for @punctuationWordPeriod.
   ///
   /// In fr, this message translates to:

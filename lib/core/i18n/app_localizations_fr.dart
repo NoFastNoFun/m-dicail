@@ -823,6 +823,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorToastReport => 'Signaler l\'erreur';
 
   @override
+  String get screenshotBugTitle => 'Un bug détecté ?';
+
+  @override
+  String get screenshotBugReport => 'Signaler le bug';
+
+  @override
+  String get screenshotBugReportMessage => 'Screenshot bug report';
+
+  @override
   String get punctuationWordPeriod => 'point';
 
   @override

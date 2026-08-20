@@ -15,6 +15,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
+import 'package:medicail/widget/feedback/screenshot_bug_prompt.dart';
 import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -82,7 +83,9 @@ class _MedicailAppState extends State<MedicailApp> {
                       }
                     },
                     child: AppToastHost(
-                      child: child ?? const SizedBox.shrink(),
+                      child: ScreenshotBugPromptHost(
+                        child: child ?? const SizedBox.shrink(),
+                      ),
                     ),
                   ),
                 ),
