@@ -709,16 +709,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templatesBuiltInSection => 'Modeles par defaut';
 
   @override
-  String get templatesUserSection => 'Mes variantes';
+  String get templatesUserSection => 'Mes modeles';
 
   @override
-  String get templatesUserEmpty => 'Aucune variante enregistree.';
+  String get templatesUserEmpty => 'Aucun modele personnalise enregistre.';
 
   @override
   String get templatesDefaultBadge => 'Defaut';
 
   @override
   String get templatesVariantBadge => 'Variante';
+
+  @override
+  String get templatesCustomBadge => 'Personnalise';
 
   @override
   String get templateDuplicateAction => 'Modifier en variante';
@@ -730,7 +733,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateSaved => 'Modele enregistre.';
 
   @override
-  String get templateDeleteTitle => 'Supprimer la variante ?';
+  String get templateCreateAction => 'Creer un modele';
+
+  @override
+  String get templateCreateTitle => 'Nouveau modele';
+
+  @override
+  String get templateNameLabel => 'Nom du modele';
+
+  @override
+  String get templateNameRequired => 'Le nom du modele est obligatoire.';
+
+  @override
+  String get templateDeleteTitle => 'Supprimer le modele ?';
 
   @override
   String templateDeleteMessage(String name) {
@@ -760,6 +775,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get templateUpdate => 'Mettre a jour';
+
+  @override
+  String get templateSaveCreate => 'Creer le modele';
 
   @override
   String get templateReset => 'Reinitialiser depuis le parent';
@@ -803,6 +821,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorToastReport => 'Signaler l\'erreur';
+
+  @override
+  String get screenshotBugTitle => 'Un bug détecté ?';
+
+  @override
+  String get screenshotBugReport => 'Signaler le bug';
+
+  @override
+  String get screenshotBugReportMessage => 'Screenshot bug report';
 
   @override
   String get punctuationWordPeriod => 'point';

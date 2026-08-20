@@ -89,6 +89,52 @@ void main() {
   );
 
   blocTest<NoteTemplateBloc, NoteTemplateState>(
+    'saves custom parent-less model',
+    build: () {
+      when(() => repository.saveVariant(any())).thenAnswer((invocation) async {
+        return invocation.positionalArguments.first as NoteTemplate;
+      });
+      when(() => repository.getBuiltInTemplates())
+          .thenAnswer((_) async => [builtInTemplate]);
+      when(() => repository.getUserVariants()).thenAnswer((_) async => []);
+      return bloc;
+    },
+    act: (bloc) {
+      bloc.add(
+        NoteTemplateSaveVariantRequested(
+          NoteTemplate(
+            id: 'custom_1',
+            pathologyKey: 'ma_pathologie',
+            name: 'Ma pathologie',
+            source: NoteTemplateSource.userVariant,
+            sections: const [
+              NoteSection(
+                id: 'subjective',
+                kind: NoteSectionKind.subjective,
+                title: 'Subjectif',
+                prompt: '- Motif :',
+                order: 0,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+    expect: () => [
+      isA<NoteTemplateActionSuccess>()
+          .having((s) => s.savedTemplateId, 'savedTemplateId', 'custom_1'),
+    ],
+    verify: (_) {
+      final saved = verify(() => repository.saveVariant(captureAny()))
+          .captured
+          .single as NoteTemplate;
+      expect(saved.parentTemplateId, isNull);
+      expect(saved.name, 'Ma pathologie');
+      expect(saved.source, NoteTemplateSource.userVariant);
+    },
+  );
+
+  blocTest<NoteTemplateBloc, NoteTemplateState>(
     'prevents deleting built-in templates via repository error',
     build: () {
       when(() => repository.deleteVariant('builtin_test'))
