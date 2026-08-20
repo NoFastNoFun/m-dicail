@@ -76,13 +76,13 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
           onResult(result.recognizedWords);
         }
       },
-      localeId: 'fr_FR',
-      pauseFor: _pauseFor,
-      listenFor: _listenFor,
       listenOptions: SpeechListenOptions(
         cancelOnError: false,
         partialResults: true,
         listenMode: ListenMode.dictation,
+        localeId: 'fr_FR',
+        pauseFor: _pauseFor,
+        listenFor: _listenFor,
       ),
     );
     _isListening = true;
