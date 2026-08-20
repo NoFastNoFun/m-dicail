@@ -11,6 +11,7 @@ import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
@@ -208,9 +209,16 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         language: event.language,
       );
 
+      final soapNote = _selectedTemplate != null
+          ? NoteTemplateApplicator.apply(
+              template: _selectedTemplate,
+              transcript: result.processedText,
+            )
+          : result.soapNote;
+
       await _completeActiveSession(
         transcript: result.processedText,
-        soapNote: result.soapNote,
+        soapNote: soapNote,
       );
 
       _segmentBase = '';

@@ -103,6 +103,14 @@ class AppRouter {
             builder: (context, state) => const TemplatesPage(),
             routes: [
               GoRoute(
+                path: 'new',
+                name: 'template-create',
+                builder: (context, state) => const TemplateEditorPage(
+                  templateId: 'new',
+                  isCreating: true,
+                ),
+              ),
+              GoRoute(
                 path: ':templateId/edit',
                 name: 'template-editor',
                 builder: (context, state) => TemplateEditorPage(

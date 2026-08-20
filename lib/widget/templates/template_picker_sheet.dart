@@ -34,11 +34,17 @@ class TemplatePickerSheet extends StatefulWidget {
         borderRadius: AppRadius.lgBorder,
       ),
       constraints: AppBottomSheet.sheetConstraints(context),
-      builder: (context) => TemplatePickerSheet(
-        templates: templates,
-        selectedTemplateId: selectedTemplateId,
-        onSelected: (template) => Navigator.of(context).pop(template),
-      ),
+      builder: (context) {
+        final height = MediaQuery.sizeOf(context).height * 0.75;
+        return SizedBox(
+          height: height,
+          child: TemplatePickerSheet(
+            templates: templates,
+            selectedTemplateId: selectedTemplateId,
+            onSelected: (template) => Navigator.of(context).pop(template),
+          ),
+        );
+      },
     );
   }
 
@@ -76,7 +82,6 @@ class _TemplatePickerSheetState extends State<TemplatePickerSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppText(l10n.templatePickerTitle, variant: AppTextVariant.title),
@@ -85,12 +90,12 @@ class _TemplatePickerSheetState extends State<TemplatePickerSheet> {
             variant: AppInputVariant.text,
             label: l10n.templatePickerSearch,
             controller: _searchController,
+            validator: (_) => null,
             onChanged: (value) => setState(() => _query = value.trim()),
           ),
           const SizedBox(height: AppSpacing.md),
-          Flexible(
+          Expanded(
             child: ListView(
-              shrinkWrap: true,
               children: [
                 if (builtIn.isNotEmpty) ...[
                   AppText(

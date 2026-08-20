@@ -1435,13 +1435,13 @@ abstract class AppLocalizations {
   /// No description provided for @templatesUserSection.
   ///
   /// In fr, this message translates to:
-  /// **'Mes variantes'**
+  /// **'Mes modeles'**
   String get templatesUserSection;
 
   /// No description provided for @templatesUserEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune variante enregistree.'**
+  /// **'Aucun modele personnalise enregistre.'**
   String get templatesUserEmpty;
 
   /// No description provided for @templatesDefaultBadge.
@@ -1455,6 +1455,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Variante'**
   String get templatesVariantBadge;
+
+  /// No description provided for @templatesCustomBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalise'**
+  String get templatesCustomBadge;
 
   /// No description provided for @templateDuplicateAction.
   ///
@@ -1474,10 +1480,34 @@ abstract class AppLocalizations {
   /// **'Modele enregistre.'**
   String get templateSaved;
 
+  /// No description provided for @templateCreateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer un modele'**
+  String get templateCreateAction;
+
+  /// No description provided for @templateCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau modele'**
+  String get templateCreateTitle;
+
+  /// No description provided for @templateNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du modele'**
+  String get templateNameLabel;
+
+  /// No description provided for @templateNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom du modele est obligatoire.'**
+  String get templateNameRequired;
+
   /// No description provided for @templateDeleteTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer la variante ?'**
+  /// **'Supprimer le modele ?'**
   String get templateDeleteTitle;
 
   /// No description provided for @templateDeleteMessage.
@@ -1533,6 +1563,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Mettre a jour'**
   String get templateUpdate;
+
+  /// No description provided for @templateSaveCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le modele'**
+  String get templateSaveCreate;
 
   /// No description provided for @templateReset.
   ///
