@@ -253,6 +253,7 @@ class _MainShellState extends State<MainShell> {
           child: child,
         ),
       ),
+
       AppBottomNavDestination(
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
@@ -283,6 +284,11 @@ class _MainShellState extends State<MainShell> {
             icon: Icons.folder_outlined,
             label: l10n.patientsSectionTitle,
             onTap: () => context.go(AppRoutes.patients),
+          ),
+          AppRadialAction(
+            icon: Icons.newspaper_outlined,
+            label: l10n.medicalWatchTitle,
+            onTap: () => context.go(AppRoutes.medicalWatch),
           ),
           AppRadialAction(
             icon: Icons.mic_outlined,

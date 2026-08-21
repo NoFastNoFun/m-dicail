@@ -15,6 +15,7 @@ import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -303,12 +304,23 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     context.read<VoiceCaptureBloc>().add(const VoiceCaptureStopRecording());
   }
 
-  void _finishConsultation() {
+  Future<void> _finishConsultation() async {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFinishFromPatient)) {
       _returnHomeAfterTutorialConsultation = true;
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
     }
+
+    final viewModel = VoiceCaptureViewModel.fromState(
+      context.read<VoiceCaptureBloc>().state,
+    );
+    if (viewModel.selectedTemplate == null) {
+      await _pickTemplate(context);
+      if (!mounted) {
+        return;
+      }
+    }
+
     final language = Localizations.localeOf(context).languageCode;
     context.read<VoiceCaptureBloc>().add(
       VoiceCaptureFinishConsultation(language: language),
@@ -419,11 +431,11 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     bloc.add(const VoiceCaptureDiscardConsultation());
   }
 
-  Future<void> _pickTemplate(BuildContext context) async {
+  Future<NoteTemplate?> _pickTemplate(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final templates = await getIt<NoteTemplateRepository>().getAll();
     if (!context.mounted) {
-      return;
+      return null;
     }
 
     final currentState = context.read<VoiceCaptureBloc>().state;
@@ -431,9 +443,17 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       VoiceCaptureReady(:final selectedTemplate) => selectedTemplate,
       RecordingInProgress(:final selectedTemplate) => selectedTemplate,
       ListeningPaused(:final selectedTemplate) => selectedTemplate,
+      VoiceCaptureTranscribingBackground(:final selectedTemplate) =>
+        selectedTemplate,
       VoiceCaptureFailure(:final selectedTemplate) => selectedTemplate,
       _ => null,
     };
+
+    // Wait until the popup menu (if any) has fully closed.
+    await Future<void>.delayed(Duration.zero);
+    if (!context.mounted) {
+      return null;
+    }
 
     final template = await TemplatePickerSheet.show(
       context,
@@ -441,13 +461,23 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       selectedTemplateId: selectedTemplate?.id,
     );
     if (!context.mounted || template == null) {
-      return;
+      return null;
     }
 
     context.read<VoiceCaptureBloc>().add(
       VoiceCaptureTemplateSelected(template),
     );
     AppToast.showSuccess(context, l10n.templateActiveLabel(template.name));
+    return template;
+  }
+
+  void _schedulePickTemplate(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      unawaited(_pickTemplate(context));
+    });
   }
 
   @override
@@ -543,6 +573,11 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       : l10n.templateActiveLabel(
                                           viewModel.selectedTemplate!.name,
                                         ),
+                                  onTemplateTap:
+                                      !viewModel.isListening &&
+                                          !viewModel.isProcessing
+                                      ? () => _pickTemplate(context)
+                                      : null,
                                   elapsedLabel: _formatElapsed(_elapsed),
                                   isRecording: viewModel.isListening,
                                   isInitializing: viewModel.isInitializing,
@@ -561,8 +596,17 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                   menuItems: [
                                     AppRecordMenuItem(
                                       label: l10n.templatePickerAction,
-                                      enabled: !viewModel.isListening,
-                                      onSelected: () => _pickTemplate(context),
+                                      enabled: !viewModel.isListening &&
+                                          !viewModel.isProcessing,
+                                      onSelected: () =>
+                                          _schedulePickTemplate(context),
+                                    ),
+                                    AppRecordMenuItem(
+                                      label: l10n.buttonFinishConsultation,
+                                      enabled: viewModel.canFinishConsultation,
+                                      onSelected: () {
+                                        unawaited(_finishConsultation());
+                                      },
                                     ),
                                     AppRecordMenuItem(
                                       label: l10n.buttonClear,

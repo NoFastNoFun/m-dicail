@@ -724,16 +724,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templatesBuiltInSection => 'Modeles par defaut';
 
   @override
-  String get templatesUserSection => 'Mes variantes';
+  String get templatesUserSection => 'Mes modeles';
 
   @override
-  String get templatesUserEmpty => 'Aucune variante enregistree.';
+  String get templatesUserEmpty => 'Aucun modele personnalise enregistre.';
 
   @override
   String get templatesDefaultBadge => 'Defaut';
 
   @override
   String get templatesVariantBadge => 'Variante';
+
+  @override
+  String get templatesCustomBadge => 'Personnalise';
 
   @override
   String get templateDuplicateAction => 'Modifier en variante';
@@ -745,7 +748,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateSaved => 'Modele enregistre.';
 
   @override
-  String get templateDeleteTitle => 'Supprimer la variante ?';
+  String get templateCreateAction => 'Creer un modele';
+
+  @override
+  String get templateCreateTitle => 'Nouveau modele';
+
+  @override
+  String get templateNameLabel => 'Nom du modele';
+
+  @override
+  String get templateNameRequired => 'Le nom du modele est obligatoire.';
+
+  @override
+  String get templateDeleteTitle => 'Supprimer le modele ?';
 
   @override
   String templateDeleteMessage(String name) {
@@ -775,6 +790,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get templateUpdate => 'Mettre a jour';
+
+  @override
+  String get templateSaveCreate => 'Creer le modele';
 
   @override
   String get templateReset => 'Reinitialiser depuis le parent';
@@ -812,6 +830,21 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get sessionExpiredMessage =>
       'Session expiree, veuillez vous reconnecter';
+
+  @override
+  String get errorToastCopied => 'Details de l\'erreur copies';
+
+  @override
+  String get errorToastReport => 'Signaler l\'erreur';
+
+  @override
+  String get screenshotBugTitle => 'Un bug détecté ?';
+
+  @override
+  String get screenshotBugReport => 'Signaler le bug';
+
+  @override
+  String get screenshotBugReportMessage => 'Screenshot bug report';
 
   @override
   String get punctuationWordPeriod => 'point';
@@ -868,4 +901,71 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get medicalWatchTitle => 'Veille medicale';
+
+  @override
+  String get medicalWatchSearchPlaceholder => 'Rechercher sur PubMed…';
+
+  @override
+  String get medicalWatchFilterAll => 'Tous';
+
+  @override
+  String get medicalWatchSpecialtyRehabilitation => 'Reeducation';
+
+  @override
+  String get medicalWatchSpecialtyMusculoskeletal => 'Musculo-squelettique';
+
+  @override
+  String get medicalWatchSpecialtyExerciseTherapy => 'Therapie par l\'exercice';
+
+  @override
+  String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
+
+  @override
+  String get medicalWatchEmpty => 'Aucun article pour le moment';
+
+  @override
+  String get medicalWatchSearchEmpty => 'Aucun resultat pour cette recherche';
+
+  @override
+  String get medicalWatchErrorLoad => 'Impossible de charger les articles';
+
+  @override
+  String get medicalWatchErrorSearch => 'Erreur lors de la recherche PubMed';
+
+  @override
+  String get medicalWatchReadMore => 'Lire la suite';
+
+  @override
+  String get medicalWatchReadLess => 'Reduire';
+
+  @override
+  String get medicalWatchOpenPubmed => 'Ouvrir dans PubMed';
+
+  @override
+  String get medicalWatchCopyReference => 'Copier la reference';
+
+  @override
+  String get medicalWatchReferenceCopied => 'Reference copiee';
+
+  @override
+  String medicalWatchArticleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles',
+      one: '1 article',
+      zero: 'Aucun article',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get medicalWatchSyncSuccess => 'Veille synchronisee';
+
+  @override
+  String get medicalWatchOfflineHint =>
+      'Resultats hors-ligne (derniere synchronisation)';
 }

@@ -83,6 +83,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
         cancelOnError: false,
         partialResults: true,
         listenMode: ListenMode.dictation,
+        localeId: 'fr_FR',
         pauseFor: _pauseFor,
         listenFor: _listenFor,
       ),

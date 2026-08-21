@@ -11,6 +11,7 @@ import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/pages/settings_page.dart';
+import 'package:medicail/pages/medical_watch_page.dart';
 import 'package:medicail/pages/template_editor_page.dart';
 import 'package:medicail/pages/templates_page.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
@@ -26,7 +27,12 @@ class AppRouter {
 
   final AuthNotifier _authNotifier;
 
+  /// Root navigator key for overlays shown from [MaterialApp.router] builder.
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   late final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.home,
     refreshListenable: _authNotifier,
     redirect: (context, state) {
@@ -93,10 +99,22 @@ class AppRouter {
             builder: (context, state) => const SettingsPage(),
           ),
           GoRoute(
+            path: AppRoutes.medicalWatch,
+            builder: (context, state) => const MedicalWatchPage(),
+          ),
+          GoRoute(
             path: AppRoutes.settingsTemplates,
             name: 'settings-templates',
             builder: (context, state) => const TemplatesPage(),
             routes: [
+              GoRoute(
+                path: 'new',
+                name: 'template-create',
+                builder: (context, state) => const TemplateEditorPage(
+                  templateId: 'new',
+                  isCreating: true,
+                ),
+              ),
               GoRoute(
                 path: ':templateId/edit',
                 name: 'template-editor',

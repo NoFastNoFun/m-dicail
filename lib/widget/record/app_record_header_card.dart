@@ -13,6 +13,7 @@ class AppRecordHeaderCard extends StatelessWidget {
     required this.dateLabel,
     this.sessionTitle,
     this.templateLabel,
+    this.onTemplateTap,
     required this.elapsedLabel,
     required this.isRecording,
     required this.isInitializing,
@@ -33,6 +34,7 @@ class AppRecordHeaderCard extends StatelessWidget {
   final String dateLabel;
   final String? sessionTitle;
   final String? templateLabel;
+  final VoidCallback? onTemplateTap;
   final String elapsedLabel;
   final bool isRecording;
   final bool isInitializing;
@@ -84,11 +86,40 @@ class AppRecordHeaderCard extends StatelessWidget {
                     ],
                     if (templateLabel != null) ...[
                       const SizedBox(height: AppSpacing.xs),
-                      AppText(
-                        templateLabel!,
-                        variant: AppTextVariant.caption,
-                        color: colorScheme.primary,
-                      ),
+                      if (onTemplateTap != null)
+                        InkWell(
+                          onTap: onTemplateTap,
+                          borderRadius: AppRadius.smBorder,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.xs,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: AppText(
+                                    templateLabel!,
+                                    variant: AppTextVariant.caption,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 14,
+                                  color: colorScheme.primary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        AppText(
+                          templateLabel!,
+                          variant: AppTextVariant.caption,
+                          color: colorScheme.primary,
+                        ),
                     ],
                   ],
                 ),

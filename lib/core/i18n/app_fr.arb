@@ -242,14 +242,19 @@
   "tutorialRestarted": "Le tutoriel a ete reinitialise.",
   "templatesTitle": "Modeles de pathologie",
   "templatesBuiltInSection": "Modeles par defaut",
-  "templatesUserSection": "Mes variantes",
-  "templatesUserEmpty": "Aucune variante enregistree.",
+  "templatesUserSection": "Mes modeles",
+  "templatesUserEmpty": "Aucun modele personnalise enregistre.",
   "templatesDefaultBadge": "Defaut",
   "templatesVariantBadge": "Variante",
+  "templatesCustomBadge": "Personnalise",
   "templateDuplicateAction": "Modifier en variante",
   "templateDuplicated": "Variante creee.",
   "templateSaved": "Modele enregistre.",
-  "templateDeleteTitle": "Supprimer la variante ?",
+  "templateCreateAction": "Creer un modele",
+  "templateCreateTitle": "Nouveau modele",
+  "templateNameLabel": "Nom du modele",
+  "templateNameRequired": "Le nom du modele est obligatoire.",
+  "templateDeleteTitle": "Supprimer le modele ?",
   "templateDeleteMessage": "Supprimer le modele \"{name}\" ?",
   "@templateDeleteMessage": {
     "placeholders": {
@@ -266,6 +271,7 @@
   "templateAddSection": "Ajouter une section",
   "templateSaveAsVariant": "Enregistrer comme variante",
   "templateUpdate": "Mettre a jour",
+  "templateSaveCreate": "Creer le modele",
   "templateReset": "Reinitialiser depuis le parent",
   "templatePickerTitle": "Choisir un modele",
   "templatePickerSearch": "Rechercher une pathologie",
@@ -284,8 +290,42 @@
   "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application.",
   "settingsSignIn": "Se connecter",
   "sessionExpiredMessage": "Session expiree, veuillez vous reconnecter",
+  "errorToastCopied": "Details de l'erreur copies",
+  "errorToastReport": "Signaler l'erreur",
+  "screenshotBugTitle": "Un bug détecté ?",
+  "screenshotBugReport": "Signaler le bug",
+  "screenshotBugReportMessage": "Screenshot bug report",
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
+  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
+
+  "medicalWatchTitle": "Veille medicale",
+  "medicalWatchSearchPlaceholder": "Rechercher sur PubMed…",
+  "medicalWatchFilterAll": "Tous",
+  "medicalWatchSpecialtyRehabilitation": "Reeducation",
+  "medicalWatchSpecialtyMusculoskeletal": "Musculo-squelettique",
+  "medicalWatchSpecialtyExerciseTherapy": "Therapie par l'exercice",
+  "medicalWatchSpecialtyManualTherapy": "Therapie manuelle",
+  "medicalWatchEmpty": "Aucun article pour le moment",
+  "medicalWatchSearchEmpty": "Aucun resultat pour cette recherche",
+  "medicalWatchErrorLoad": "Impossible de charger les articles",
+  "medicalWatchErrorSearch": "Erreur lors de la recherche PubMed",
+  "medicalWatchReadMore": "Lire la suite",
+  "medicalWatchReadLess": "Reduire",
+  "medicalWatchOpenPubmed": "Ouvrir dans PubMed",
+  "medicalWatchCopyReference": "Copier la reference",
+  "medicalWatchReferenceCopied": "Reference copiee",
+  "medicalWatchArticleCount": "{count, plural, =0{Aucun article} =1{1 article} other{{count} articles}}",
+  "@medicalWatchArticleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "medicalWatchSyncSuccess": "Veille synchronisee",
+  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)"
+}
   "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
 
   "homeGreeting": "Bonjour, {name}",

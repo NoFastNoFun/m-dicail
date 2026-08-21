@@ -34,6 +34,7 @@ class AppScaffold extends StatelessWidget {
     AppRoutes.appointments,
     AppRoutes.patients,
     AppRoutes.settings,
+    AppRoutes.medicalWatch,
   };
 
   bool _shouldShowBack(BuildContext context) {
