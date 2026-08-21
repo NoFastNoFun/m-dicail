@@ -4,6 +4,10 @@ import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/audio/background_audio_recorder.dart';
 import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
 import 'package:medicail/core/audio/recording_notification_service.dart';
+import 'package:medicail/features/note_template/domain/entities/note_section.dart';
+import 'package:medicail/features/note_template/domain/entities/note_section_kind.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/note_template/domain/entities/note_template_source.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
@@ -156,7 +160,7 @@ void main() {
 
   group('VoiceCaptureBloc dual capture', () {
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'starts continuous session audio with STT',
+      'starts live STT without session WAV so the microphone stays exclusive',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -170,9 +174,9 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(
+        verifyNever(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        ).called(1);
+        );
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
@@ -183,12 +187,12 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'keeps session audio and only stops STT when app backgrounds',
+      'stops STT and starts session WAV when app backgrounds',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
         clearInteractions(backgroundRecorder);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        clearInteractions(audioCapture);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
           (state) =>
@@ -210,24 +214,36 @@ void main() {
       ],
       verify: (_) {
         verify(() => audioCapture.stopListening()).called(greaterThan(0));
-        verifyNever(
+        verify(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        );
+        ).called(1);
         verifyNever(() => backgroundRecorder.stop());
       },
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'resumes STT on foreground without offline whisper merge',
+      'merges offline whisper then resumes STT on foreground',
       build: buildBloc,
+      setUp: () {
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/bg.wav';
+        });
+        when(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer((_) async => 'texte hors ligne');
+      },
       act: (bloc) async {
         await seedListening(bloc);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
           (state) =>
               state is RecordingInProgress && state.isBackgroundCapture,
         );
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
         clearInteractions(audioCapture);
         clearInteractions(offlineTranscription);
         clearInteractions(backgroundRecorder);
@@ -245,15 +261,25 @@ void main() {
           'isBackgroundCapture',
           true,
         ),
+        isA<VoiceCaptureTranscribingBackground>(),
         isA<RecordingInProgress>().having(
           (s) => s.isBackgroundCapture,
           'isBackgroundCapture',
           false,
+        ).having(
+          (s) => s.transcript,
+          'transcript',
+          contains('texte hors ligne'),
         ),
       ],
       verify: (_) {
-        verifyNever(() => backgroundRecorder.stop());
-        verifyNever(() => offlineTranscription.transcribeFile(any()));
+        verify(() => backgroundRecorder.stop()).called(1);
+        verify(
+          () => offlineTranscription.transcribeFile(
+            '/tmp/bg.wav',
+            language: any(named: 'language'),
+          ),
+        ).called(1);
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
@@ -369,7 +395,93 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'cleans up notification on stop but keeps session audio',
+      'applies selected pathology template to SOAP on finish',
+      build: buildBloc,
+      setUp: () {
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return null;
+        });
+        when(
+          () => noteProcessing.process(
+            sessionId: any(named: 'sessionId'),
+            rawText: any(named: 'rawText'),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer(
+          (_) async => const SoapNoteResult(
+            processedText: 'douleur a la cheville',
+            soapNote: SoapNote(),
+          ),
+        );
+      },
+      act: (bloc) async {
+        const template = NoteTemplate(
+          id: 'builtin_ankle_sprain',
+          pathologyKey: 'ankle_sprain',
+          name: 'Entorse de cheville',
+          source: NoteTemplateSource.builtIn,
+          sections: [
+            NoteSection(
+              id: 'subjective',
+              kind: NoteSectionKind.subjective,
+              title: 'Subjectif',
+              prompt: '- Motif de consultation :',
+              order: 0,
+            ),
+            NoteSection(
+              id: 'objective',
+              kind: NoteSectionKind.objective,
+              title: 'Objectif',
+              prompt: '- Inspection :',
+              order: 1,
+            ),
+            NoteSection(
+              id: 'assessment',
+              kind: NoteSectionKind.assessment,
+              title: 'Evaluation',
+              prompt: '- Grade :',
+              order: 2,
+            ),
+            NoteSection(
+              id: 'plan',
+              kind: NoteSectionKind.plan,
+              title: 'Plan',
+              prompt: '- Traitement :',
+              order: 3,
+            ),
+          ],
+        );
+        bloc.add(const VoiceCaptureTemplateSelected(template));
+        await seedListening(bloc);
+        bloc.add(const VoiceCaptureTranscriptUpdated('douleur'));
+        await bloc.stream.firstWhere(
+          (state) =>
+              state is RecordingInProgress && state.transcript.isNotEmpty,
+        );
+        bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureConsultationFinished,
+        );
+      },
+      verify: (_) {
+        final savedSessions = verify(() => sessionRepository.save(captureAny()))
+            .captured
+            .cast<RecordingSession>();
+        final completed = savedSessions.lastWhere(
+          (session) => session.status == RecordingSessionStatus.completed,
+        );
+        expect(completed.templateId, 'builtin_ankle_sprain');
+        expect(completed.soapNote?.subjective, contains('douleur a la cheville'));
+        expect(completed.soapNote?.subjective, contains('Motif de consultation'));
+        expect(completed.soapNote?.objective, contains('Inspection'));
+        expect(completed.soapNote?.assessment, contains('Grade'));
+        expect(completed.soapNote?.plan, contains('Traitement'));
+      },
+    );
+
+    blocTest<VoiceCaptureBloc, VoiceCaptureState>(
+      'cleans up notification and session audio on pause',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -386,7 +498,7 @@ void main() {
       verify: (_) {
         verify(() => audioCapture.stopListening()).called(greaterThan(0));
         verify(() => notificationService.stop()).called(greaterThan(0));
-        verifyNever(() => backgroundRecorder.stop());
+        verify(() => backgroundRecorder.cancel()).called(greaterThan(0));
       },
     );
 

@@ -1465,13 +1465,13 @@ abstract class AppLocalizations {
   /// No description provided for @templatesUserSection.
   ///
   /// In fr, this message translates to:
-  /// **'Mes variantes'**
+  /// **'Mes modeles'**
   String get templatesUserSection;
 
   /// No description provided for @templatesUserEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune variante enregistree.'**
+  /// **'Aucun modele personnalise enregistre.'**
   String get templatesUserEmpty;
 
   /// No description provided for @templatesDefaultBadge.
@@ -1485,6 +1485,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Variante'**
   String get templatesVariantBadge;
+
+  /// No description provided for @templatesCustomBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalise'**
+  String get templatesCustomBadge;
 
   /// No description provided for @templateDuplicateAction.
   ///
@@ -1504,10 +1510,34 @@ abstract class AppLocalizations {
   /// **'Modele enregistre.'**
   String get templateSaved;
 
+  /// No description provided for @templateCreateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer un modele'**
+  String get templateCreateAction;
+
+  /// No description provided for @templateCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau modele'**
+  String get templateCreateTitle;
+
+  /// No description provided for @templateNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du modele'**
+  String get templateNameLabel;
+
+  /// No description provided for @templateNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom du modele est obligatoire.'**
+  String get templateNameRequired;
+
   /// No description provided for @templateDeleteTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer la variante ?'**
+  /// **'Supprimer le modele ?'**
   String get templateDeleteTitle;
 
   /// No description provided for @templateDeleteMessage.
@@ -1563,6 +1593,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Mettre a jour'**
   String get templateUpdate;
+
+  /// No description provided for @templateSaveCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Creer le modele'**
+  String get templateSaveCreate;
 
   /// No description provided for @templateReset.
   ///
@@ -1629,6 +1665,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Session expiree, veuillez vous reconnecter'**
   String get sessionExpiredMessage;
+
+  /// No description provided for @errorToastCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Details de l\'erreur copies'**
+  String get errorToastCopied;
+
+  /// No description provided for @errorToastReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler l\'erreur'**
+  String get errorToastReport;
+
+  /// No description provided for @screenshotBugTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un bug détecté ?'**
+  String get screenshotBugTitle;
+
+  /// No description provided for @screenshotBugReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler le bug'**
+  String get screenshotBugReport;
+
+  /// No description provided for @screenshotBugReportMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Screenshot bug report'**
+  String get screenshotBugReportMessage;
 
   /// No description provided for @punctuationWordPeriod.
   ///
@@ -1713,6 +1779,120 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =0{Aucune consultation aujourd\'hui} =1{1 consultation prévue} other{{count} consultations prévues}}'**
   String homeConsultationsToday(num count);
+
+  /// No description provided for @medicalWatchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille medicale'**
+  String get medicalWatchTitle;
+
+  /// No description provided for @medicalWatchSearchPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher sur PubMed…'**
+  String get medicalWatchSearchPlaceholder;
+
+  /// No description provided for @medicalWatchFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get medicalWatchFilterAll;
+
+  /// No description provided for @medicalWatchSpecialtyRehabilitation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reeducation'**
+  String get medicalWatchSpecialtyRehabilitation;
+
+  /// No description provided for @medicalWatchSpecialtyMusculoskeletal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Musculo-squelettique'**
+  String get medicalWatchSpecialtyMusculoskeletal;
+
+  /// No description provided for @medicalWatchSpecialtyExerciseTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie par l\'exercice'**
+  String get medicalWatchSpecialtyExerciseTherapy;
+
+  /// No description provided for @medicalWatchSpecialtyManualTherapy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Therapie manuelle'**
+  String get medicalWatchSpecialtyManualTherapy;
+
+  /// No description provided for @medicalWatchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article pour le moment'**
+  String get medicalWatchEmpty;
+
+  /// No description provided for @medicalWatchSearchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun resultat pour cette recherche'**
+  String get medicalWatchSearchEmpty;
+
+  /// No description provided for @medicalWatchErrorLoad.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les articles'**
+  String get medicalWatchErrorLoad;
+
+  /// No description provided for @medicalWatchErrorSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur lors de la recherche PubMed'**
+  String get medicalWatchErrorSearch;
+
+  /// No description provided for @medicalWatchReadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire la suite'**
+  String get medicalWatchReadMore;
+
+  /// No description provided for @medicalWatchReadLess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reduire'**
+  String get medicalWatchReadLess;
+
+  /// No description provided for @medicalWatchOpenPubmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir dans PubMed'**
+  String get medicalWatchOpenPubmed;
+
+  /// No description provided for @medicalWatchCopyReference.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier la reference'**
+  String get medicalWatchCopyReference;
+
+  /// No description provided for @medicalWatchReferenceCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reference copiee'**
+  String get medicalWatchReferenceCopied;
+
+  /// No description provided for @medicalWatchArticleCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun article} =1{1 article} other{{count} articles}}'**
+  String medicalWatchArticleCount(int count);
+
+  /// No description provided for @medicalWatchSyncSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille synchronisee'**
+  String get medicalWatchSyncSuccess;
+
+  /// No description provided for @medicalWatchOfflineHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Resultats hors-ligne (derniere synchronisation)'**
+  String get medicalWatchOfflineHint;
 }
 
 class _AppLocalizationsDelegate

@@ -11,6 +11,7 @@ import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
@@ -68,6 +69,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       'Enregistrement en arriere-plan';
   static const _notificationBackgroundBody =
       "L'enregistrement audio continue pendant que l'ecran est eteint";
+  static const _micReleaseDelay = Duration(milliseconds: 250);
 
   Future<void> _onInitialize(
     VoiceCaptureInitializeRequested event,
@@ -103,17 +105,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         currentTranscript,
         patientId: event.patientId,
       );
-      await _tryStartListeningSession();
-      // Petite pause pour s'assurer que STT a bien pris le lock du micro
-      await Future.delayed(const Duration(milliseconds: 300));
-      
-      // Temporarily commented out to test if 'record' is still locking the mic
-      // await _ensureSessionAudioStarted();
-      
+      await _ensureSessionAudioStarted();
       await _recordingNotificationService.start(
         title: _notificationTitle,
         body: _notificationBody,
       );
+      await _startListeningSession();
       _isBackgroundCapture = false;
       emit(RecordingInProgress(
         transcript: currentTranscript,
@@ -138,6 +135,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     try {
       await _stopListeningAndNotification();
+      await _discardSessionAudio();
       await _saveActiveSessionTranscript(_currentTranscript);
       var transcript = _currentTranscript.trim();
       if (transcript.isNotEmpty && !transcript.endsWith('.')) {
@@ -220,9 +218,16 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         language: event.language,
       ).timeout(const Duration(minutes: 1));
 
-      await _completeActiveSession(
+      final soapNote = _selectedTemplate != null
+          ? NoteTemplateApplicator.apply(
+              template: _selectedTemplate,
+              transcript: result.processedText,
+            )
+          : result.soapNote;
+
+       await _completeActiveSession(
         transcript: result.processedText,
-        soapNote: result.soapNote,
+        soapNote: soapNote,
       );
 
       _segmentBase = '';
@@ -301,7 +306,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _lastRawText = '';
     try {
       await _saveActiveSessionTranscript(transcript);
-      await _tryStartListeningSession();
+      await _startListeningSession();
       emit(RecordingInProgress(
         transcript: transcript,
         selectedTemplate: _selectedTemplate,
@@ -420,6 +425,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _isHandlingLifecycle = true;
     try {
       await _audioCaptureService.stopListening();
+      await _awaitMicRelease();
       await _ensureSessionAudioStarted();
       _isBackgroundCapture = true;
       await _recordingNotificationService.update(
@@ -462,14 +468,34 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _isHandlingLifecycle = true;
     final baseTranscript = _currentTranscript;
     try {
+      emit(VoiceCaptureTranscribingBackground(
+        transcript: baseTranscript,
+        selectedTemplate: _selectedTemplate,
+      ));
+
+      final audioPath = await _stopSessionAudio();
       _isBackgroundCapture = false;
+
+      var mergedTranscript = baseTranscript;
+      if (audioPath != null) {
+        try {
+          mergedTranscript = await _mergeOfflineAudio(
+            audioPath,
+            baseTranscript,
+          );
+        } finally {
+          await _deleteAudioFile(audioPath);
+        }
+      }
+
+      await _awaitMicRelease();
       await _recordingNotificationService.update(
         title: _notificationTitle,
         body: _notificationBody,
       );
-      await _tryStartListeningSession();
+      await _startListeningSession();
       emit(RecordingInProgress(
-        transcript: baseTranscript,
+        transcript: mergedTranscript,
         selectedTemplate: _selectedTemplate,
       ));
     } catch (error) {
@@ -521,31 +547,33 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     };
   }
 
-  Future<void> _tryStartListeningSession() async {
-    try {
-      await _audioCaptureService.startListening(
-        onResult: (text, {bool isFinal = false}) {
-          if (isClosed || _isBackgroundCapture) {
-            return;
-          }
-          add(VoiceCaptureTranscriptUpdated(text, isFinal: isFinal));
-        },
-        onListeningEnded: () {
-          if (isClosed || _isBackgroundCapture) {
-            return;
-          }
-          add(const VoiceCaptureListeningSessionEnded());
-        },
-      );
-    } catch (_) {
-      // Keep continuous WAV; rough live STT may be unavailable when the mic
-      // cannot be shared with the session recorder.
+  Future<void> _startListeningSession() async {
+    if (_backgroundAudioRecorder.isRecording) {
+      await _discardSessionAudio();
+      await _awaitMicRelease();
     }
+    await _audioCaptureService.startListening(
+      onResult: (text) {
+        if (isClosed || _isBackgroundCapture) {
+          return;
+        }
+        add(VoiceCaptureTranscriptUpdated(text));
+      },
+      onListeningEnded: () {
+        if (isClosed || _isBackgroundCapture) {
+          return;
+        }
+        add(const VoiceCaptureListeningSessionEnded());
+      },
+    );
   }
 
   Future<void> _ensureSessionAudioStarted() async {
     if (_backgroundAudioRecorder.isRecording) {
       return;
+    }
+    if (_audioCaptureService.isListening) {
+      await _audioCaptureService.stopListening();
     }
     final sessionId = _activeSession?.id ?? 'anonymous';
     await _backgroundAudioRecorder.start(sessionId: sessionId);
@@ -556,6 +584,44 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return null;
     }
     return _backgroundAudioRecorder.stop();
+  }
+
+  Future<void> _discardSessionAudio() async {
+    if (!_backgroundAudioRecorder.isRecording) {
+      return;
+    }
+    try {
+      await _backgroundAudioRecorder.cancel();
+    } catch (_) {}
+  }
+
+  Future<void> _awaitMicRelease() {
+    return Future<void>.delayed(_micReleaseDelay);
+  }
+
+  Future<String> _mergeOfflineAudio(
+    String audioPath,
+    String baseTranscript,
+  ) async {
+    final offlineText = await _offlineAudioTranscriptionService.transcribeFile(
+      audioPath,
+      language: 'fr',
+    );
+    if (offlineText.isEmpty) {
+      return baseTranscript;
+    }
+
+    final anonymized = AnonymizationHelper.anonymize(offlineText);
+    final punctuated = PunctuationHelper.applyHeuristics(
+      text: anonymized,
+      wordPeriod: _wordPeriod,
+      wordComma: _wordComma,
+      transitionWords: _transitions,
+    );
+    final merged = TranscriptMergeHelper.merge(baseTranscript, punctuated);
+    _segmentBase = merged;
+    await _saveActiveSessionTranscript(merged);
+    return merged;
   }
 
   Future<void> _stopListeningAndNotification() async {

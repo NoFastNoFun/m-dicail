@@ -26,8 +26,9 @@ class ApiEnhancedTranscriptionRepository
     });
 
     try {
+      final base = _config.aiBaseUrl.replaceAll(RegExp(r'/+$'), '');
       final response = await _dio.post<Map<String, dynamic>>(
-        '${_config.aiBaseUrl}/transcriptions',
+        '$base/transcriptions',
         data: formData,
         options: Options(
           contentType: Headers.multipartFormDataContentType,
