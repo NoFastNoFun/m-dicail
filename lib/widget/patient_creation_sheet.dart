@@ -41,30 +41,37 @@ class PatientCreationSheet extends StatefulWidget {
       backgroundColor: Colors.transparent,
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (sheetContext) {
-        PatientBloc bloc;
+        PatientBloc? existingBloc;
         try {
-          bloc = context.read<PatientBloc>();
-        } catch (_) {
-          bloc = getIt<PatientBloc>();
-        }
+          existingBloc = context.read<PatientBloc>();
+        } catch (_) {}
 
-        return Padding(
+        final child = Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
           ),
-          child: BlocProvider.value(
-            value: bloc,
-            child: PatientCreationSheet(
-              initialPatient: initialPatient,
-              onSuccess: onSuccess == null
-                  ? null
-                  : (patientId) {
-                      Navigator.of(sheetContext).pop();
-                      onSuccess(patientId);
-                    },
-            ),
+          child: PatientCreationSheet(
+            initialPatient: initialPatient,
+            onSuccess: onSuccess == null
+                ? null
+                : (patientId) {
+                    context.pop();
+                    onSuccess(patientId);
+                  },
           ),
         );
+
+        if (existingBloc != null) {
+          return BlocProvider.value(
+            value: existingBloc,
+            child: child,
+          );
+        } else {
+          return BlocProvider<PatientBloc>(
+            create: (_) => getIt<PatientBloc>(),
+            child: child,
+          );
+        }
       },
     );
   }
