@@ -61,7 +61,7 @@ class MainActivity : FlutterActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
         if (screenCaptureCallback != null) return
 
-        val callback = Runnable {
+        val callback = android.app.Activity.ScreenCaptureCallback {
             screenshotEventSink?.success(null)
         }
         screenCaptureCallback = callback
@@ -70,7 +70,7 @@ class MainActivity : FlutterActivity() {
 
     private fun unregisterScreenCaptureCallbackIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
-        val callback = screenCaptureCallback as? Runnable ?: return
+        val callback = screenCaptureCallback as? android.app.Activity.ScreenCaptureCallback ?: return
         unregisterScreenCaptureCallback(callback)
         screenCaptureCallback = null
     }

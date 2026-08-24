@@ -514,6 +514,42 @@ abstract class AppLocalizations {
   /// **'Âge'**
   String get patientAgeLabel;
 
+  /// No description provided for @appointmentCancelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler le rendez-vous ?'**
+  String get appointmentCancelTitle;
+
+  /// No description provided for @appointmentCancelBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Êtes-vous sûr de vouloir annuler ce rendez-vous ?'**
+  String get appointmentCancelBody;
+
+  /// No description provided for @appointmentDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le rendez-vous ?'**
+  String get appointmentDeleteTitle;
+
+  /// No description provided for @appointmentDeleteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?'**
+  String get appointmentDeleteBody;
+
+  /// No description provided for @buttonConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get buttonConfirm;
+
+  /// No description provided for @buttonCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get buttonCancel;
+
   /// No description provided for @recordingStatusLabel.
   ///
   /// In fr, this message translates to:
@@ -1714,72 +1750,6 @@ abstract class AppLocalizations {
   /// **'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin'**
   String get punctuationTransitions;
 
-  /// No description provided for @homeGreeting.
-  ///
-  /// In fr, this message translates to:
-  /// **'Bonjour, {name}'**
-  String homeGreeting(String name);
-
-  /// No description provided for @homeGreetingGuest.
-  ///
-  /// In fr, this message translates to:
-  /// **'Bienvenue'**
-  String get homeGreetingGuest;
-
-  /// No description provided for @homeQuickRecord.
-  ///
-  /// In fr, this message translates to:
-  /// **'Enregistrement rapide'**
-  String get homeQuickRecord;
-
-  /// No description provided for @homeNewPatient.
-  ///
-  /// In fr, this message translates to:
-  /// **'Nouveau patient'**
-  String get homeNewPatient;
-
-  /// No description provided for @homeViewAgenda.
-  ///
-  /// In fr, this message translates to:
-  /// **'Agenda'**
-  String get homeViewAgenda;
-
-  /// No description provided for @homeRecentConsultationsTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Consultations récentes'**
-  String get homeRecentConsultationsTitle;
-
-  /// No description provided for @homeRecentConsultationsEmpty.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucune consultation pour le moment'**
-  String get homeRecentConsultationsEmpty;
-
-  /// No description provided for @homeRecentConsultationsSeeAll.
-  ///
-  /// In fr, this message translates to:
-  /// **'Voir tout'**
-  String get homeRecentConsultationsSeeAll;
-
-  /// No description provided for @homeEmptyTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Bienvenue sur Medicail'**
-  String get homeEmptyTitle;
-
-  /// No description provided for @homeEmptySubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Planifiez votre premiere consultation ou démarrez un enregistrement rapide'**
-  String get homeEmptySubtitle;
-
-  /// No description provided for @homeConsultationsToday.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count, plural, =0{Aucune consultation aujourd\'hui} =1{1 consultation prévue} other{{count} consultations prévues}}'**
-  String homeConsultationsToday(num count);
-
   /// No description provided for @medicalWatchTitle.
   ///
   /// In fr, this message translates to:
@@ -1893,6 +1863,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Resultats hors-ligne (derniere synchronisation)'**
   String get medicalWatchOfflineHint;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingGuest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue'**
+  String get homeGreetingGuest;
+
+  /// No description provided for @homeQuickRecord.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement rapide'**
+  String get homeQuickRecord;
+
+  /// No description provided for @homeNewPatient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get homeNewPatient;
+
+  /// No description provided for @homeViewAgenda.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agenda'**
+  String get homeViewAgenda;
+
+  /// No description provided for @homeRecentConsultationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations récentes'**
+  String get homeRecentConsultationsTitle;
+
+  /// No description provided for @homeRecentConsultationsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune consultation pour le moment'**
+  String get homeRecentConsultationsEmpty;
+
+  /// No description provided for @homeRecentConsultationsSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tout'**
+  String get homeRecentConsultationsSeeAll;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur Medicail'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifiez votre premiere consultation ou démarrez un enregistrement rapide'**
+  String get homeEmptySubtitle;
+
+  /// No description provided for @homeConsultationsToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune consultation aujourd\'hui} =1{1 consultation prévue} other{{count} consultations prévues}}'**
+  String homeConsultationsToday(num count);
 }
 
 class _AppLocalizationsDelegate

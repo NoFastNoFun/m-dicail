@@ -228,6 +228,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientAgeLabel => 'Âge';
 
   @override
+  String get appointmentCancelTitle => 'Annuler le rendez-vous ?';
+
+  @override
+  String get appointmentCancelBody =>
+      'Êtes-vous sûr de vouloir annuler ce rendez-vous ?';
+
+  @override
+  String get appointmentDeleteTitle => 'Supprimer le rendez-vous ?';
+
+  @override
+  String get appointmentDeleteBody =>
+      'Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?';
+
+  @override
+  String get buttonConfirm => 'Confirmer';
+
+  @override
+  String get buttonCancel => 'Annuler';
+
+  @override
   String get recordingStatusLabel => 'Statut';
 
   @override
@@ -857,52 +877,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
 
   @override
-  String homeGreeting(String name) {
-    return 'Bonjour, $name';
-  }
-
-  @override
-  String get homeGreetingGuest => 'Bienvenue';
-
-  @override
-  String get homeQuickRecord => 'Enregistrement rapide';
-
-  @override
-  String get homeNewPatient => 'Nouveau patient';
-
-  @override
-  String get homeViewAgenda => 'Agenda';
-
-  @override
-  String get homeRecentConsultationsTitle => 'Consultations récentes';
-
-  @override
-  String get homeRecentConsultationsEmpty =>
-      'Aucune consultation pour le moment';
-
-  @override
-  String get homeRecentConsultationsSeeAll => 'Voir tout';
-
-  @override
-  String get homeEmptyTitle => 'Bienvenue sur Medicail';
-
-  @override
-  String get homeEmptySubtitle =>
-      'Planifiez votre premiere consultation ou démarrez un enregistrement rapide';
-
-  @override
-  String homeConsultationsToday(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count consultations prévues',
-      one: '1 consultation prévue',
-      zero: 'Aucune consultation aujourd\'hui',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get medicalWatchTitle => 'Veille medicale';
 
   @override
@@ -968,4 +942,50 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get medicalWatchOfflineHint =>
       'Resultats hors-ligne (derniere synchronisation)';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Bonjour, $name';
+  }
+
+  @override
+  String get homeGreetingGuest => 'Bienvenue';
+
+  @override
+  String get homeQuickRecord => 'Enregistrement rapide';
+
+  @override
+  String get homeNewPatient => 'Nouveau patient';
+
+  @override
+  String get homeViewAgenda => 'Agenda';
+
+  @override
+  String get homeRecentConsultationsTitle => 'Consultations récentes';
+
+  @override
+  String get homeRecentConsultationsEmpty =>
+      'Aucune consultation pour le moment';
+
+  @override
+  String get homeRecentConsultationsSeeAll => 'Voir tout';
+
+  @override
+  String get homeEmptyTitle => 'Bienvenue sur Medicail';
+
+  @override
+  String get homeEmptySubtitle =>
+      'Planifiez votre premiere consultation ou démarrez un enregistrement rapide';
+
+  @override
+  String homeConsultationsToday(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count consultations prévues',
+      one: '1 consultation prévue',
+      zero: 'Aucune consultation aujourd\'hui',
+    );
+    return '$_temp0';
+  }
 }

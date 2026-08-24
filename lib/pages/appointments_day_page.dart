@@ -10,11 +10,12 @@ import 'package:medicail/features/appointment/presentation/appointment_bloc.dart
 import 'package:medicail/features/appointment/presentation/appointment_change_notifier.dart';
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
-import 'package:medicail/widget/app_button.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/appointment_list_row.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 
 class AppointmentsDayPage extends StatelessWidget {
@@ -112,10 +113,31 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                     icon: const Icon(Icons.chevron_left),
                   ),
                   Expanded(
-                    child: AppText(
-                      dateLabel,
-                      variant: AppTextVariant.title,
-                      textAlign: TextAlign.center,
+                    child: InkWell(
+                      onTap: () async {
+                        final selected = await showDatePicker(
+                          context: context,
+                          initialDate: _day,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (selected != null) {
+                          if (!context.mounted) return;
+                          setState(() {
+                            _day = selected;
+                          });
+                          context.read<AppointmentBloc>().add(AppointmentsDayRequested(_day));
+                        }
+                      },
+                      borderRadius: AppRadius.smBorder,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                        child: AppText(
+                          dateLabel,
+                          variant: AppTextVariant.title,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ),
                   IconButton(
@@ -125,12 +147,6 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              AppButton(
-                label: l10n.appointmentCreateTitle,
-                style: AppButtonStyle.secondary,
-                onPressed: _openCreate,
-              ),
-              const SizedBox(height: AppSpacing.md),
               Expanded(
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -158,12 +174,52 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                               existing: item.appointment,
                               initialDay: _day,
                             ),
-                            onCancel: () => context.read<AppointmentBloc>().add(
-                              AppointmentCancelled(item.appointment.id),
-                            ),
-                            onDelete: () => context.read<AppointmentBloc>().add(
-                              AppointmentDeleted(item.appointment.id),
-                            ),
+                            onCancel: () async {
+                              final confirm = await AppDialog.show<bool>(
+                                context,
+                                variant: AppDialogVariant.standard,
+                                title: 'Annuler le rendez-vous ?',
+                                body: AppText('Êtes-vous sûr de vouloir annuler le rendez-vous de ${item.patient.displayName} ?', variant: AppTextVariant.body),
+                                actionsBuilder: (dialogContext) => [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                                    child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                                    child: AppText('Confirmer', variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
+                                  ),
+                                ],
+                              );
+                              if (confirm == true && context.mounted) {
+                                context.read<AppointmentBloc>().add(
+                                  AppointmentCancelled(item.appointment.id),
+                                );
+                              }
+                            },
+                            onDelete: () async {
+                              final confirm = await AppDialog.show<bool>(
+                                context,
+                                variant: AppDialogVariant.standard,
+                                title: 'Supprimer le rendez-vous ?',
+                                body: AppText('Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?', variant: AppTextVariant.body),
+                                actionsBuilder: (dialogContext) => [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                                    child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                                    child: AppText('Supprimer', variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
+                                  ),
+                                ],
+                              );
+                              if (confirm == true && context.mounted) {
+                                context.read<AppointmentBloc>().add(
+                                  AppointmentDeleted(item.appointment.id),
+                                );
+                              }
+                            },
                           );
                         },
                       ),
