@@ -84,6 +84,12 @@
   "sessionStatusCompleted": "Terminée",
   "sessionStatusFailed": "Échec",
   "patientAgeLabel": "Âge",
+  "appointmentCancelTitle": "Annuler le rendez-vous ?",
+  "appointmentCancelBody": "Êtes-vous sûr de vouloir annuler ce rendez-vous ?",
+  "appointmentDeleteTitle": "Supprimer le rendez-vous ?",
+  "appointmentDeleteBody": "Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?",
+  "buttonConfirm": "Confirmer",
+  "buttonCancel": "Annuler",
   "recordingStatusLabel": "Statut",
   "recordingAudioLabel": "Audio",
   "inputErrorRequired": "Ce champ est obligatoire",
@@ -324,10 +330,7 @@
     }
   },
   "medicalWatchSyncSuccess": "Veille synchronisee",
-  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)"
-}
-  "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
-
+  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)",
   "homeGreeting": "Bonjour, {name}",
   "@homeGreeting": {
     "placeholders": {

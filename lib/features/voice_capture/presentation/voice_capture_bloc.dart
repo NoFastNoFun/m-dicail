@@ -553,11 +553,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       await _awaitMicRelease();
     }
     await _audioCaptureService.startListening(
-      onResult: (text) {
+      onResult: (text, {isFinal = false}) {
         if (isClosed || _isBackgroundCapture) {
           return;
         }
-        add(VoiceCaptureTranscriptUpdated(text));
+        add(VoiceCaptureTranscriptUpdated(text, isFinal: isFinal));
       },
       onListeningEnded: () {
         if (isClosed || _isBackgroundCapture) {

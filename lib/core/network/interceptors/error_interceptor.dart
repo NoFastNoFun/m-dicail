@@ -85,11 +85,8 @@ class ErrorInterceptor extends Interceptor {
     
     if (statusCode != null && statusCode >= 500) {
       return ServerException(
-        
         'Le service est temporairement indisponible (Erreur $statusCode)', 
-       
         statusCode: statusCode,
-      ,
         method: method,
         path: path,
       );
