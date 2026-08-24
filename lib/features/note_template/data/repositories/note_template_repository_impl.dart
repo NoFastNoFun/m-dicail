@@ -34,7 +34,7 @@ class NoteTemplateRepositoryImpl implements NoteTemplateRepository {
 
   @override
   Future<List<NoteTemplate>> getUserVariants() async {
-    final variants = await _readUserVariants();
+    final variants = (await _readUserVariants()).toList();
     variants.sort((a, b) {
       final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);

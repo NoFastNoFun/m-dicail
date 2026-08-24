@@ -311,16 +311,6 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
     }
 
-    final viewModel = VoiceCaptureViewModel.fromState(
-      context.read<VoiceCaptureBloc>().state,
-    );
-    if (viewModel.selectedTemplate == null) {
-      await _pickTemplate(context);
-      if (!mounted) {
-        return;
-      }
-    }
-
     final language = Localizations.localeOf(context).languageCode;
     context.read<VoiceCaptureBloc>().add(
       VoiceCaptureFinishConsultation(language: language),

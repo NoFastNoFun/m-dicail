@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_bloc.dart';
@@ -164,8 +165,7 @@ class _PatientDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
       children: [
         AppText(patient.displayName, variant: AppTextVariant.headline),
         const SizedBox(height: AppSpacing.sm),
@@ -286,27 +286,27 @@ class _PatientDetailView extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         AppText(l10n.patientSessionsTitle, variant: AppTextVariant.title),
         const SizedBox(height: AppSpacing.sm),
-        Expanded(
-          child: sessions.isEmpty
-              ? Center(
-                  child: AppText(
-                    l10n.patientSessionsEmpty,
-                    variant: AppTextVariant.body,
-                    color: context.secondaryTextColor,
-                  ),
-                )
-              : ListView.separated(
-                  itemCount: sessions.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: AppSpacing.md),
-                  itemBuilder: (context, index) {
-                    return _RecordingSessionListItem(
-                      session: sessions[index],
-                      onRefresh: onRefresh,
-                    );
-                  },
-                ),
-        ),
+        if (sessions.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+              child: AppText(
+                l10n.patientSessionsEmpty,
+                variant: AppTextVariant.body,
+                color: context.secondaryTextColor,
+              ),
+            ),
+          )
+        else
+          ...sessions.map(
+            (session) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: _RecordingSessionListItem(
+                session: session,
+                onRefresh: onRefresh,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -336,19 +336,19 @@ class _RecordingSessionListItem extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (hasSoap) {
-          SoapNoteBottomSheet.show(
-            context,
-            initialNote: session.soapNote!,
-            onSave: (updatedNote) async {
-              final repo = getIt<RecordingSessionRepository>();
-              await repo.save(
-                session.copyWith(soapNote: updatedNote),
-              );
-              onRefresh();
-            },
-          );
-        }
+        final initialNote = session.soapNote ?? const SoapNote();
+        SoapNoteBottomSheet.show(
+          context,
+          initialNote: initialNote,
+          transcript: session.transcript,
+          onSave: (updatedNote) async {
+            final repo = getIt<RecordingSessionRepository>();
+            await repo.save(
+              session.copyWith(soapNote: updatedNote),
+            );
+            onRefresh();
+          },
+        );
       },
       borderRadius: AppRadius.mdBorder,
       child: Ink(
