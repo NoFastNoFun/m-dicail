@@ -61,3 +61,43 @@ final class PatientDeleted extends PatientEvent {
   @override
   List<Object?> get props => [id];
 }
+
+final class PatientUpdated extends PatientEvent {
+  const PatientUpdated({
+    required this.id,
+    required this.mrn,
+    required this.firstName,
+    required this.lastName,
+    this.birthDate,
+    this.sex,
+    this.email,
+    this.phone,
+    this.address,
+    this.notes,
+  });
+
+  final String id;
+  final String mrn;
+  final String firstName;
+  final String lastName;
+  final DateTime? birthDate;
+  final String? sex;
+  final String? email;
+  final String? phone;
+  final String? address;
+  final String? notes;
+
+  @override
+  List<Object?> get props => [
+        id,
+        mrn,
+        firstName,
+        lastName,
+        birthDate,
+        sex,
+        email,
+        phone,
+        address,
+        notes,
+      ];
+}
