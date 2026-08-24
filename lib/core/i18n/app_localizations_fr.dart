@@ -535,6 +535,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientCreateSubmit => 'Créer le dossier';
 
   @override
+  String get patientUpdateTitle => 'Modifier le patient';
+
+  @override
+  String get patientUpdateSubmit => 'Enregistrer';
+
+  @override
+  String get patientUpdateSuccess => 'Patient modifié avec succès.';
+
+  @override
   String get loginWelcomeTitle => 'Bienvenue sur Medicail';
 
   @override

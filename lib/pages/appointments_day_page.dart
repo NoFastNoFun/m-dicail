@@ -178,8 +178,8 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                               final confirm = await AppDialog.show<bool>(
                                 context,
                                 variant: AppDialogVariant.standard,
-                                title: 'Annuler le rendez-vous ?',
-                                body: AppText('Êtes-vous sûr de vouloir annuler le rendez-vous de ${item.patient.displayName} ?', variant: AppTextVariant.body),
+                                title: l10n.appointmentCancelTitle,
+                                body: AppText(l10n.appointmentCancelBody, variant: AppTextVariant.body),
                                 actionsBuilder: (dialogContext) => [
                                   TextButton(
                                     onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -187,7 +187,7 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                                   ),
                                   TextButton(
                                     onPressed: () => Navigator.of(dialogContext).pop(true),
-                                    child: AppText('Confirmer', variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
+                                    child: AppText(l10n.buttonConfirm, variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
                                   ),
                                 ],
                               );
@@ -201,8 +201,8 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                               final confirm = await AppDialog.show<bool>(
                                 context,
                                 variant: AppDialogVariant.standard,
-                                title: 'Supprimer le rendez-vous ?',
-                                body: AppText('Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?', variant: AppTextVariant.body),
+                                title: l10n.appointmentDeleteTitle,
+                                body: AppText(l10n.appointmentDeleteBody, variant: AppTextVariant.body),
                                 actionsBuilder: (dialogContext) => [
                                   TextButton(
                                     onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -210,7 +210,7 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
                                   ),
                                   TextButton(
                                     onPressed: () => Navigator.of(dialogContext).pop(true),
-                                    child: AppText('Supprimer', variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
+                                    child: AppText(l10n.buttonConfirm, variant: AppTextVariant.label, color: Theme.of(context).colorScheme.error),
                                   ),
                                 ],
                               );
