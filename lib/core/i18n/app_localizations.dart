@@ -166,6 +166,84 @@ abstract class AppLocalizations {
   /// **'Microphone indisponible'**
   String get errorAudio;
 
+  /// No description provided for @audioPlayerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio brut'**
+  String get audioPlayerTitle;
+
+  /// No description provided for @audioPlayerPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire'**
+  String get audioPlayerPlay;
+
+  /// No description provided for @audioPlayerPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get audioPlayerPause;
+
+  /// No description provided for @audioPlayerStop.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stop'**
+  String get audioPlayerStop;
+
+  /// No description provided for @audioPlayerAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio disponible'**
+  String get audioPlayerAvailable;
+
+  /// No description provided for @audioPlayerUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio indisponible'**
+  String get audioPlayerUnavailable;
+
+  /// No description provided for @audioPlayerLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement...'**
+  String get audioPlayerLoading;
+
+  /// No description provided for @audioPlayerError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture impossible'**
+  String get audioPlayerError;
+
+  /// No description provided for @audioPlayerPlaying.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture en cours'**
+  String get audioPlayerPlaying;
+
+  /// No description provided for @templateSectionCustom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Section'**
+  String get templateSectionCustom;
+
+  /// No description provided for @recordStatusEnhancing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Amélioration de la transcription...'**
+  String get recordStatusEnhancing;
+
+  /// No description provided for @recordStatusGeneratingSOAP.
+  ///
+  /// In fr, this message translates to:
+  /// **'Génération de la note SOAP par l\'IA...'**
+  String get recordStatusGeneratingSOAP;
+
+  /// No description provided for @routerErrorNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Route introuvable:'**
+  String get routerErrorNotFound;
+
   /// No description provided for @labelHistory.
   ///
   /// In fr, this message translates to:

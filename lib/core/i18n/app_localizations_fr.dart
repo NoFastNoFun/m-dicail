@@ -45,6 +45,46 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorAudio => 'Microphone indisponible';
 
   @override
+  String get audioPlayerTitle => 'Audio brut';
+
+  @override
+  String get audioPlayerPlay => 'Lire';
+
+  @override
+  String get audioPlayerPause => 'Pause';
+
+  @override
+  String get audioPlayerStop => 'Stop';
+
+  @override
+  String get audioPlayerAvailable => 'Audio disponible';
+
+  @override
+  String get audioPlayerUnavailable => 'Audio indisponible';
+
+  @override
+  String get audioPlayerLoading => 'Chargement...';
+
+  @override
+  String get audioPlayerError => 'Lecture impossible';
+
+  @override
+  String get audioPlayerPlaying => 'Lecture en cours';
+
+  @override
+  String get templateSectionCustom => 'Section';
+
+  @override
+  String get recordStatusEnhancing => 'Amélioration de la transcription...';
+
+  @override
+  String get recordStatusGeneratingSOAP =>
+      'Génération de la note SOAP par l\'IA...';
+
+  @override
+  String get routerErrorNotFound => 'Route introuvable:';
+
+  @override
   String get labelHistory => 'Historique';
 
   @override
