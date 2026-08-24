@@ -115,23 +115,12 @@ class _AppToastWidgetState extends State<AppToastWidget>
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     
-    Color accent;
-    IconData icon;
-
-    switch (widget.type) {
-      case AppToastType.success:
-        accent = AppColors.success;
-        icon = Icons.check_circle_outline;
-      case AppToastType.warning:
-        accent = AppColors.warning;
-        icon = Icons.warning_amber_outlined;
-      case AppToastType.error:
-        accent = AppColors.error;
-        icon = Icons.error_outline;
-      case AppToastType.info:
-        accent = AppColors.info;
-        icon = Icons.info_outline;
-    }
+    final (accent, icon) = switch (widget.type) {
+      AppToastType.success => (AppColors.success, Icons.check_circle_outline),
+      AppToastType.warning => (AppColors.warning, Icons.warning_amber_outlined),
+      AppToastType.error => (AppColors.error, Icons.error_outline),
+      AppToastType.info => (AppColors.info, Icons.info_outline),
+    };
 
     final messageArea = Row(
       children: [
