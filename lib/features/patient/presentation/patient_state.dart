@@ -46,3 +46,12 @@ class PatientCreateSuccess extends PatientState {
   @override
   List<Object?> get props => [patientId];
 }
+
+class PatientUpdateSuccess extends PatientState {
+  const PatientUpdateSuccess(this.patientId);
+
+  final String patientId;
+
+  @override
+  List<Object?> get props => [patientId];
+}

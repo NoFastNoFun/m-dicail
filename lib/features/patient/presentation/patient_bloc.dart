@@ -19,6 +19,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           .switchMap(mapper),
     );
     on<PatientCreated>(_onPatientCreated);
+    on<PatientUpdated>(_onPatientUpdated);
     on<PatientDeleted>(_onPatientDeleted);
   }
 
@@ -56,6 +57,46 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
       );
       final savedPatient = await _patientRepository.save(patient);
       emit(PatientCreateSuccess(savedPatient.id));
+      await _loadPatients(emit);
+    } on ServerException catch (error) {
+      if (error.statusCode == 409) {
+        emit(const PatientMrnConflict());
+      } else {
+        emit(PatientFailure(error.message));
+      }
+    } catch (error) {
+      emit(PatientFailure(Failure.fromException(error).message));
+    }
+  }
+
+  Future<void> _onPatientUpdated(
+    PatientUpdated event,
+    Emitter<PatientState> emit,
+  ) async {
+    try {
+      final existingPatient = await _patientRepository.getById(event.id);
+      if (existingPatient == null) {
+        emit(const PatientFailure('Patient introuvable'));
+        return;
+      }
+      
+      final updatedPatient = existingPatient.copyWith(
+        mrn: event.mrn.trim(),
+        firstName: event.firstName.trim(),
+        lastName: event.lastName.trim(),
+        birthDate: event.birthDate,
+        sex: event.sex,
+        contact: Contact(
+          email: event.email,
+          phone: event.phone,
+          address: event.address,
+        ),
+        notes: event.notes,
+        updatedAt: DateTime.now(),
+      );
+      
+      final savedPatient = await _patientRepository.save(updatedPatient);
+      emit(PatientUpdateSuccess(savedPatient.id));
       await _loadPatients(emit);
     } on ServerException catch (error) {
       if (error.statusCode == 409) {

@@ -4,7 +4,9 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
@@ -22,13 +24,15 @@ import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientCreationSheet extends StatefulWidget {
-  const PatientCreationSheet({super.key, this.onSuccess});
+  const PatientCreationSheet({super.key, this.onSuccess, this.initialPatient});
 
   final void Function(String patientId)? onSuccess;
+  final Patient? initialPatient;
 
   static Future<void> show(
     BuildContext context, {
     void Function(String patientId)? onSuccess,
+    Patient? initialPatient,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -37,13 +41,21 @@ class PatientCreationSheet extends StatefulWidget {
       backgroundColor: Colors.transparent,
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (sheetContext) {
+        PatientBloc bloc;
+        try {
+          bloc = context.read<PatientBloc>();
+        } catch (_) {
+          bloc = getIt<PatientBloc>();
+        }
+
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
           ),
           child: BlocProvider.value(
-            value: context.read<PatientBloc>(),
+            value: bloc,
             child: PatientCreationSheet(
+              initialPatient: initialPatient,
               onSuccess: onSuccess == null
                   ? null
                   : (patientId) {
@@ -62,13 +74,13 @@ class PatientCreationSheet extends StatefulWidget {
 }
 
 class _PatientCreationSheetState extends State<PatientCreationSheet> {
-  final _mrnController = TextEditingController();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _notesController = TextEditingController();
+  late final TextEditingController _mrnController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _notesController;
   String? _selectedSex;
   DateTime? _selectedBirthDate;
 
@@ -91,6 +103,17 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   @override
   void initState() {
     super.initState();
+    final patient = widget.initialPatient;
+    _mrnController = TextEditingController(text: patient?.mrn);
+    _firstNameController = TextEditingController(text: patient?.firstName);
+    _lastNameController = TextEditingController(text: patient?.lastName);
+    _emailController = TextEditingController(text: patient?.contact?.email);
+    _phoneController = TextEditingController(text: patient?.contact?.phone);
+    _addressController = TextEditingController(text: patient?.contact?.address);
+    _notesController = TextEditingController(text: patient?.notes);
+    _selectedSex = patient?.sex;
+    _selectedBirthDate = patient?.birthDate;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
@@ -173,19 +196,36 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       return;
     }
 
-    context.read<PatientBloc>().add(
-      PatientCreated(
-        mrn: mrn,
-        firstName: firstName,
-        lastName: lastName,
-        birthDate: _selectedBirthDate,
-        sex: _selectedSex,
-        email: _emailController.text.trim(),
-        phone: _phoneController.text.trim(),
-        address: _addressController.text.trim(),
-        notes: _notesController.text.trim(),
-      ),
-    );
+    if (widget.initialPatient != null) {
+      context.read<PatientBloc>().add(
+        PatientUpdated(
+          id: widget.initialPatient!.id,
+          mrn: mrn,
+          firstName: firstName,
+          lastName: lastName,
+          birthDate: _selectedBirthDate,
+          sex: _selectedSex,
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
+          notes: _notesController.text.trim(),
+        ),
+      );
+    } else {
+      context.read<PatientBloc>().add(
+        PatientCreated(
+          mrn: mrn,
+          firstName: firstName,
+          lastName: lastName,
+          birthDate: _selectedBirthDate,
+          sex: _selectedSex,
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
+          notes: _notesController.text.trim(),
+        ),
+      );
+    }
   }
 
   Future<void> _pickDate() async {
@@ -221,6 +261,13 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             Navigator.of(context).pop();
           }
           AppToast.showSuccess(context, l10n.patientCreateSuccess);
+        } else if (state is PatientUpdateSuccess) {
+          if (widget.onSuccess != null) {
+            widget.onSuccess!(state.patientId);
+          } else {
+            Navigator.of(context).pop();
+          }
+          AppToast.showSuccess(context, 'Patient modifié avec succès');
         }
       },
       child: BlocListener<TutorialBloc, TutorialState>(
@@ -244,7 +291,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppText(
-                    l10n.patientCreateTitle,
+                    widget.initialPatient != null 
+                        ? 'Modifier le patient' 
+                        : l10n.patientCreateTitle,
                     variant: AppTextVariant.title,
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -406,7 +455,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         disableBarrierInteraction: true,
                         onTargetClick: _handleTutorialCreateSubmit,
                         child: AppButton(
-                          label: l10n.patientCreateSubmit,
+                          label: widget.initialPatient != null
+                              ? 'Enregistrer'
+                              : l10n.patientCreateSubmit,
                           isLoading: state is PatientLoading,
                           onPressed: _handleTutorialCreateSubmit,
                         ),

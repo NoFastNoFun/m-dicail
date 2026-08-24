@@ -17,6 +17,7 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_sta
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -110,6 +111,25 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
 
         return AppScaffold(
           title: l10n.patientDetailTitle,
+          actions: patient == null
+              ? null
+              : [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: 'Modifier le patient',
+                    onPressed: () {
+                      PatientCreationSheet.show(
+                        context,
+                        initialPatient: patient,
+                        onSuccess: (_) {
+                          context.read<PatientDetailBloc>().add(
+                            PatientDetailRequested(patient.id),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
           body: BlocListener<TutorialBloc, TutorialState>(
             listener: (context, state) => _handleTutorialState(state),
             child: isLoading
