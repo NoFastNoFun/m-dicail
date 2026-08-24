@@ -274,7 +274,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           } else {
             Navigator.of(context).pop();
           }
-          AppToast.showSuccess(context, 'Patient modifié avec succès');
+          AppToast.showSuccess(context, l10n.patientUpdateSuccess);
         }
       },
       child: BlocListener<TutorialBloc, TutorialState>(
@@ -299,7 +299,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                 children: [
                   AppText(
                     widget.initialPatient != null 
-                        ? 'Modifier le patient' 
+                        ? l10n.patientUpdateTitle 
                         : l10n.patientCreateTitle,
                     variant: AppTextVariant.title,
                   ),
@@ -463,7 +463,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         onTargetClick: _handleTutorialCreateSubmit,
                         child: AppButton(
                           label: widget.initialPatient != null
-                              ? 'Enregistrer'
+                              ? l10n.patientUpdateSubmit
                               : l10n.patientCreateSubmit,
                           isLoading: state is PatientLoading,
                           onPressed: _handleTutorialCreateSubmit,

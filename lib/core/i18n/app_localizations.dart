@@ -1114,6 +1114,24 @@ abstract class AppLocalizations {
   /// **'Créer le dossier'**
   String get patientCreateSubmit;
 
+  /// No description provided for @patientUpdateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le patient'**
+  String get patientUpdateTitle;
+
+  /// No description provided for @patientUpdateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get patientUpdateSubmit;
+
+  /// No description provided for @patientUpdateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient modifié avec succès.'**
+  String get patientUpdateSuccess;
+
   /// No description provided for @loginWelcomeTitle.
   ///
   /// In fr, this message translates to:

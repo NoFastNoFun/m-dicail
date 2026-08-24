@@ -10,7 +10,7 @@ import 'package:medicail/features/appointment/presentation/appointment_change_no
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
-import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/appointment_form_sheet.dart';
@@ -68,7 +68,8 @@ class _HomeViewState extends State<_HomeView> {
 
   Future<void> _loadRecentSessions() async {
     try {
-      final repo = getIt<RecordingSessionRepository>();
+      // Use local repository to always get recent sessions even if API doesn't support global listing
+      final repo = getIt<SecureStorageRecordingSessionRepository>();
       final all = await repo.getAll();
       final completed = all
           .where((s) => s.status == RecordingSessionStatus.completed)
