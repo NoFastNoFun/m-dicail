@@ -129,6 +129,9 @@ class _AppInputState extends State<AppInput> {
             : null,
         suffixIcon: isPassword
             ? IconButton(
+                tooltip: _obscurePassword
+                    ? 'Afficher le mot de passe'
+                    : 'Masquer le mot de passe',
                 icon: Icon(
                   _obscurePassword
                       ? Icons.visibility_outlined

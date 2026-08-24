@@ -21,8 +21,8 @@ class AppRecordProcessingOverlay extends StatelessWidget {
     final String message = isTranscribingBackground
         ? l10n.recordStatusTranscribingBackground
         : isEnhancing
-            ? 'Amélioration de la transcription...'
-            : "Génération de la note SOAP par l'IA...";
+            ? l10n.recordStatusEnhancing
+            : l10n.recordStatusGeneratingSOAP;
 
     return Container(
       color: AppColors.highContrastBlack.withValues(alpha: 0.54),

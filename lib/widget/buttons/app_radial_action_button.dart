@@ -116,9 +116,15 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     final arc = _arcAngles;
     final showSatellites = _isOpen || _controller.value > 0;
 
-    return SizedBox(
-      width: _width,
-      height: showSatellites ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
+    return TapRegion(
+      onTapOutside: (_) {
+        if (_isOpen) {
+          _toggle();
+        }
+      },
+      child: SizedBox(
+        width: _width,
+        height: showSatellites ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: _stackAlignment,
@@ -177,7 +183,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _animatedSatellite(double progress, Widget? child) {
@@ -206,7 +212,6 @@ class _SatelliteButton extends StatelessWidget {
 
     return Tooltip(
       message: action.label,
-      triggerMode: TooltipTriggerMode.longPress,
       child: Material(
         elevation: 4,
         shadowColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
