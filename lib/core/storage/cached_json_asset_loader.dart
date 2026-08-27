@@ -9,6 +9,7 @@ class CachedJsonAssetLoader<T> {
   final String _assetPath;
   final T Function(dynamic decoded) _parse;
   T? _cache;
+  Future<T>? _inFlight;
 
   Future<T> load() async {
     final cached = _cache;
@@ -16,6 +17,22 @@ class CachedJsonAssetLoader<T> {
       return cached;
     }
 
+    final inFlight = _inFlight;
+    if (inFlight != null) {
+      return inFlight;
+    }
+
+    final future = _loadAndCache();
+    _inFlight = future;
+    try {
+      return await future;
+    } catch (_) {
+      _inFlight = null;
+      rethrow;
+    }
+  }
+
+  Future<T> _loadAndCache() async {
     try {
       final raw = await rootBundle.loadString(_assetPath);
       final parsed = _parse(jsonDecode(raw));

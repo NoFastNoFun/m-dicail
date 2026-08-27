@@ -13,8 +13,6 @@ void main() {
 
   Future<void> expectCorrection(String input, String expected) async {
     final result = await service.correct(input);
-    // ignore: avoid_print
-    print('"$input" -> "$result"');
     expect(result, expected);
   }
 
@@ -55,5 +53,34 @@ void main() {
     test('returns the input unchanged when empty', () async {
       await expectCorrection('', '');
     });
+
+    test('leaves an already-correct multi-word phrase unchanged', () async {
+      await expectCorrection('hernie discale', 'hernie discale');
+    });
+
+    test('fixes a slightly misheard multi-word phrase', () async {
+      await expectCorrection('ernie diskale', 'hernie discale');
+    });
+
+    test(
+      'corrects a multi-word phrase inside surrounding text',
+      () async {
+        await expectCorrection(
+          'une ernie diskale L5',
+          'une hernie discale L5',
+        );
+      },
+    );
+
+    test('still corrects the single-word term hernie on its own', () async {
+      await expectCorrection('ernie', 'hernie');
+    });
+
+    test(
+      'does not glue a multi-word phrase across punctuation',
+      () async {
+        await expectCorrection('hernie, discale', 'hernie, discale');
+      },
+    );
   });
 }

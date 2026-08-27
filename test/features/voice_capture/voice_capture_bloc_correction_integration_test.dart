@@ -156,17 +156,10 @@ void main() {
         const simulatedAsrOutput =
             'le patient a une tendinnite au coude depuis 3 semaines';
         bloc.add(const VoiceCaptureTranscriptUpdated(simulatedAsrOutput));
-        final result = await bloc.stream.firstWhere(
+        await bloc.stream.firstWhere(
           (state) =>
               state is RecordingInProgress &&
               state.transcript.contains('tendin'),
-        );
-
-        // ignore: avoid_print
-        print('ASR (simulé)  : "$simulatedAsrOutput"');
-        // ignore: avoid_print
-        print(
-          'Après pipeline: "${(result as RecordingInProgress).transcript}"',
         );
       },
       verify: (bloc) {
@@ -205,17 +198,8 @@ void main() {
           (state) => state is RecordingInProgress && state.isBackgroundCapture,
         );
         bloc.add(const VoiceCaptureAppForegrounded());
-        final result = await bloc.stream.firstWhere(
+        await bloc.stream.firstWhere(
           (state) => state is RecordingInProgress && !state.isBackgroundCapture,
-        );
-
-        // ignore: avoid_print
-        print(
-          'Whisper (simulé): "le patient presente une epicondylite du coude"',
-        );
-        // ignore: avoid_print
-        print(
-          'Après pipeline  : "${(result as RecordingInProgress).transcript}"',
         );
       },
       verify: (bloc) {
