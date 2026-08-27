@@ -1,0 +1,28 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+class CachedJsonAssetLoader<T> {
+  CachedJsonAssetLoader(this._assetPath, this._parse);
+
+  final String _assetPath;
+  final T Function(dynamic decoded) _parse;
+  T? _cache;
+
+  Future<T> load() async {
+    final cached = _cache;
+    if (cached != null) {
+      return cached;
+    }
+
+    try {
+      final raw = await rootBundle.loadString(_assetPath);
+      final parsed = _parse(jsonDecode(raw));
+      _cache = parsed;
+      return parsed;
+    } on FlutterError catch (error) {
+      throw StateError('Impossible de charger $_assetPath: ${error.message}');
+    }
+  }
+}

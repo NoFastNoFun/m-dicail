@@ -28,6 +28,10 @@ import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
     as _i367;
 import 'package:medicail/core/di/register_module.dart' as _i91;
+import 'package:medicail/core/medical_terms/medical_root_dictionary.dart'
+    as _i711;
+import 'package:medicail/core/medical_terms/medical_term_correction_service.dart'
+    as _i879;
 import 'package:medicail/core/network/api_client.dart' as _i1005;
 import 'package:medicail/core/network/auth_token_refresh_client.dart' as _i124;
 import 'package:medicail/core/network/auth_token_storage.dart' as _i760;
@@ -139,6 +143,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
     );
+    gh.lazySingleton<_i711.MedicalRootDictionary>(
+      () => _i711.MedicalRootDictionary(),
+    );
     gh.lazySingleton<_i479.ErrorInterceptor>(() => _i479.ErrorInterceptor());
     gh.lazySingleton<_i945.LoggingInterceptor>(
       () => _i945.LoggingInterceptor(),
@@ -148,6 +155,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i564.AssetNoteTemplateDataSource(),
     );
     gh.lazySingleton<_i713.SettingsNotifier>(() => _i713.SettingsNotifier());
+    gh.lazySingleton<_i879.MedicalTermCorrectionService>(
+      () =>
+          _i879.MedicalTermCorrectionService(gh<_i711.MedicalRootDictionary>()),
+    );
     gh.lazySingleton<_i117.RecordingNotificationService>(
       () => _i117.RecordingNotificationServiceImpl(),
     );
@@ -348,6 +359,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i390.PatientRepository>(),
       ),
     );
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
@@ -357,12 +374,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i117.RecordingNotificationService>(),
         gh<_i162.BackgroundAudioRecorder>(),
         gh<_i356.OfflineAudioTranscriptionService>(),
-      ),
-    );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+        gh<_i879.MedicalTermCorrectionService>(),
       ),
     );
     return this;

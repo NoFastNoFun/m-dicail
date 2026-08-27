@@ -7,6 +7,7 @@ import 'package:medicail/core/audio/background_audio_recorder.dart';
 import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
 import 'package:medicail/core/audio/recording_notification_service.dart';
 import 'package:medicail/core/error/failure.dart';
+import 'package:medicail/core/medical_terms/medical_term_correction_service.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
 import 'package:medicail/core/utils/transcript_merge_helper.dart';
@@ -30,6 +31,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     this._recordingNotificationService,
     this._backgroundAudioRecorder,
     this._offlineAudioTranscriptionService,
+    this._medicalTermCorrectionService,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -51,6 +53,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   final RecordingNotificationService _recordingNotificationService;
   final BackgroundAudioRecorder _backgroundAudioRecorder;
   final OfflineAudioTranscriptionService _offlineAudioTranscriptionService;
+  final MedicalTermCorrectionService _medicalTermCorrectionService;
 
   RecordingSession? _activeSession;
   bool _isHandlingLifecycle = false;
@@ -78,6 +81,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     try {
       await _audioCaptureService.initialize();
       await _recordingNotificationService.ensureInitialized();
+      await _medicalTermCorrectionService.warmUp();
       emit(const VoiceCaptureReady());
     } catch (error) {
       emit(
@@ -210,6 +214,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         }
       }
 
+      transcriptForProcess = await _medicalTermCorrectionService.correct(
+        transcriptForProcess,
+      );
+
       emit(VoiceCaptureProcessing(transcript: transcriptForProcess));
 
       final result = await _noteProcessingRepository.process(
@@ -324,10 +332,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
   }
 
-  void _onTranscriptUpdated(
+  Future<void> _onTranscriptUpdated(
     VoiceCaptureTranscriptUpdated event,
     Emitter<VoiceCaptureState> emit,
-  ) {
+  ) async {
     if (state is! RecordingInProgress || _isBackgroundCapture) {
       return;
     }
@@ -374,10 +382,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _lastRawText = event.rawText;
 
     final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
-    _updateActiveSessionTranscriptInMemory(merged);
-    
+    final corrected = await _medicalTermCorrectionService.correct(merged);
+    _updateActiveSessionTranscriptInMemory(corrected);
+
     if (event.isFinal) {
-      var finalTranscript = merged.trim();
+      var finalTranscript = corrected.trim();
       if (finalTranscript.isNotEmpty && !finalTranscript.endsWith('.')) {
         finalTranscript += '. ';
       } else if (finalTranscript.isNotEmpty) {
@@ -388,7 +397,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
 
     emit(RecordingInProgress(
-      transcript: merged,
+      transcript: corrected,
       selectedTemplate: _selectedTemplate,
     ));
   }
@@ -619,9 +628,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transitionWords: _transitions,
     );
     final merged = TranscriptMergeHelper.merge(baseTranscript, punctuated);
-    _segmentBase = merged;
-    await _saveActiveSessionTranscript(merged);
-    return merged;
+    final corrected = await _medicalTermCorrectionService.correct(merged);
+    _segmentBase = corrected;
+    await _saveActiveSessionTranscript(corrected);
+    return corrected;
   }
 
   Future<void> _stopListeningAndNotification() async {
