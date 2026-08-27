@@ -25,9 +25,12 @@ class AppInput extends StatefulWidget {
     this.maxLength,
     this.maxLines,
     this.prefixIcon,
+    this.suffixIcon,
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   final AppInputVariant variant;
@@ -44,9 +47,12 @@ class AppInput extends StatefulWidget {
   final int? maxLength;
   final int? maxLines;
   final IconData? prefixIcon;
+  final Widget? suffixIcon;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -127,7 +133,7 @@ class _AppInputState extends State<AppInput> {
         prefixIcon: widget.prefixIcon != null
             ? Icon(widget.prefixIcon, color: secondaryColor)
             : null,
-        suffixIcon: isPassword
+        suffixIcon: widget.suffixIcon ?? (isPassword
             ? IconButton(
                 tooltip: _obscurePassword
                     ? 'Afficher le mot de passe'
@@ -142,12 +148,13 @@ class _AppInputState extends State<AppInput> {
                     ? () => setState(() => _obscurePassword = !_obscurePassword)
                     : null,
               )
-            : null,
+            : null),
       ),
     );
   }
 
   TextInputType _keyboardType() {
+    if (widget.keyboardType != null) return widget.keyboardType!;
     return switch (widget.variant) {
       AppInputVariant.number =>
         const TextInputType.numberWithOptions(decimal: true),
@@ -159,6 +166,7 @@ class _AppInputState extends State<AppInput> {
   }
 
   List<TextInputFormatter>? _inputFormatters() {
+    if (widget.inputFormatters != null) return widget.inputFormatters!;
     if (widget.variant == AppInputVariant.number) {
       return [
         FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),

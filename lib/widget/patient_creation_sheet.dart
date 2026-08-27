@@ -6,6 +6,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/utils/date_input_formatter.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
@@ -88,6 +89,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   late final TextEditingController _phoneController;
   late final TextEditingController _addressController;
   late final TextEditingController _notesController;
+  late final TextEditingController _birthDateController;
   String? _selectedSex;
   DateTime? _selectedBirthDate;
 
@@ -118,8 +120,14 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController = TextEditingController(text: patient?.contact?.phone);
     _addressController = TextEditingController(text: patient?.contact?.address);
     _notesController = TextEditingController(text: patient?.notes);
-    _selectedSex = patient?.sex;
+    
     _selectedBirthDate = patient?.birthDate;
+    _birthDateController = TextEditingController(
+      text: _selectedBirthDate != null 
+          ? '${_selectedBirthDate!.day.toString().padLeft(2, '0')}/${_selectedBirthDate!.month.toString().padLeft(2, '0')}/${_selectedBirthDate!.year}'
+          : '',
+    );
+    _selectedSex = patient?.sex;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -136,6 +144,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
+    _birthDateController.dispose();
     _mrnFocusNode.dispose();
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
@@ -203,6 +212,22 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       return;
     }
 
+    DateTime? parsedBirthDate = _selectedBirthDate;
+    final dateStr = _birthDateController.text.trim();
+    if (dateStr.length == 10) {
+      final parts = dateStr.split('/');
+      if (parts.length == 3) {
+        final day = int.tryParse(parts[0]);
+        final month = int.tryParse(parts[1]);
+        final year = int.tryParse(parts[2]);
+        if (day != null && month != null && year != null) {
+          parsedBirthDate = DateTime(year, month, day);
+        }
+      }
+    } else if (dateStr.isEmpty) {
+      parsedBirthDate = null;
+    }
+
     if (widget.initialPatient != null) {
       context.read<PatientBloc>().add(
         PatientUpdated(
@@ -210,7 +235,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           mrn: mrn,
           firstName: firstName,
           lastName: lastName,
-          birthDate: _selectedBirthDate,
+          birthDate: parsedBirthDate,
           sex: _selectedSex,
           email: _emailController.text.trim(),
           phone: _phoneController.text.trim(),
@@ -224,7 +249,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
           mrn: mrn,
           firstName: firstName,
           lastName: lastName,
-          birthDate: _selectedBirthDate,
+          birthDate: parsedBirthDate,
           sex: _selectedSex,
           email: _emailController.text.trim(),
           phone: _phoneController.text.trim(),
@@ -241,10 +266,12 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       initialDate: _selectedBirthDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
     );
     if (picked != null) {
       setState(() {
         _selectedBirthDate = picked;
+        _birthDateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
       });
     }
   }
@@ -374,20 +401,16 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                   Row(
                     children: [
                       Expanded(
-                        child: InkWell(
-                          onTap: _pickDate,
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: l10n.patientBirthDateLabel,
-                              border: OutlineInputBorder(
-                                borderRadius: fieldBorderRadius,
-                              ),
-                            ),
-                            child: Text(
-                              _selectedBirthDate != null
-                                  ? '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}'
-                                  : l10n.patientBirthDateSelect,
-                            ),
+                        child: AppInput(
+                          variant: AppInputVariant.text,
+                          label: l10n.patientBirthDateLabel,
+                          controller: _birthDateController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [DateInputFormatter()],
+                          hint: 'JJ/MM/AAAA',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.calendar_today_outlined),
+                            onPressed: _pickDate,
                           ),
                         ),
                       ),
