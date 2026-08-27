@@ -52,6 +52,7 @@ flutter:
   generate: true
   assets:
     - assets/templates/
+    - assets/medical_terms/
 
 flutter_launcher_icons:
   android: true

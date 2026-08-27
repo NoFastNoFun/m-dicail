@@ -4,6 +4,7 @@ import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/audio/background_audio_recorder.dart';
 import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
 import 'package:medicail/core/audio/recording_notification_service.dart';
+import 'package:medicail/core/medical_terms/medical_term_correction_service.dart';
 import 'package:medicail/features/note_template/domain/entities/note_section.dart';
 import 'package:medicail/features/note_template/domain/entities/note_section_kind.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
@@ -38,6 +39,13 @@ class _MockBackgroundAudioRecorder extends Mock
 class _MockOfflineAudioTranscriptionService extends Mock
     implements OfflineAudioTranscriptionService {}
 
+class _MockMedicalTermCorrectionService extends Mock
+    implements MedicalTermCorrectionService {}
+
+void _fallbackOnResult(String text, {bool isFinal = false}) {}
+
+void _fallbackOnListeningEnded() {}
+
 void main() {
   late _MockAudioCaptureService audioCapture;
   late _MockRecordingSessionRepository sessionRepository;
@@ -46,8 +54,11 @@ void main() {
   late _MockRecordingNotificationService notificationService;
   late _MockBackgroundAudioRecorder backgroundRecorder;
   late _MockOfflineAudioTranscriptionService offlineTranscription;
+  late _MockMedicalTermCorrectionService medicalTermCorrection;
 
   setUpAll(() {
+    registerFallbackValue(_fallbackOnResult);
+    registerFallbackValue(_fallbackOnListeningEnded);
     registerFallbackValue(
       RecordingSession(
         id: 'fallback',
@@ -65,6 +76,7 @@ void main() {
     notificationService = _MockRecordingNotificationService();
     backgroundRecorder = _MockBackgroundAudioRecorder();
     offlineTranscription = _MockOfflineAudioTranscriptionService();
+    medicalTermCorrection = _MockMedicalTermCorrectionService();
 
     when(() => audioCapture.initialize()).thenAnswer((_) async => true);
     when(() => audioCapture.isListening).thenReturn(false);
@@ -112,6 +124,11 @@ void main() {
       ),
     ).thenAnswer((_) async => '');
 
+    when(() => medicalTermCorrection.warmUp()).thenAnswer((_) async {});
+    when(() => medicalTermCorrection.correct(any())).thenAnswer(
+      (invocation) async => invocation.positionalArguments.first as String,
+    );
+
     when(() => sessionRepository.save(any())).thenAnswer((invocation) async {
       return invocation.positionalArguments.first as RecordingSession;
     });
@@ -148,6 +165,7 @@ void main() {
       notificationService,
       backgroundRecorder,
       offlineTranscription,
+      medicalTermCorrection,
     );
   }
 
@@ -160,7 +178,7 @@ void main() {
 
   group('VoiceCaptureBloc dual capture', () {
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'starts live STT without session WAV so the microphone stays exclusive',
+      'starts live STT and session audio when recording begins',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -174,9 +192,9 @@ void main() {
         ),
       ],
       verify: (_) {
-        verifyNever(
+        verify(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        );
+        ).called(1);
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
