@@ -45,6 +45,46 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorAudio => 'Microphone indisponible';
 
   @override
+  String get audioPlayerTitle => 'Audio brut';
+
+  @override
+  String get audioPlayerPlay => 'Lire';
+
+  @override
+  String get audioPlayerPause => 'Pause';
+
+  @override
+  String get audioPlayerStop => 'Stop';
+
+  @override
+  String get audioPlayerAvailable => 'Audio disponible';
+
+  @override
+  String get audioPlayerUnavailable => 'Audio indisponible';
+
+  @override
+  String get audioPlayerLoading => 'Chargement...';
+
+  @override
+  String get audioPlayerError => 'Lecture impossible';
+
+  @override
+  String get audioPlayerPlaying => 'Lecture en cours';
+
+  @override
+  String get templateSectionCustom => 'Section';
+
+  @override
+  String get recordStatusEnhancing => 'Amélioration de la transcription...';
+
+  @override
+  String get recordStatusGeneratingSOAP =>
+      'Génération de la note SOAP par l\'IA...';
+
+  @override
+  String get routerErrorNotFound => 'Route introuvable:';
+
+  @override
   String get labelHistory => 'Historique';
 
   @override
@@ -211,6 +251,41 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
+
+  @override
+  String get sessionStatusDraft => 'Brouillon';
+
+  @override
+  String get sessionStatusRecording => 'En cours';
+
+  @override
+  String get sessionStatusCompleted => 'Terminée';
+
+  @override
+  String get sessionStatusFailed => 'Échec';
+
+  @override
+  String get patientAgeLabel => 'Âge';
+
+  @override
+  String get appointmentCancelTitle => 'Annuler le rendez-vous ?';
+
+  @override
+  String get appointmentCancelBody =>
+      'Êtes-vous sûr de vouloir annuler ce rendez-vous ?';
+
+  @override
+  String get appointmentDeleteTitle => 'Supprimer le rendez-vous ?';
+
+  @override
+  String get appointmentDeleteBody =>
+      'Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?';
+
+  @override
+  String get buttonConfirm => 'Confirmer';
+
+  @override
+  String get buttonCancel => 'Annuler';
 
   @override
   String get recordingStatusLabel => 'Statut';
@@ -458,6 +533,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get patientCreateSubmit => 'Créer le dossier';
+
+  @override
+  String get patientUpdateTitle => 'Modifier le patient';
+
+  @override
+  String get patientUpdateSubmit => 'Enregistrer';
+
+  @override
+  String get patientUpdateSuccess => 'Patient modifié avec succès.';
 
   @override
   String get loginWelcomeTitle => 'Bienvenue sur Medicail';
@@ -907,4 +991,50 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get medicalWatchOfflineHint =>
       'Resultats hors-ligne (derniere synchronisation)';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Bonjour, $name';
+  }
+
+  @override
+  String get homeGreetingGuest => 'Bienvenue';
+
+  @override
+  String get homeQuickRecord => 'Enregistrement rapide';
+
+  @override
+  String get homeNewPatient => 'Nouveau patient';
+
+  @override
+  String get homeViewAgenda => 'Agenda';
+
+  @override
+  String get homeRecentConsultationsTitle => 'Consultations récentes';
+
+  @override
+  String get homeRecentConsultationsEmpty =>
+      'Aucune consultation pour le moment';
+
+  @override
+  String get homeRecentConsultationsSeeAll => 'Voir tout';
+
+  @override
+  String get homeEmptyTitle => 'Bienvenue sur Medicail';
+
+  @override
+  String get homeEmptySubtitle =>
+      'Planifiez votre premiere consultation ou démarrez un enregistrement rapide';
+
+  @override
+  String homeConsultationsToday(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count consultations prévues',
+      one: '1 consultation prévue',
+      zero: 'Aucune consultation aujourd\'hui',
+    );
+    return '$_temp0';
+  }
 }

@@ -4,6 +4,7 @@ import 'package:medicail/features/note_template/domain/entities/note_section.dar
 import 'package:medicail/features/note_template/domain/entities/note_section_kind.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 
 class AppTemplateSectionEditor extends StatefulWidget {
   const AppTemplateSectionEditor({
@@ -61,7 +62,7 @@ class _AppTemplateSectionEditorState extends State<AppTemplateSectionEditor> {
   Widget build(BuildContext context) {
     final isCustom = widget.section.kind == NoteSectionKind.custom;
     final displayTitle =
-        isCustom ? widget.section.title : _soapSectionLabel(widget.section.kind);
+        isCustom ? widget.section.title : _soapSectionLabel(context, widget.section.kind);
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -108,13 +109,14 @@ class _AppTemplateSectionEditorState extends State<AppTemplateSectionEditor> {
     );
   }
 
-  String _soapSectionLabel(NoteSectionKind kind) {
+  String _soapSectionLabel(BuildContext context, NoteSectionKind kind) {
+    final l10n = AppLocalizations.of(context);
     return switch (kind) {
-      NoteSectionKind.subjective => 'Subjectif (S)',
-      NoteSectionKind.objective => 'Objectif (O)',
-      NoteSectionKind.assessment => 'Evaluation (A)',
-      NoteSectionKind.plan => 'Plan (P)',
-      NoteSectionKind.custom => 'Section',
+      NoteSectionKind.subjective => '${l10n.soapNoteSubjective} (S)',
+      NoteSectionKind.objective => '${l10n.soapNoteObjective} (O)',
+      NoteSectionKind.assessment => '${l10n.soapNoteAssessment} (A)',
+      NoteSectionKind.plan => '${l10n.soapNotePlan} (P)',
+      NoteSectionKind.custom => l10n.templateSectionCustom,
     };
   }
 }

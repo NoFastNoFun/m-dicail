@@ -4,7 +4,10 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/utils/date_input_formatter.dart';
+import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
 import 'package:medicail/features/patient/presentation/patient_state.dart';
@@ -22,13 +25,15 @@ import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientCreationSheet extends StatefulWidget {
-  const PatientCreationSheet({super.key, this.onSuccess});
+  const PatientCreationSheet({super.key, this.onSuccess, this.initialPatient});
 
   final void Function(String patientId)? onSuccess;
+  final Patient? initialPatient;
 
   static Future<void> show(
     BuildContext context, {
     void Function(String patientId)? onSuccess,
+    Patient? initialPatient,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -37,22 +42,37 @@ class PatientCreationSheet extends StatefulWidget {
       backgroundColor: Colors.transparent,
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (sheetContext) {
-        return Padding(
+        PatientBloc? existingBloc;
+        try {
+          existingBloc = context.read<PatientBloc>();
+        } catch (_) {}
+
+        final child = Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
           ),
-          child: BlocProvider.value(
-            value: context.read<PatientBloc>(),
-            child: PatientCreationSheet(
-              onSuccess: onSuccess == null
-                  ? null
-                  : (patientId) {
-                      Navigator.of(sheetContext).pop();
-                      onSuccess(patientId);
-                    },
-            ),
+          child: PatientCreationSheet(
+            initialPatient: initialPatient,
+            onSuccess: onSuccess == null
+                ? null
+                : (patientId) {
+                    context.pop();
+                    onSuccess(patientId);
+                  },
           ),
         );
+
+        if (existingBloc != null) {
+          return BlocProvider.value(
+            value: existingBloc,
+            child: child,
+          );
+        } else {
+          return BlocProvider<PatientBloc>(
+            create: (_) => getIt<PatientBloc>(),
+            child: child,
+          );
+        }
       },
     );
   }
@@ -62,13 +82,14 @@ class PatientCreationSheet extends StatefulWidget {
 }
 
 class _PatientCreationSheetState extends State<PatientCreationSheet> {
-  final _mrnController = TextEditingController();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _notesController = TextEditingController();
+  late final TextEditingController _mrnController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _notesController;
+  late final TextEditingController _birthDateController;
   String? _selectedSex;
   DateTime? _selectedBirthDate;
 
@@ -91,6 +112,23 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
   @override
   void initState() {
     super.initState();
+    final patient = widget.initialPatient;
+    _mrnController = TextEditingController(text: patient?.mrn);
+    _firstNameController = TextEditingController(text: patient?.firstName);
+    _lastNameController = TextEditingController(text: patient?.lastName);
+    _emailController = TextEditingController(text: patient?.contact?.email);
+    _phoneController = TextEditingController(text: patient?.contact?.phone);
+    _addressController = TextEditingController(text: patient?.contact?.address);
+    _notesController = TextEditingController(text: patient?.notes);
+    
+    _selectedBirthDate = patient?.birthDate;
+    _birthDateController = TextEditingController(
+      text: _selectedBirthDate != null 
+          ? '${_selectedBirthDate!.day.toString().padLeft(2, '0')}/${_selectedBirthDate!.month.toString().padLeft(2, '0')}/${_selectedBirthDate!.year}'
+          : '',
+    );
+    _selectedSex = patient?.sex;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
@@ -106,6 +144,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
+    _birthDateController.dispose();
     _mrnFocusNode.dispose();
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
@@ -173,19 +212,52 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       return;
     }
 
-    context.read<PatientBloc>().add(
-      PatientCreated(
-        mrn: mrn,
-        firstName: firstName,
-        lastName: lastName,
-        birthDate: _selectedBirthDate,
-        sex: _selectedSex,
-        email: _emailController.text.trim(),
-        phone: _phoneController.text.trim(),
-        address: _addressController.text.trim(),
-        notes: _notesController.text.trim(),
-      ),
-    );
+    DateTime? parsedBirthDate = _selectedBirthDate;
+    final dateStr = _birthDateController.text.trim();
+    if (dateStr.length == 10) {
+      final parts = dateStr.split('/');
+      if (parts.length == 3) {
+        final day = int.tryParse(parts[0]);
+        final month = int.tryParse(parts[1]);
+        final year = int.tryParse(parts[2]);
+        if (day != null && month != null && year != null) {
+          parsedBirthDate = DateTime(year, month, day);
+        }
+      }
+    } else if (dateStr.isEmpty) {
+      parsedBirthDate = null;
+    }
+
+    if (widget.initialPatient != null) {
+      context.read<PatientBloc>().add(
+        PatientUpdated(
+          id: widget.initialPatient!.id,
+          mrn: mrn,
+          firstName: firstName,
+          lastName: lastName,
+          birthDate: parsedBirthDate,
+          sex: _selectedSex,
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
+          notes: _notesController.text.trim(),
+        ),
+      );
+    } else {
+      context.read<PatientBloc>().add(
+        PatientCreated(
+          mrn: mrn,
+          firstName: firstName,
+          lastName: lastName,
+          birthDate: parsedBirthDate,
+          sex: _selectedSex,
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
+          notes: _notesController.text.trim(),
+        ),
+      );
+    }
   }
 
   Future<void> _pickDate() async {
@@ -194,10 +266,12 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
       initialDate: _selectedBirthDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
     );
     if (picked != null) {
       setState(() {
         _selectedBirthDate = picked;
+        _birthDateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
       });
     }
   }
@@ -221,6 +295,13 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             Navigator.of(context).pop();
           }
           AppToast.showSuccess(context, l10n.patientCreateSuccess);
+        } else if (state is PatientUpdateSuccess) {
+          if (widget.onSuccess != null) {
+            widget.onSuccess!(state.patientId);
+          } else {
+            Navigator.of(context).pop();
+          }
+          AppToast.showSuccess(context, l10n.patientUpdateSuccess);
         }
       },
       child: BlocListener<TutorialBloc, TutorialState>(
@@ -244,7 +325,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppText(
-                    l10n.patientCreateTitle,
+                    widget.initialPatient != null 
+                        ? l10n.patientUpdateTitle 
+                        : l10n.patientCreateTitle,
                     variant: AppTextVariant.title,
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -318,20 +401,16 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                   Row(
                     children: [
                       Expanded(
-                        child: InkWell(
-                          onTap: _pickDate,
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: l10n.patientBirthDateLabel,
-                              border: OutlineInputBorder(
-                                borderRadius: fieldBorderRadius,
-                              ),
-                            ),
-                            child: Text(
-                              _selectedBirthDate != null
-                                  ? '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}'
-                                  : l10n.patientBirthDateSelect,
-                            ),
+                        child: AppInput(
+                          variant: AppInputVariant.text,
+                          label: l10n.patientBirthDateLabel,
+                          controller: _birthDateController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [DateInputFormatter()],
+                          hint: 'JJ/MM/AAAA',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.calendar_today_outlined),
+                            onPressed: _pickDate,
                           ),
                         ),
                       ),
@@ -406,7 +485,9 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         disableBarrierInteraction: true,
                         onTargetClick: _handleTutorialCreateSubmit,
                         child: AppButton(
-                          label: l10n.patientCreateSubmit,
+                          label: widget.initialPatient != null
+                              ? l10n.patientUpdateSubmit
+                              : l10n.patientCreateSubmit,
                           isLoading: state is PatientLoading,
                           onPressed: _handleTutorialCreateSubmit,
                         ),

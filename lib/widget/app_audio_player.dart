@@ -4,32 +4,17 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 
 class AppAudioPlayer extends StatefulWidget {
   const AppAudioPlayer({
     super.key,
     required this.playbackService,
     required this.source,
-    this.title = 'Audio brut',
-    this.playLabel = 'Lire',
-    this.pauseLabel = 'Pause',
-    this.stopLabel = 'Stop',
-    this.availableLabel = 'Audio disponible',
-    this.unavailableLabel = 'Audio indisponible',
-    this.loadingLabel = 'Chargement...',
-    this.errorLabel = 'Lecture impossible',
   });
 
   final AudioPlaybackService playbackService;
   final String? source;
-  final String title;
-  final String playLabel;
-  final String pauseLabel;
-  final String stopLabel;
-  final String availableLabel;
-  final String unavailableLabel;
-  final String loadingLabel;
-  final String errorLabel;
 
   @override
   State<AppAudioPlayer> createState() => _AppAudioPlayerState();
@@ -37,7 +22,7 @@ class AppAudioPlayer extends StatefulWidget {
 
 class _AppAudioPlayerState extends State<AppAudioPlayer> {
   bool _isLoading = false;
-  String? _errorMessage;
+  bool _hasError = false;
 
   bool get _hasSource => widget.source != null && widget.source!.isNotEmpty;
 
@@ -58,9 +43,13 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
   }
 
   Future<void> _runPlaybackAction(Future<void> Function() action) async {
+    if (_isLoading) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
-      _errorMessage = null;
+      _hasError = false;
     });
 
     try {
@@ -70,7 +59,7 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
         return;
       }
       setState(() {
-        _errorMessage = widget.errorLabel;
+        _hasError = true;
       });
     } finally {
       if (mounted) {
@@ -83,30 +72,36 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return StreamBuilder<bool>(
       stream: widget.playbackService.playingStream,
       initialData: false,
       builder: (context, snapshot) {
         final isPlaying = snapshot.data ?? false;
-        final statusLabel = _statusLabel(isPlaying: isPlaying);
-        final statusColor = _statusColor(isPlaying: isPlaying);
-
+        
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppText(widget.title, variant: AppTextVariant.label),
-            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
-                Icon(_statusIcon(isPlaying: isPlaying), color: statusColor),
-                const SizedBox(width: AppSpacing.sm),
+                Icon(_statusIcon(isPlaying: isPlaying), 
+                    color: _statusColor(isPlaying: isPlaying)),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: AppText(
-                    statusLabel,
-                    variant: AppTextVariant.caption,
-                    color: statusColor,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        l10n.audioPlayerTitle,
+                        variant: AppTextVariant.body,
+                      ),
+                      AppText(
+                        _statusLabel(isPlaying: isPlaying, l10n: l10n),
+                        variant: AppTextVariant.caption,
+                        color: _statusColor(isPlaying: isPlaying),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -116,7 +111,7 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
               children: [
                 Expanded(
                   child: AppButton(
-                    label: isPlaying ? widget.pauseLabel : widget.playLabel,
+                    label: isPlaying ? l10n.audioPlayerPause : l10n.audioPlayerPlay,
                     icon: isPlaying ? Icons.pause : Icons.play_arrow,
                     layout: AppButtonLayout.textWithIcon,
                     style: AppButtonStyle.primary,
@@ -128,7 +123,7 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
                 const SizedBox(width: AppSpacing.md),
                 AppButton(
                   icon: Icons.stop,
-                  label: widget.stopLabel,
+                  label: l10n.audioPlayerStop,
                   layout: AppButtonLayout.textWithIcon,
                   style: AppButtonStyle.secondary,
                   expanded: false,
@@ -143,24 +138,24 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
     );
   }
 
-  String _statusLabel({required bool isPlaying}) {
-    if (_errorMessage != null) {
-      return _errorMessage!;
+  String _statusLabel({required bool isPlaying, required AppLocalizations l10n}) {
+    if (_hasError) {
+      return l10n.audioPlayerError;
     }
     if (_isLoading) {
-      return widget.loadingLabel;
+      return l10n.audioPlayerLoading;
     }
     if (!_hasSource) {
-      return widget.unavailableLabel;
+      return l10n.audioPlayerUnavailable;
     }
     if (isPlaying) {
-      return 'Lecture en cours';
+      return l10n.audioPlayerPlaying;
     }
-    return widget.availableLabel;
+    return l10n.audioPlayerAvailable;
   }
 
   Color _statusColor({required bool isPlaying}) {
-    if (_errorMessage != null) {
+    if (_hasError) {
       return AppColors.error;
     }
     if (!_hasSource) {
@@ -173,7 +168,7 @@ class _AppAudioPlayerState extends State<AppAudioPlayer> {
   }
 
   IconData _statusIcon({required bool isPlaying}) {
-    if (_errorMessage != null) {
+    if (_hasError) {
       return Icons.error_outline;
     }
     if (!_hasSource) {

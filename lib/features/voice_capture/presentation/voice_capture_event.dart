@@ -55,12 +55,13 @@ final class VoiceCaptureListeningSessionEnded extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureTranscriptUpdated extends VoiceCaptureEvent {
-  const VoiceCaptureTranscriptUpdated(this.rawText);
+  const VoiceCaptureTranscriptUpdated(this.rawText, {this.isFinal = false});
 
   final String rawText;
+  final bool isFinal;
 
   @override
-  List<Object?> get props => [rawText];
+  List<Object?> get props => [rawText, isFinal];
 }
 
 final class VoiceCaptureTemplateSelected extends VoiceCaptureEvent {

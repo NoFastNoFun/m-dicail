@@ -33,6 +33,7 @@ migrate_working_dir/
 /build/
 /coverage/
 installer/windows/.wix/
+windows/Flutter/*
 
 # Symbolication related
 app.*.symbols
@@ -48,3 +49,12 @@ app.*.map.json
 
 .env
 /future_feature/
+# Windows generated plugins
+windows/flutter/generated_plugins.cmake
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+
+# Linux generated plugins
+linux/flutter/generated_plugins.cmake
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h

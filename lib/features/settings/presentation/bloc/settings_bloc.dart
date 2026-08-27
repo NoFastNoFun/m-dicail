@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
+import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
+import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
+import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
@@ -26,9 +29,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     emit(const SettingsLoading());
 
-    final themeVariant = await _repository.readThemeVariant();
-    final fontScale = await _repository.readFontScale();
-    final defaultSessionLength = await _repository.readDefaultSessionLength();
+    AppThemeVariant themeVariant = AppThemeVariant.light;
+    AppFontScale fontScale = AppFontScale.defaultScale;
+    AppSessionLength defaultSessionLength = AppSessionLength.hour1;
+
+    try {
+      themeVariant = await _repository.readThemeVariant();
+      fontScale = await _repository.readFontScale();
+      defaultSessionLength = await _repository.readDefaultSessionLength();
+    } catch (e) {
+      // Ignore secure storage errors and use defaults
+    }
 
     _settingsNotifier.setThemeVariant(themeVariant);
     _settingsNotifier.setFontScale(fontScale);
@@ -45,7 +56,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsThemeChanged event,
     Emitter<SettingsState> emit,
   ) async {
-    await _repository.writeThemeVariant(event.variant);
+    try {
+      await _repository.writeThemeVariant(event.variant);
+    } catch (_) {}
     _settingsNotifier.setThemeVariant(event.variant);
 
     final current = state;
@@ -58,7 +71,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsFontScaleChanged event,
     Emitter<SettingsState> emit,
   ) async {
-    await _repository.writeFontScale(event.scale);
+    try {
+      await _repository.writeFontScale(event.scale);
+    } catch (_) {}
     _settingsNotifier.setFontScale(event.scale);
 
     final current = state;
@@ -71,7 +86,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsDefaultSessionLengthChanged event,
     Emitter<SettingsState> emit,
   ) async {
-    await _repository.writeDefaultSessionLength(event.length);
+    try {
+      await _repository.writeDefaultSessionLength(event.length);
+    } catch (_) {}
     _settingsNotifier.setDefaultSessionLength(event.length);
 
     final current = state;

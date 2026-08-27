@@ -9,12 +9,17 @@ import 'package:medicail/features/appointment/presentation/appointment_bloc.dart
 import 'package:medicail/features/appointment/presentation/appointment_change_notifier.dart';
 import 'package:medicail/features/appointment/presentation/appointment_event.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
-import 'package:medicail/widget/app_button.dart';
+import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/appointment_form_sheet.dart';
 import 'package:medicail/widget/appointment_list_row.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+
+import 'package:medicail/widget/home/home_greeting_header.dart';
+import 'package:medicail/widget/home/home_recent_session_tile.dart';
+import 'package:medicail/widget/layout/app_empty_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -38,11 +43,14 @@ class _HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<_HomeView> {
   List<AppointmentListItem> _lastItems = const [];
+  List<RecordingSession> _recentSessions = const [];
+  bool _sessionsLoading = true;
 
   @override
   void initState() {
     super.initState();
     appointmentChangeNotifier.addListener(_onAppointmentsChanged);
+    _loadRecentSessions();
   }
 
   @override
@@ -58,9 +66,32 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
+  Future<void> _loadRecentSessions() async {
+    try {
+      // Use local repository to always get recent sessions even if API doesn't support global listing
+      final repo = getIt<SecureStorageRecordingSessionRepository>();
+      final all = await repo.getAll();
+      final completed = all
+          .where((s) => s.status == RecordingSessionStatus.completed)
+          .take(5)
+          .toList();
+      if (mounted) {
+        setState(() {
+          _recentSessions = completed;
+          _sessionsLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _sessionsLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
     return BlocConsumer<AppointmentBloc, AppointmentState>(
       listener: (context, state) {
@@ -78,9 +109,14 @@ class _HomeViewState extends State<_HomeView> {
 
         return AppScaffold(
           title: l10n.homeTitle,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: ListView(
+            padding: MainShellScope.scrollPaddingOf(context),
             children: [
+              // ── Greeting Section ──
+              const HomeGreetingHeader(),
+              const SizedBox(height: AppSpacing.xl),
+
+              // ── Upcoming Appointments ──
               Row(
                 children: [
                   Expanded(
@@ -93,46 +129,69 @@ class _HomeViewState extends State<_HomeView> {
                     onPressed: () => context.goAppointments(),
                     child: AppText(
                       l10n.appointmentsSeeAll,
-                      variant: AppTextVariant.body,
+                      variant: AppTextVariant.label,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              AppButton(
-                label: l10n.appointmentCreateTitle,
-                style: AppButtonStyle.secondary,
-                onPressed: () => AppointmentFormSheet.show(
-                  context,
-                  initialDay: DateTime.now(),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Expanded(
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : preview.isEmpty
-                    ? Center(
-                        child: AppText(
-                          l10n.appointmentsUpcomingEmpty,
-                          variant: AppTextVariant.body,
+              if (isLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (preview.isEmpty)
+                AppEmptyState(
+                  icon: Icons.event_outlined,
+                  message: l10n.appointmentsUpcomingEmpty,
+                  actionLabel: l10n.appointmentCreateTitle,
+                  onAction: () => AppointmentFormSheet.show(
+                    context,
+                    initialDay: DateTime.now(),
+                  ),
+                )
+              else
+                ...preview.map(
+                  (item) => Column(
+                    children: [
+                      AppointmentListRow(
+                        item: item,
+                        onTap: () => context.goPatientDetail(
+                          item.appointment.patientId,
                         ),
-                      )
-                    : ListView.separated(
-                        padding: MainShellScope.scrollPaddingOf(context),
-                        itemCount: preview.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final item = preview[index];
-                          return AppointmentListRow(
-                            item: item,
-                            onTap: () => context.goPatientDetail(
-                              item.appointment.patientId,
-                            ),
-                          );
-                        },
                       ),
+                      const Divider(height: 1),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: AppSpacing.xxl),
+
+              // ── Recent Consultations ──
+              AppText(
+                l10n.homeRecentConsultationsTitle,
+                variant: AppTextVariant.title,
               ),
+              const SizedBox(height: AppSpacing.sm),
+              if (_sessionsLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              else if (_recentSessions.isEmpty)
+                AppEmptyState(
+                  icon: Icons.mic_none_outlined,
+                  message: l10n.homeRecentConsultationsEmpty,
+                  actionLabel: l10n.homeQuickRecord,
+                  onAction: () => context.goRecord(),
+                )
+              else
+                ..._recentSessions.map(
+                  (session) => HomeRecentSessionTile(session: session),
+                ),
             ],
           ),
         );

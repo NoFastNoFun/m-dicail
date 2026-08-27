@@ -12,6 +12,19 @@
   "errorNetwork": "Problème de connexion",
   "errorServer": "Erreur serveur",
   "errorAudio": "Microphone indisponible",
+  "audioPlayerTitle": "Audio brut",
+  "audioPlayerPlay": "Lire",
+  "audioPlayerPause": "Pause",
+  "audioPlayerStop": "Stop",
+  "audioPlayerAvailable": "Audio disponible",
+  "audioPlayerUnavailable": "Audio indisponible",
+  "audioPlayerLoading": "Chargement...",
+  "audioPlayerError": "Lecture impossible",
+  "audioPlayerPlaying": "Lecture en cours",
+  "templateSectionCustom": "Section",
+  "recordStatusEnhancing": "Amélioration de la transcription...",
+  "recordStatusGeneratingSOAP": "Génération de la note SOAP par l'IA...",
+  "routerErrorNotFound": "Route introuvable:",
   "labelHistory": "Historique",
   "navigateToRecord": "Nouvel enregistrement",
   "transcriptLabel": "Transcription",
@@ -79,6 +92,17 @@
   "patientNewConsultationButton": "Nouvelle consultation",
   "patientSessionsTitle": "Consultations",
   "patientSessionsEmpty": "Aucune consultation pour ce patient",
+  "sessionStatusDraft": "Brouillon",
+  "sessionStatusRecording": "En cours",
+  "sessionStatusCompleted": "Terminée",
+  "sessionStatusFailed": "Échec",
+  "patientAgeLabel": "Âge",
+  "appointmentCancelTitle": "Annuler le rendez-vous ?",
+  "appointmentCancelBody": "Êtes-vous sûr de vouloir annuler ce rendez-vous ?",
+  "appointmentDeleteTitle": "Supprimer le rendez-vous ?",
+  "appointmentDeleteBody": "Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?",
+  "buttonConfirm": "Confirmer",
+  "buttonCancel": "Annuler",
   "recordingStatusLabel": "Statut",
   "recordingAudioLabel": "Audio",
   "inputErrorRequired": "Ce champ est obligatoire",
@@ -160,6 +184,9 @@
   "patientAddressLabel": "Adresse",
   "patientNotesLabel": "Notes",
   "patientCreateSubmit": "Créer le dossier",
+  "patientUpdateTitle": "Modifier le patient",
+  "patientUpdateSubmit": "Enregistrer",
+  "patientUpdateSuccess": "Patient modifié avec succès.",
   "loginWelcomeTitle": "Bienvenue sur Medicail",
   "loginWelcomeSubtitle": "Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.",
   "loginEmailLabel": "Adresse email",
@@ -319,5 +346,24 @@
     }
   },
   "medicalWatchSyncSuccess": "Veille synchronisee",
-  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)"
+  "medicalWatchOfflineHint": "Resultats hors-ligne (derniere synchronisation)",
+  "homeGreeting": "Bonjour, {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingGuest": "Bienvenue",
+  "homeQuickRecord": "Enregistrement rapide",
+  "homeNewPatient": "Nouveau patient",
+  "homeViewAgenda": "Agenda",
+  "homeRecentConsultationsTitle": "Consultations récentes",
+  "homeRecentConsultationsEmpty": "Aucune consultation pour le moment",
+  "homeRecentConsultationsSeeAll": "Voir tout",
+  "homeEmptyTitle": "Bienvenue sur Medicail",
+  "homeEmptySubtitle": "Planifiez votre premiere consultation ou démarrez un enregistrement rapide",
+  "homeConsultationsToday": "{count, plural, =0{Aucune consultation aujourd'hui} =1{1 consultation prévue} other{{count} consultations prévues}}"
 }
+

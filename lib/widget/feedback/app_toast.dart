@@ -56,7 +56,7 @@ class AppToast {
   }
 }
 
-class AppToastWidget extends StatelessWidget {
+class AppToastWidget extends StatefulWidget {
   const AppToastWidget({
     super.key,
     required this.message,
@@ -75,28 +75,58 @@ class AppToastWidget extends StatelessWidget {
   final VoidCallback? onReport;
 
   @override
+  State<AppToastWidget> createState() => _AppToastWidgetState();
+}
+
+class _AppToastWidgetState extends State<AppToastWidget>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Offset> _offsetAnimation;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _offsetAnimation = Tween<Offset>(
+      begin: const Offset(0.0, -0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final accent = switch (type) {
-      AppToastType.success => AppColors.success,
-      AppToastType.warning => AppColors.warning,
-      AppToastType.error => AppColors.error,
-      AppToastType.info => AppColors.info,
-    };
-
-    final icon = switch (type) {
-      AppToastType.success => Icons.check_circle_outline,
-      AppToastType.warning => Icons.warning_amber_outlined,
-      AppToastType.error => Icons.error_outline,
-      AppToastType.info => Icons.info_outline,
+    
+    final (accent, icon) = switch (widget.type) {
+      AppToastType.success => (AppColors.success, Icons.check_circle_outline),
+      AppToastType.warning => (AppColors.warning, Icons.warning_amber_outlined),
+      AppToastType.error => (AppColors.error, Icons.error_outline),
+      AppToastType.info => (AppColors.info, Icons.info_outline),
     };
 
     final messageArea = Row(
       children: [
         Container(
           width: 4,
-          height: 40,
+          height: 32,
           decoration: BoxDecoration(
             color: accent,
             borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -106,57 +136,62 @@ class AppToastWidget extends StatelessWidget {
         Icon(icon, color: accent, size: 22),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: AppText(message, variant: AppTextVariant.body),
+          child: AppText(widget.message, variant: AppTextVariant.body),
         ),
       ],
     );
-
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
-        decoration: BoxDecoration(
-          color: theme.scaffoldBackgroundColor,
-          borderRadius: AppRadius.mdBorder,
-          border: Border.all(color: theme.dividerColor),
-          boxShadow: [
-            BoxShadow(
-              color: theme.colorScheme.shadow.withValues(alpha: 0.12),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+    return SlideTransition(
+      position: _offsetAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: onCopyDetails == null
-                  ? messageArea
-                  : InkWell(
-                      onTap: onCopyDetails,
-                      borderRadius: AppRadius.mdBorder,
-                      child: messageArea,
-                    ),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: AppRadius.mdBorder,
+              border: Border.all(color: theme.dividerColor),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.12),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            if (onReport != null)
-              IconButton(
-                icon: const Icon(Icons.bug_report_outlined, size: 20),
-                color: context.secondaryTextColor,
-                tooltip: l10n.errorToastReport,
-                onPressed: onReport,
-                visualDensity: VisualDensity.compact,
-              ),
-            IconButton(
-              icon: const Icon(Icons.close, size: 20),
-              color: context.secondaryTextColor,
-              onPressed: onDismiss,
-              visualDensity: VisualDensity.compact,
+            child: Row(
+              children: [
+                Expanded(
+                  child: widget.onCopyDetails == null
+                      ? messageArea
+                      : InkWell(
+                          onTap: widget.onCopyDetails,
+                          borderRadius: AppRadius.mdBorder,
+                          child: messageArea,
+                        ),
+                ),
+                if (widget.onReport != null)
+                  IconButton(
+                    icon: const Icon(Icons.bug_report_outlined, size: 20),
+                    color: context.secondaryTextColor,
+                    tooltip: l10n.errorToastReport,
+                    onPressed: widget.onReport,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  color: context.secondaryTextColor,
+                  onPressed: widget.onDismiss,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

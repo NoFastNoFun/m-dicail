@@ -166,6 +166,84 @@ abstract class AppLocalizations {
   /// **'Microphone indisponible'**
   String get errorAudio;
 
+  /// No description provided for @audioPlayerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio brut'**
+  String get audioPlayerTitle;
+
+  /// No description provided for @audioPlayerPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire'**
+  String get audioPlayerPlay;
+
+  /// No description provided for @audioPlayerPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get audioPlayerPause;
+
+  /// No description provided for @audioPlayerStop.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stop'**
+  String get audioPlayerStop;
+
+  /// No description provided for @audioPlayerAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio disponible'**
+  String get audioPlayerAvailable;
+
+  /// No description provided for @audioPlayerUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio indisponible'**
+  String get audioPlayerUnavailable;
+
+  /// No description provided for @audioPlayerLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement...'**
+  String get audioPlayerLoading;
+
+  /// No description provided for @audioPlayerError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture impossible'**
+  String get audioPlayerError;
+
+  /// No description provided for @audioPlayerPlaying.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture en cours'**
+  String get audioPlayerPlaying;
+
+  /// No description provided for @templateSectionCustom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Section'**
+  String get templateSectionCustom;
+
+  /// No description provided for @recordStatusEnhancing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Amélioration de la transcription...'**
+  String get recordStatusEnhancing;
+
+  /// No description provided for @recordStatusGeneratingSOAP.
+  ///
+  /// In fr, this message translates to:
+  /// **'Génération de la note SOAP par l\'IA...'**
+  String get recordStatusGeneratingSOAP;
+
+  /// No description provided for @routerErrorNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Route introuvable:'**
+  String get routerErrorNotFound;
+
   /// No description provided for @labelHistory.
   ///
   /// In fr, this message translates to:
@@ -483,6 +561,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune consultation pour ce patient'**
   String get patientSessionsEmpty;
+
+  /// No description provided for @sessionStatusDraft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get sessionStatusDraft;
+
+  /// No description provided for @sessionStatusRecording.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get sessionStatusRecording;
+
+  /// No description provided for @sessionStatusCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminée'**
+  String get sessionStatusCompleted;
+
+  /// No description provided for @sessionStatusFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échec'**
+  String get sessionStatusFailed;
+
+  /// No description provided for @patientAgeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Âge'**
+  String get patientAgeLabel;
+
+  /// No description provided for @appointmentCancelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler le rendez-vous ?'**
+  String get appointmentCancelTitle;
+
+  /// No description provided for @appointmentCancelBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Êtes-vous sûr de vouloir annuler ce rendez-vous ?'**
+  String get appointmentCancelBody;
+
+  /// No description provided for @appointmentDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le rendez-vous ?'**
+  String get appointmentDeleteTitle;
+
+  /// No description provided for @appointmentDeleteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. Voulez-vous supprimer ce rendez-vous ?'**
+  String get appointmentDeleteBody;
+
+  /// No description provided for @buttonConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get buttonConfirm;
+
+  /// No description provided for @buttonCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get buttonCancel;
 
   /// No description provided for @recordingStatusLabel.
   ///
@@ -969,6 +1113,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Créer le dossier'**
   String get patientCreateSubmit;
+
+  /// No description provided for @patientUpdateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le patient'**
+  String get patientUpdateTitle;
+
+  /// No description provided for @patientUpdateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get patientUpdateSubmit;
+
+  /// No description provided for @patientUpdateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient modifié avec succès.'**
+  String get patientUpdateSuccess;
 
   /// No description provided for @loginWelcomeTitle.
   ///
@@ -1797,6 +1959,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Resultats hors-ligne (derniere synchronisation)'**
   String get medicalWatchOfflineHint;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingGuest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue'**
+  String get homeGreetingGuest;
+
+  /// No description provided for @homeQuickRecord.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement rapide'**
+  String get homeQuickRecord;
+
+  /// No description provided for @homeNewPatient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get homeNewPatient;
+
+  /// No description provided for @homeViewAgenda.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agenda'**
+  String get homeViewAgenda;
+
+  /// No description provided for @homeRecentConsultationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations récentes'**
+  String get homeRecentConsultationsTitle;
+
+  /// No description provided for @homeRecentConsultationsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune consultation pour le moment'**
+  String get homeRecentConsultationsEmpty;
+
+  /// No description provided for @homeRecentConsultationsSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tout'**
+  String get homeRecentConsultationsSeeAll;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur Medicail'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifiez votre premiere consultation ou démarrez un enregistrement rapide'**
+  String get homeEmptySubtitle;
+
+  /// No description provided for @homeConsultationsToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune consultation aujourd\'hui} =1{1 consultation prévue} other{{count} consultations prévues}}'**
+  String homeConsultationsToday(num count);
 }
 
 class _AppLocalizationsDelegate

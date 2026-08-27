@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/error/exceptions.dart';
@@ -39,6 +40,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
   }
 
   void _onSpeechStatus(String status) {
+    debugPrint('STT Status: $status');
     if (status != SpeechToText.doneStatus) {
       return;
     }
@@ -49,6 +51,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
   }
 
   void _onSpeechError(Object error) {
+    debugPrint('STT Error: $error');
     _isListening = false;
     if (_keepListening) {
       _onListeningEnded?.call();
@@ -57,7 +60,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
 
   @override
   Future<void> startListening({
-    required void Function(String text) onResult,
+    required void Function(String text, {bool isFinal}) onResult,
     void Function()? onListeningEnded,
   }) async {
     if (!_speech.isAvailable) {
@@ -73,7 +76,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     await _speech.listen(
       onResult: (result) {
         if (result.recognizedWords.isNotEmpty) {
-          onResult(result.recognizedWords);
+          onResult(result.recognizedWords, isFinal: result.finalResult);
         }
       },
       listenOptions: SpeechListenOptions(

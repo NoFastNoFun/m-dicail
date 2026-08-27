@@ -14,19 +14,23 @@ class SoapNoteBottomSheet extends StatefulWidget {
     super.key,
     required this.initialNote,
     required this.onSave,
+    this.transcript,
   });
 
   final SoapNote initialNote;
   final ValueChanged<SoapNote> onSave;
+  final String? transcript;
 
   static Future<void> show(
     BuildContext context, {
     required SoapNote initialNote,
     required ValueChanged<SoapNote> onSave,
+    String? transcript,
   }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
@@ -39,6 +43,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
         child: SoapNoteBottomSheet(
           initialNote: initialNote,
           onSave: onSave,
+          transcript: transcript,
         ),
       ),
     );
@@ -120,6 +125,23 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                   controller: scrollController,
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
+                    if (widget.transcript != null && widget.transcript!.isNotEmpty) ...[
+                      AppText('Transcription brute', variant: AppTextVariant.label),
+                      const SizedBox(height: AppSpacing.xs),
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: const BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: AppRadius.mdBorder,
+                        ),
+                        child: AppText(
+                          widget.transcript!,
+                          variant: AppTextVariant.body,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
                     AppInput(
                       variant: AppInputVariant.textarea,
                       label: l10n.soapNoteSubjective,

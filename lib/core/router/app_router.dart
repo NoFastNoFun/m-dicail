@@ -16,6 +16,7 @@ import 'package:medicail/pages/template_editor_page.dart';
 import 'package:medicail/pages/templates_page.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:medicail/pages/login_page.dart';
@@ -153,7 +154,7 @@ class AppRouter {
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: AppText(
-          'Route introuvable: ${state.uri}',
+          '${AppLocalizations.of(context).routerErrorNotFound} ${state.uri}',
           variant: AppTextVariant.body,
         ),
       ),

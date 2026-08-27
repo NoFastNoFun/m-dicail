@@ -35,6 +35,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
+import 'package:medicail/widget/record/app_record_processing_overlay.dart';
 
 enum _RecordLeaveAction { save, discard, cancel }
 
@@ -308,16 +309,6 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     if (tutorialBloc.isCurrentStep(TutorialStepId.recordFinishFromPatient)) {
       _returnHomeAfterTutorialConsultation = true;
       tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
-    }
-
-    final viewModel = VoiceCaptureViewModel.fromState(
-      context.read<VoiceCaptureBloc>().state,
-    );
-    if (viewModel.selectedTemplate == null) {
-      await _pickTemplate(context);
-      if (!mounted) {
-        return;
-      }
     }
 
     final language = Localizations.localeOf(context).languageCode;
@@ -668,6 +659,13 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
+                          if (viewModel.canFinishConsultation) ...[
+                            const SizedBox(height: AppSpacing.lg),
+                            AppButton(
+                              label: l10n.buttonFinishConsultation,
+                              onPressed: _finishConsultation,
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -677,28 +675,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
             ),
             if (viewModel.isProcessing)
               Positioned.fill(
-                child: Container(
-                  color: AppColors.highContrastBlack.withValues(alpha: 0.54),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(
-                          color: AppColors.highContrastWhite,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppText(
-                          viewModel.isTranscribingBackground
-                              ? l10n.recordStatusTranscribingBackground
-                              : viewModel.isEnhancing
-                                  ? 'Amelioration de la transcription...'
-                                  : "Génération de la note SOAP par l'IA...",
-                          variant: AppTextVariant.body,
-                          color: AppColors.highContrastWhite,
-                        ),
-                      ],
-                    ),
-                  ),
+                child: AppRecordProcessingOverlay(
+                  isTranscribingBackground: viewModel.isTranscribingBackground,
+                  isEnhancing: viewModel.isEnhancing,
                 ),
               ),
           ],
