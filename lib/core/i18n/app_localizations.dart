@@ -1942,6 +1942,12 @@ abstract class AppLocalizations {
   /// **'Veille medicale'**
   String get medicalWatchTitle;
 
+  /// No description provided for @medicalWatchNavTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille'**
+  String get medicalWatchNavTitle;
+
   /// No description provided for @medicalWatchSearchPlaceholder.
   ///
   /// In fr, this message translates to:

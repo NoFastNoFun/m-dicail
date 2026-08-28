@@ -596,7 +596,8 @@ String? _latestSessionPathologyTag(List<RecordingSession> sessions) {
     return null;
   }
 
-  final latest = sessions.reduce(
+  final latest = sessions.fold<RecordingSession>(
+    sessions.first,
     (current, candidate) =>
         candidate.startedAt.isAfter(current.startedAt) ? candidate : current,
   );

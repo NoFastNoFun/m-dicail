@@ -351,6 +351,7 @@
   "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
 
   "medicalWatchTitle": "Veille medicale",
+  "medicalWatchNavTitle": "Veille",
   "medicalWatchSearchPlaceholder": "Rechercher sur PubMed…",
   "medicalWatchFilterAll": "Tous",
   "medicalWatchSpecialtyRehabilitation": "Reeducation",

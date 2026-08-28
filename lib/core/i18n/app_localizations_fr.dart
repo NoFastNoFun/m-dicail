@@ -980,6 +980,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicalWatchTitle => 'Veille medicale';
 
   @override
+  String get medicalWatchNavTitle => 'Veille';
+
+  @override
   String get medicalWatchSearchPlaceholder => 'Rechercher sur PubMed…';
 
   @override

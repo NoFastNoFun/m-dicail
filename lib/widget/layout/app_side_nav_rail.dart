@@ -23,6 +23,10 @@ class AppSideNavRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final selectedIndex = indexOfBottomNavDestination(
+      destinations,
+      selectedRoute,
+    );
 
     return Material(
       color: theme.colorScheme.surface,
@@ -33,8 +37,8 @@ class AppSideNavRail extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             children: [
-              for (final dest in destinations)
-                _buildItem(context, dest, dest.route == selectedRoute),
+              for (var i = 0; i < destinations.length; i++)
+                _buildItem(context, destinations[i], i == selectedIndex),
             ],
           ),
         ),
@@ -80,9 +84,7 @@ class _SideNavItem extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       child: Material(
-        color: selected
-            ? active.withValues(alpha: 0.16)
-            : Colors.transparent,
+        color: selected ? active.withValues(alpha: 0.16) : Colors.transparent,
         borderRadius: BorderRadius.circular(AppSpacing.md),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

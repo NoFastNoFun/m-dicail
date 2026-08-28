@@ -20,6 +20,7 @@ import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/layout/app_bottom_nav_pill.dart';
 import 'package:medicail/widget/layout/app_side_nav_rail.dart';
+import 'package:medicail/widget/layout/app_tab_slide_switcher.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -253,7 +254,12 @@ class _MainShellState extends State<MainShell> {
           child: child,
         ),
       ),
-
+      AppBottomNavDestination(
+        route: AppRoutes.medicalWatch,
+        icon: Icons.newspaper_outlined,
+        selectedIcon: Icons.newspaper,
+        label: l10n.medicalWatchNavTitle,
+      ),
       AppBottomNavDestination(
         route: AppRoutes.settings,
         icon: Icons.settings_outlined,
@@ -284,11 +290,6 @@ class _MainShellState extends State<MainShell> {
             icon: Icons.folder_outlined,
             label: l10n.patientsSectionTitle,
             onTap: () => context.go(AppRoutes.patients),
-          ),
-          AppRadialAction(
-            icon: Icons.newspaper_outlined,
-            label: l10n.medicalWatchTitle,
-            onTap: () => context.go(AppRoutes.medicalWatch),
           ),
           AppRadialAction(
             icon: Icons.mic_outlined,
@@ -328,11 +329,13 @@ class _MainShellState extends State<MainShell> {
       });
     }
 
+    final tabIndex = indexOfBottomNavDestination(destinations, location);
+
     final pageBody = BlocListener<TutorialBloc, TutorialState>(
       listener: (context, state) => _handleTutorialState(state),
       child: NotificationListener<ScrollNotification>(
         onNotification: _handleScrollNotification,
-        child: widget.child,
+        child: AppTabSlideSwitcher(tabIndex: tabIndex, child: widget.child),
       ),
     );
 
