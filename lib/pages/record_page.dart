@@ -14,8 +14,14 @@ import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
-import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
+import 'package:medicail/features/pathology/domain/entities/pathology.dart';
+import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart';
+import 'package:medicail/features/pathology/domain/utils/pathology_suggestion_matcher.dart';
+import 'package:medicail/features/pathology/domain/utils/pathology_template_resolver.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
+import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -27,7 +33,8 @@ import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
-import 'package:medicail/widget/templates/template_picker_sheet.dart';
+import 'package:medicail/widget/templates/pathology_picker_sheet.dart';
+import 'package:medicail/widget/templates/pathology_suggestion_sheet.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -74,8 +81,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   final _startedTutorialSteps = <TutorialStepId>{};
   final _recordToggleKey = GlobalKey();
   final _transcriptKey = GlobalKey();
-  final _menuKey = GlobalKey();
-  final _menuButtonKey = GlobalKey<PopupMenuButtonState<int>>();
+  final _finishKey = GlobalKey();
   bool _returnHomeAfterTutorialConsultation = false;
   Timer? _transcriptTutorialTimer;
   Timer? _debounceTimer;
@@ -219,7 +225,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return _transcriptKey;
     }
     if (stepId == TutorialStepId.recordFinishFromPatient) {
-      return _menuKey;
+      return _finishKey;
     }
     return _recordToggleKey;
   }
@@ -254,6 +260,18 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   }
 
   void _handleConsultationFinished(VoiceCaptureConsultationFinished state) {
+    unawaited(_handleConsultationFinishedAsync(state));
+  }
+
+  Future<void> _handleConsultationFinishedAsync(
+    VoiceCaptureConsultationFinished state,
+  ) async {
+    await _maybeSuggestPathology(state);
+
+    if (!mounted) {
+      return;
+    }
+
     final tutorialBloc = context.read<TutorialBloc>();
     final isTutorial = tutorialBloc.state is TutorialInProgress;
     final isDemoPatient = widget.patientId == TutorialFlow.demoPatientId;
@@ -278,6 +296,80 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     } else {
       AssignPatientSheet.show(context, state.sessionId);
     }
+  }
+
+  Future<void> _maybeSuggestPathology(
+    VoiceCaptureConsultationFinished state,
+  ) async {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (tutorialBloc.state is TutorialInProgress) {
+      return;
+    }
+
+    final repo = getIt<RecordingSessionRepository>();
+    final session = await repo.getById(state.sessionId);
+    if (!mounted || session == null) {
+      return;
+    }
+
+    final hasPathology =
+        session.templateId != null &&
+        session.templateId!.isNotEmpty &&
+        session.templateName != null &&
+        session.templateName!.isNotEmpty;
+    if (hasPathology) {
+      return;
+    }
+
+    final pathologies = await getIt<PathologyRepository>().getAll();
+    if (!mounted) {
+      return;
+    }
+
+    final suggestion = PathologySuggestionMatcher.suggest(
+      transcript: state.transcript,
+      pathologies: pathologies,
+    );
+    if (suggestion == null) {
+      return;
+    }
+
+    final selected = await PathologySuggestionSheet.show(
+      context,
+      suggestion: suggestion,
+      pathologies: pathologies,
+    );
+    if (!mounted || selected == null) {
+      return;
+    }
+
+    await _applyPathologyToSession(session, selected);
+  }
+
+  Future<void> _applyPathologyToSession(
+    RecordingSession session,
+    Pathology pathology,
+  ) async {
+    final resolver = getIt<PathologyTemplateResolver>();
+    final template = await resolver.resolveTemplate(pathology);
+    final transcript = session.transcript;
+    final soapNote = session.soapNote ?? const SoapNote();
+    final updatedSoap = template != null
+        ? NoteTemplateApplicator.apply(
+            template: template,
+            transcript: transcript.isNotEmpty ? transcript : soapNote.subjective,
+          )
+        : NoteTemplateApplicator.genericSoapNote(
+            transcript.isNotEmpty ? transcript : soapNote.subjective,
+          );
+
+    await getIt<RecordingSessionRepository>().save(
+      session.copyWith(
+        templateId: template?.id ?? pathology.id,
+        templateName: pathology.name,
+        soapNote: updatedSoap,
+      ),
+    );
   }
 
   void _startRecording() {
@@ -423,7 +515,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
 
   Future<NoteTemplate?> _pickTemplate(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final templates = await getIt<NoteTemplateRepository>().getAll();
+    final pathologies = await getIt<PathologyRepository>().getAll();
     if (!context.mounted) {
       return null;
     }
@@ -439,35 +531,31 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       _ => null,
     };
 
-    // Wait until the popup menu (if any) has fully closed.
     await Future<void>.delayed(Duration.zero);
     if (!context.mounted) {
       return null;
     }
 
-    final template = await TemplatePickerSheet.show(
+    final pathology = await PathologyPickerSheet.show(
       context,
-      templates: templates,
-      selectedTemplateId: selectedTemplate?.id,
+      pathologies: pathologies,
+      selectedPathologyId: selectedTemplate?.pathologyId,
     );
-    if (!context.mounted || template == null) {
+    if (!context.mounted || pathology == null) {
+      return null;
+    }
+
+    final template =
+        await getIt<PathologyTemplateResolver>().resolveForSession(pathology);
+    if (!context.mounted) {
       return null;
     }
 
     context.read<VoiceCaptureBloc>().add(
       VoiceCaptureTemplateSelected(template),
     );
-    AppToast.showSuccess(context, l10n.templateActiveLabel(template.name));
+    AppToast.showSuccess(context, l10n.templateActiveLabel(pathology.name));
     return template;
-  }
-
-  void _schedulePickTemplate(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-      unawaited(_pickTemplate(context));
-    });
   }
 
   @override
@@ -557,15 +645,11 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       : AppRadius.pillBorder,
                                   dateLabel: dateLabel,
                                   sessionTitle: _patientName,
-                                  templateLabel:
-                                      viewModel.selectedTemplate == null
+                                  pathologyTagName: viewModel.selectedTemplate?.name,
+                                  pathologyPlaceholder: viewModel.selectedTemplate == null
                                       ? l10n.templateNoneLabel
-                                      : l10n.templateActiveLabel(
-                                          viewModel.selectedTemplate!.name,
-                                        ),
-                                  onTemplateTap:
-                                      !viewModel.isListening &&
-                                          !viewModel.isProcessing
+                                      : null,
+                                  onPathologyTap: !viewModel.isProcessing
                                       ? () => _pickTemplate(context)
                                       : null,
                                   elapsedLabel: _formatElapsed(_elapsed),
@@ -582,47 +666,6 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                     if (viewModel.canStart) {
                                       _startRecording();
                                     }
-                                  },
-                                  menuItems: [
-                                    AppRecordMenuItem(
-                                      label: l10n.templatePickerAction,
-                                      enabled: !viewModel.isListening &&
-                                          !viewModel.isProcessing,
-                                      onSelected: () =>
-                                          _schedulePickTemplate(context),
-                                    ),
-                                    AppRecordMenuItem(
-                                      label: l10n.buttonFinishConsultation,
-                                      enabled: viewModel.canFinishConsultation,
-                                      onSelected: () {
-                                        unawaited(_finishConsultation());
-                                      },
-                                    ),
-                                    AppRecordMenuItem(
-                                      label: l10n.buttonClear,
-                                      enabled: viewModel.canClear,
-                                      onSelected: () {
-                                        setState(() {
-                                          _elapsed = Duration.zero;
-                                          _recordingStartedAt = null;
-                                        });
-                                        context.read<VoiceCaptureBloc>().add(
-                                          const VoiceCaptureClearTranscript(),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                  menuKey: _menuKey,
-                                  menuButtonKey: _menuButtonKey,
-                                  menuShowcaseTitle: _currentShowcaseTitle(
-                                    l10n,
-                                  ),
-                                  menuShowcaseDescription:
-                                      _currentShowcaseDescription(l10n),
-                                  onMenuShowcaseTargetClick: () {
-                                    _menuButtonKey.currentState
-                                        ?.showButtonMenu();
-                                    ShowcaseView.get().dismiss();
                                   },
                                 ),
                               );
@@ -659,11 +702,35 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-                          if (viewModel.canFinishConsultation) ...[
+                          if (viewModel.canClear) ...[
                             const SizedBox(height: AppSpacing.lg),
                             AppButton(
-                              label: l10n.buttonFinishConsultation,
-                              onPressed: _finishConsultation,
+                              label: l10n.buttonClear,
+                              style: AppButtonStyle.secondary,
+                              onPressed: () {
+                                setState(() {
+                                  _elapsed = Duration.zero;
+                                  _recordingStartedAt = null;
+                                });
+                                context.read<VoiceCaptureBloc>().add(
+                                  const VoiceCaptureClearTranscript(),
+                                );
+                              },
+                            ),
+                          ],
+                          if (viewModel.canFinishConsultation) ...[
+                            const SizedBox(height: AppSpacing.lg),
+                            AppShowcase(
+                              key: _finishKey,
+                              title: l10n.tutorialRecordFinishTitle,
+                              description: l10n.tutorialRecordFinishDesc,
+                              disposeOnTap: false,
+                              disableBarrierInteraction: true,
+                              onTargetClick: _finishConsultation,
+                              child: AppButton(
+                                label: l10n.buttonFinishConsultation,
+                                onPressed: _finishConsultation,
+                              ),
                             ),
                           ],
                         ],

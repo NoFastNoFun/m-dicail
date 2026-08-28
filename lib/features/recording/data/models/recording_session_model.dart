@@ -39,8 +39,9 @@ final class RecordingSessionModel extends RecordingSession {
           ? SoapNote.fromJson((json['soap_note'] ?? json['soapNote']) as Map<String, dynamic>)
           : null,
       status: _parseStatus(json['status'] as String?),
-      templateId: json['templateId'] as String?,
-      templateName: json['templateName'] as String?,
+      templateId: json['template_id'] as String? ?? json['templateId'] as String?,
+      templateName:
+          json['template_name'] as String? ?? json['templateName'] as String?,
     );
   }
 
@@ -53,8 +54,8 @@ final class RecordingSessionModel extends RecordingSession {
       'transcript': transcript,
       'soap_note': soapNote?.toJson(),
       'status': status.name,
-      'templateId': templateId,
-      'templateName': templateName,
+      'template_id': templateId,
+      'template_name': templateName,
     };
   }
 

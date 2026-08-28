@@ -15,17 +15,20 @@ class SoapNoteBottomSheet extends StatefulWidget {
     required this.initialNote,
     required this.onSave,
     this.transcript,
+    this.showTranscript = true,
   });
 
   final SoapNote initialNote;
   final ValueChanged<SoapNote> onSave;
   final String? transcript;
+  final bool showTranscript;
 
   static Future<void> show(
     BuildContext context, {
     required SoapNote initialNote,
     required ValueChanged<SoapNote> onSave,
     String? transcript,
+    bool showTranscript = true,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -44,6 +47,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
           initialNote: initialNote,
           onSave: onSave,
           transcript: transcript,
+          showTranscript: showTranscript,
         ),
       ),
     );
@@ -125,7 +129,9 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                   controller: scrollController,
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
-                    if (widget.transcript != null && widget.transcript!.isNotEmpty) ...[
+                    if (widget.showTranscript &&
+                        widget.transcript != null &&
+                        widget.transcript!.isNotEmpty) ...[
                       AppText('Transcription brute', variant: AppTextVariant.label),
                       const SizedBox(height: AppSpacing.xs),
                       Container(

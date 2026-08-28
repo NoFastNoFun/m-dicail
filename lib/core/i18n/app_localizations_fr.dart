@@ -668,7 +668,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSessionLength2h => '2 h';
 
   @override
-  String get settingsTemplates => 'Modeles';
+  String get settingsTemplates => 'Pathologies';
 
   @override
   String get settingsRestartOnboarding => 'Recommencer l\'introduction';
@@ -787,16 +787,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';
 
   @override
-  String get templatesTitle => 'Modeles de pathologie';
+  String get templatesTitle => 'Pathologies';
 
   @override
-  String get templatesBuiltInSection => 'Modeles par defaut';
+  String get templatesBuiltInSection => 'Pathologies par defaut';
 
   @override
-  String get templatesUserSection => 'Mes modeles';
+  String get templatesUserSection => 'Mes pathologies';
 
   @override
-  String get templatesUserEmpty => 'Aucun modele personnalise enregistre.';
+  String get templatesUserEmpty =>
+      'Aucune pathologie personnalisee enregistree.';
 
   @override
   String get templatesDefaultBadge => 'Defaut';
@@ -814,36 +815,36 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateDuplicated => 'Variante creee.';
 
   @override
-  String get templateSaved => 'Modele enregistre.';
+  String get templateSaved => 'Pathologie enregistree.';
 
   @override
-  String get templateCreateAction => 'Creer un modele';
+  String get templateCreateAction => 'Creer une pathologie';
 
   @override
-  String get templateCreateTitle => 'Nouveau modele';
+  String get templateCreateTitle => 'Nouvelle pathologie';
 
   @override
-  String get templateNameLabel => 'Nom du modele';
+  String get templateNameLabel => 'Nom de la pathologie';
 
   @override
-  String get templateNameRequired => 'Le nom du modele est obligatoire.';
+  String get templateNameRequired => 'Le nom de la pathologie est obligatoire.';
 
   @override
-  String get templateDeleteTitle => 'Supprimer le modele ?';
+  String get templateDeleteTitle => 'Supprimer la pathologie ?';
 
   @override
   String templateDeleteMessage(String name) {
-    return 'Supprimer le modele \"$name\" ?';
+    return 'Supprimer la pathologie \"$name\" ?';
   }
 
   @override
   String get templateDeleteConfirm => 'Supprimer';
 
   @override
-  String get templateEditorTitle => 'Editer le modele';
+  String get templateEditorTitle => 'Editer la pathologie';
 
   @override
-  String get templateNotFound => 'Modele introuvable.';
+  String get templateNotFound => 'Pathologie introuvable.';
 
   @override
   String get templateSectionTitleLabel => 'Titre de section';
@@ -861,37 +862,87 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateUpdate => 'Mettre a jour';
 
   @override
-  String get templateSaveCreate => 'Creer le modele';
+  String get templateSaveCreate => 'Creer la pathologie';
 
   @override
   String get templateReset => 'Reinitialiser depuis le parent';
 
   @override
-  String get templatePickerTitle => 'Choisir un modele';
+  String get templatePickerTitle => 'Choisir une pathologie';
 
   @override
   String get templatePickerSearch => 'Rechercher une pathologie';
 
   @override
-  String get templatePickerEmpty => 'Aucun modele trouve.';
+  String get templatePickerEmpty => 'Aucune pathologie trouvee.';
 
   @override
-  String get templatePickerAction => 'Choisir un modele';
+  String get templatePickerAction => 'Choisir une pathologie';
 
   @override
   String templateActiveLabel(String name) {
-    return 'Modele : $name';
+    return 'Pathologie : $name';
   }
 
   @override
-  String get templateNoneLabel => 'Aucun modele selectionne';
+  String get templateNoneLabel => 'Aucune pathologie selectionnee';
 
   @override
   String get templateRetry => 'Reessayer';
 
   @override
   String get templatesBuiltInEmpty =>
-      'Aucun modele par defaut disponible. Reinstallez l application.';
+      'Aucune pathologie par defaut disponible. Reinstallez l application.';
+
+  @override
+  String get patientDossierOralTab => 'Oral';
+
+  @override
+  String get patientDossierWrittenTab => 'Ecrit';
+
+  @override
+  String get patientDossierOralEmpty => 'Aucune transcription pour ce patient';
+
+  @override
+  String get patientDossierWrittenEmpty => 'Aucune note ecrite pour ce patient';
+
+  @override
+  String get patientDossierTranscriptTitle => 'Transcription';
+
+  @override
+  String patientDossierPathologyLabel(String name) {
+    return 'Pathologie : $name';
+  }
+
+  @override
+  String get pathologySuggestionTitle => 'Pathologie suggeree';
+
+  @override
+  String get pathologySuggestionDesc =>
+      'D\'apres la transcription, cette pathologie semble correspondre a la consultation.';
+
+  @override
+  String get pathologySuggestionApply => 'Appliquer cette pathologie';
+
+  @override
+  String get pathologySuggestionChooseOther => 'Choisir une autre pathologie';
+
+  @override
+  String get pathologySuggestionSkip => 'Ignorer';
+
+  @override
+  String get pathologyDomainLabel => 'Domaine clinique';
+
+  @override
+  String get pathologyCustomizeSoapAction => 'Personnaliser le SOAP';
+
+  @override
+  String pathologyPubmedSearchAction(String query) {
+    return 'Rechercher \"$query\" sur PubMed';
+  }
+
+  @override
+  String get pathologyPubmedResultsSection => 'Resultats PubMed';
 
   @override
   String get settingsSignIn => 'Se connecter';

@@ -9,6 +9,7 @@ class NoteTemplate extends Equatable {
     required this.name,
     required this.sections,
     required this.source,
+    this.pathologyId,
     this.parentTemplateId,
     this.updatedAt,
   });
@@ -18,6 +19,7 @@ class NoteTemplate extends Equatable {
   final String name;
   final List<NoteSection> sections;
   final NoteTemplateSource source;
+  final String? pathologyId;
   final String? parentTemplateId;
   final DateTime? updatedAt;
 
@@ -37,8 +39,10 @@ class NoteTemplate extends Equatable {
     String? name,
     List<NoteSection>? sections,
     NoteTemplateSource? source,
+    String? pathologyId,
     String? parentTemplateId,
     DateTime? updatedAt,
+    bool clearPathologyId = false,
     bool clearParentTemplateId = false,
     bool clearUpdatedAt = false,
   }) {
@@ -48,6 +52,7 @@ class NoteTemplate extends Equatable {
       name: name ?? this.name,
       sections: sections ?? this.sections,
       source: source ?? this.source,
+      pathologyId: clearPathologyId ? null : pathologyId ?? this.pathologyId,
       parentTemplateId:
           clearParentTemplateId ? null : parentTemplateId ?? this.parentTemplateId,
       updatedAt: clearUpdatedAt ? null : updatedAt ?? this.updatedAt,
@@ -61,6 +66,7 @@ class NoteTemplate extends Equatable {
         name,
         sections,
         source,
+        pathologyId,
         parentTemplateId,
         updatedAt,
       ];

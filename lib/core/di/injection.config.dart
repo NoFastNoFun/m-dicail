@@ -82,6 +82,18 @@ import 'package:medicail/features/note_template/domain/repositories/note_templat
     as _i144;
 import 'package:medicail/features/note_template/presentation/note_template_bloc.dart'
     as _i297;
+import 'package:medicail/features/pathology/data/datasources/asset_pathology_data_source.dart'
+    as _i985;
+import 'package:medicail/features/pathology/data/repositories/api_pubmed_mesh_repository.dart'
+    as _i74;
+import 'package:medicail/features/pathology/data/repositories/pathology_repository_impl.dart'
+    as _i157;
+import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart'
+    as _i865;
+import 'package:medicail/features/pathology/domain/utils/pathology_template_resolver.dart'
+    as _i663;
+import 'package:medicail/features/pathology/presentation/pathology_bloc.dart'
+    as _i79;
 import 'package:medicail/features/patient/data/repositories/api_patient_repository.dart'
     as _i545;
 import 'package:medicail/features/patient/data/repositories/dynamic_patient_repository.dart'
@@ -153,6 +165,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i541.AuthNotifier>(() => _i541.AuthNotifier());
     gh.lazySingleton<_i564.AssetNoteTemplateDataSource>(
       () => _i564.AssetNoteTemplateDataSource(),
+    );
+    gh.lazySingleton<_i985.AssetPathologyDataSource>(
+      () => _i985.AssetPathologyDataSource(),
     );
     gh.lazySingleton<_i713.SettingsNotifier>(() => _i713.SettingsNotifier());
     gh.lazySingleton<_i879.MedicalTermCorrectionService>(
@@ -245,6 +260,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i155.AppConfig>(),
       ),
     );
+    gh.lazySingleton<_i663.PathologyTemplateResolver>(
+      () => _i663.PathologyTemplateResolver(gh<_i144.NoteTemplateRepository>()),
+    );
     gh.lazySingleton<_i737.AuthInterceptor>(
       () => _i737.AuthInterceptor(gh<_i760.AuthTokenStorage>()),
     );
@@ -282,6 +300,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i8.ApiMedicalWatchRepository>(
       () => _i8.ApiMedicalWatchRepository(gh<_i1005.ApiClient>()),
+    );
+    gh.factory<_i74.ApiPubmedMeshRepository>(
+      () => _i74.ApiPubmedMeshRepository(gh<_i1005.ApiClient>()),
     );
     gh.factory<_i545.ApiPatientRepository>(
       () => _i545.ApiPatientRepository(gh<_i1005.ApiClient>()),
@@ -347,6 +368,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i865.PathologyRepository>(
+      () => _i157.PathologyRepositoryImpl(
+        gh<_i985.AssetPathologyDataSource>(),
+        gh<_i558.FlutterSecureStorage>(),
+        gh<_i144.NoteTemplateRepository>(),
+        gh<_i74.ApiPubmedMeshRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i306.TutorialBloc>(
       () => _i306.TutorialBloc(
         gh<_i79.TutorialRepository>(),
@@ -376,6 +406,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
       ),
+    );
+    gh.factory<_i79.PathologyBloc>(
+      () => _i79.PathologyBloc(gh<_i865.PathologyRepository>()),
     );
     return this;
   }

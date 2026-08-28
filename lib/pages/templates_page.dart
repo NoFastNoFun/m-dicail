@@ -6,9 +6,16 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
-import 'package:medicail/features/note_template/presentation/note_template_bloc.dart';
-import 'package:medicail/features/note_template/presentation/note_template_event.dart';
-import 'package:medicail/features/note_template/presentation/note_template_state.dart';
+import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
+import 'package:medicail/features/pathology/domain/entities/pathology.dart';
+import 'package:medicail/features/pathology/domain/entities/pathology_domain.dart';
+import 'package:medicail/features/pathology/domain/entities/pathology_source.dart';
+import 'package:medicail/features/pathology/domain/utils/pathology_labels.dart';
+import 'package:medicail/features/pathology/presentation/pathology_bloc.dart';
+import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart';
+import 'package:medicail/features/pathology/presentation/pathology_event.dart';
+import 'package:medicail/features/pathology/presentation/pathology_state.dart';
+import 'package:medicail/pages/pathology_create_page.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -21,8 +28,7 @@ class TemplatesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          getIt<NoteTemplateBloc>()..add(const NoteTemplatesRequested()),
+      create: (_) => getIt<PathologyBloc>()..add(const PathologiesRequested()),
       child: const _TemplatesView(),
     );
   }
@@ -40,50 +46,37 @@ class _TemplatesView extends StatelessWidget {
       actions: [
         IconButton(
           tooltip: l10n.templateCreateAction,
-          onPressed: () => context.pushNamed('template-create'),
+          onPressed: () => openPathologyCreatePage(context),
           icon: const Icon(Icons.add),
         ),
       ],
-      body: BlocConsumer<NoteTemplateBloc, NoteTemplateState>(
+      body: BlocConsumer<PathologyBloc, PathologyState>(
         listener: (context, state) {
-          if (state is NoteTemplateFailure) {
+          if (state is PathologyFailure) {
             AppToast.show(context, message: state.message);
           }
-          if (state is NoteTemplateActionSuccess &&
-              state.message == 'duplicated' &&
-              state.savedTemplateId != null) {
-            final variant = _findTemplateById(
-              state.userVariants,
-              state.savedTemplateId!,
-            );
-            if (variant == null) {
-              return;
-            }
-            context.pushNamed(
-              'template-editor',
-              pathParameters: {'templateId': variant.id},
-              extra: variant,
-            );
+          if (state is PathologyActionSuccess && state.message == 'created') {
+            AppToast.showSuccess(context, l10n.templateSaved);
           }
         },
         builder: (context, state) {
           return switch (state) {
-            NoteTemplateInitial() || NoteTemplateLoading() => const Center(
+            PathologyInitial() || PathologyLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
-            NoteTemplateLoaded(
-              :final builtInTemplates,
-              :final userVariants,
+            PathologyLoaded(
+              :final builtInPathologies,
+              :final userPathologies,
             ) ||
-            NoteTemplateActionSuccess(
-              :final builtInTemplates,
-              :final userVariants,
+            PathologyActionSuccess(
+              :final builtInPathologies,
+              :final userPathologies,
             ) =>
-              _TemplatesList(
-                builtInTemplates: builtInTemplates,
-                userVariants: userVariants,
+              _PathologiesList(
+                builtInPathologies: builtInPathologies,
+                userPathologies: userPathologies,
               ),
-            NoteTemplateFailure(:final message) => Center(
+            PathologyFailure(:final message) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Column(
@@ -94,8 +87,8 @@ class _TemplatesView extends StatelessWidget {
                       AppButton(
                         label: l10n.templateRetry,
                         onPressed: () => context
-                            .read<NoteTemplateBloc>()
-                            .add(const NoteTemplatesRequested()),
+                            .read<PathologyBloc>()
+                            .add(const PathologiesRequested()),
                       ),
                     ],
                   ),
@@ -108,109 +101,142 @@ class _TemplatesView extends StatelessWidget {
   }
 }
 
-NoteTemplate? _findTemplateById(List<NoteTemplate> templates, String id) {
-  for (final template in templates) {
-    if (template.id == id) {
-      return template;
-    }
-  }
-  return null;
+Future<void> openPathologyCreatePage(BuildContext context) async {
+  await Navigator.of(context).push<void>(
+    MaterialPageRoute<void>(
+      builder: (innerContext) => BlocProvider.value(
+        value: context.read<PathologyBloc>(),
+        child: PathologyCreatePage(
+          onCreate: (name, domain) async {
+            await getIt<PathologyRepository>().createUserPathology(
+              name: name,
+              domain: domain,
+            );
+            if (context.mounted) {
+              context.read<PathologyBloc>().add(const PathologiesRequested());
+            }
+          },
+        ),
+      ),
+    ),
+  );
 }
 
-class _TemplatesList extends StatelessWidget {
-  const _TemplatesList({
-    required this.builtInTemplates,
-    required this.userVariants,
+class _PathologiesList extends StatelessWidget {
+  const _PathologiesList({
+    required this.builtInPathologies,
+    required this.userPathologies,
   });
 
-  final List<NoteTemplate> builtInTemplates;
-  final List<NoteTemplate> userVariants;
+  final List<Pathology> builtInPathologies;
+  final List<Pathology> userPathologies;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final groupedBuiltIn = _groupByDomain(builtInPathologies);
 
     return ListView(
       padding: MainShellScope.scrollPaddingOf(context),
       children: [
+        AppButton(
+          label: l10n.templateCreateAction,
+          style: AppButtonStyle.secondary,
+          layout: AppButtonLayout.textWithIcon,
+          icon: Icons.add,
+          onPressed: () => openPathologyCreatePage(context),
+        ),
+        const SizedBox(height: AppSpacing.xl),
         AppText(
           l10n.templatesBuiltInSection,
           variant: AppTextVariant.title,
         ),
         const SizedBox(height: AppSpacing.sm),
-        if (builtInTemplates.isEmpty)
+        if (builtInPathologies.isEmpty)
           AppText(
             l10n.templatesBuiltInEmpty,
             variant: AppTextVariant.caption,
           )
         else
-          ...builtInTemplates.map(
-          (template) => _TemplateListTile(
-            template: template,
-            badge: l10n.templatesDefaultBadge,
-            onTap: () => context.pushNamed(
-              'template-editor',
-              pathParameters: {'templateId': template.id},
-              extra: template,
-            ),
-            onDuplicate: () => _duplicateTemplate(context, template),
+          ...groupedBuiltIn.entries.expand(
+            (entry) => [
+              AppText(entry.key.labelFr(), variant: AppTextVariant.caption),
+              const SizedBox(height: AppSpacing.sm),
+              ...entry.value.map(
+                (pathology) => _PathologyListTile(
+                  pathology: pathology,
+                  onCustomizeSoap: () => _openSoapEditor(context, pathology),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
           ),
-        ),
         const SizedBox(height: AppSpacing.xl),
         AppText(
           l10n.templatesUserSection,
           variant: AppTextVariant.title,
         ),
         const SizedBox(height: AppSpacing.sm),
-        AppButton(
-          label: l10n.templateCreateAction,
-          style: AppButtonStyle.secondary,
-          layout: AppButtonLayout.textWithIcon,
-          icon: Icons.add,
-          onPressed: () => context.pushNamed('template-create'),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (userVariants.isEmpty)
+        if (userPathologies.isEmpty)
           AppText(
             l10n.templatesUserEmpty,
             variant: AppTextVariant.caption,
           )
         else
-          ...userVariants.map(
-            (template) => _TemplateListTile(
-              template: template,
-              badge: template.parentTemplateId == null
-                  ? l10n.templatesCustomBadge
-                  : l10n.templatesVariantBadge,
-              onTap: () => context.pushNamed(
-                'template-editor',
-                pathParameters: {'templateId': template.id},
-                extra: template,
-              ),
-              onDelete: () => _deleteVariant(context, template),
+          ...userPathologies.map(
+            (pathology) => _PathologyListTile(
+              pathology: pathology,
+              onCustomizeSoap: () => _openSoapEditor(context, pathology),
+              onDelete: pathology.source == PathologySource.builtIn
+                  ? null
+                  : () => _deletePathology(context, pathology),
             ),
           ),
       ],
     );
   }
 
-  Future<void> _duplicateTemplate(
-    BuildContext context,
-    NoteTemplate template,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    final name = '${template.name} (${l10n.templatesVariantBadge})';
-    context.read<NoteTemplateBloc>().add(
-          NoteTemplateDuplicateRequested(
-            parentTemplateId: template.id,
-            name: name,
-          ),
-        );
+  Map<PathologyDomain, List<Pathology>> _groupByDomain(List<Pathology> items) {
+    final grouped = <PathologyDomain, List<Pathology>>{};
+    for (final pathology in items) {
+      grouped.putIfAbsent(pathology.domain, () => []).add(pathology);
+    }
+    return {
+      for (final domain in PathologyDomain.values)
+        if (grouped.containsKey(domain)) domain: grouped[domain]!,
+    };
   }
 
-  Future<void> _deleteVariant(
+  Future<void> _openSoapEditor(BuildContext context, Pathology pathology) async {
+    final templateRepository = getIt<NoteTemplateRepository>();
+    NoteTemplate? template;
+    final templateId = pathology.templateId;
+    if (templateId != null && templateId.isNotEmpty) {
+      template = await templateRepository.getById(templateId);
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (template != null) {
+      context.pushNamed(
+        'template-editor',
+        pathParameters: {'templateId': template.id},
+        extra: template,
+      );
+      return;
+    }
+
+    context.pushNamed(
+      'template-create',
+      queryParameters: {'pathologyId': pathology.id},
+    );
+  }
+
+  Future<void> _deletePathology(
     BuildContext context,
-    NoteTemplate template,
+    Pathology pathology,
   ) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await AppDialog.show<bool>(
@@ -218,7 +244,7 @@ class _TemplatesList extends StatelessWidget {
       variant: AppDialogVariant.standard,
       title: l10n.templateDeleteTitle,
       body: AppText(
-        l10n.templateDeleteMessage(template.name),
+        l10n.templateDeleteMessage(pathology.name),
         variant: AppTextVariant.body,
       ),
       actionsBuilder: (dialogContext) => [
@@ -239,25 +265,21 @@ class _TemplatesList extends StatelessWidget {
     if (confirmed != true || !context.mounted) {
       return;
     }
-    context.read<NoteTemplateBloc>().add(
-          NoteTemplateDeleteRequested(template.id),
+    context.read<PathologyBloc>().add(
+          PathologyDeleteRequested(pathology.id),
         );
   }
 }
 
-class _TemplateListTile extends StatelessWidget {
-  const _TemplateListTile({
-    required this.template,
-    required this.badge,
-    required this.onTap,
-    this.onDuplicate,
+class _PathologyListTile extends StatelessWidget {
+  const _PathologyListTile({
+    required this.pathology,
+    required this.onCustomizeSoap,
     this.onDelete,
   });
 
-  final NoteTemplate template;
-  final String badge;
-  final VoidCallback onTap;
-  final VoidCallback? onDuplicate;
+  final Pathology pathology;
+  final VoidCallback onCustomizeSoap;
   final VoidCallback? onDelete;
 
   @override
@@ -267,27 +289,25 @@ class _TemplateListTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ListTile(
-        title: AppText(template.name, variant: AppTextVariant.body),
-        subtitle: AppText(badge, variant: AppTextVariant.caption),
+        title: AppText(pathology.name, variant: AppTextVariant.body),
+        subtitle: AppText(pathology.sourceBadgeFr(), variant: AppTextVariant.caption),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (onDuplicate != null)
-              IconButton(
-                tooltip: l10n.templateDuplicateAction,
-                onPressed: onDuplicate,
-                icon: const Icon(Icons.edit_outlined),
-              ),
+            IconButton(
+              tooltip: l10n.pathologyCustomizeSoapAction,
+              onPressed: onCustomizeSoap,
+              icon: const Icon(Icons.description_outlined),
+            ),
             if (onDelete != null)
               IconButton(
                 tooltip: l10n.templateDeleteConfirm,
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_outline),
               ),
-            const Icon(Icons.chevron_right),
           ],
         ),
-        onTap: onTap,
+        onTap: onCustomizeSoap,
       ),
     );
   }

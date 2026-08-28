@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +12,7 @@ import 'package:medicail/features/note_template/domain/entities/note_section_kin
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template_source.dart';
 import 'package:medicail/features/note_template/domain/repositories/note_template_repository.dart';
+import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart';
 import 'package:medicail/features/note_template/presentation/note_template_bloc.dart';
 import 'package:medicail/features/note_template/presentation/note_template_event.dart';
 import 'package:medicail/features/note_template/presentation/note_template_state.dart';
@@ -26,11 +29,13 @@ class TemplateEditorPage extends StatelessWidget {
     required this.templateId,
     this.initialTemplate,
     this.isCreating = false,
+    this.pathologyId,
   });
 
   final String templateId;
   final NoteTemplate? initialTemplate;
   final bool isCreating;
+  final String? pathologyId;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +45,7 @@ class TemplateEditorPage extends StatelessWidget {
         templateId: templateId,
         initialTemplate: initialTemplate,
         isCreating: isCreating,
+        pathologyId: pathologyId,
       ),
     );
   }
@@ -50,11 +56,13 @@ class _TemplateEditorView extends StatefulWidget {
     required this.templateId,
     this.initialTemplate,
     this.isCreating = false,
+    this.pathologyId,
   });
 
   final String templateId;
   final NoteTemplate? initialTemplate;
   final bool isCreating;
+  final String? pathologyId;
 
   @override
   State<_TemplateEditorView> createState() => _TemplateEditorViewState();
@@ -73,11 +81,7 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
     super.initState();
     _nameController = TextEditingController();
     if (widget.isCreating) {
-      final draft = _createDraftTemplate();
-      _originalTemplate = draft;
-      _sections = List<NoteSection>.from(draft.orderedSections);
-      _nameController.text = draft.name;
-      _isLoading = false;
+      unawaited(_initializeCreateDraft());
       return;
     }
 
@@ -98,12 +102,34 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
     super.dispose();
   }
 
-  NoteTemplate _createDraftTemplate() {
+  Future<void> _initializeCreateDraft() async {
+    final pathologyId = widget.pathologyId;
+    var draftName = '';
+    if (pathologyId != null && pathologyId.isNotEmpty) {
+      final pathology = await getIt<PathologyRepository>().getById(pathologyId);
+      draftName = pathology?.name ?? '';
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final draft = _createDraftTemplate(name: draftName);
+    setState(() {
+      _originalTemplate = draft;
+      _sections = List<NoteSection>.from(draft.orderedSections);
+      _nameController.text = draft.name;
+      _isLoading = false;
+    });
+  }
+
+  NoteTemplate _createDraftTemplate({String name = ''}) {
     final id = 'custom_${DateTime.now().toUtc().microsecondsSinceEpoch}';
     return NoteTemplate(
       id: id,
+      pathologyId: widget.pathologyId,
       pathologyKey: 'custom_$id',
-      name: '',
+      name: name,
       source: NoteTemplateSource.userVariant,
       sections: const [
         NoteSection(
@@ -253,11 +279,23 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
     final template = _originalTemplate!;
     return template.copyWith(
       name: name,
+      pathologyId: template.pathologyId ?? widget.pathologyId,
       pathologyKey: template.parentTemplateId == null
           ? _slugify(name)
           : template.pathologyKey,
       sections: _sections,
       updatedAt: DateTime.now(),
+    );
+  }
+
+  Future<void> _linkPathologyIfNeeded(String templateId) async {
+    final pathologyId = widget.pathologyId;
+    if (pathologyId == null || pathologyId.isEmpty) {
+      return;
+    }
+    await getIt<PathologyRepository>().linkTemplate(
+      pathologyId: pathologyId,
+      templateId: templateId,
     );
   }
 
@@ -280,6 +318,7 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
       final variant = NoteTemplate(
         id: 'variant_${DateTime.now().toUtc().microsecondsSinceEpoch}',
         pathologyKey: template.pathologyKey,
+        pathologyId: template.pathologyId,
         name: name.isEmpty
             ? '${template.name} (${l10n.templatesVariantBadge})'
             : name,
@@ -300,8 +339,15 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
     final l10n = AppLocalizations.of(context);
 
     return BlocListener<NoteTemplateBloc, NoteTemplateState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is NoteTemplateActionSuccess) {
+          final savedId = state.savedTemplateId;
+          if (savedId != null) {
+            await _linkPathologyIfNeeded(savedId);
+          }
+          if (!context.mounted) {
+            return;
+          }
           AppToast.showSuccess(context, l10n.templateSaved);
           if (widget.isCreating ||
               (_originalTemplate?.isBuiltIn == true &&

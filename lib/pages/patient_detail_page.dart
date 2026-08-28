@@ -19,6 +19,8 @@ import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:medicail/widget/transcript_view_sheet.dart';
+import 'package:medicail/widget/app_pathology_tag.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
@@ -159,7 +161,9 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
   }
 }
 
-class _PatientDetailView extends StatelessWidget {
+enum _DossierTab { oral, written }
+
+class _PatientDetailView extends StatefulWidget {
   const _PatientDetailView({
     required this.patient,
     required this.sessions,
@@ -172,22 +176,60 @@ class _PatientDetailView extends StatelessWidget {
   final GlobalKey consultKey;
   final VoidCallback onRefresh;
 
+  @override
+  State<_PatientDetailView> createState() => _PatientDetailViewState();
+}
+
+class _PatientDetailViewState extends State<_PatientDetailView> {
+  _DossierTab _selectedTab = _DossierTab.oral;
+
   int _calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    if (now.month < birthDate.month || (now.month == birthDate.month && now.day < birthDate.day)) {
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
     return age;
   }
 
+  List<RecordingSession> get _oralSessions {
+    return widget.sessions
+        .where((session) => session.transcript.trim().isNotEmpty)
+        .toList();
+  }
+
+  List<RecordingSession> get _writtenSessions {
+    return widget.sessions
+        .where((session) => session.soapNote != null)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final patient = widget.patient;
+    final displayedSessions = _selectedTab == _DossierTab.oral
+        ? _oralSessions
+        : _writtenSessions;
+    final emptyLabel = _selectedTab == _DossierTab.oral
+        ? l10n.patientDossierOralEmpty
+        : l10n.patientDossierWrittenEmpty;
+    final latestPathologyTag = _latestSessionPathologyTag(widget.sessions);
 
     return ListView(
       children: [
         AppText(patient.displayName, variant: AppTextVariant.headline),
+        if (latestPathologyTag != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppPathologyTag(
+              label: latestPathologyTag,
+              compact: true,
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
         AppText(
           'MRN: ${patient.mrn}',
@@ -284,7 +326,7 @@ class _PatientDetailView extends StatelessWidget {
         ],
         const SizedBox(height: AppSpacing.lg),
         AppShowcase(
-          key: consultKey,
+          key: widget.consultKey,
           title: l10n.tutorialDetailConsultTitle,
           description: l10n.tutorialDetailConsultDesc,
           disposeOnTap: false,
@@ -292,39 +334,50 @@ class _PatientDetailView extends StatelessWidget {
           onTargetClick: () => _openConsultationRecord(
             context,
             patientId: patient.id,
-            onRefresh: onRefresh,
+            onRefresh: widget.onRefresh,
           ),
           child: AppButton(
             label: l10n.patientNewConsultationButton,
             onPressed: () => _openConsultationRecord(
               context,
               patientId: patient.id,
-              onRefresh: onRefresh,
+              onRefresh: widget.onRefresh,
             ),
           ),
         ),
         const SizedBox(height: AppSpacing.xl),
         AppText(l10n.patientSessionsTitle, variant: AppTextVariant.title),
         const SizedBox(height: AppSpacing.sm),
-        if (sessions.isEmpty)
+        _DossierTabSelector(
+          selectedTab: _selectedTab,
+          oralLabel: l10n.patientDossierOralTab,
+          writtenLabel: l10n.patientDossierWrittenTab,
+          onChanged: (tab) => setState(() => _selectedTab = tab),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        if (displayedSessions.isEmpty)
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
               child: AppText(
-                l10n.patientSessionsEmpty,
+                emptyLabel,
                 variant: AppTextVariant.body,
                 color: context.secondaryTextColor,
               ),
             ),
           )
         else
-          ...sessions.map(
+          ...displayedSessions.map(
             (session) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: _RecordingSessionListItem(
-                session: session,
-                onRefresh: onRefresh,
-              ),
+              child: _selectedTab == _DossierTab.oral
+                  ? _OralSessionListItem(
+                      session: session,
+                    )
+                  : _WrittenSessionListItem(
+                      session: session,
+                      onRefresh: widget.onRefresh,
+                    ),
             ),
           ),
       ],
@@ -332,8 +385,88 @@ class _PatientDetailView extends StatelessWidget {
   }
 }
 
-class _RecordingSessionListItem extends StatelessWidget {
-  const _RecordingSessionListItem({
+class _OralSessionListItem extends StatelessWidget {
+  const _OralSessionListItem({required this.session});
+
+  final RecordingSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final statusLabel = _statusLabel(l10n, session.status);
+
+    return InkWell(
+      onTap: () {
+        TranscriptViewSheet.show(
+          context,
+          transcript: session.transcript,
+          recordedAt: session.startedAt,
+        );
+      },
+      borderRadius: AppRadius.mdBorder,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border.all(color: theme.dividerColor),
+          borderRadius: AppRadius.mdBorder,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          '${l10n.recordingDateLabel}: ${DateFormat('dd/MM/yyyy HH:mm').format(session.startedAt.toLocal())}',
+                          variant: AppTextVariant.label,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppText(
+                          '${l10n.recordingStatusLabel}: $statusLabel',
+                          variant: AppTextVariant.caption,
+                          color: context.secondaryTextColor,
+                        ),
+                        if (session.templateName != null &&
+                            session.templateName!.isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.sm),
+                          AppPathologyTag(
+                            label: session.templateName!,
+                            compact: true,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.mic_outlined,
+                    color: context.secondaryTextColor,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppText(
+                session.transcript,
+                variant: AppTextVariant.body,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WrittenSessionListItem extends StatelessWidget {
+  const _WrittenSessionListItem({
     required this.session,
     required this.onRefresh,
   });
@@ -344,32 +477,28 @@ class _RecordingSessionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final hasSoap = session.soapNote != null;
     final theme = Theme.of(context);
-
-    final statusLabel = switch (session.status) {
-      RecordingSessionStatus.draft => l10n.sessionStatusDraft,
-      RecordingSessionStatus.recording => l10n.sessionStatusRecording,
-      RecordingSessionStatus.completed => l10n.sessionStatusCompleted,
-      RecordingSessionStatus.failed => l10n.sessionStatusFailed,
-    };
+    final soapNote = session.soapNote;
+    final statusLabel = _statusLabel(l10n, session.status);
+    final preview = _soapPreview(soapNote);
 
     return InkWell(
-      onTap: () {
-        final initialNote = session.soapNote ?? const SoapNote();
-        SoapNoteBottomSheet.show(
-          context,
-          initialNote: initialNote,
-          transcript: session.transcript,
-          onSave: (updatedNote) async {
-            final repo = getIt<RecordingSessionRepository>();
-            await repo.save(
-              session.copyWith(soapNote: updatedNote),
-            );
-            onRefresh();
-          },
-        );
-      },
+      onTap: soapNote == null
+          ? null
+          : () {
+              SoapNoteBottomSheet.show(
+                context,
+                initialNote: soapNote,
+                showTranscript: false,
+                onSave: (updatedNote) async {
+                  final repo = getIt<RecordingSessionRepository>();
+                  await repo.save(
+                    session.copyWith(soapNote: updatedNote),
+                  );
+                  onRefresh();
+                },
+              );
+            },
       borderRadius: AppRadius.mdBorder,
       child: Ink(
         decoration: BoxDecoration(
@@ -400,26 +529,161 @@ class _RecordingSessionListItem extends StatelessWidget {
                           variant: AppTextVariant.caption,
                           color: context.secondaryTextColor,
                         ),
+                        if (session.templateName != null &&
+                            session.templateName!.isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.sm),
+                          AppPathologyTag(
+                            label: session.templateName!,
+                            compact: true,
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                  if (hasSoap)
+                  if (soapNote != null)
                     Icon(
                       Icons.chevron_right,
                       color: context.secondaryTextColor,
                     ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              AppText(
-                session.transcript.isEmpty
-                    ? l10n.transcriptEmptyFallback
-                    : session.transcript,
-                variant: AppTextVariant.body,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-              ),
+              if (preview.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.md),
+                AppText(
+                  preview,
+                  variant: AppTextVariant.body,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _statusLabel(AppLocalizations l10n, RecordingSessionStatus status) {
+  return switch (status) {
+    RecordingSessionStatus.draft => l10n.sessionStatusDraft,
+    RecordingSessionStatus.recording => l10n.sessionStatusRecording,
+    RecordingSessionStatus.completed => l10n.sessionStatusCompleted,
+    RecordingSessionStatus.failed => l10n.sessionStatusFailed,
+  };
+}
+
+String _soapPreview(SoapNote? note) {
+  if (note == null) {
+    return '';
+  }
+  for (final section in [
+    note.subjective,
+    note.objective,
+    note.assessment,
+    note.plan,
+  ]) {
+    final trimmed = section.trim();
+    if (trimmed.isNotEmpty) {
+      return trimmed;
+    }
+  }
+  return '';
+}
+
+String? _latestSessionPathologyTag(List<RecordingSession> sessions) {
+  if (sessions.isEmpty) {
+    return null;
+  }
+
+  final latest = sessions.reduce(
+    (current, candidate) =>
+        candidate.startedAt.isAfter(current.startedAt) ? candidate : current,
+  );
+  final name = latest.templateName?.trim();
+  if (name == null || name.isEmpty) {
+    return null;
+  }
+  return name;
+}
+
+class _DossierTabSelector extends StatelessWidget {
+  const _DossierTabSelector({
+    required this.selectedTab,
+    required this.oralLabel,
+    required this.writtenLabel,
+    required this.onChanged,
+  });
+
+  final _DossierTab selectedTab;
+  final String oralLabel;
+  final String writtenLabel;
+  final ValueChanged<_DossierTab> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: AppRadius.mdBorder,
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _DossierTabButton(
+              label: oralLabel,
+              isSelected: selectedTab == _DossierTab.oral,
+              onTap: () => onChanged(_DossierTab.oral),
+            ),
+          ),
+          Expanded(
+            child: _DossierTabButton(
+              label: writtenLabel,
+              isSelected: selectedTab == _DossierTab.written,
+              onTap: () => onChanged(_DossierTab.written),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DossierTabButton extends StatelessWidget {
+  const _DossierTabButton({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: isSelected
+          ? theme.colorScheme.primary.withValues(alpha: 0.12)
+          : Colors.transparent,
+      borderRadius: AppRadius.mdBorder,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          child: AppText(
+            label,
+            variant: AppTextVariant.label,
+            textAlign: TextAlign.center,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : context.secondaryTextColor,
           ),
         ),
       ),

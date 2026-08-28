@@ -227,7 +227,7 @@
   "settingsSessionLength1h": "1 h",
   "settingsSessionLength1h30": "1 h 30",
   "settingsSessionLength2h": "2 h",
-  "settingsTemplates": "Modeles",
+  "settingsTemplates": "Pathologies",
   "settingsRestartOnboarding": "Recommencer l'introduction",
   "settingsTbd": "TBD",
   "settingsLogout": "Se deconnecter",
@@ -262,22 +262,22 @@
   "tutorialAssignPatientTitle": "Associer a un patient",
   "tutorialAssignPatientDesc": "Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l'onglet Rechercher, ou creer un nouveau dossier avec l'onglet Nouveau patient.\n\n👉 Appuyez sur 'Associer a un patient' pour continuer.",
   "tutorialRestarted": "Le tutoriel a ete reinitialise.",
-  "templatesTitle": "Modeles de pathologie",
-  "templatesBuiltInSection": "Modeles par defaut",
-  "templatesUserSection": "Mes modeles",
-  "templatesUserEmpty": "Aucun modele personnalise enregistre.",
+  "templatesTitle": "Pathologies",
+  "templatesBuiltInSection": "Pathologies par defaut",
+  "templatesUserSection": "Mes pathologies",
+  "templatesUserEmpty": "Aucune pathologie personnalisee enregistree.",
   "templatesDefaultBadge": "Defaut",
   "templatesVariantBadge": "Variante",
   "templatesCustomBadge": "Personnalise",
   "templateDuplicateAction": "Modifier en variante",
   "templateDuplicated": "Variante creee.",
-  "templateSaved": "Modele enregistre.",
-  "templateCreateAction": "Creer un modele",
-  "templateCreateTitle": "Nouveau modele",
-  "templateNameLabel": "Nom du modele",
-  "templateNameRequired": "Le nom du modele est obligatoire.",
-  "templateDeleteTitle": "Supprimer le modele ?",
-  "templateDeleteMessage": "Supprimer le modele \"{name}\" ?",
+  "templateSaved": "Pathologie enregistree.",
+  "templateCreateAction": "Creer une pathologie",
+  "templateCreateTitle": "Nouvelle pathologie",
+  "templateNameLabel": "Nom de la pathologie",
+  "templateNameRequired": "Le nom de la pathologie est obligatoire.",
+  "templateDeleteTitle": "Supprimer la pathologie ?",
+  "templateDeleteMessage": "Supprimer la pathologie \"{name}\" ?",
   "@templateDeleteMessage": {
     "placeholders": {
       "name": {
@@ -286,20 +286,20 @@
     }
   },
   "templateDeleteConfirm": "Supprimer",
-  "templateEditorTitle": "Editer le modele",
-  "templateNotFound": "Modele introuvable.",
+  "templateEditorTitle": "Editer la pathologie",
+  "templateNotFound": "Pathologie introuvable.",
   "templateSectionTitleLabel": "Titre de section",
   "templateSectionPromptLabel": "Structure / puces",
   "templateAddSection": "Ajouter une section",
   "templateSaveAsVariant": "Enregistrer comme variante",
   "templateUpdate": "Mettre a jour",
-  "templateSaveCreate": "Creer le modele",
+  "templateSaveCreate": "Creer la pathologie",
   "templateReset": "Reinitialiser depuis le parent",
-  "templatePickerTitle": "Choisir un modele",
+  "templatePickerTitle": "Choisir une pathologie",
   "templatePickerSearch": "Rechercher une pathologie",
-  "templatePickerEmpty": "Aucun modele trouve.",
-  "templatePickerAction": "Choisir un modele",
-  "templateActiveLabel": "Modele : {name}",
+  "templatePickerEmpty": "Aucune pathologie trouvee.",
+  "templatePickerAction": "Choisir une pathologie",
+  "templateActiveLabel": "Pathologie : {name}",
   "@templateActiveLabel": {
     "placeholders": {
       "name": {
@@ -307,9 +307,38 @@
       }
     }
   },
-  "templateNoneLabel": "Aucun modele selectionne",
+  "templateNoneLabel": "Aucune pathologie selectionnee",
   "templateRetry": "Reessayer",
-  "templatesBuiltInEmpty": "Aucun modele par defaut disponible. Reinstallez l application.",
+  "templatesBuiltInEmpty": "Aucune pathologie par defaut disponible. Reinstallez l application.",
+  "patientDossierOralTab": "Oral",
+  "patientDossierWrittenTab": "Ecrit",
+  "patientDossierOralEmpty": "Aucune transcription pour ce patient",
+  "patientDossierWrittenEmpty": "Aucune note ecrite pour ce patient",
+  "patientDossierTranscriptTitle": "Transcription",
+  "patientDossierPathologyLabel": "Pathologie : {name}",
+  "@patientDossierPathologyLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathologySuggestionTitle": "Pathologie suggeree",
+  "pathologySuggestionDesc": "D'apres la transcription, cette pathologie semble correspondre a la consultation.",
+  "pathologySuggestionApply": "Appliquer cette pathologie",
+  "pathologySuggestionChooseOther": "Choisir une autre pathologie",
+  "pathologySuggestionSkip": "Ignorer",
+  "pathologyDomainLabel": "Domaine clinique",
+  "pathologyCustomizeSoapAction": "Personnaliser le SOAP",
+  "pathologyPubmedSearchAction": "Rechercher \"{query}\" sur PubMed",
+  "@pathologyPubmedSearchAction": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "pathologyPubmedResultsSection": "Resultats PubMed",
   "settingsSignIn": "Se connecter",
   "sessionExpiredMessage": "Session expiree, veuillez vous reconnecter",
   "errorToastCopied": "Details de l'erreur copies",

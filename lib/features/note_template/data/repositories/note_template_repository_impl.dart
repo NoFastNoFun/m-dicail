@@ -104,6 +104,7 @@ class NoteTemplateRepositoryImpl implements NoteTemplateRepository {
     final variant = NoteTemplateModel(
       id: variantId,
       pathologyKey: parent.pathologyKey,
+      pathologyId: parent.pathologyId,
       name: name.trim(),
       sections: parent.sections,
       source: NoteTemplateSource.userVariant,

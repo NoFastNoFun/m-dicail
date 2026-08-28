@@ -3,17 +3,18 @@ import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
+import 'package:medicail/widget/app_pathology_tag.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/record/app_record_toggle_button.dart';
-import 'package:medicail/widget/feedback/app_showcase.dart';
 
 class AppRecordHeaderCard extends StatelessWidget {
   const AppRecordHeaderCard({
     super.key,
     required this.dateLabel,
     this.sessionTitle,
-    this.templateLabel,
-    this.onTemplateTap,
+    this.pathologyTagName,
+    this.pathologyPlaceholder,
+    this.onPathologyTap,
     required this.elapsedLabel,
     required this.isRecording,
     required this.isInitializing,
@@ -21,20 +22,15 @@ class AppRecordHeaderCard extends StatelessWidget {
     required this.canStop,
     required this.onBack,
     required this.onToggleRecording,
-    required this.menuItems,
-    this.menuKey,
-    this.menuButtonKey,
-    this.menuShowcaseTitle,
-    this.menuShowcaseDescription,
-    this.onMenuShowcaseTargetClick,
     this.cardBorderRadius = AppRadius.mdBorder,
     this.controlBorderRadius = AppRadius.pillBorder,
   });
 
   final String dateLabel;
   final String? sessionTitle;
-  final String? templateLabel;
-  final VoidCallback? onTemplateTap;
+  final String? pathologyTagName;
+  final String? pathologyPlaceholder;
+  final VoidCallback? onPathologyTap;
   final String elapsedLabel;
   final bool isRecording;
   final bool isInitializing;
@@ -42,12 +38,6 @@ class AppRecordHeaderCard extends StatelessWidget {
   final bool canStop;
   final VoidCallback onBack;
   final VoidCallback onToggleRecording;
-  final List<AppRecordMenuItem> menuItems;
-  final GlobalKey? menuKey;
-  final GlobalKey<PopupMenuButtonState<int>>? menuButtonKey;
-  final String? menuShowcaseTitle;
-  final String? menuShowcaseDescription;
-  final VoidCallback? onMenuShowcaseTargetClick;
   final BorderRadius cardBorderRadius;
   final BorderRadius controlBorderRadius;
 
@@ -55,6 +45,8 @@ class AppRecordHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     final controlSurface = colorScheme.surface.withValues(alpha: 0.9);
+    final hasPathologyTag =
+        pathologyTagName != null && pathologyTagName!.trim().isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -84,43 +76,6 @@ class AppRecordHeaderCard extends StatelessWidget {
                         variant: AppTextVariant.headline,
                       ),
                     ],
-                    if (templateLabel != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      if (onTemplateTap != null)
-                        InkWell(
-                          onTap: onTemplateTap,
-                          borderRadius: AppRadius.smBorder,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: AppSpacing.xs,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: AppText(
-                                    templateLabel!,
-                                    variant: AppTextVariant.caption,
-                                    color: colorScheme.primary,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                Icon(
-                                  Icons.edit_outlined,
-                                  size: 14,
-                                  color: colorScheme.primary,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      else
-                        AppText(
-                          templateLabel!,
-                          variant: AppTextVariant.caption,
-                          color: colorScheme.primary,
-                        ),
-                    ],
                   ],
                 ),
               ),
@@ -130,6 +85,22 @@ class AppRecordHeaderCard extends StatelessWidget {
               ],
             ],
           ),
+          if (hasPathologyTag || pathologyPlaceholder != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            if (hasPathologyTag)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: AppPathologyTag(
+                  label: pathologyTagName!,
+                  onTap: onPathologyTap,
+                ),
+              )
+            else
+              _PathologyPlaceholder(
+                label: pathologyPlaceholder!,
+                onTap: onPathologyTap,
+              ),
+          ],
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
@@ -148,29 +119,6 @@ class AppRecordHeaderCard extends StatelessWidget {
                   onPressed: onToggleRecording,
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
-              if (menuKey != null)
-                AppShowcase(
-                  key: menuKey!,
-                  title: menuShowcaseTitle,
-                  description: menuShowcaseDescription,
-                  disposeOnTap: false,
-                  disableBarrierInteraction: true,
-                  onTargetClick: onMenuShowcaseTargetClick,
-                  child: _RecordMenuButton(
-                    menuButtonKey: menuButtonKey,
-                    backgroundColor: controlSurface,
-                    borderRadius: controlBorderRadius,
-                    items: menuItems,
-                  ),
-                )
-              else
-                _RecordMenuButton(
-                  menuButtonKey: menuButtonKey,
-                  backgroundColor: controlSurface,
-                  borderRadius: controlBorderRadius,
-                  items: menuItems,
-                ),
             ],
           ),
         ],
@@ -179,16 +127,70 @@ class AppRecordHeaderCard extends StatelessWidget {
   }
 }
 
-class AppRecordMenuItem {
-  const AppRecordMenuItem({
+class _PathologyPlaceholder extends StatelessWidget {
+  const _PathologyPlaceholder({
     required this.label,
-    required this.onSelected,
-    this.enabled = true,
+    this.onTap,
   });
 
   final String label;
-  final VoidCallback onSelected;
-  final bool enabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final isInteractive = onTap != null;
+
+    final content = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.medical_information_outlined,
+          size: 18,
+          color: isInteractive ? colorScheme.primary : context.secondaryTextColor,
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: AppText(
+            label,
+            variant: AppTextVariant.label,
+            color: isInteractive ? colorScheme.primary : context.secondaryTextColor,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (isInteractive) ...[
+          const SizedBox(width: AppSpacing.xs),
+          Icon(
+            Icons.expand_more,
+            size: 18,
+            color: colorScheme.primary,
+          ),
+        ],
+      ],
+    );
+
+    if (!isInteractive) {
+      return content;
+    }
+
+    return Material(
+      color: colorScheme.primary.withValues(alpha: 0.08),
+      borderRadius: AppRadius.smBorder,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.smBorder,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          child: content,
+        ),
+      ),
+    );
+  }
 }
 
 class _RecordingTimer extends StatelessWidget {
@@ -246,55 +248,6 @@ class _SideControlButton extends StatelessWidget {
           height: AppSpacing.minTouchTarget,
           child: Icon(icon, size: 20),
         ),
-      ),
-    );
-  }
-}
-
-class _RecordMenuButton extends StatelessWidget {
-  const _RecordMenuButton({
-    required this.backgroundColor,
-    required this.borderRadius,
-    required this.items,
-    this.menuButtonKey,
-  });
-
-  final Color backgroundColor;
-  final BorderRadius borderRadius;
-  final List<AppRecordMenuItem> items;
-  final GlobalKey<PopupMenuButtonState<int>>? menuButtonKey;
-
-  @override
-  Widget build(BuildContext context) {
-    final enabledItems = items.where((item) => item.enabled).toList();
-
-    return Material(
-      color: backgroundColor,
-      borderRadius: borderRadius,
-      clipBehavior: Clip.antiAlias,
-      child: PopupMenuButton<int>(
-        key: menuButtonKey,
-        enabled: enabledItems.isNotEmpty,
-        icon: const Icon(Icons.more_vert, size: 20),
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(
-          minWidth: AppSpacing.minTouchTarget,
-          minHeight: AppSpacing.minTouchTarget,
-        ),
-        itemBuilder: (context) {
-          return [
-            for (var i = 0; i < items.length; i++)
-              PopupMenuItem<int>(
-                value: i,
-                enabled: items[i].enabled,
-                child: AppText(
-                  items[i].label,
-                  variant: AppTextVariant.body,
-                ),
-              ),
-          ];
-        },
-        onSelected: (index) => items[index].onSelected(),
       ),
     );
   }

@@ -1,0 +1,500 @@
+[
+  {
+    "id": "path_ankle_sprain",
+    "name": "Entorse de cheville",
+    "domain": "musculoskeletal",
+    "meshUi": "D016512",
+    "meshTerm": "Ankle Injuries",
+    "aliases": ["entorse", "cheville", "ligament", "malleole", "malleoles"],
+    "templateId": "builtin_ankle_sprain"
+  },
+  {
+    "id": "path_low_back_pain",
+    "name": "Lombalgie",
+    "domain": "musculoskeletal",
+    "meshUi": "D017116",
+    "meshTerm": "Low Back Pain",
+    "aliases": ["lombalgie", "lombaire", "lombaires", "rachis", "dos"],
+    "templateId": "builtin_low_back_pain"
+  },
+  {
+    "id": "path_patellar_tendinopathy",
+    "name": "Tendinopathie rotulienne",
+    "domain": "musculoskeletal",
+    "meshUi": "D052256",
+    "meshTerm": "Tendinopathy",
+    "aliases": ["rotule", "rotulien", "rotulienne", "tendinite", "tendinopathie", "jumpers"],
+    "templateId": "builtin_patellar_tendinopathy"
+  },
+  {
+    "id": "path_frozen_shoulder",
+    "name": "Capsulite retractile",
+    "domain": "musculoskeletal",
+    "meshUi": "D002062",
+    "meshTerm": "Bursitis",
+    "aliases": ["epaule", "capsulite", "coiffe", "omoplate"],
+    "templateId": "builtin_frozen_shoulder"
+  },
+  {
+    "id": "path_knee_osteoarthritis",
+    "name": "Gonarthrose",
+    "domain": "musculoskeletal",
+    "meshUi": "D020370",
+    "meshTerm": "Osteoarthritis, Knee",
+    "aliases": ["gonarthrose", "genou", "arthrose", "femoro"],
+    "templateId": "builtin_knee_osteoarthritis"
+  },
+  {
+    "id": "path_knee_sprain",
+    "name": "Entorse du genou",
+    "domain": "musculoskeletal",
+    "meshUi": "D007718",
+    "meshTerm": "Knee Injuries",
+    "aliases": ["entorse", "genou", "menisque", "meniscal"],
+    "templateId": "builtin_knee_sprain"
+  },
+  {
+    "id": "path_epicondylitis",
+    "name": "Epicondylite",
+    "domain": "musculoskeletal",
+    "meshUi": "D013716",
+    "meshTerm": "Tennis Elbow",
+    "aliases": ["epicondylite", "coude", "tennis", "golf"],
+    "templateId": "builtin_epicondylitis"
+  },
+  {
+    "id": "path_neck_pain",
+    "name": "Cervicalgie",
+    "domain": "musculoskeletal",
+    "meshUi": "D019547",
+    "meshTerm": "Neck Pain",
+    "aliases": ["cervicalgie", "cou", "cervical", "cervicales"],
+    "templateId": "builtin_neck_pain"
+  },
+  {
+    "id": "path_acl_post_op",
+    "name": "Reeducation post-op LCA",
+    "domain": "musculoskeletal",
+    "meshUi": "D007718",
+    "meshTerm": "Anterior Cruciate Ligament Injuries",
+    "aliases": ["lca", "ligament", "croise", "croise", "postoperatoire", "post-op", "greffe"],
+    "templateId": "builtin_acl_post_op"
+  },
+  {
+    "id": "path_wrist_fracture",
+    "name": "Fracture de poignet",
+    "domain": "musculoskeletal",
+    "meshUi": "D014954",
+    "meshTerm": "Wrist Injuries",
+    "aliases": ["poignet", "fracture", "scaphoide", "radius"],
+    "templateId": "builtin_wrist_fracture"
+  },
+  {
+    "id": "path_rotator_cuff",
+    "name": "Lesion de la coiffe des rotateurs",
+    "domain": "musculoskeletal",
+    "meshUi": "D017006",
+    "meshTerm": "Rotator Cuff Injuries",
+    "aliases": ["coiffe", "rotateurs", "epaule", "supraspinatus"]
+  },
+  {
+    "id": "path_hip_osteoarthritis",
+    "name": "Coxarthrose",
+    "domain": "musculoskeletal",
+    "meshUi": "D015207",
+    "meshTerm": "Osteoarthritis, Hip",
+    "aliases": ["coxarthrose", "hanche", "arthrose"]
+  },
+  {
+    "id": "path_plantar_fasciitis",
+    "name": "Fasciite plantaire",
+    "domain": "musculoskeletal",
+    "meshUi": "D036981",
+    "meshTerm": "Fasciitis, Plantar",
+    "aliases": ["fasciite", "plantaire", "talon", "pied"]
+  },
+  {
+    "id": "path_achilles_tendinopathy",
+    "name": "Tendinopathie achilleenne",
+    "domain": "musculoskeletal",
+    "meshUi": "D052256",
+    "meshTerm": "Tendinopathy",
+    "aliases": ["achille", "achilleen", "tendon", "calcaneen"]
+  },
+  {
+    "id": "path_shoulder_impingement",
+    "name": "Conflit sous-acromial",
+    "domain": "musculoskeletal",
+    "meshUi": "D019534",
+    "meshTerm": "Shoulder Impingement Syndrome",
+    "aliases": ["conflit", "acromial", "epaule", "sous-acromial"]
+  },
+  {
+    "id": "path_fibromyalgia",
+    "name": "Fibromyalgie",
+    "domain": "musculoskeletal",
+    "meshUi": "D005356",
+    "meshTerm": "Fibromyalgia",
+    "aliases": ["fibromyalgie", "douleur", "diffuse"]
+  },
+  {
+    "id": "path_herniated_disc",
+    "name": "Hernie discale",
+    "domain": "musculoskeletal",
+    "meshUi": "D007405",
+    "meshTerm": "Intervertebral Disc Displacement",
+    "aliases": ["hernie", "discale", "sciatique", "lombaire"]
+  },
+  {
+    "id": "path_scapular_dyskinesia",
+    "name": "Dyskinesie scapulaire",
+    "domain": "musculoskeletal",
+    "meshUi": "D012785",
+    "meshTerm": "Shoulder Pain",
+    "aliases": ["scapula", "omoplate", "dyskinesie"]
+  },
+  {
+    "id": "path_tmj_disorder",
+    "name": "Trouble temporo-mandibulaire",
+    "domain": "musculoskeletal",
+    "meshUi": "D008310",
+    "meshTerm": "Temporomandibular Joint Disorders",
+    "aliases": ["atm", "mandibule", "machoire"]
+  },
+  {
+    "id": "path_hip_fracture",
+    "name": "Fracture de hanche",
+    "domain": "musculoskeletal",
+    "meshUi": "D006620",
+    "meshTerm": "Hip Fractures",
+    "aliases": ["hanche", "fracture", "col femoral"]
+  },
+  {
+    "id": "path_meniscus_tear",
+    "name": "Lesion meniscale",
+    "domain": "musculoskeletal",
+    "meshUi": "D010007",
+    "meshTerm": "Osteoarthritis, Knee",
+    "aliases": ["menisque", "meniscal", "genou"]
+  },
+  {
+    "id": "path_carpal_tunnel",
+    "name": "Syndrome du canal carpien",
+    "domain": "musculoskeletal",
+    "meshUi": "D002349",
+    "meshTerm": "Carpal Tunnel Syndrome",
+    "aliases": ["canal carpien", "poignet", "median"]
+  },
+  {
+    "id": "path_stroke_rehab",
+    "name": "Reeducation post-AVC",
+    "domain": "neurology",
+    "meshUi": "D020521",
+    "meshTerm": "Stroke Rehabilitation",
+    "aliases": ["avc", "stroke", "hemiplegie", "hemiparesie"]
+  },
+  {
+    "id": "path_parkinson",
+    "name": "Maladie de Parkinson",
+    "domain": "neurology",
+    "meshUi": "D010300",
+    "meshTerm": "Parkinson Disease",
+    "aliases": ["parkinson", "tremblement", "akinesie"]
+  },
+  {
+    "id": "path_multiple_sclerosis",
+    "name": "Sclerose en plaques",
+    "domain": "neurology",
+    "meshUi": "D009103",
+    "meshTerm": "Multiple Sclerosis",
+    "aliases": ["sep", "sclerose", "plaques"]
+  },
+  {
+    "id": "path_spinal_cord_injury",
+    "name": "Lesion medullaire",
+    "domain": "neurology",
+    "meshUi": "D013119",
+    "meshTerm": "Spinal Cord Injuries",
+    "aliases": ["medullaire", "paraplegie", "tetraplegie"]
+  },
+  {
+    "id": "path_peripheral_neuropathy",
+    "name": "Neuropathie peripherique",
+    "domain": "neurology",
+    "meshUi": "D010523",
+    "meshTerm": "Peripheral Nervous System Diseases",
+    "aliases": ["neuropathie", "diabete", "paresthesie"]
+  },
+  {
+    "id": "path_vestibular_disorder",
+    "name": "Trouble vestibulaire",
+    "domain": "neurology",
+    "meshUi": "D014717",
+    "meshTerm": "Vertigo",
+    "aliases": ["vertige", "vestibulaire", "equilibre"]
+  },
+  {
+    "id": "path_traumatic_brain_injury",
+    "name": "Traumatisme cranien",
+    "domain": "neurology",
+    "meshUi": "D001924",
+    "meshTerm": "Brain Concussion",
+    "aliases": ["tcc", "commotion", "cranien"]
+  },
+  {
+    "id": "path_cerebral_palsy",
+    "name": "Infirmité motrice cerebrale",
+    "domain": "neurology",
+    "meshUi": "D002547",
+    "meshTerm": "Cerebral Palsy",
+    "aliases": ["imc", "cerebrale", "enfant"]
+  },
+  {
+    "id": "path_guillain_barre",
+    "name": "Syndrome de Guillain-Barre",
+    "domain": "neurology",
+    "meshUi": "D020275",
+    "meshTerm": "Guillain-Barre Syndrome",
+    "aliases": ["guillain", "barre", "polyneuropathie"]
+  },
+  {
+    "id": "path_copd",
+    "name": "Bronchopneumopathie chronique obstructive",
+    "domain": "cardio_respiratory",
+    "meshUi": "D029424",
+    "meshTerm": "Pulmonary Disease, Chronic Obstructive",
+    "aliases": ["bpco", "copd", "respiratoire", "bronchique"]
+  },
+  {
+    "id": "path_cystic_fibrosis",
+    "name": "Mucoviscidose",
+    "domain": "cardio_respiratory",
+    "meshUi": "D003550",
+    "meshTerm": "Cystic Fibrosis",
+    "aliases": ["mucoviscidose", "fibrose", "kystique"]
+  },
+  {
+    "id": "path_heart_failure",
+    "name": "Insuffisance cardiaque",
+    "domain": "cardio_respiratory",
+    "meshUi": "D006333",
+    "meshTerm": "Heart Failure",
+    "aliases": ["cardiaque", "insuffisance", "coeur"]
+  },
+  {
+    "id": "path_post_covid",
+    "name": "Syndrome post-COVID",
+    "domain": "cardio_respiratory",
+    "meshUi": "D000086382",
+    "meshTerm": "Post-Acute COVID-19 Syndrome",
+    "aliases": ["covid", "post-covid", "long covid", "fatigue"]
+  },
+  {
+    "id": "path_asthma",
+    "name": "Asthme",
+    "domain": "cardio_respiratory",
+    "meshUi": "D001249",
+    "meshTerm": "Asthma",
+    "aliases": ["asthme", "respiratoire", "bronchospasme"]
+  },
+  {
+    "id": "path_pulmonary_rehab",
+    "name": "Reeducation respiratoire",
+    "domain": "cardio_respiratory",
+    "meshUi": "D012131",
+    "meshTerm": "Respiratory Therapy",
+    "aliases": ["respiratoire", "reeducation", "ventilation"]
+  },
+  {
+    "id": "path_cardiac_rehab",
+    "name": "Reeducation cardiaque",
+    "domain": "cardio_respiratory",
+    "meshUi": "D000072036",
+    "meshTerm": "Cardiac Rehabilitation",
+    "aliases": ["cardiaque", "reeducation", "infarctus"]
+  },
+  {
+    "id": "path_accidental_falls",
+    "name": "Prevention des chutes",
+    "domain": "geriatrics",
+    "meshUi": "D000058",
+    "meshTerm": "Accidental Falls",
+    "aliases": ["chute", "chutes", "equilibre", "geriatrie"]
+  },
+  {
+    "id": "path_osteoporosis",
+    "name": "Osteoporose",
+    "domain": "geriatrics",
+    "meshUi": "D010024",
+    "meshTerm": "Osteoporosis",
+    "aliases": ["osteoporose", "densite", "os"]
+  },
+  {
+    "id": "path_sarcopenia",
+    "name": "Sarcopenie",
+    "domain": "geriatrics",
+    "meshUi": "D055948",
+    "meshTerm": "Sarcopenia",
+    "aliases": ["sarcopenie", "masse musculaire", "age"]
+  },
+  {
+    "id": "path_hip_replacement",
+    "name": "Reeducation prothese de hanche",
+    "domain": "geriatrics",
+    "meshUi": "D019644",
+    "meshTerm": "Arthroplasty, Replacement, Hip",
+    "aliases": ["prothese", "hanche", "arthroplastie"]
+  },
+  {
+    "id": "path_knee_replacement",
+    "name": "Reeducation prothese de genou",
+    "domain": "geriatrics",
+    "meshUi": "D019645",
+    "meshTerm": "Arthroplasty, Replacement, Knee",
+    "aliases": ["prothese", "genou", "arthroplastie"]
+  },
+  {
+    "id": "path_idiopathic_scoliosis",
+    "name": "Scoliose idiopathique",
+    "domain": "pediatrics",
+    "meshUi": "D012600",
+    "meshTerm": "Scoliosis",
+    "aliases": ["scoliose", "rachis", "adolescent"]
+  },
+  {
+    "id": "path_developmental_delay",
+    "name": "Retard de developpement moteur",
+    "domain": "pediatrics",
+    "meshUi": "D002658",
+    "meshTerm": "Developmental Disabilities",
+    "aliases": ["developpement", "moteur", "enfant"]
+  },
+  {
+    "id": "path_torticollis",
+    "name": "Torticolis congenital",
+    "domain": "pediatrics",
+    "meshUi": "D014103",
+    "meshTerm": "Torticollis",
+    "aliases": ["torticolis", "cou", "nourrisson"]
+  },
+  {
+    "id": "path_plagiocephaly",
+    "name": "Plagiocephalie",
+    "domain": "pediatrics",
+    "meshUi": "D010002",
+    "meshTerm": "Plagiocephaly",
+    "aliases": ["plagiocephalie", "crane", "bebe"]
+  },
+  {
+    "id": "path_incontinence",
+    "name": "Incontinence urinaire",
+    "domain": "other",
+    "meshUi": "D014549",
+    "meshTerm": "Urinary Incontinence",
+    "aliases": ["incontinence", "perinee", "pelvien"]
+  },
+  {
+    "id": "path_pelvic_pain",
+    "name": "Douleur pelvienne chronique",
+    "domain": "other",
+    "meshUi": "D017699",
+    "meshTerm": "Pelvic Pain",
+    "aliases": ["pelvien", "pelvienne", "perinee"]
+  },
+  {
+    "id": "path_lymphedema",
+    "name": "Lymphoedeme",
+    "domain": "other",
+    "meshUi": "D008209",
+    "meshTerm": "Lymphedema",
+    "aliases": ["lymphoedeme", "oedeme", "drainage"]
+  },
+  {
+    "id": "path_breast_cancer_rehab",
+    "name": "Reeducation post-cancer du sein",
+    "domain": "other",
+    "meshUi": "D001943",
+    "meshTerm": "Breast Neoplasms",
+    "aliases": ["sein", "cancer", "mastectomie"]
+  },
+  {
+    "id": "path_amputation",
+    "name": "Reeducation post-amputation",
+    "domain": "other",
+    "meshUi": "D000673",
+    "meshTerm": "Amputation",
+    "aliases": ["amputation", "prothese", "membre"]
+  },
+  {
+    "id": "path_burns",
+    "name": "Reeducation post-brulure",
+    "domain": "other",
+    "meshUi": "D002056",
+    "meshTerm": "Burns",
+    "aliases": ["brulure", "cicatrice", "mobilite"]
+  },
+  {
+    "id": "path_chronic_pain",
+    "name": "Douleur chronique",
+    "domain": "other",
+    "meshUi": "D059350",
+    "meshTerm": "Chronic Pain",
+    "aliases": ["douleur", "chronique", "persistante"]
+  },
+  {
+    "id": "path_edema",
+    "name": "Oedeme chronique",
+    "domain": "other",
+    "meshUi": "D004487",
+    "meshTerm": "Edema",
+    "aliases": ["oedeme", "gonflement", "retention"]
+  },
+  {
+    "id": "path_rheumatoid_arthritis",
+    "name": "Polyarthrite rhumatoide",
+    "domain": "musculoskeletal",
+    "meshUi": "D001172",
+    "meshTerm": "Arthritis, Rheumatoid",
+    "aliases": ["polyarthrite", "rhumatoide", "pr"]
+  },
+  {
+    "id": "path_anterior_knee_pain",
+    "name": "Syndrome femoro-patellaire",
+    "domain": "musculoskeletal",
+    "meshUi": "D046788",
+    "meshTerm": "Patellofemoral Pain Syndrome",
+    "aliases": ["femoro-patellaire", "rotule", "genou"]
+  },
+  {
+    "id": "path_spondylolisthesis",
+    "name": "Spondylolisthesis",
+    "domain": "musculoskeletal",
+    "meshUi": "D013168",
+    "meshTerm": "Spondylolisthesis",
+    "aliases": ["spondylolisthesis", "rachis", "lombaire"]
+  },
+  {
+    "id": "path_thoracic_outlet",
+    "name": "Syndrome du defile thoraco-brachial",
+    "domain": "musculoskeletal",
+    "meshUi": "D013901",
+    "meshTerm": "Thoracic Outlet Syndrome",
+    "aliases": ["defile", "thoraco-brachial", "nerf"]
+  },
+  {
+    "id": "path_bell_palsy",
+    "name": "Paralysie faciale peripherique",
+    "domain": "neurology",
+    "meshUi": "D020330",
+    "meshTerm": "Bell Palsy",
+    "aliases": ["bell", "faciale", "paralysie"]
+  },
+  {
+    "id": "path_migraine",
+    "name": "Migraine",
+    "domain": "neurology",
+    "meshUi": "D008881",
+    "meshTerm": "Migraine Disorders",
+    "aliases": ["migraine", "cephalee", "cervicogene"]
+  }
+]

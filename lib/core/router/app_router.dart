@@ -111,9 +111,10 @@ class AppRouter {
               GoRoute(
                 path: 'new',
                 name: 'template-create',
-                builder: (context, state) => const TemplateEditorPage(
+                builder: (context, state) => TemplateEditorPage(
                   templateId: 'new',
                   isCreating: true,
+                  pathologyId: state.uri.queryParameters['pathologyId'],
                 ),
               ),
               GoRoute(

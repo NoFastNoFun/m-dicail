@@ -4,12 +4,16 @@ import 'package:medicail/features/note_template/domain/entities/note_template.da
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 
 abstract final class NoteTemplateApplicator {
+  static SoapNote genericSoapNote(String transcript) {
+    return _defaultSoapNote(transcript);
+  }
+
   static SoapNote apply({
     NoteTemplate? template,
     required String transcript,
   }) {
     if (template == null) {
-      return _defaultSoapNote(transcript);
+      return genericSoapNote(transcript);
     }
 
     final sections = template.orderedSections;

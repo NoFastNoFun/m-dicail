@@ -50,6 +50,7 @@ final class NoteTemplateModel extends NoteTemplate {
     required super.name,
     required super.sections,
     required super.source,
+    super.pathologyId,
     super.parentTemplateId,
     super.updatedAt,
   });
@@ -61,6 +62,7 @@ final class NoteTemplateModel extends NoteTemplate {
       name: template.name,
       sections: template.sections,
       source: template.source,
+      pathologyId: template.pathologyId,
       parentTemplateId: template.parentTemplateId,
       updatedAt: template.updatedAt,
     );
@@ -85,6 +87,7 @@ final class NoteTemplateModel extends NoteTemplate {
       name: json['name'] as String? ?? '',
       sections: sections,
       source: NoteTemplateSourceX.fromJson(json['source'] as String?),
+      pathologyId: json['pathologyId'] as String?,
       parentTemplateId: json['parentTemplateId'] as String?,
       updatedAt: _parseNullableDate(json['updatedAt']),
     );
@@ -99,6 +102,7 @@ final class NoteTemplateModel extends NoteTemplate {
           .map((section) => NoteSectionModel.fromEntity(section).toJson())
           .toList(),
       'source': source.jsonValue,
+      'pathologyId': pathologyId,
       'parentTemplateId': parentTemplateId,
       'updatedAt': updatedAt?.toIso8601String(),
     };

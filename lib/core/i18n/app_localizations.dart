@@ -1375,7 +1375,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTemplates.
   ///
   /// In fr, this message translates to:
-  /// **'Modeles'**
+  /// **'Pathologies'**
   String get settingsTemplates;
 
   /// No description provided for @settingsRestartOnboarding.
@@ -1585,25 +1585,25 @@ abstract class AppLocalizations {
   /// No description provided for @templatesTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Modeles de pathologie'**
+  /// **'Pathologies'**
   String get templatesTitle;
 
   /// No description provided for @templatesBuiltInSection.
   ///
   /// In fr, this message translates to:
-  /// **'Modeles par defaut'**
+  /// **'Pathologies par defaut'**
   String get templatesBuiltInSection;
 
   /// No description provided for @templatesUserSection.
   ///
   /// In fr, this message translates to:
-  /// **'Mes modeles'**
+  /// **'Mes pathologies'**
   String get templatesUserSection;
 
   /// No description provided for @templatesUserEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun modele personnalise enregistre.'**
+  /// **'Aucune pathologie personnalisee enregistree.'**
   String get templatesUserEmpty;
 
   /// No description provided for @templatesDefaultBadge.
@@ -1639,43 +1639,43 @@ abstract class AppLocalizations {
   /// No description provided for @templateSaved.
   ///
   /// In fr, this message translates to:
-  /// **'Modele enregistre.'**
+  /// **'Pathologie enregistree.'**
   String get templateSaved;
 
   /// No description provided for @templateCreateAction.
   ///
   /// In fr, this message translates to:
-  /// **'Creer un modele'**
+  /// **'Creer une pathologie'**
   String get templateCreateAction;
 
   /// No description provided for @templateCreateTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Nouveau modele'**
+  /// **'Nouvelle pathologie'**
   String get templateCreateTitle;
 
   /// No description provided for @templateNameLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Nom du modele'**
+  /// **'Nom de la pathologie'**
   String get templateNameLabel;
 
   /// No description provided for @templateNameRequired.
   ///
   /// In fr, this message translates to:
-  /// **'Le nom du modele est obligatoire.'**
+  /// **'Le nom de la pathologie est obligatoire.'**
   String get templateNameRequired;
 
   /// No description provided for @templateDeleteTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer le modele ?'**
+  /// **'Supprimer la pathologie ?'**
   String get templateDeleteTitle;
 
   /// No description provided for @templateDeleteMessage.
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer le modele \"{name}\" ?'**
+  /// **'Supprimer la pathologie \"{name}\" ?'**
   String templateDeleteMessage(String name);
 
   /// No description provided for @templateDeleteConfirm.
@@ -1687,13 +1687,13 @@ abstract class AppLocalizations {
   /// No description provided for @templateEditorTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Editer le modele'**
+  /// **'Editer la pathologie'**
   String get templateEditorTitle;
 
   /// No description provided for @templateNotFound.
   ///
   /// In fr, this message translates to:
-  /// **'Modele introuvable.'**
+  /// **'Pathologie introuvable.'**
   String get templateNotFound;
 
   /// No description provided for @templateSectionTitleLabel.
@@ -1729,7 +1729,7 @@ abstract class AppLocalizations {
   /// No description provided for @templateSaveCreate.
   ///
   /// In fr, this message translates to:
-  /// **'Creer le modele'**
+  /// **'Creer la pathologie'**
   String get templateSaveCreate;
 
   /// No description provided for @templateReset.
@@ -1741,7 +1741,7 @@ abstract class AppLocalizations {
   /// No description provided for @templatePickerTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Choisir un modele'**
+  /// **'Choisir une pathologie'**
   String get templatePickerTitle;
 
   /// No description provided for @templatePickerSearch.
@@ -1753,25 +1753,25 @@ abstract class AppLocalizations {
   /// No description provided for @templatePickerEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun modele trouve.'**
+  /// **'Aucune pathologie trouvee.'**
   String get templatePickerEmpty;
 
   /// No description provided for @templatePickerAction.
   ///
   /// In fr, this message translates to:
-  /// **'Choisir un modele'**
+  /// **'Choisir une pathologie'**
   String get templatePickerAction;
 
   /// No description provided for @templateActiveLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Modele : {name}'**
+  /// **'Pathologie : {name}'**
   String templateActiveLabel(String name);
 
   /// No description provided for @templateNoneLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun modele selectionne'**
+  /// **'Aucune pathologie selectionnee'**
   String get templateNoneLabel;
 
   /// No description provided for @templateRetry.
@@ -1783,8 +1783,98 @@ abstract class AppLocalizations {
   /// No description provided for @templatesBuiltInEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun modele par defaut disponible. Reinstallez l application.'**
+  /// **'Aucune pathologie par defaut disponible. Reinstallez l application.'**
   String get templatesBuiltInEmpty;
+
+  /// No description provided for @patientDossierOralTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oral'**
+  String get patientDossierOralTab;
+
+  /// No description provided for @patientDossierWrittenTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ecrit'**
+  String get patientDossierWrittenTab;
+
+  /// No description provided for @patientDossierOralEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune transcription pour ce patient'**
+  String get patientDossierOralEmpty;
+
+  /// No description provided for @patientDossierWrittenEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune note ecrite pour ce patient'**
+  String get patientDossierWrittenEmpty;
+
+  /// No description provided for @patientDossierTranscriptTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription'**
+  String get patientDossierTranscriptTitle;
+
+  /// No description provided for @patientDossierPathologyLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pathologie : {name}'**
+  String patientDossierPathologyLabel(String name);
+
+  /// No description provided for @pathologySuggestionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pathologie suggeree'**
+  String get pathologySuggestionTitle;
+
+  /// No description provided for @pathologySuggestionDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'D\'apres la transcription, cette pathologie semble correspondre a la consultation.'**
+  String get pathologySuggestionDesc;
+
+  /// No description provided for @pathologySuggestionApply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appliquer cette pathologie'**
+  String get pathologySuggestionApply;
+
+  /// No description provided for @pathologySuggestionChooseOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une autre pathologie'**
+  String get pathologySuggestionChooseOther;
+
+  /// No description provided for @pathologySuggestionSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignorer'**
+  String get pathologySuggestionSkip;
+
+  /// No description provided for @pathologyDomainLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Domaine clinique'**
+  String get pathologyDomainLabel;
+
+  /// No description provided for @pathologyCustomizeSoapAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnaliser le SOAP'**
+  String get pathologyCustomizeSoapAction;
+
+  /// No description provided for @pathologyPubmedSearchAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher \"{query}\" sur PubMed'**
+  String pathologyPubmedSearchAction(String query);
+
+  /// No description provided for @pathologyPubmedResultsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Resultats PubMed'**
+  String get pathologyPubmedResultsSection;
 
   /// No description provided for @settingsSignIn.
   ///
