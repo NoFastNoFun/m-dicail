@@ -57,54 +57,88 @@ class AppBottomNavPill extends StatefulWidget {
 }
 
 class _AppBottomNavPillState extends State<AppBottomNavPill> {
-  static const _minFlingVelocity = 240.0;
-  static const _minDragDistance = 36.0;
-
-  double _dragDx = 0;
+  late List<GlobalKey> _itemKeys;
+  int? _dragPreviewIndex;
 
   int get _selectedIndex =>
       indexOfBottomNavDestination(widget.destinations, widget.selectedRoute);
 
+  @override
+  void initState() {
+    super.initState();
+    _itemKeys = _keysForCount(widget.destinations.length);
+  }
+
+  @override
+  void didUpdateWidget(AppBottomNavPill oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.destinations.length != widget.destinations.length) {
+      _itemKeys = _keysForCount(widget.destinations.length);
+    }
+  }
+
+  List<GlobalKey> _keysForCount(int count) {
+    return List<GlobalKey>.generate(count, (_) => GlobalKey());
+  }
+
+  int _indexAtGlobalX(double globalX) {
+    var bestIndex = 0;
+    var bestDistance = double.infinity;
+    for (var i = 0; i < _itemKeys.length; i++) {
+      final box = _itemKeys[i].currentContext?.findRenderObject() as RenderBox?;
+      if (box == null || !box.hasSize) {
+        continue;
+      }
+      final origin = box.localToGlobal(Offset.zero);
+      final centerX = origin.dx + box.size.width / 2;
+      final distance = (globalX - centerX).abs();
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = i;
+      }
+    }
+    return bestIndex;
+  }
+
+  void _setPreviewAt(double globalX) {
+    final index = _indexAtGlobalX(globalX);
+    if (_dragPreviewIndex == index) {
+      return;
+    }
+    setState(() => _dragPreviewIndex = index);
+  }
+
   void _onDragStart(DragStartDetails details) {
-    _dragDx = 0;
+    _setPreviewAt(details.globalPosition.dx);
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
-    _dragDx += details.delta.dx;
+    _setPreviewAt(details.globalPosition.dx);
   }
 
   void _onDragEnd(DragEndDetails details) {
-    final index = _selectedIndex;
-    if (index < 0) {
-      _dragDx = 0;
+    final index = _dragPreviewIndex;
+    setState(() => _dragPreviewIndex = null);
+    if (index == null ||
+        index < 0 ||
+        index >= widget.destinations.length ||
+        index == _selectedIndex) {
       return;
     }
+    widget.onDestinationSelected(widget.destinations[index].route);
+  }
 
-    final velocity = details.primaryVelocity ?? 0;
-    final dragDx = _dragDx;
-    _dragDx = 0;
-
-    final int? nextIndex;
-    if (velocity.abs() >= _minFlingVelocity) {
-      nextIndex = velocity < 0 ? index + 1 : index - 1;
-    } else if (dragDx.abs() >= _minDragDistance) {
-      nextIndex = dragDx < 0 ? index + 1 : index - 1;
-    } else {
-      nextIndex = null;
-    }
-
-    if (nextIndex == null ||
-        nextIndex < 0 ||
-        nextIndex >= widget.destinations.length) {
+  void _onDragCancel() {
+    if (_dragPreviewIndex == null) {
       return;
     }
-    widget.onDestinationSelected(widget.destinations[nextIndex].route);
+    setState(() => _dragPreviewIndex = null);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final selectedIndex = _selectedIndex;
+    final highlightedIndex = _dragPreviewIndex ?? _selectedIndex;
 
     return Material(
       elevation: 8,
@@ -116,7 +150,7 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
         onHorizontalDragStart: _onDragStart,
         onHorizontalDragUpdate: _onDragUpdate,
         onHorizontalDragEnd: _onDragEnd,
-        onHorizontalDragCancel: () => _dragDx = 0,
+        onHorizontalDragCancel: _onDragCancel,
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
@@ -130,10 +164,13 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
               for (var i = 0; i < widget.destinations.length; i++) ...[
                 if (i > 0) const SizedBox(width: AppSpacing.xs),
                 Flexible(
-                  child: _buildNavItem(
-                    widget.destinations[i],
-                    widget.showLabels,
-                    i == selectedIndex,
+                  child: KeyedSubtree(
+                    key: _itemKeys[i],
+                    child: _buildNavItem(
+                      widget.destinations[i],
+                      widget.showLabels,
+                      i == highlightedIndex,
+                    ),
                   ),
                 ),
               ],

@@ -23,6 +23,37 @@ const _destinations = [
   ),
 ];
 
+Future<void> _pumpPill(
+  WidgetTester tester, {
+  required String selectedRoute,
+  required ValueChanged<String> onDestinationSelected,
+}) {
+  return tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: AppBottomNavPill(
+            destinations: _destinations,
+            selectedRoute: selectedRoute,
+            onDestinationSelected: onDestinationSelected,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Future<void> _dragBetweenLabels(
+  WidgetTester tester, {
+  required String from,
+  required String to,
+}) async {
+  final start = tester.getCenter(find.text(from));
+  final end = tester.getCenter(find.text(to));
+  await tester.dragFrom(start, end - start);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   test('indexOfBottomNavDestination matches nested routes', () {
     expect(indexOfBottomNavDestination(_destinations, '/home'), 0);
@@ -37,18 +68,10 @@ void main() {
   testWidgets('tap still selects a destination', (tester) async {
     String? selected;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: AppBottomNavPill(
-              destinations: _destinations,
-              selectedRoute: '/home',
-              onDestinationSelected: (route) => selected = route,
-            ),
-          ),
-        ),
-      ),
+    await _pumpPill(
+      tester,
+      selectedRoute: '/home',
+      onDestinationSelected: (route) => selected = route,
     );
 
     await tester.tap(find.text('Agenda'));
@@ -56,86 +79,61 @@ void main() {
     expect(selected, '/appointments');
   });
 
-  testWidgets('swipe left on the pill selects the next destination', (
-    tester,
-  ) async {
+  testWidgets('dragging onto another destination selects it', (tester) async {
     String? selected;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: AppBottomNavPill(
-              destinations: _destinations,
-              selectedRoute: '/home',
-              onDestinationSelected: (route) => selected = route,
-            ),
-          ),
-        ),
-      ),
+    await _pumpPill(
+      tester,
+      selectedRoute: '/home',
+      onDestinationSelected: (route) => selected = route,
     );
 
-    await tester.fling(
-      find.byType(AppBottomNavPill),
-      const Offset(-120, 0),
-      800,
-    );
-    await tester.pumpAndSettle();
+    await _dragBetweenLabels(tester, from: 'Home', to: 'Agenda');
     expect(selected, '/appointments');
   });
 
-  testWidgets('swipe right on the pill selects the previous destination', (
+  testWidgets('dragging can skip destinations and land on the release target', (
     tester,
   ) async {
     String? selected;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: AppBottomNavPill(
-              destinations: _destinations,
-              selectedRoute: '/appointments',
-              onDestinationSelected: (route) => selected = route,
-            ),
-          ),
-        ),
-      ),
+    await _pumpPill(
+      tester,
+      selectedRoute: '/home',
+      onDestinationSelected: (route) => selected = route,
     );
 
-    await tester.fling(
-      find.byType(AppBottomNavPill),
-      const Offset(120, 0),
-      800,
-    );
-    await tester.pumpAndSettle();
-    expect(selected, '/home');
+    await _dragBetweenLabels(tester, from: 'Home', to: 'Settings');
+    expect(selected, '/settings');
   });
 
-  testWidgets('swipe past the last tab does not change destination', (
+  testWidgets('dragging back onto a previous destination selects it', (
     tester,
   ) async {
     String? selected;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: AppBottomNavPill(
-              destinations: _destinations,
-              selectedRoute: '/settings',
-              onDestinationSelected: (route) => selected = route,
-            ),
-          ),
-        ),
-      ),
+    await _pumpPill(
+      tester,
+      selectedRoute: '/settings',
+      onDestinationSelected: (route) => selected = route,
     );
 
-    await tester.fling(
-      find.byType(AppBottomNavPill),
-      const Offset(-120, 0),
-      800,
+    await _dragBetweenLabels(tester, from: 'Settings', to: 'Agenda');
+    expect(selected, '/appointments');
+  });
+
+  testWidgets('releasing on the current destination does not change it', (
+    tester,
+  ) async {
+    String? selected;
+
+    await _pumpPill(
+      tester,
+      selectedRoute: '/home',
+      onDestinationSelected: (route) => selected = route,
     );
+
+    await tester.drag(find.text('Home'), const Offset(28, 0));
     await tester.pumpAndSettle();
     expect(selected, isNull);
   });

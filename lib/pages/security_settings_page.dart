@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
@@ -50,6 +52,17 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     super.dispose();
   }
 
+  String? get _totpSecret {
+    final url = _otpauthUrl;
+    if (url == null) return null;
+    return Uri.tryParse(url)?.queryParameters['secret'];
+  }
+
+  Future<void> _copyText(String text, String successMessage) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (mounted) AppToast.showSuccess(context, successMessage);
+  }
+
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
@@ -77,7 +90,9 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
   Future<void> _confirmMfa() async {
     try {
-      final codes = await _authRepository.confirmMfa(code: _mfaCodeController.text.trim());
+      final codes = await _authRepository.confirmMfa(
+        code: _mfaCodeController.text.trim(),
+      );
       setState(() {
         _recoveryCodes = codes;
         _mfaEnabled = true;
@@ -123,7 +138,10 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
         email: _recoveryEmailController.text.trim(),
       );
       if (mounted) {
-        AppToast.showSuccess(context, AppLocalizations.of(context).authRecoveryRequestSent);
+        AppToast.showSuccess(
+          context,
+          AppLocalizations.of(context).authRecoveryRequestSent,
+        );
       }
     } catch (e) {
       if (mounted) AppToast.showError(context, e.toString());
@@ -142,6 +160,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final secret = _totpSecret;
 
     return AppScaffold(
       title: l10n.authSecurityTitle,
@@ -152,7 +171,8 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               children: [
                 AppSettingsTile(
                   title: l10n.authMfaTitle,
-                  subtitle: _mfaEnabled ? l10n.authMfaEnabled : l10n.authMfaDisabled,
+                  subtitle:
+                      _mfaEnabled ? l10n.authMfaEnabled : l10n.authMfaDisabled,
                   child: _mfaEnabled
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -174,20 +194,67 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             if (_otpauthUrl != null) ...[
+                              AppText(
+                                l10n.authMfaManualHint,
+                                variant: AppTextVariant.body,
+                                color: context.secondaryTextColor,
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              if (secret != null) ...[
+                                AppText(
+                                  l10n.authMfaSecretLabel,
+                                  variant: AppTextVariant.label,
+                                  color: context.secondaryTextColor,
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                SelectableText(
+                                  secret,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontFamily: 'monospace',
+                                        letterSpacing: 1.2,
+                                      ),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                AppButton(
+                                  label: l10n.authMfaCopySecret,
+                                  style: AppButtonStyle.secondary,
+                                  onPressed: () => _copyText(
+                                    secret,
+                                    l10n.authMfaSecretCopied,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                              ],
+                              AppButton(
+                                label: l10n.authMfaCopyUri,
+                                style: AppButtonStyle.tertiary,
+                                onPressed: () => _copyText(
+                                  _otpauthUrl!,
+                                  l10n.authMfaUriCopied,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.md),
                               Center(
                                 child: QrImageView(
                                   data: _otpauthUrl!,
                                   size: 180,
+                                  backgroundColor: Colors.white,
                                 ),
                               ),
-                              const SizedBox(height: AppSpacing.sm),
+                              const SizedBox(height: AppSpacing.md),
                               AppInput(
                                 variant: AppInputVariant.text,
                                 label: l10n.authMfaCodeLabel,
                                 controller: _mfaCodeController,
                               ),
                               const SizedBox(height: AppSpacing.sm),
-                              AppButton(label: l10n.authMfaConfirm, onPressed: _confirmMfa),
+                              AppButton(
+                                label: l10n.authMfaConfirm,
+                                onPressed: _confirmMfa,
+                              ),
                             ] else
                               AppButton(
                                 label: l10n.authMfaEnroll,
@@ -200,7 +267,10 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                   const Divider(),
                   AppSettingsTile(
                     title: l10n.authRecoveryCodesTitle,
-                    child: AppText(_recoveryCodes.join('\n'), variant: AppTextVariant.body),
+                    child: AppText(
+                      _recoveryCodes.join('\n'),
+                      variant: AppTextVariant.body,
+                    ),
                   ),
                 ],
                 const Divider(),
@@ -218,9 +288,15 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                           ),
                         ),
                       if (_passkeysSupported)
-                        AppButton(label: l10n.authPasskeyAdd, onPressed: _addPasskey)
+                        AppButton(
+                          label: l10n.authPasskeyAdd,
+                          onPressed: _addPasskey,
+                        )
                       else
-                        AppText(l10n.authPasskeyUnsupported, variant: AppTextVariant.body),
+                        AppText(
+                          l10n.authPasskeyUnsupported,
+                          variant: AppTextVariant.body,
+                        ),
                     ],
                   ),
                 ),
@@ -250,7 +326,10 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                   subtitle: l10n.authDigestHint,
                   child: SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: AppText(l10n.authDigestOptIn, variant: AppTextVariant.body),
+                    title: AppText(
+                      l10n.authDigestOptIn,
+                      variant: AppTextVariant.body,
+                    ),
                     value: _digestOptIn,
                     onChanged: _toggleDigest,
                   ),

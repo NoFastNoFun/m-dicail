@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
@@ -47,7 +48,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         password: _passwordController.text,
       );
       if (mounted) {
-        AppToast.showSuccess(context, AppLocalizations.of(context).authResetPasswordSuccess);
+        TextInput.finishAutofillContext();
+        AppToast.showSuccess(
+          context,
+          AppLocalizations.of(context).authResetPasswordSuccess,
+        );
         context.go(AppRoutes.login);
       }
     } catch (e) {
@@ -67,27 +72,35 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: AppFormConstraint(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppText(l10n.authResetPasswordHint, variant: AppTextVariant.body),
-                  const SizedBox(height: AppSpacing.lg),
-                  AppInput(
-                    variant: AppInputVariant.password,
-                    label: l10n.loginPasswordLabel,
-                    controller: _passwordController,
-                    messageResolver: _messageResolver,
-                    validator: InputValidators.validatePassword,
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  AppButton(
-                    label: l10n.authResetPasswordSubmit,
-                    onPressed: _submit,
-                    isLoading: _loading,
-                  ),
-                ],
+            child: AutofillGroup(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppText(
+                      l10n.authResetPasswordHint,
+                      variant: AppTextVariant.body,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    AppInput(
+                      variant: AppInputVariant.password,
+                      label: l10n.loginPasswordLabel,
+                      controller: _passwordController,
+                      messageResolver: _messageResolver,
+                      validator: InputValidators.validatePassword,
+                      autofillHints: const [AutofillHints.newPassword],
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _submit(),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    AppButton(
+                      label: l10n.authResetPasswordSubmit,
+                      onPressed: _submit,
+                      isLoading: _loading,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

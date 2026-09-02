@@ -76,7 +76,17 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
-        builder: (context, state) => const ForgotPasswordPage(),
+        pageBuilder: (context, state) {
+          final email = state.extra is String ? state.extra as String : null;
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: ForgotPasswordPage(initialEmail: email),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.resetPassword,

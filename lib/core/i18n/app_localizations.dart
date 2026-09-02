@@ -1360,6 +1360,42 @@ abstract class AppLocalizations {
   /// **'Desactive'**
   String get authMfaDisabled;
 
+  /// No description provided for @authMfaManualHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur mobile, copiez la cle secrete dans votre application d\'authentification.'**
+  String get authMfaManualHint;
+
+  /// No description provided for @authMfaSecretLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cle secrete'**
+  String get authMfaSecretLabel;
+
+  /// No description provided for @authMfaCopySecret.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier la cle'**
+  String get authMfaCopySecret;
+
+  /// No description provided for @authMfaCopyUri.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le lien otpauth'**
+  String get authMfaCopyUri;
+
+  /// No description provided for @authMfaSecretCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cle secrete copiee'**
+  String get authMfaSecretCopied;
+
+  /// No description provided for @authMfaUriCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien otpauth copie'**
+  String get authMfaUriCopied;
+
   /// No description provided for @authPasskeyLogin.
   ///
   /// In fr, this message translates to:
@@ -1485,6 +1521,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réglages'**
   String get settingsTitle;
+
+  /// No description provided for @settingsSectionDisplay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage'**
+  String get settingsSectionDisplay;
+
+  /// No description provided for @settingsSectionSession.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations'**
+  String get settingsSectionSession;
+
+  /// No description provided for @settingsSectionAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get settingsSectionAccount;
 
   /// No description provided for @settingsTheme.
   ///

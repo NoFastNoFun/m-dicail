@@ -199,14 +199,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     await _authRepository.logout();
-    _authNotifier.setGuest(true);
-    emit(const AuthGuest());
+    _authNotifier.setAuthenticated(false);
+    _authNotifier.setGuest(false);
+    emit(const AuthUnauthenticated());
   }
 
   Future<void> _onAuthSessionExpired(
     AuthSessionExpired event,
     Emitter<AuthState> emit,
   ) async {
+    _authNotifier.setAuthenticated(false);
+    _authNotifier.setGuest(false);
     emit(const AuthSessionExpiredState());
     emit(const AuthUnauthenticated());
   }

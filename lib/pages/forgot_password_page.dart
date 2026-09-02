@@ -14,21 +14,37 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key, this.initialEmail});
+
+  final String? initialEmail;
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _emailController = TextEditingController();
+  late final TextEditingController _emailController;
   bool _loading = false;
   bool _sent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController(text: widget.initialEmail ?? '');
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
+  }
+
+  void _backToLogin() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppRoutes.login);
+    }
   }
 
   Future<void> _submit() async {
@@ -49,43 +65,78 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return AppScaffold(
-      title: l10n.authForgotPasswordTitle,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: AppFormConstraint(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppText(
-                  _sent ? l10n.authForgotPasswordSent : l10n.authForgotPasswordHint,
-                  variant: AppTextVariant.body,
-                  color: context.secondaryTextColor,
+    return Theme(
+      data: Theme.of(context).authSurface,
+      child: AppScaffold(
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.xl,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - AppSpacing.xxl,
                 ),
-                if (!_sent) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  AppInput(
-                    variant: AppInputVariant.email,
-                    label: l10n.loginEmailLabel,
-                    controller: _emailController,
+                child: AppFormConstraint(
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppText(
+                          l10n.authForgotPasswordTitle,
+                          variant: AppTextVariant.display,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppText(
+                          _sent
+                              ? l10n.authForgotPasswordSent
+                              : l10n.authForgotPasswordHint,
+                          variant: AppTextVariant.body,
+                          color: context.secondaryTextColor,
+                        ),
+                        if (!_sent) ...[
+                          const SizedBox(
+                            height: AppSpacing.xxl + AppSpacing.sm,
+                          ),
+                          Hero(
+                            tag: 'auth-email-field',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: AppInput(
+                                variant: AppInputVariant.email,
+                                label: l10n.loginEmailLabel,
+                                controller: _emailController,
+                                autofillHints: const [
+                                  AutofillHints.username,
+                                  AutofillHints.email,
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+                          AppButton(
+                            label: l10n.authForgotPasswordSubmit,
+                            onPressed: _submit,
+                            isLoading: _loading,
+                          ),
+                        ],
+                        const SizedBox(height: AppSpacing.lg),
+                        AppButton(
+                          label: l10n.authBackToLogin,
+                          style: AppButtonStyle.tertiary,
+                          onPressed: _backToLogin,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
-                  AppButton(
-                    label: l10n.authForgotPasswordSubmit,
-                    onPressed: _submit,
-                    isLoading: _loading,
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.md),
-                AppButton(
-                  label: l10n.authBackToLogin,
-                  style: AppButtonStyle.secondary,
-                  onPressed: () => context.go(AppRoutes.login),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

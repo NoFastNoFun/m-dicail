@@ -31,6 +31,7 @@ class AppInput extends StatefulWidget {
     this.onFieldSubmitted,
     this.keyboardType,
     this.inputFormatters,
+    this.autofillHints,
   });
 
   final AppInputVariant variant;
@@ -53,6 +54,7 @@ class AppInput extends StatefulWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -94,6 +96,15 @@ class _AppInputState extends State<AppInput> {
     return widget.messageResolver?.call(key) ?? key;
   }
 
+  Iterable<String>? _effectiveAutofillHints() {
+    if (widget.autofillHints != null) return widget.autofillHints;
+    return switch (widget.variant) {
+      AppInputVariant.email => const [AutofillHints.email],
+      AppInputVariant.password => const [AutofillHints.password],
+      _ => null,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final secondaryColor = context.secondaryTextColor;
@@ -102,8 +113,10 @@ class _AppInputState extends State<AppInput> {
 
     final effectiveValidator = widget.validator ?? _defaultValidator;
     final isPassword = widget.variant == AppInputVariant.password;
+    final isEmail = widget.variant == AppInputVariant.email;
     final isTextarea = widget.variant == AppInputVariant.textarea;
     final lines = widget.maxLines ?? (isTextarea ? 4 : 1);
+    final disableSuggestions = isEmail || isPassword;
 
     return TextFormField(
       controller: widget.controller,
@@ -116,6 +129,9 @@ class _AppInputState extends State<AppInput> {
       maxLines: isPassword ? 1 : lines,
       maxLength: widget.maxLength,
       autovalidateMode: widget.autovalidateMode,
+      autofillHints: _effectiveAutofillHints(),
+      autocorrect: !disableSuggestions,
+      enableSuggestions: !disableSuggestions,
       validator: (value) {
         if (widget.errorText != null) return widget.errorText;
         return effectiveValidator(value);

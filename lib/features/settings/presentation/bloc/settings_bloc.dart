@@ -12,8 +12,15 @@ import 'package:medicail/features/settings/presentation/notifier/settings_notifi
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(
     this._repository,
-    this._settingsNotifier,
-  ) : super(const SettingsInitial()) {
+    SettingsNotifier settingsNotifier,
+  ) : _settingsNotifier = settingsNotifier,
+      super(
+        SettingsLoaded(
+          themeVariant: settingsNotifier.themeVariant,
+          fontScale: settingsNotifier.fontScale,
+          defaultSessionLength: settingsNotifier.defaultSessionLength,
+        ),
+      ) {
     on<SettingsLoadRequested>(_onLoadRequested);
     on<SettingsThemeChanged>(_onThemeChanged);
     on<SettingsFontScaleChanged>(_onFontScaleChanged);
@@ -27,7 +34,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsLoadRequested event,
     Emitter<SettingsState> emit,
   ) async {
-    emit(const SettingsLoading());
+    if (state is! SettingsLoaded) {
+      emit(const SettingsLoading());
+    }
 
     AppThemeVariant themeVariant = AppThemeVariant.light;
     AppFontScale fontScale = AppFontScale.defaultScale;

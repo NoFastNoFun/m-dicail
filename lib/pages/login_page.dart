@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
-import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
@@ -29,18 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _passkeysSupported = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkPasskeys();
-  }
-
-  Future<void> _checkPasskeys() async {
-    final supported = await getIt<PasskeyService>().isSupported();
-    if (mounted) setState(() => _passkeysSupported = supported);
-  }
 
   @override
   void dispose() {
@@ -75,8 +62,9 @@ class _LoginPageState extends State<LoginPage> {
     final l10n = AppLocalizations.of(context);
 
     return Theme(
-      data: Theme.of(context).highContrastSurface,
+      data: Theme.of(context).authSurface,
       child: AppScaffold(
+        hideAppBar: true,
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {
@@ -84,105 +72,118 @@ class _LoginPageState extends State<LoginPage> {
             } else if (state is AuthMfaRequired) {
               context.push(AppRoutes.loginMfa, extra: state);
             } else if (state is AuthGuest || state is AuthAuthenticated) {
+              TextInput.finishAutofillContext();
               context.go(AppRoutes.home);
             }
           },
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: AppFormConstraint(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Icon(
-                        Icons.medical_services_rounded,
-                        size: 64,
-                        color: context.colorScheme.primary,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      AppText(
-                        l10n.loginWelcomeTitle,
-                        variant: AppTextVariant.headline,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      AppText(
-                        l10n.loginWelcomeSubtitle,
-                        variant: AppTextVariant.body,
-                        color: context.secondaryTextColor,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-                      AppInput(
-                        variant: AppInputVariant.email,
-                        label: l10n.loginEmailLabel,
-                        controller: _emailController,
-                        messageResolver: _messageResolver,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      AppInput(
-                        variant: AppInputVariant.password,
-                        label: l10n.loginPasswordLabel,
-                        controller: _passwordController,
-                        messageResolver: _messageResolver,
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () => context.push(AppRoutes.forgotPassword),
-                          child: AppText(
-                            l10n.authForgotPasswordLink,
-                            variant: AppTextVariant.body,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return AppButton(
-                            label: l10n.homeSignIn,
-                            onPressed: _submit,
-                            isLoading: state is AuthLoading,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      if (_passkeysSupported)
-                        AppButton(
-                          label: l10n.authPasskeyLogin,
-                          style: AppButtonStyle.secondary,
-                          onPressed: () {
-                            context.read<AuthBloc>().add(
-                              AuthPasskeyLoginRequested(
-                                email: _emailController.text.trim(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.xxl,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - AppSpacing.xxl,
+                  ),
+                  child: AppFormConstraint(
+                    child: AutofillGroup(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AppText(
+                              l10n.loginWelcomeTitle,
+                              variant: AppTextVariant.display,
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            AppText(
+                              l10n.loginWelcomeSubtitle,
+                              variant: AppTextVariant.body,
+                              color: context.secondaryTextColor,
+                            ),
+                            const SizedBox(
+                              height: AppSpacing.xxl + AppSpacing.sm,
+                            ),
+                            Hero(
+                              tag: 'auth-email-field',
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: AppInput(
+                                  variant: AppInputVariant.email,
+                                  label: l10n.loginEmailLabel,
+                                  controller: _emailController,
+                                  messageResolver: _messageResolver,
+                                  autofillHints: const [
+                                    AutofillHints.username,
+                                    AutofillHints.email,
+                                  ],
+                                  textInputAction: TextInputAction.next,
+                                ),
                               ),
-                            );
-                          },
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            AppInput(
+                              variant: AppInputVariant.password,
+                              label: l10n.loginPasswordLabel,
+                              controller: _passwordController,
+                              messageResolver: _messageResolver,
+                              autofillHints: const [AutofillHints.password],
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (_) => _submit(),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () => context.push(
+                                  AppRoutes.forgotPassword,
+                                  extra: _emailController.text,
+                                ),
+                                child: AppText(
+                                  l10n.authForgotPasswordLink,
+                                  variant: AppTextVariant.label,
+                                  color: context.colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                                return AppButton(
+                                  label: l10n.homeSignIn,
+                                  onPressed: _submit,
+                                  isLoading: state is AuthLoading,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            AppButton(
+                              label: l10n.loginCreateAccountButton,
+                              style: AppButtonStyle.tertiary,
+                              onPressed: () =>
+                                  context.push(AppRoutes.register),
+                            ),
+                            AppButton(
+                              label: l10n.loginContinueWithoutAccount,
+                              style: AppButtonStyle.tertiary,
+                              onPressed: () {
+                                context.read<AuthBloc>().add(
+                                  const AuthGuestContinueRequested(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      if (_passkeysSupported) const SizedBox(height: AppSpacing.md),
-                      AppButton(
-                        label: l10n.loginContinueWithoutAccount,
-                        style: AppButtonStyle.secondary,
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                            const AuthGuestContinueRequested(),
-                          );
-                        },
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppButton(
-                        label: l10n.loginCreateAccountButton,
-                        style: AppButtonStyle.secondary,
-                        onPressed: () => context.push(AppRoutes.register),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

@@ -667,6 +667,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authMfaDisabled => 'Desactive';
 
   @override
+  String get authMfaManualHint =>
+      'Sur mobile, copiez la cle secrete dans votre application d\'authentification.';
+
+  @override
+  String get authMfaSecretLabel => 'Cle secrete';
+
+  @override
+  String get authMfaCopySecret => 'Copier la cle';
+
+  @override
+  String get authMfaCopyUri => 'Copier le lien otpauth';
+
+  @override
+  String get authMfaSecretCopied => 'Cle secrete copiee';
+
+  @override
+  String get authMfaUriCopied => 'Lien otpauth copie';
+
+  @override
   String get authPasskeyLogin => 'Se connecter avec une passkey';
 
   @override
@@ -732,6 +751,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Réglages';
+
+  @override
+  String get settingsSectionDisplay => 'Affichage';
+
+  @override
+  String get settingsSectionSession => 'Consultations';
+
+  @override
+  String get settingsSectionAccount => 'Compte';
 
   @override
   String get settingsTheme => 'Theme';
