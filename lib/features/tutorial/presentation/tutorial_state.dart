@@ -7,7 +7,6 @@ sealed class TutorialState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Storage has not been read yet. Do not prompt for the tutorial.
 final class TutorialLoading extends TutorialState {
   const TutorialLoading();
 }

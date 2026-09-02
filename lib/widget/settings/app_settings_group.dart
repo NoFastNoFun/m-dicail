@@ -4,7 +4,6 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/app_text.dart';
 
-/// One UI settings group: section label above a rounded surface card.
 class AppSettingsGroup extends StatelessWidget {
   const AppSettingsGroup({
     super.key,

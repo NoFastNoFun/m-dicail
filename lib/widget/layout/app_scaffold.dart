@@ -30,7 +30,6 @@ class AppScaffold extends StatelessWidget {
   /// When false, [body] spans the full width (rare; prefer default).
   final bool constrainBody;
 
-  /// Hide the app bar when there is no back affordance (e.g. auth welcome).
   final bool hideAppBar;
 
   static const _shellRootRoutes = {

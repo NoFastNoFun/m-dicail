@@ -14,8 +14,6 @@ extension MedicailThemeColors on BuildContext {
 }
 
 extension MedicailHighContrastTheme on ThemeData {
-  /// Onboarding/dialog overlays that need maximum contrast.
-  /// Follows the active brightness so dark mode stays dark.
   ThemeData get highContrastSurface {
     final isDark = brightness == Brightness.dark;
     final bg =
