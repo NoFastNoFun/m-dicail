@@ -36,8 +36,6 @@ extension MedicailHighContrastTheme on ThemeData {
     );
   }
 
-  /// One UI 7/8-style auth surfaces: soft filled fields, large radii,
-  /// theme-aware colors (no forced white page).
   ThemeData get authSurface {
     final pageBg = scaffoldBackgroundColor;
     final fieldFill = Color.alphaBlend(
