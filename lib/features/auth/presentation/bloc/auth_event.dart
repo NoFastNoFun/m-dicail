@@ -21,6 +21,35 @@ class AuthLoginRequested extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
+class AuthPasskeyLoginRequested extends AuthEvent {
+  const AuthPasskeyLoginRequested({required this.email});
+
+  final String email;
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class AuthMfaVerifyRequested extends AuthEvent {
+  const AuthMfaVerifyRequested({required this.mfaToken, required this.code});
+
+  final String mfaToken;
+  final String code;
+
+  @override
+  List<Object?> get props => [mfaToken, code];
+}
+
+class AuthMfaPasskeyRequested extends AuthEvent {
+  const AuthMfaPasskeyRequested({required this.mfaToken, required this.email});
+
+  final String mfaToken;
+  final String email;
+
+  @override
+  List<Object?> get props => [mfaToken, email];
+}
+
 class AuthRegisterRequested extends AuthEvent {
   const AuthRegisterRequested({
     required this.email,

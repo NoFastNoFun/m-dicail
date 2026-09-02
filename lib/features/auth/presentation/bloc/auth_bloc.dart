@@ -6,6 +6,7 @@ import 'package:medicail/core/auth/auth_session_coordinator.dart';
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/core/storage/app_session_storage.dart';
+import 'package:medicail/features/auth/domain/entities/login_result.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:medicail/core/error/failure.dart';
@@ -23,6 +24,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) : super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
+    on<AuthPasskeyLoginRequested>(_onAuthPasskeyLoginRequested);
+    on<AuthMfaVerifyRequested>(_onAuthMfaVerifyRequested);
+    on<AuthMfaPasskeyRequested>(_onAuthMfaPasskeyRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthGuestContinueRequested>(_onAuthGuestContinueRequested);
@@ -94,24 +98,79 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthGuest());
   }
 
+  Future<void> _completeAuthenticated(Emitter<AuthState> emit, user) async {
+    await _sessionStorage.markOnboardingCompleted();
+    _authNotifier.setHasCompletedOnboarding(true);
+    _authNotifier.setAuthenticated(true);
+    emit(AuthAuthenticated(user));
+  }
+
   Future<void> _onAuthLoginRequested(
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.login(
+      final result = await _authRepository.login(
         email: event.email,
         password: event.password,
       );
-      await _sessionStorage.markOnboardingCompleted();
-      _authNotifier.setHasCompletedOnboarding(true);
-      _authNotifier.setAuthenticated(true);
-      emit(AuthAuthenticated(user));
+      switch (result) {
+        case LoginAuthenticated(:final user):
+          await _completeAuthenticated(emit, user);
+        case LoginMfaRequired(:final mfaToken, :final methods, :final email):
+          emit(AuthMfaRequired(mfaToken: mfaToken, methods: methods, email: email));
+      }
     } catch (e) {
       _authNotifier.setAuthenticated(false);
       emit(AuthError(Failure.fromException(e).message));
       emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onAuthPasskeyLoginRequested(
+    AuthPasskeyLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      final user = await _authRepository.loginWithPasskey(email: event.email);
+      await _completeAuthenticated(emit, user);
+    } catch (e) {
+      emit(AuthError(Failure.fromException(e).message));
+      emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onAuthMfaVerifyRequested(
+    AuthMfaVerifyRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      final user = await _authRepository.verifyMfa(
+        mfaToken: event.mfaToken,
+        code: event.code,
+      );
+      await _completeAuthenticated(emit, user);
+    } catch (e) {
+      emit(AuthError(Failure.fromException(e).message));
+    }
+  }
+
+  Future<void> _onAuthMfaPasskeyRequested(
+    AuthMfaPasskeyRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      final user = await _authRepository.verifyMfaWithPasskey(
+        mfaToken: event.mfaToken,
+        email: event.email,
+      );
+      await _completeAuthenticated(emit, user);
+    } catch (e) {
+      emit(AuthError(Failure.fromException(e).message));
     }
   }
 
@@ -126,10 +185,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
         fullName: event.fullName,
       );
-      await _sessionStorage.markOnboardingCompleted();
-      _authNotifier.setHasCompletedOnboarding(true);
-      _authNotifier.setAuthenticated(true);
-      emit(AuthAuthenticated(user));
+      await _completeAuthenticated(emit, user);
     } catch (e) {
       _authNotifier.setAuthenticated(false);
       emit(AuthError(Failure.fromException(e).message));

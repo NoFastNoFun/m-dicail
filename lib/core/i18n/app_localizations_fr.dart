@@ -582,6 +582,117 @@ class AppLocalizationsFr extends AppLocalizations {
   String get registerSubmit => 'S\'inscrire';
 
   @override
+  String get authForgotPasswordLink => 'Mot de passe oublie ?';
+
+  @override
+  String get authForgotPasswordTitle => 'Mot de passe oublie';
+
+  @override
+  String get authForgotPasswordHint =>
+      'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de reinitialisation.';
+
+  @override
+  String get authForgotPasswordSubmit => 'Envoyer le lien';
+
+  @override
+  String get authForgotPasswordSent =>
+      'Si un compte existe pour cette adresse, un email vient d\'etre envoye.';
+
+  @override
+  String get authResetPasswordTitle => 'Nouveau mot de passe';
+
+  @override
+  String get authResetPasswordHint =>
+      'Choisissez un nouveau mot de passe pour votre compte.';
+
+  @override
+  String get authResetPasswordSubmit => 'Reinitialiser';
+
+  @override
+  String get authResetPasswordSuccess => 'Mot de passe mis a jour.';
+
+  @override
+  String get authRecoveryTitle => 'Recuperation de compte';
+
+  @override
+  String get authRecoveryHint =>
+      'Confirmez la recuperation pour desactiver l\'authentification TOTP. Vos passkeys restent actives.';
+
+  @override
+  String get authRecoveryConfirm => 'Confirmer la recuperation';
+
+  @override
+  String get authRecoverySuccess =>
+      'Recuperation terminee. Vous pouvez vous reconnecter.';
+
+  @override
+  String get authRecoveryRequest => 'Demander un lien de recuperation';
+
+  @override
+  String get authRecoveryRequestSent =>
+      'Si un compte existe, un email de recuperation vient d\'etre envoye.';
+
+  @override
+  String get authRecoveryCodesTitle => 'Codes de recuperation';
+
+  @override
+  String get authBackToLogin => 'Retour a la connexion';
+
+  @override
+  String get authMfaTitle => 'Verification en deux etapes';
+
+  @override
+  String get authMfaHint =>
+      'Entrez le code de votre application d\'authentification ou un code de recuperation.';
+
+  @override
+  String get authMfaCodeLabel => 'Code';
+
+  @override
+  String get authMfaVerify => 'Verifier';
+
+  @override
+  String get authMfaEnroll => 'Activer TOTP';
+
+  @override
+  String get authMfaConfirm => 'Confirmer TOTP';
+
+  @override
+  String get authMfaDisable => 'Desactiver TOTP';
+
+  @override
+  String get authMfaEnabled => 'Active';
+
+  @override
+  String get authMfaDisabled => 'Desactive';
+
+  @override
+  String get authPasskeyLogin => 'Se connecter avec une passkey';
+
+  @override
+  String get authPasskeysTitle => 'Passkeys';
+
+  @override
+  String get authPasskeyAdd => 'Ajouter une passkey';
+
+  @override
+  String get authPasskeyUnsupported =>
+      'Passkeys non disponibles sur cette plateforme.';
+
+  @override
+  String get authSecurityTitle => 'Securite';
+
+  @override
+  String get authDigestTitle => 'Veille medicale';
+
+  @override
+  String get authDigestHint =>
+      'Recevoir un digest par email (bientot disponible).';
+
+  @override
+  String get authDigestOptIn => 'Activer le digest email';
+
+  @override
   String get recordingDateLabel => 'Date';
 
   @override

@@ -84,6 +84,16 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const Divider(),
+              AppSettingsTile(
+                title: l10n.authSecurityTitle,
+                trailing: const Icon(Icons.chevron_right),
+                child: AppButton(
+                  label: l10n.authSecurityTitle,
+                  style: AppButtonStyle.secondary,
+                  onPressed: () => context.push(AppRoutes.settingsSecurity),
+                ),
+              ),
+              const Divider(),
               InkWell(
                 onTap: () {
                   context.read<TutorialBloc>().add(

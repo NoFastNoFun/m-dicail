@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
@@ -27,6 +29,18 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _passkeysSupported = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPasskeys();
+  }
+
+  Future<void> _checkPasskeys() async {
+    final supported = await getIt<PasskeyService>().isSupported();
+    if (mounted) setState(() => _passkeysSupported = supported);
+  }
 
   @override
   void dispose() {
@@ -67,6 +81,8 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             if (state is AuthError) {
               AppToast.showError(context, state.message);
+            } else if (state is AuthMfaRequired) {
+              context.push(AppRoutes.loginMfa, extra: state);
             } else if (state is AuthGuest || state is AuthAuthenticated) {
               context.go(AppRoutes.home);
             }
@@ -113,7 +129,17 @@ class _LoginPageState extends State<LoginPage> {
                         controller: _passwordController,
                         messageResolver: _messageResolver,
                       ),
-                      const SizedBox(height: AppSpacing.xxl),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => context.push(AppRoutes.forgotPassword),
+                          child: AppText(
+                            l10n.authForgotPasswordLink,
+                            variant: AppTextVariant.body,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           return AppButton(
@@ -124,6 +150,19 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       const SizedBox(height: AppSpacing.md),
+                      if (_passkeysSupported)
+                        AppButton(
+                          label: l10n.authPasskeyLogin,
+                          style: AppButtonStyle.secondary,
+                          onPressed: () {
+                            context.read<AuthBloc>().add(
+                              AuthPasskeyLoginRequested(
+                                email: _emailController.text.trim(),
+                              ),
+                            );
+                          },
+                        ),
+                      if (_passkeysSupported) const SizedBox(height: AppSpacing.md),
                       AppButton(
                         label: l10n.loginContinueWithoutAccount,
                         style: AppButtonStyle.secondary,

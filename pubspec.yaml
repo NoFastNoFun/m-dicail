@@ -35,7 +35,8 @@ dependencies:
   whisper_kit: ^0.3.1
   url_launcher: ^6.3.2
   wakelock_plus: ^1.5.2
-  firebase_core: ^4.13.0
+  passkeys: ^2.22.3
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

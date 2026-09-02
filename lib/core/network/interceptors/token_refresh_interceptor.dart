@@ -19,6 +19,13 @@ class TokenRefreshInterceptor extends QueuedInterceptor {
     '/auth/register',
     '/auth/refresh',
     '/auth/logout',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/recovery/request',
+    '/auth/recovery/confirm',
+    '/auth/mfa/verify',
+    '/auth/passkeys/authenticate/options',
+    '/auth/passkeys/authenticate/verify',
   };
 
   final AuthTokenStorage _tokenStorage;

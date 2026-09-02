@@ -11,7 +11,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
   TutorialBloc(
     this._repository,
     this._recordingSessionRepository,
-  ) : super(const TutorialInitial()) {
+  ) : super(const TutorialLoading()) {
     on<TutorialCheckRequested>(_onCheckRequested);
     on<TutorialStartRequested>(_onStartRequested);
     on<TutorialStepCompleted>(_onStepCompleted);
@@ -48,6 +48,7 @@ class TutorialBloc extends Bloc<TutorialEvent, TutorialState> {
     Emitter<TutorialState> emit,
   ) async {
     await _purgeTutorialRecordings();
+    await _repository.resetTutorial();
     final firstStep = TutorialFlow.firstStep;
     await _repository.setCurrentTutorialStep(firstStep);
     emit(TutorialInProgress(firstStep));

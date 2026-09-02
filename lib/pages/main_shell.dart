@@ -60,6 +60,10 @@ class _MainShellState extends State<MainShell> {
   }
 
   void _handleTutorialState(TutorialState state) {
+    if (state is TutorialLoading) {
+      return;
+    }
+
     if (state is TutorialInitial) {
       _didStartPatientsShowcase = false;
       _didStartQuickRecordShowcase = false;
@@ -69,6 +73,9 @@ class _MainShellState extends State<MainShell> {
         _didAskTutorialStart = true;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
+          if (context.read<TutorialBloc>().state is! TutorialInitial) {
+            return;
+          }
           final l10n = AppLocalizations.of(context);
           AppDialog.show(
             context,
