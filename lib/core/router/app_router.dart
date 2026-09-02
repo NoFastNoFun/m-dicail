@@ -19,8 +19,14 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
+import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/pages/login_page.dart';
 import 'package:medicail/pages/register_page.dart';
+import 'package:medicail/pages/forgot_password_page.dart';
+import 'package:medicail/pages/reset_password_page.dart';
+import 'package:medicail/pages/recovery_page.dart';
+import 'package:medicail/pages/mfa_login_page.dart';
+import 'package:medicail/pages/security_settings_page.dart';
 
 @lazySingleton
 class AppRouter {
@@ -28,7 +34,6 @@ class AppRouter {
 
   final AuthNotifier _authNotifier;
 
-  /// Root navigator key for overlays shown from [MaterialApp.router] builder.
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
@@ -37,10 +42,10 @@ class AppRouter {
     initialLocation: AppRoutes.home,
     refreshListenable: _authNotifier,
     redirect: (context, state) {
+      final location = state.uri.toString();
       final hasCompletedOnboarding = _authNotifier.hasCompletedOnboarding;
       final isAuthenticated = _authNotifier.isAuthenticated;
-      final isAuthRoute = state.uri.toString() == AppRoutes.login ||
-          state.uri.toString() == AppRoutes.register;
+      final isAuthRoute = _isPublicAuthRoute(location);
 
       if (_authNotifier.hasCompletedOnboarding &&
           !_authNotifier.canAccessApp &&
@@ -52,7 +57,7 @@ class AppRouter {
         return AppRoutes.login;
       }
 
-      if (isAuthenticated && isAuthRoute) {
+      if (isAuthenticated && (location == AppRoutes.login || location == AppRoutes.register)) {
         return AppRoutes.home;
       }
 
@@ -68,6 +73,46 @@ class AppRouter {
         path: AppRoutes.register,
         name: 'register',
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        pageBuilder: (context, state) {
+          final email = state.extra is String ? state.extra as String : null;
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: ForgotPasswordPage(initialEmail: email),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) => ResetPasswordPage(
+          token: state.uri.queryParameters['token'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.recovery,
+        builder: (context, state) => RecoveryPage(
+          token: state.uri.queryParameters['token'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.loginMfa,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is AuthMfaRequired) {
+            return MfaLoginPage(
+              mfaToken: extra.mfaToken,
+              methods: extra.methods,
+              email: extra.email,
+            );
+          }
+          return const LoginPage();
+        },
       ),
       ShellRoute(
         builder: (context, state, child) => MainShell(child: child),
@@ -98,6 +143,10 @@ class AppRouter {
             path: AppRoutes.settings,
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.settingsSecurity,
+            builder: (context, state) => const SecuritySettingsPage(),
           ),
           GoRoute(
             path: AppRoutes.medicalWatch,
@@ -161,6 +210,15 @@ class AppRouter {
       ),
     ),
   );
+
+  bool _isPublicAuthRoute(String location) {
+    return location == AppRoutes.login ||
+        location == AppRoutes.register ||
+        location.startsWith(AppRoutes.forgotPassword) ||
+        location.startsWith(AppRoutes.resetPassword) ||
+        location.startsWith(AppRoutes.recovery) ||
+        location.startsWith(AppRoutes.loginMfa);
+  }
 }
 
 extension AppRouterNavigation on BuildContext {

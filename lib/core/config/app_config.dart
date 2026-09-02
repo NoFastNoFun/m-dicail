@@ -4,8 +4,8 @@ import 'package:medicail/core/config/app_platform.dart';
 
 @lazySingleton
 class AppConfig {
-  static const String _debugDefaultBaseUrl = 'http://10.10.161.239//api/v1';
-  static const String _releaseBaseUrl = 'https://medicail.nf2.dev/api/v1';
+  static const String _debugDefaultBaseUrl = 'http://10.10.161.239/api/v1';
+  static const String _releaseBaseUrl = 'https://medicail.nf2.tech/api/v1';
   static const String mockAdminToken = 'mock_admin_token';
 
   String? _debugBackendUrlOverride;

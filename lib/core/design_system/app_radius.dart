@@ -8,6 +8,8 @@ abstract final class AppRadius {
   static const double md = 12;
   static const double lg = 16;
 
+  static const double xxl = 28;
+
   /// Softened radii for onboarding/tutorial surfaces.
   static const double onboardingSm = 12;
   static const double onboardingMd = 16;
@@ -18,6 +20,7 @@ abstract final class AppRadius {
   static const BorderRadius lgBorder = BorderRadius.vertical(
     top: Radius.circular(lg),
   );
+  static const BorderRadius xxlBorder = BorderRadius.all(Radius.circular(xxl));
   static const BorderRadius pillBorder = BorderRadius.all(
     Radius.circular(pill),
   );

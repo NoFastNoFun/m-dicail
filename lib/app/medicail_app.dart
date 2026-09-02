@@ -65,6 +65,7 @@ class _MedicailAppState extends State<MedicailApp> {
                           getIt<AuthBloc>()..add(const AuthCheckRequested()),
                     ),
                     BlocProvider<SettingsBloc>(
+                      lazy: false,
                       create: (_) => getIt<SettingsBloc>()
                         ..add(const SettingsLoadRequested()),
                     ),

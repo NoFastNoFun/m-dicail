@@ -17,6 +17,7 @@ class AppScaffold extends StatelessWidget {
     this.actions,
     this.contentMaxWidth,
     this.constrainBody = true,
+    this.hideAppBar = false,
   });
 
   final String? title;
@@ -28,6 +29,8 @@ class AppScaffold extends StatelessWidget {
 
   /// When false, [body] spans the full width (rare; prefer default).
   final bool constrainBody;
+
+  final bool hideAppBar;
 
   static const _shellRootRoutes = {
     AppRoutes.home,
@@ -67,24 +70,30 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
+    final hideBar = hideAppBar && !showBack && title == null &&
+        (actions == null || actions!.isEmpty);
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: theme.colorScheme.onSurface,
-        title: title != null ? _AppBarTitle(title: title!) : null,
-        centerTitle: !AppLayout.isExpanded(context),
-        automaticallyImplyLeading: false,
-        leading: showBack
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                color: theme.colorScheme.onSurface,
-                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                onPressed: () => context.pop(),
-              )
-            : null,
-        actions: actions,
-      ),
+      appBar: hideBar
+          ? null
+          : AppBar(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              foregroundColor: theme.colorScheme.onSurface,
+              title: title != null ? _AppBarTitle(title: title!) : null,
+              centerTitle: !AppLayout.isExpanded(context),
+              automaticallyImplyLeading: false,
+              leading: showBack
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      color: theme.colorScheme.onSurface,
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => context.pop(),
+                    )
+                  : null,
+              actions: actions,
+            ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,

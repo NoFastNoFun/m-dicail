@@ -1204,6 +1204,246 @@ abstract class AppLocalizations {
   /// **'S\'inscrire'**
   String get registerSubmit;
 
+  /// No description provided for @authForgotPasswordLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublie ?'**
+  String get authForgotPasswordLink;
+
+  /// No description provided for @authForgotPasswordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublie'**
+  String get authForgotPasswordTitle;
+
+  /// No description provided for @authForgotPasswordHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de reinitialisation.'**
+  String get authForgotPasswordHint;
+
+  /// No description provided for @authForgotPasswordSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer le lien'**
+  String get authForgotPasswordSubmit;
+
+  /// No description provided for @authForgotPasswordSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si un compte existe pour cette adresse, un email vient d\'etre envoye.'**
+  String get authForgotPasswordSent;
+
+  /// No description provided for @authResetPasswordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get authResetPasswordTitle;
+
+  /// No description provided for @authResetPasswordHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un nouveau mot de passe pour votre compte.'**
+  String get authResetPasswordHint;
+
+  /// No description provided for @authResetPasswordSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reinitialiser'**
+  String get authResetPasswordSubmit;
+
+  /// No description provided for @authResetPasswordSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe mis a jour.'**
+  String get authResetPasswordSuccess;
+
+  /// No description provided for @authRecoveryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recuperation de compte'**
+  String get authRecoveryTitle;
+
+  /// No description provided for @authRecoveryHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez la recuperation pour desactiver l\'authentification TOTP. Vos passkeys restent actives.'**
+  String get authRecoveryHint;
+
+  /// No description provided for @authRecoveryConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer la recuperation'**
+  String get authRecoveryConfirm;
+
+  /// No description provided for @authRecoverySuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recuperation terminee. Vous pouvez vous reconnecter.'**
+  String get authRecoverySuccess;
+
+  /// No description provided for @authRecoveryRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demander un lien de recuperation'**
+  String get authRecoveryRequest;
+
+  /// No description provided for @authRecoveryRequestSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si un compte existe, un email de recuperation vient d\'etre envoye.'**
+  String get authRecoveryRequestSent;
+
+  /// No description provided for @authRecoveryCodesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Codes de recuperation'**
+  String get authRecoveryCodesTitle;
+
+  /// No description provided for @authBackToLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour a la connexion'**
+  String get authBackToLogin;
+
+  /// No description provided for @authMfaTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verification en deux etapes'**
+  String get authMfaTitle;
+
+  /// No description provided for @authMfaHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez le code de votre application d\'authentification ou un code de recuperation.'**
+  String get authMfaHint;
+
+  /// No description provided for @authMfaCodeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code'**
+  String get authMfaCodeLabel;
+
+  /// No description provided for @authMfaVerify.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verifier'**
+  String get authMfaVerify;
+
+  /// No description provided for @authMfaEnroll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer TOTP'**
+  String get authMfaEnroll;
+
+  /// No description provided for @authMfaConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer TOTP'**
+  String get authMfaConfirm;
+
+  /// No description provided for @authMfaDisable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Desactiver TOTP'**
+  String get authMfaDisable;
+
+  /// No description provided for @authMfaEnabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Active'**
+  String get authMfaEnabled;
+
+  /// No description provided for @authMfaDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Desactive'**
+  String get authMfaDisabled;
+
+  /// No description provided for @authMfaManualHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur mobile, copiez la cle secrete dans votre application d\'authentification.'**
+  String get authMfaManualHint;
+
+  /// No description provided for @authMfaSecretLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cle secrete'**
+  String get authMfaSecretLabel;
+
+  /// No description provided for @authMfaCopySecret.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier la cle'**
+  String get authMfaCopySecret;
+
+  /// No description provided for @authMfaCopyUri.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le lien otpauth'**
+  String get authMfaCopyUri;
+
+  /// No description provided for @authMfaSecretCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cle secrete copiee'**
+  String get authMfaSecretCopied;
+
+  /// No description provided for @authMfaUriCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien otpauth copie'**
+  String get authMfaUriCopied;
+
+  /// No description provided for @authPasskeyLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter avec une passkey'**
+  String get authPasskeyLogin;
+
+  /// No description provided for @authPasskeysTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passkeys'**
+  String get authPasskeysTitle;
+
+  /// No description provided for @authPasskeyAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une passkey'**
+  String get authPasskeyAdd;
+
+  /// No description provided for @authPasskeyUnsupported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passkeys non disponibles sur cette plateforme.'**
+  String get authPasskeyUnsupported;
+
+  /// No description provided for @authSecurityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Securite'**
+  String get authSecurityTitle;
+
+  /// No description provided for @authDigestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille medicale'**
+  String get authDigestTitle;
+
+  /// No description provided for @authDigestHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir un digest par email (bientot disponible).'**
+  String get authDigestHint;
+
+  /// No description provided for @authDigestOptIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer le digest email'**
+  String get authDigestOptIn;
+
   /// No description provided for @recordingDateLabel.
   ///
   /// In fr, this message translates to:
@@ -1281,6 +1521,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réglages'**
   String get settingsTitle;
+
+  /// No description provided for @settingsSectionDisplay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage'**
+  String get settingsSectionDisplay;
+
+  /// No description provided for @settingsSectionSession.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultations'**
+  String get settingsSectionSession;
+
+  /// No description provided for @settingsSectionAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get settingsSectionAccount;
 
   /// No description provided for @settingsTheme.
   ///

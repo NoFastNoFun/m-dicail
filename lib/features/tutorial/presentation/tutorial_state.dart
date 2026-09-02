@@ -7,6 +7,10 @@ sealed class TutorialState extends Equatable {
   List<Object?> get props => [];
 }
 
+final class TutorialLoading extends TutorialState {
+  const TutorialLoading();
+}
+
 final class TutorialInitial extends TutorialState {
   const TutorialInitial();
 }

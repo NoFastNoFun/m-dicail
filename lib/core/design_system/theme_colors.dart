@@ -14,18 +14,85 @@ extension MedicailThemeColors on BuildContext {
 }
 
 extension MedicailHighContrastTheme on ThemeData {
-  /// Onboarding/auth surfaces that need true black-on-white readability.
   ThemeData get highContrastSurface {
+    final isDark = brightness == Brightness.dark;
+    final bg =
+        isDark ? AppColors.highContrastBlack : AppColors.highContrastWhite;
+    final fg =
+        isDark ? AppColors.highContrastWhite : AppColors.highContrastBlack;
+
     return withOnboardingShapes.copyWith(
-      scaffoldBackgroundColor: AppColors.highContrastWhite,
+      scaffoldBackgroundColor: bg,
       colorScheme: colorScheme.copyWith(
-        onSurface: AppColors.highContrastBlack,
-        primary: AppColors.highContrastBlack,
-        onPrimary: AppColors.highContrastWhite,
+        onSurface: fg,
+        primary: fg,
+        onPrimary: bg,
+        surface: isDark ? const Color(0xFF1A1A1A) : AppColors.surface,
       ),
       textTheme: textTheme.apply(
-        bodyColor: AppColors.highContrastBlack,
-        displayColor: AppColors.highContrastBlack,
+        bodyColor: fg,
+        displayColor: fg,
+      ),
+    );
+  }
+
+  ThemeData get authSurface {
+    final pageBg = scaffoldBackgroundColor;
+    final fieldFill = Color.alphaBlend(
+      colorScheme.onSurface.withValues(
+        alpha: brightness == Brightness.dark ? 0.12 : 0.06,
+      ),
+      pageBg,
+    );
+    final softBorder = OutlineInputBorder(
+      borderRadius: AppRadius.xxlBorder,
+      borderSide: BorderSide.none,
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderRadius: AppRadius.xxlBorder,
+      borderSide: BorderSide(color: colorScheme.primary, width: 2),
+    );
+    final errorBorder = OutlineInputBorder(
+      borderRadius: AppRadius.xxlBorder,
+      borderSide: BorderSide(color: colorScheme.error, width: 1.5),
+    );
+    final focusedErrorBorder = OutlineInputBorder(
+      borderRadius: AppRadius.xxlBorder,
+      borderSide: BorderSide(color: colorScheme.error, width: 2),
+    );
+
+    return copyWith(
+      inputDecorationTheme: inputDecorationTheme.copyWith(
+        filled: true,
+        fillColor: fieldFill,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.lg + 2,
+        ),
+        border: softBorder,
+        enabledBorder: softBorder,
+        focusedBorder: focusedBorder,
+        errorBorder: errorBorder,
+        focusedErrorBorder: focusedErrorBorder,
+        disabledBorder: softBorder,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(0, 52),
+          shape: AppRadius.pillShape,
+        ).merge(filledButtonTheme.style),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(0, 52),
+          shape: AppRadius.pillShape,
+        ).merge(outlinedButtonTheme.style),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
+          shape: AppRadius.pillShape,
+        ).merge(textButtonTheme.style),
       ),
     );
   }

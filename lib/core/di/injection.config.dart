@@ -24,6 +24,7 @@ import 'package:medicail/core/audio/recording_notification_service.dart'
     as _i117;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
+import 'package:medicail/core/auth/passkey_service.dart' as _i332;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
     as _i367;
@@ -151,6 +152,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
+    gh.lazySingleton<_i332.PasskeyService>(() => _i332.PasskeyService());
     gh.lazySingleton<_i155.AppConfig>(() => _i155.AppConfig());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
@@ -317,6 +319,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i985.AuthRepositoryImpl(
         gh<_i1005.ApiClient>(),
         gh<_i760.AuthTokenStorage>(),
+        gh<_i332.PasskeyService>(),
       ),
     );
     gh.lazySingleton<_i885.AppointmentRepository>(

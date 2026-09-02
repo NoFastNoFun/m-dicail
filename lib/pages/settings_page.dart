@@ -5,6 +5,7 @@ import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
@@ -18,10 +19,10 @@ import 'package:medicail/features/settings/presentation/bloc/settings_event.dart
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
-import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'package:medicail/widget/settings/app_settings_group.dart';
 import 'package:medicail/widget/settings/app_settings_tile.dart';
 import 'package:medicail/widget/settings/app_stepped_slider.dart';
 
@@ -31,6 +32,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final shellPadding = MainShellScope.scrollPaddingOf(context);
 
     return AppScaffold(
       title: l10n.settingsTitle,
@@ -41,79 +43,110 @@ class SettingsPage extends StatelessWidget {
           }
 
           return ListView(
-            padding: MainShellScope.scrollPaddingOf(context),
+            padding: shellPadding.copyWith(
+              bottom: shellPadding.bottom +
+                  (MainShellChrome.fabHeight + AppSpacing.xxl) / 2,
+            ),
             children: [
-              AppSettingsTile(
-                title: l10n.settingsTheme,
-                child: _ThemeSelector(
-                  selected: state.themeVariant,
-                  onChanged: (variant) => context.read<SettingsBloc>().add(
-                    SettingsThemeChanged(variant),
+              AppSettingsGroup(
+                title: l10n.settingsSectionDisplay,
+                children: [
+                  AppSettingsTile(
+                    icon: Icons.palette_outlined,
+                    title: l10n.settingsTheme,
+                    child: _ThemeSelector(
+                      selected: state.themeVariant,
+                      onChanged: (variant) => context.read<SettingsBloc>().add(
+                        SettingsThemeChanged(variant),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const Divider(),
-              AppSettingsTile(
-                title: l10n.settingsFontSize,
-                child: _FontScaleSelector(
-                  selected: state.fontScale,
-                  onChanged: (scale) => context.read<SettingsBloc>().add(
-                    SettingsFontScaleChanged(scale),
+                  AppSettingsTile(
+                    icon: Icons.format_size,
+                    title: l10n.settingsFontSize,
+                    child: _FontScaleSelector(
+                      selected: state.fontScale,
+                      onChanged: (scale) => context.read<SettingsBloc>().add(
+                        SettingsFontScaleChanged(scale),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              const Divider(),
-              AppSettingsTile(
-                title: l10n.settingsDefaultSessionLength,
-                child: _SessionLengthSelector(
-                  selected: state.defaultSessionLength,
-                  onChanged: (length) => context.read<SettingsBloc>().add(
-                    SettingsDefaultSessionLengthChanged(length),
+              AppSettingsGroup(
+                title: l10n.settingsSectionSession,
+                children: [
+                  AppSettingsTile(
+                    icon: Icons.timer_outlined,
+                    title: l10n.settingsDefaultSessionLength,
+                    child: _SessionLengthSelector(
+                      selected: state.defaultSessionLength,
+                      onChanged: (length) => context.read<SettingsBloc>().add(
+                        SettingsDefaultSessionLengthChanged(length),
+                      ),
+                    ),
                   ),
-                ),
+                  AppSettingsTile(
+                    icon: Icons.medical_information_outlined,
+                    title: l10n.settingsTemplates,
+                    showChevron: true,
+                    onTap: () => context.goTemplates(),
+                  ),
+                ],
               ),
-              const Divider(),
-              AppSettingsTile(
-                title: l10n.settingsTemplates,
-                subtitle: l10n.templatesTitle,
-                trailing: const Icon(Icons.chevron_right),
-                child: AppButton(
-                  label: l10n.settingsTemplates,
-                  style: AppButtonStyle.secondary,
-                  onPressed: () => context.goTemplates(),
-                ),
+              AppSettingsGroup(
+                title: l10n.settingsSectionAccount,
+                children: [
+                  AppSettingsTile(
+                    icon: Icons.lock_outline,
+                    title: l10n.authSecurityTitle,
+                    showChevron: true,
+                    onTap: () => context.push(AppRoutes.settingsSecurity),
+                  ),
+                  AppSettingsTile(
+                    icon: Icons.school_outlined,
+                    title: l10n.settingsRestartOnboarding,
+                    onTap: () {
+                      context.read<TutorialBloc>().add(
+                        const TutorialStartRequested(),
+                      );
+                      AppToast.showSuccess(context, l10n.tutorialRestarted);
+                      context.go(AppRoutes.home);
+                    },
+                  ),
+                ],
               ),
-              const Divider(),
-              InkWell(
-                onTap: () {
-                  context.read<TutorialBloc>().add(
-                    const TutorialStartRequested(),
-                  );
-                  AppToast.showSuccess(context, l10n.tutorialRestarted);
-                  context.go(AppRoutes.home);
-                },
-                child: AppSettingsTile(title: l10n.settingsRestartOnboarding),
-              ),
-              const Divider(),
-              const SizedBox(height: AppSpacing.lg),
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
-                  if (authState is AuthAuthenticated) {
-                    return AppButton(
-                      label: l10n.settingsLogout,
-                      style: AppButtonStyle.secondary,
-                      layout: AppButtonLayout.textWithIcon,
-                      icon: Icons.logout,
-                      onPressed: () => context.read<AuthBloc>().add(
-                        const AuthLogoutRequested(),
+                  final isAuthenticated = authState is AuthAuthenticated;
+                  final colorScheme = Theme.of(context).colorScheme;
+
+                  return AppSettingsGroup(
+                    children: [
+                      AppSettingsTile(
+                        icon: isAuthenticated
+                            ? Icons.logout
+                            : Icons.login,
+                        iconColor: isAuthenticated
+                            ? colorScheme.error
+                            : colorScheme.primary,
+                        titleColor: isAuthenticated
+                            ? colorScheme.error
+                            : null,
+                        title: isAuthenticated
+                            ? l10n.settingsLogout
+                            : l10n.settingsSignIn,
+                        onTap: () {
+                          if (isAuthenticated) {
+                            context.read<AuthBloc>().add(
+                              const AuthLogoutRequested(),
+                            );
+                          } else {
+                            context.push(AppRoutes.login);
+                          }
+                        },
                       ),
-                    );
-                  }
-                  return AppButton(
-                    label: l10n.homeSignIn,
-                    layout: AppButtonLayout.textWithIcon,
-                    icon: Icons.login,
-                    onPressed: () => context.push(AppRoutes.login),
+                    ],
                   );
                 },
               ),
@@ -135,25 +168,13 @@ class _ThemeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: [
-        _ChoiceChip(
-          label: l10n.settingsThemeLight,
-          isSelected: selected == AppThemeVariant.light,
-          onTap: () => onChanged(AppThemeVariant.light),
-        ),
-        _ChoiceChip(
-          label: l10n.settingsThemeDark,
-          isSelected: selected == AppThemeVariant.dark,
-          onTap: () => onChanged(AppThemeVariant.dark),
-        ),
-        _ChoiceChip(
-          label: l10n.settingsThemeSolarized,
-          isSelected: selected == AppThemeVariant.solarized,
-          onTap: () => onChanged(AppThemeVariant.solarized),
-        ),
+    return _SegmentedControl<AppThemeVariant>(
+      value: selected,
+      onChanged: onChanged,
+      options: [
+        (value: AppThemeVariant.light, label: l10n.settingsThemeLight),
+        (value: AppThemeVariant.dark, label: l10n.settingsThemeDark),
+        (value: AppThemeVariant.solarized, label: l10n.settingsThemeSolarized),
       ],
     );
   }
@@ -217,8 +238,47 @@ class _SessionLengthSelector extends StatelessWidget {
   }
 }
 
-class _ChoiceChip extends StatelessWidget {
-  const _ChoiceChip({
+class _SegmentedControl<T> extends StatelessWidget {
+  const _SegmentedControl({
+    required this.value,
+    required this.onChanged,
+    required this.options,
+  });
+
+  final T value;
+  final ValueChanged<T> onChanged;
+  final List<({T value, String label})> options;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+        borderRadius: AppRadius.pillBorder,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Row(
+          children: [
+            for (final option in options)
+              Expanded(
+                child: _SegmentedOption(
+                  label: option.label,
+                  isSelected: option.value == value,
+                  onTap: () => onChanged(option.value),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SegmentedOption extends StatelessWidget {
+  const _SegmentedOption({
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -233,22 +293,29 @@ class _ChoiceChip extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Material(
-      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+      color: isSelected ? theme.colorScheme.primary : Colors.transparent,
       borderRadius: AppRadius.pillBorder,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadius.pillBorder,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: AppSpacing.minTouchTarget - AppSpacing.sm,
           ),
-          child: AppText(
-            label,
-            variant: AppTextVariant.label,
-            color: isSelected
-                ? theme.colorScheme.onPrimary
-                : theme.colorScheme.onSurface,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              child: AppText(
+                label,
+                variant: AppTextVariant.label,
+                color: isSelected
+                    ? theme.colorScheme.onPrimary
+                    : context.secondaryTextColor,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ),
         ),
       ),

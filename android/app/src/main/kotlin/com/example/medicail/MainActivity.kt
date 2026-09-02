@@ -3,7 +3,6 @@ package dev.nf2.medicail
 import android.os.Build
 import android.os.Bundle
 import androidx.core.view.WindowCompat
-import com.google.firebase.appdistribution.FirebaseAppDistribution
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -50,11 +49,6 @@ class MainActivity : FlutterActivity() {
     override fun onStop() {
         unregisterScreenCaptureCallbackIfNeeded()
         super.onStop()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        FirebaseAppDistribution.getInstance().updateIfNewReleaseAvailable()
     }
 
     private fun registerScreenCaptureCallbackIfNeeded() {

@@ -25,6 +25,21 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [user];
 }
 
+class AuthMfaRequired extends AuthState {
+  const AuthMfaRequired({
+    required this.mfaToken,
+    required this.methods,
+    required this.email,
+  });
+
+  final String mfaToken;
+  final List<String> methods;
+  final String email;
+
+  @override
+  List<Object?> get props => [mfaToken, methods, email];
+}
+
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
@@ -44,4 +59,16 @@ class AuthError extends AuthState {
 
 class AuthSessionExpiredState extends AuthState {
   const AuthSessionExpiredState();
+}
+
+class AuthPasswordResetSent extends AuthState {
+  const AuthPasswordResetSent();
+}
+
+class AuthPasswordResetComplete extends AuthState {
+  const AuthPasswordResetComplete();
+}
+
+class AuthRecoveryComplete extends AuthState {
+  const AuthRecoveryComplete();
 }
