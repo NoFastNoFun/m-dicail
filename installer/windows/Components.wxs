@@ -62,6 +62,32 @@
             Value="[INSTALLFOLDER]"
             KeyPath="yes" />
       </Component>
+
+      <!-- Custom URL protocol so email bounce links open the desktop app -->
+      <Component Id="UrlProtocol" Directory="INSTALLFOLDER" Guid="*">
+        <RegistryValue
+            Root="HKLM"
+            Key="Software\Classes\medicail"
+            Name="URL Protocol"
+            Type="string"
+            Value=""
+            KeyPath="yes" />
+        <RegistryValue
+            Root="HKLM"
+            Key="Software\Classes\medicail"
+            Type="string"
+            Value="URL:Medicail Protocol" />
+        <RegistryValue
+            Root="HKLM"
+            Key="Software\Classes\medicail\DefaultIcon"
+            Type="string"
+            Value="[INSTALLFOLDER]medicail.exe,0" />
+        <RegistryValue
+            Root="HKLM"
+            Key="Software\Classes\medicail\shell\open\command"
+            Type="string"
+            Value="&quot;[INSTALLFOLDER]medicail.exe&quot; &quot;%1&quot;" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>

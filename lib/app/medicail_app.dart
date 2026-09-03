@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/config/app_theme.dart';
+import 'package:medicail/core/deeplink/auth_deeplink_listener.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/app_system_ui.dart';
@@ -27,10 +30,20 @@ class MedicailApp extends StatefulWidget {
 }
 
 class _MedicailAppState extends State<MedicailApp> {
+  AuthDeeplinkListener? _deeplinkListener;
+
   @override
   void initState() {
     super.initState();
     ShowcaseView.register();
+    _deeplinkListener = AuthDeeplinkListener(router: getIt<GoRouter>());
+    unawaited(_deeplinkListener!.start());
+  }
+
+  @override
+  void dispose() {
+    _deeplinkListener?.dispose();
+    super.dispose();
   }
 
   @override
