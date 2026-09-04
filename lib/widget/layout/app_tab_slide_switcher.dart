@@ -40,7 +40,7 @@ class _AppTabSlideSwitcherState extends State<AppTabSlideSwitcher> {
             fit: StackFit.expand,
             children: [
               ...previousChildren,
-              if (currentChild != null) currentChild,
+              ?currentChild,
             ],
           );
         },

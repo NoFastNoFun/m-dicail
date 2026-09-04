@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
+import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -55,7 +56,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
       setState(() => _sent = true);
     } catch (e) {
-      if (mounted) AppToast.showError(context, e.toString());
+      if (mounted) {
+        AppToast.showError(context, Failure.fromException(e).message);
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

@@ -49,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthLoading());
+    emit(const AuthChecking());
 
     final hasCompletedOnboarding =
         await _sessionStorage.hasCompletedOnboarding();
