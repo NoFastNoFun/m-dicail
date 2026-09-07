@@ -2,17 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_colors_dark.dart';
 import 'package:medicail/core/design_system/app_colors_solarized.dart';
+import 'package:medicail/core/design_system/app_custom_theme_palettes.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 
 abstract final class AppTheme {
-  static ThemeData forVariant(AppThemeVariant variant) {
+  static ThemeData forVariant(
+    AppThemeVariant variant, {
+    CustomThemeColors? customColors,
+  }) {
     return switch (variant) {
       AppThemeVariant.light => light,
       AppThemeVariant.dark => dark,
       AppThemeVariant.solarized => solarized,
+      AppThemeVariant.custom => custom(
+          customColors ?? CustomThemeColors.defaults(),
+        ),
     };
+  }
+
+  static ThemeData custom(CustomThemeColors colors) {
+    final background = colors.background;
+    final primary = colors.primary;
+    final isDark = AppCustomThemePalettes.isDarkBackground(background);
+    final brightness = isDark ? Brightness.dark : Brightness.light;
+    final textPrimary = _contrastOn(background);
+    final onPrimary = _contrastOn(primary);
+    final surfaceBlend = isDark ? 0.08 : 0.04;
+    final borderBlend = isDark ? 0.22 : 0.12;
+    final surface = Color.lerp(background, textPrimary, surfaceBlend)!;
+    final border = Color.lerp(background, textPrimary, borderBlend)!;
+    final textSecondary = Color.lerp(textPrimary, background, 0.35)!;
+    final textDisabled = Color.lerp(textPrimary, background, 0.55)!;
+    final secondary = Color.lerp(primary, textPrimary, 0.25)!;
+    final disabled = Color.lerp(background, textPrimary, isDark ? 0.2 : 0.25)!;
+    final onDisabled = Color.lerp(textPrimary, background, 0.4)!;
+    final error = isDark ? AppColorsDark.error : AppColors.error;
+    final onError = isDark ? AppColorsDark.onError : AppColors.onError;
+
+    return _buildTheme(
+      brightness: brightness,
+      background: background,
+      surface: surface,
+      primary: primary,
+      onPrimary: onPrimary,
+      secondary: secondary,
+      onSecondary: _contrastOn(secondary),
+      onSurface: textPrimary,
+      error: error,
+      onError: onError,
+      border: border,
+      disabled: disabled,
+      onDisabled: onDisabled,
+      textPrimary: textPrimary,
+      textSecondary: textSecondary,
+      textDisabled: textDisabled,
+    );
+  }
+
+  static Color _contrastOn(Color color) {
+    return color.computeLuminance() > 0.55
+        ? AppColors.black
+        : AppColors.highContrastWhite;
   }
 
   static ThemeData get light => _buildTheme(

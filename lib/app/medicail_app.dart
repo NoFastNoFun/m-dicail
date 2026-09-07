@@ -55,11 +55,17 @@ class _MedicailAppState extends State<MedicailApp> {
       builder: (context, _) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: AppSystemUi.overlayStyle(
-            AppTheme.forVariant(settingsNotifier.themeVariant).brightness,
+            AppTheme.forVariant(
+              settingsNotifier.themeVariant,
+              customColors: settingsNotifier.customThemeColors,
+            ).brightness,
           ),
           child: MaterialApp.router(
             title: 'Medicail',
-            theme: AppTheme.forVariant(settingsNotifier.themeVariant),
+            theme: AppTheme.forVariant(
+              settingsNotifier.themeVariant,
+              customColors: settingsNotifier.customThemeColors,
+            ),
             locale: const Locale('fr'),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,

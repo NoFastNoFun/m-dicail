@@ -41,14 +41,25 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   final _patientsNavKey = GlobalKey();
   final _quickRecordKey = GlobalKey();
+  final _addPatientFabKey = GlobalKey();
 
   bool _didAskTutorialStart = false;
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
+  bool _didStartPatientsAddShowcase = false;
   String? _lastLocation;
   bool _navLabelsVisible = true;
+  VoidCallback? _fabPrimaryAction;
 
   int? _lastSeenTutorialStep;
+
+  void _registerFabPrimaryAction(VoidCallback? action) {
+    if (_fabPrimaryAction == action) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _fabPrimaryAction = action);
+    });
+  }
 
   @override
   void initState() {
@@ -67,6 +78,7 @@ class _MainShellState extends State<MainShell> {
     if (state is TutorialInitial) {
       _didStartPatientsShowcase = false;
       _didStartQuickRecordShowcase = false;
+      _didStartPatientsAddShowcase = false;
       _lastSeenTutorialStep = null;
 
       if (!_didAskTutorialStart) {
@@ -114,6 +126,7 @@ class _MainShellState extends State<MainShell> {
     if (state is! TutorialInProgress) {
       _didStartPatientsShowcase = false;
       _didStartQuickRecordShowcase = false;
+      _didStartPatientsAddShowcase = false;
       _lastSeenTutorialStep = null;
       return;
     }
@@ -123,11 +136,16 @@ class _MainShellState extends State<MainShell> {
           TutorialFlow.indexOf(TutorialStepId.homePatients)) {
         _didStartPatientsShowcase = false;
         _didStartQuickRecordShowcase = false;
+        _didStartPatientsAddShowcase = false;
       }
       _lastSeenTutorialStep = state.currentStep;
+      if (mounted) {
+        setState(() {});
+      }
     }
 
     final currentStep = TutorialFlow.idFromIndex(state.currentStep);
+    final location = GoRouterState.of(context).matchedLocation;
 
     if (currentStep == TutorialStepId.homePatients &&
         !_didStartPatientsShowcase) {
@@ -141,8 +159,21 @@ class _MainShellState extends State<MainShell> {
       });
     }
 
+    if (currentStep == TutorialStepId.patientsAdd &&
+        location == AppRoutes.patients &&
+        !_didStartPatientsAddShowcase) {
+      TutorialShowcaseLauncher.startWhenReady(
+        context: context,
+        key: _addPatientFabKey,
+      ).then((started) {
+        if (mounted && started) {
+          _didStartPatientsAddShowcase = true;
+        }
+      });
+    }
+
     if (currentStep == TutorialStepId.homeQuickRecord) {
-      if (GoRouterState.of(context).matchedLocation != AppRoutes.home) {
+      if (location != AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
         return;
       }
@@ -276,7 +307,65 @@ class _MainShellState extends State<MainShell> {
     ];
   }
 
+  Future<void> _handlePatientsAddTutorialTap() async {
+    final tutorialBloc = context.read<TutorialBloc>();
+    if (!tutorialBloc.isCurrentStep(TutorialStepId.patientsAdd)) {
+      return;
+    }
+    ShowcaseView.get().dismiss();
+    tutorialBloc.completeStep(TutorialStepId.patientsAdd);
+    _fabPrimaryAction?.call();
+  }
+
   Widget _buildQuickRecordFab(AppLocalizations l10n) {
+    final location = GoRouterState.of(context).matchedLocation;
+    final tutorialState = context.read<TutorialBloc>().state;
+    final showPatientsAddShowcase =
+        location == AppRoutes.patients &&
+        tutorialState.isTutorialStep(TutorialStepId.patientsAdd);
+
+    final button = AppRadialActionButton(
+      anchor: AppRadialActionAnchor.end,
+      onPrimaryPressed: _fabPrimaryAction,
+      actions: [
+        AppRadialAction(
+          icon: Icons.event_outlined,
+          label: l10n.appointmentCreateTitle,
+          onTap: () =>
+              AppointmentFormSheet.show(context, initialDay: DateTime.now()),
+        ),
+        AppRadialAction(
+          icon: Icons.folder_outlined,
+          label: l10n.patientsSectionTitle,
+          onTap: () => context.go(AppRoutes.patients),
+        ),
+        AppRadialAction(
+          icon: Icons.mic_outlined,
+          label: l10n.radialActionNewRecord,
+          onTap: () async {
+            final tutorialBloc = context.read<TutorialBloc>();
+            if (tutorialBloc.isCurrentStep(TutorialStepId.homeQuickRecord)) {
+              await _handleHomeQuickRecordTutorialTap();
+              return;
+            }
+            _openQuickRecordIfAllowed();
+          },
+        ),
+      ],
+    );
+
+    if (showPatientsAddShowcase) {
+      return AppShowcase(
+        key: _addPatientFabKey,
+        title: l10n.tutorialPatientAddTitle,
+        description: l10n.tutorialPatientAddDesc,
+        disposeOnTap: false,
+        disableBarrierInteraction: true,
+        onTargetClick: _handlePatientsAddTutorialTap,
+        child: button,
+      );
+    }
+
     return AppShowcase(
       key: _quickRecordKey,
       title: l10n.tutorialHomeRecordTitle,
@@ -284,34 +373,7 @@ class _MainShellState extends State<MainShell> {
       disposeOnTap: false,
       disableBarrierInteraction: true,
       onTargetClick: _handleHomeQuickRecordTutorialTap,
-      child: AppRadialActionButton(
-        anchor: AppRadialActionAnchor.end,
-        actions: [
-          AppRadialAction(
-            icon: Icons.event_outlined,
-            label: l10n.appointmentCreateTitle,
-            onTap: () =>
-                AppointmentFormSheet.show(context, initialDay: DateTime.now()),
-          ),
-          AppRadialAction(
-            icon: Icons.folder_outlined,
-            label: l10n.patientsSectionTitle,
-            onTap: () => context.go(AppRoutes.patients),
-          ),
-          AppRadialAction(
-            icon: Icons.mic_outlined,
-            label: l10n.radialActionNewRecord,
-            onTap: () async {
-              final tutorialBloc = context.read<TutorialBloc>();
-              if (tutorialBloc.isCurrentStep(TutorialStepId.homeQuickRecord)) {
-                await _handleHomeQuickRecordTutorialTap();
-                return;
-              }
-              _openQuickRecordIfAllowed();
-            },
-          ),
-        ],
-      ),
+      child: button,
     );
   }
 
@@ -329,6 +391,14 @@ class _MainShellState extends State<MainShell> {
       _scheduleNavLabelReset();
       if (location == AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
+      }
+      if (location == AppRoutes.patients) {
+        _didStartPatientsAddShowcase = false;
+      }
+      // Leaving a page that registered a primary FAB action — clear it until
+      // the new page registers (if any).
+      if (_fabPrimaryAction != null) {
+        _fabPrimaryAction = null;
       }
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -426,6 +496,7 @@ class _MainShellState extends State<MainShell> {
 
     return MainShellScope(
       navLabelsVisible: _navLabelsVisible,
+      registerFabPrimaryAction: _registerFabPrimaryAction,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         extendBody: !useSideNav,

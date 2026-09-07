@@ -4,6 +4,7 @@ import 'package:medicail/features/settings/domain/repositories/user_preferences_
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
 import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
@@ -17,12 +18,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       super(
         SettingsLoaded(
           themeVariant: settingsNotifier.themeVariant,
+          customThemeColors: settingsNotifier.customThemeColors,
           fontScale: settingsNotifier.fontScale,
           defaultSessionLength: settingsNotifier.defaultSessionLength,
         ),
       ) {
     on<SettingsLoadRequested>(_onLoadRequested);
     on<SettingsThemeChanged>(_onThemeChanged);
+    on<SettingsCustomThemeColorsChanged>(_onCustomThemeColorsChanged);
     on<SettingsFontScaleChanged>(_onFontScaleChanged);
     on<SettingsDefaultSessionLengthChanged>(_onDefaultSessionLengthChanged);
   }
@@ -39,11 +42,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
 
     AppThemeVariant themeVariant = AppThemeVariant.light;
+    CustomThemeColors customThemeColors = CustomThemeColors.defaults();
     AppFontScale fontScale = AppFontScale.defaultScale;
     AppSessionLength defaultSessionLength = AppSessionLength.hour1;
 
     try {
       themeVariant = await _repository.readThemeVariant();
+      customThemeColors = await _repository.readCustomThemeColors();
       fontScale = await _repository.readFontScale();
       defaultSessionLength = await _repository.readDefaultSessionLength();
     } catch (e) {
@@ -51,11 +56,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
 
     _settingsNotifier.setThemeVariant(themeVariant);
+    _settingsNotifier.setCustomThemeColors(customThemeColors);
     _settingsNotifier.setFontScale(fontScale);
     _settingsNotifier.setDefaultSessionLength(defaultSessionLength);
 
     emit(SettingsLoaded(
       themeVariant: themeVariant,
+      customThemeColors: customThemeColors,
       fontScale: fontScale,
       defaultSessionLength: defaultSessionLength,
     ));
@@ -73,6 +80,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final current = state;
     if (current is SettingsLoaded) {
       emit(current.copyWith(themeVariant: event.variant));
+    }
+  }
+
+  Future<void> _onCustomThemeColorsChanged(
+    SettingsCustomThemeColorsChanged event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _repository.writeCustomThemeColors(event.colors);
+    } catch (_) {}
+    _settingsNotifier.setCustomThemeColors(event.colors);
+
+    final current = state;
+    if (current is SettingsLoaded) {
+      emit(current.copyWith(customThemeColors: event.colors));
     }
   }
 

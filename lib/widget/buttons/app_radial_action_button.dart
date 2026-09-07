@@ -23,10 +23,15 @@ class AppRadialActionButton extends StatefulWidget {
     super.key,
     required this.actions,
     this.anchor = AppRadialActionAnchor.center,
+    this.onPrimaryPressed,
   });
 
   final List<AppRadialAction> actions;
   final AppRadialActionAnchor anchor;
+
+  /// When set, a tap runs this action and opening the radial menu requires a
+  /// long-press. When null, a tap toggles the menu (default).
+  final VoidCallback? onPrimaryPressed;
 
   @override
   State<AppRadialActionButton> createState() => _AppRadialActionButtonState();
@@ -90,6 +95,19 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     onTap();
   }
 
+  void _onFabPressed() {
+    final primary = widget.onPrimaryPressed;
+    if (primary != null) {
+      if (_isOpen) {
+        _close();
+        return;
+      }
+      primary();
+      return;
+    }
+    _toggle();
+  }
+
   Alignment get _stackAlignment => switch (widget.anchor) {
         AppRadialActionAnchor.center => Alignment.bottomCenter,
         AppRadialActionAnchor.end => Alignment.bottomRight,
@@ -115,6 +133,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     final actionCount = widget.actions.length;
     final arc = _arcAngles;
     final showSatellites = _isOpen || _controller.value > 0;
+    final hasPrimary = widget.onPrimaryPressed != null;
 
     return TapRegion(
       onTapOutside: (_) {
@@ -124,66 +143,72 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
       },
       child: SizedBox(
         width: _width,
-        height: showSatellites ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: _stackAlignment,
-        children: [
-          if (showSatellites)
-            for (var i = 0; i < actionCount; i++)
-              AnimatedBuilder(
-                animation: _expandAnimation,
-                builder: (context, child) {
-                  final progress = _expandAnimation.value;
-                  final motionProgress = progress.clamp(0.0, 1.0);
-                  final angle = arc.startAngle +
-                      (arc.endAngle - arc.startAngle) *
-                          (i / (actionCount - 1).clamp(1, 999));
-                  final dx = math.cos(angle) * _orbitRadius * motionProgress;
-                  final dy = math.sin(angle) * _orbitRadius * motionProgress;
-                  final edgeInset = (_fabSize - _satelliteSize) / 2;
-                  final interactive = progress > 0.05;
+        height: showSatellites
+            ? _orbitRadius + _fabSize + AppSpacing.xl
+            : _fabSize,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: _stackAlignment,
+          children: [
+            if (showSatellites)
+              for (var i = 0; i < actionCount; i++)
+                AnimatedBuilder(
+                  animation: _expandAnimation,
+                  builder: (context, child) {
+                    final progress = _expandAnimation.value;
+                    final motionProgress = progress.clamp(0.0, 1.0);
+                    final angle = arc.startAngle +
+                        (arc.endAngle - arc.startAngle) *
+                            (i / (actionCount - 1).clamp(1, 999));
+                    final dx = math.cos(angle) * _orbitRadius * motionProgress;
+                    final dy = math.sin(angle) * _orbitRadius * motionProgress;
+                    final edgeInset = (_fabSize - _satelliteSize) / 2;
+                    final interactive = progress > 0.05;
 
-                  final satellite = IgnorePointer(
-                    ignoring: !interactive,
-                    child: _animatedSatellite(progress, child),
-                  );
+                    final satellite = IgnorePointer(
+                      ignoring: !interactive,
+                      child: _animatedSatellite(progress, child),
+                    );
 
-                  return switch (widget.anchor) {
-                    AppRadialActionAnchor.center => Positioned(
-                        bottom: edgeInset - dy,
-                        left: (_orbitRadius + _fabSize / 2) +
-                            dx -
-                            _satelliteSize / 2,
-                        child: satellite,
-                      ),
-                    AppRadialActionAnchor.end => Positioned(
-                        bottom: edgeInset - dy,
-                        right: edgeInset - dx,
-                        child: satellite,
-                      ),
-                  };
-                },
-                child: _SatelliteButton(
-                  action: widget.actions[i],
-                  onTap: () => _onActionTap(widget.actions[i].onTap),
+                    return switch (widget.anchor) {
+                      AppRadialActionAnchor.center => Positioned(
+                          bottom: edgeInset - dy,
+                          left: (_orbitRadius + _fabSize / 2) +
+                              dx -
+                              _satelliteSize / 2,
+                          child: satellite,
+                        ),
+                      AppRadialActionAnchor.end => Positioned(
+                          bottom: edgeInset - dy,
+                          right: edgeInset - dx,
+                          child: satellite,
+                        ),
+                    };
+                  },
+                  child: _SatelliteButton(
+                    action: widget.actions[i],
+                    onTap: () => _onActionTap(widget.actions[i].onTap),
+                  ),
+                ),
+            GestureDetector(
+              onLongPress: hasPrimary ? _toggle : null,
+              child: FloatingActionButton(
+                onPressed: _onFabPressed,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+                elevation: 6,
+                shape: AppRadius.stadiumBorder,
+                child: AnimatedRotation(
+                  turns: _isOpen ? 0.125 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: const Icon(Icons.add, size: 28),
                 ),
               ),
-          FloatingActionButton(
-            onPressed: _toggle,
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            elevation: 6,
-            shape: AppRadius.stadiumBorder,
-            child: AnimatedRotation(
-              turns: _isOpen ? 0.125 : 0,
-              duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.add, size: 28),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _animatedSatellite(double progress, Widget? child) {

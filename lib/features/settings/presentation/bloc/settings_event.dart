@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
 import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 
 sealed class SettingsEvent extends Equatable {
   const SettingsEvent();
@@ -21,6 +22,15 @@ final class SettingsThemeChanged extends SettingsEvent {
 
   @override
   List<Object?> get props => [variant];
+}
+
+final class SettingsCustomThemeColorsChanged extends SettingsEvent {
+  const SettingsCustomThemeColorsChanged(this.colors);
+
+  final CustomThemeColors colors;
+
+  @override
+  List<Object?> get props => [colors];
 }
 
 final class SettingsFontScaleChanged extends SettingsEvent {
