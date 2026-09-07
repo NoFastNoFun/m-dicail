@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/recording/domain/entities/session_pathology.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 
 enum RecordingSessionStatus {
@@ -19,6 +20,7 @@ class RecordingSession extends Equatable {
     this.soapNote,
     this.templateId,
     this.templateName,
+    this.pathologies = const [],
   });
 
   final String id;
@@ -30,6 +32,24 @@ class RecordingSession extends Equatable {
   final RecordingSessionStatus status;
   final String? templateId;
   final String? templateName;
+  final List<SessionPathology> pathologies;
+
+  /// Display names: list first, else legacy [templateName].
+  List<String> get pathologyNames {
+    if (pathologies.isNotEmpty) {
+      return pathologies
+          .map((p) => p.name.trim())
+          .where((name) => name.isNotEmpty)
+          .toList();
+    }
+    final legacy = templateName?.trim();
+    if (legacy == null || legacy.isEmpty) {
+      return const [];
+    }
+    return [legacy];
+  }
+
+  bool get hasPathology => pathologyNames.isNotEmpty;
 
   RecordingSession copyWith({
     String? id,
@@ -41,6 +61,7 @@ class RecordingSession extends Equatable {
     RecordingSessionStatus? status,
     String? templateId,
     String? templateName,
+    List<SessionPathology>? pathologies,
     bool clearPatientId = false,
     bool clearEndedAt = false,
     bool clearSoapNote = false,
@@ -58,6 +79,7 @@ class RecordingSession extends Equatable {
       templateId: clearTemplateId ? null : templateId ?? this.templateId,
       templateName:
           clearTemplateName ? null : templateName ?? this.templateName,
+      pathologies: pathologies ?? this.pathologies,
     );
   }
 
@@ -72,5 +94,6 @@ class RecordingSession extends Equatable {
         status,
         templateId,
         templateName,
+        pathologies,
       ];
 }

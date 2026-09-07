@@ -95,6 +95,10 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
     if (model.templateName != null) {
       payload['template_name'] = model.templateName;
     }
+    if (model.pathologies.isNotEmpty) {
+      payload['pathologies'] =
+          model.pathologies.map((p) => p.toJson()).toList();
+    }
 
     final response = await _apiClient.put<Map<String, dynamic>>(
       '/recording-sessions/${session.id}',

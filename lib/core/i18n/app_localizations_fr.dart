@@ -94,7 +94,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transcriptLabel => 'Transcription';
 
   @override
-  String get transcriptEmptyHint => 'Aucune parole captee pour le moment';
+  String get transcriptEmptyHint => 'Aucune parole captée pour le moment';
 
   @override
   String get transcriptEmptyFallback => 'Transcription vide';
@@ -103,33 +103,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buttonClear => 'Effacer';
 
   @override
-  String get recordStatusReady => 'Pret a ecouter';
+  String get recordStatusReady => 'Prêt à écouter';
 
   @override
   String get recordStatusInitializing => 'Initialisation du micro';
 
   @override
-  String get recordStatusListening => 'Ecoute en cours';
+  String get recordStatusListening => 'Écoute en cours';
 
   @override
-  String get recordStatusPaused => 'Ecoute en pause';
+  String get recordStatusPaused => 'Écoute en pause';
 
   @override
-  String get recordStatusEnded => 'Session terminee';
+  String get recordStatusEnded => 'Session terminée';
 
   @override
-  String get recordNotificationTitle => 'Ecoute en cours';
+  String get recordNotificationTitle => 'Écoute en cours';
 
   @override
-  String get recordNotificationBody => 'Touchez pour revenir a Medicail';
+  String get recordNotificationBody => 'Touchez pour revenir à Medicail';
 
   @override
   String get recordNotificationBackgroundTitle =>
-      'Enregistrement en arriere-plan';
+      'Enregistrement en arrière-plan';
 
   @override
   String get recordNotificationBackgroundBody =>
-      'L\'ecoute continue pendant que l\'ecran est eteint';
+      'L\'écoute continue pendant que l\'écran est éteint';
 
   @override
   String get recordStatusTranscribingBackground =>
@@ -151,7 +151,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appointmentsSeeAll => 'Voir tout';
 
   @override
-  String get appointmentsEmpty => 'Aucun rendez-vous pour cette journee';
+  String get appointmentsEmpty => 'Aucun rendez-vous pour cette journée';
 
   @override
   String get appointmentsUpcomingEmpty => 'Aucun prochain rendez-vous';
@@ -163,13 +163,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appointmentEditTitle => 'Modifier le rendez-vous';
 
   @override
-  String get appointmentCreateSubmit => 'Creer le rendez-vous';
+  String get appointmentCreateSubmit => 'Créer le rendez-vous';
 
   @override
   String get appointmentSaveChanges => 'Enregistrer';
 
   @override
-  String get appointmentSaved => 'Rendez-vous enregistre';
+  String get appointmentSaved => 'Rendez-vous enregistré';
 
   @override
   String get appointmentEdit => 'Modifier';
@@ -184,24 +184,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appointmentNotesLabel => 'Notes';
 
   @override
-  String get appointmentPatientRequired => 'Selectionnez un patient';
+  String get appointmentPatientRequired => 'Sélectionnez un patient';
 
   @override
   String get appointmentEndBeforeStart =>
-      'L\'heure de fin doit etre apres l\'heure de debut';
+      'L\'heure de fin doit être après l\'heure de début';
 
   @override
   String get appointmentKeepPatientHint =>
       'Laissez le patient actuel, ou choisissez-en un autre ci-dessous.';
 
   @override
-  String get appointmentStatusScheduled => 'Planifie';
+  String get appointmentStatusScheduled => 'Planifié';
 
   @override
-  String get appointmentStatusCancelled => 'Annule';
+  String get appointmentStatusCancelled => 'Annulé';
 
   @override
-  String get appointmentStatusCompleted => 'Termine';
+  String get appointmentStatusCompleted => 'Terminé';
 
   @override
   String appointmentStartTime(String time) {
@@ -223,13 +223,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientsEmpty => 'Aucun patient pour le moment';
 
   @override
-  String get patientFirstNameLabel => 'Prenom';
+  String get patientFirstNameLabel => 'Prénom';
 
   @override
   String get patientLastNameLabel => 'Nom';
 
   @override
-  String get patientCreateButton => 'Creer le patient';
+  String get patientCreateButton => 'Créer le patient';
 
   @override
   String get patientOpenButton => 'Ouvrir le dossier';
@@ -451,10 +451,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debugBackendUrlSave => 'Enregistrer';
 
   @override
-  String get debugBackendUrlReset => 'Reinitialiser';
+  String get debugBackendUrlReset => 'Réinitialiser';
 
   @override
-  String get debugBackendUrlSaved => 'URL backend mise a jour';
+  String get debugBackendUrlSaved => 'URL backend mise à jour';
 
   @override
   String get debugBackendUrlInvalid => 'URL invalide (http ou https requis)';
@@ -548,7 +548,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loginWelcomeSubtitle =>
-      'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.';
+      'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos données restent chiffrées sur cet appareil.';
 
   @override
   String get loginEmailLabel => 'Adresse email';
@@ -557,7 +557,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginPasswordLabel => 'Mot de passe';
 
   @override
-  String get loginCreateAccountButton => 'Creer un compte';
+  String get loginCreateAccountButton => 'Créer un compte';
 
   @override
   String get loginContinueWithoutAccount => 'Continuer sans compte';
@@ -582,21 +582,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get registerSubmit => 'S\'inscrire';
 
   @override
-  String get authForgotPasswordLink => 'Mot de passe oublie ?';
+  String get authForgotPasswordLink => 'Mot de passe oublié ?';
 
   @override
-  String get authForgotPasswordTitle => 'Mot de passe oublie';
+  String get authForgotPasswordTitle => 'Mot de passe oublié';
 
   @override
   String get authForgotPasswordHint =>
-      'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de reinitialisation.';
+      'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de réinitialisation.';
 
   @override
   String get authForgotPasswordSubmit => 'Envoyer le lien';
 
   @override
   String get authForgotPasswordSent =>
-      'Si un compte existe pour cette adresse, un email vient d\'etre envoye.';
+      'Si un compte existe pour cette adresse, un email vient d\'être envoyé.';
 
   @override
   String get authResetPasswordTitle => 'Nouveau mot de passe';
@@ -606,50 +606,50 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choisissez un nouveau mot de passe pour votre compte.';
 
   @override
-  String get authResetPasswordSubmit => 'Reinitialiser';
+  String get authResetPasswordSubmit => 'Réinitialiser';
 
   @override
-  String get authResetPasswordSuccess => 'Mot de passe mis a jour.';
+  String get authResetPasswordSuccess => 'Mot de passe mis à jour.';
 
   @override
-  String get authRecoveryTitle => 'Recuperation de compte';
+  String get authRecoveryTitle => 'Récupération de compte';
 
   @override
   String get authRecoveryHint =>
-      'Confirmez la recuperation pour desactiver l\'authentification TOTP. Vos passkeys restent actives.';
+      'Confirmez la récupération pour désactiver l\'authentification TOTP. Vos passkeys restent actives.';
 
   @override
-  String get authRecoveryConfirm => 'Confirmer la recuperation';
+  String get authRecoveryConfirm => 'Confirmer la récupération';
 
   @override
   String get authRecoverySuccess =>
-      'Recuperation terminee. Vous pouvez vous reconnecter.';
+      'Récupération terminée. Vous pouvez vous reconnecter.';
 
   @override
-  String get authRecoveryRequest => 'Demander un lien de recuperation';
+  String get authRecoveryRequest => 'Demander un lien de récupération';
 
   @override
   String get authRecoveryRequestSent =>
-      'Si un compte existe, un email de recuperation vient d\'etre envoye.';
+      'Si un compte existe, un email de récupération vient d\'être envoyé.';
 
   @override
-  String get authRecoveryCodesTitle => 'Codes de recuperation';
+  String get authRecoveryCodesTitle => 'Codes de récupération';
 
   @override
-  String get authBackToLogin => 'Retour a la connexion';
+  String get authBackToLogin => 'Retour à la connexion';
 
   @override
-  String get authMfaTitle => 'Verification en deux etapes';
+  String get authMfaTitle => 'Vérification en deux étapes';
 
   @override
   String get authMfaHint =>
-      'Entrez le code de votre application d\'authentification ou un code de recuperation.';
+      'Entrez le code de votre application d\'authentification ou un code de récupération.';
 
   @override
   String get authMfaCodeLabel => 'Code';
 
   @override
-  String get authMfaVerify => 'Verifier';
+  String get authMfaVerify => 'Vérifier';
 
   @override
   String get authMfaEnroll => 'Activer TOTP';
@@ -658,32 +658,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authMfaConfirm => 'Confirmer TOTP';
 
   @override
-  String get authMfaDisable => 'Desactiver TOTP';
+  String get authMfaDisable => 'Désactiver TOTP';
 
   @override
-  String get authMfaEnabled => 'Active';
+  String get authMfaEnabled => 'Activé';
 
   @override
-  String get authMfaDisabled => 'Desactive';
+  String get authMfaDisabled => 'Désactivé';
 
   @override
   String get authMfaManualHint =>
-      'Sur mobile, copiez la cle secrete dans votre application d\'authentification.';
+      'Sur mobile, copiez la clé secrète dans votre application d\'authentification.';
 
   @override
-  String get authMfaSecretLabel => 'Cle secrete';
+  String get authMfaSecretLabel => 'Clé secrète';
 
   @override
-  String get authMfaCopySecret => 'Copier la cle';
+  String get authMfaCopySecret => 'Copier la clé';
 
   @override
   String get authMfaCopyUri => 'Copier le lien otpauth';
 
   @override
-  String get authMfaSecretCopied => 'Cle secrete copiee';
+  String get authMfaSecretCopied => 'Clé secrète copiée';
 
   @override
-  String get authMfaUriCopied => 'Lien otpauth copie';
+  String get authMfaUriCopied => 'Lien otpauth copié';
 
   @override
   String get authPasskeyLogin => 'Se connecter avec une passkey';
@@ -699,7 +699,17 @@ class AppLocalizationsFr extends AppLocalizations {
       'Passkeys non disponibles sur cette plateforme.';
 
   @override
-  String get authSecurityTitle => 'Securite';
+  String get authSecurityTitle => 'Sécurité';
+
+  @override
+  String get authDigestTitle => 'Veille médicale';
+
+  @override
+  String get authDigestHint =>
+      'Recevoir un digest par email (bientôt disponible).';
+
+  @override
+  String get authDigestOptIn => 'Activer le digest email';
 
   @override
   String get recordingDateLabel => 'Date';
@@ -721,11 +731,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordLeaveMessage =>
-      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?';
+      'Cette consultation n\'est pas enregistrée. Voulez-vous la sauvegarder et l\'associer à un patient ?';
 
   @override
   String get recordLeaveMessageWithPatient =>
-      'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?';
+      'Cette consultation n\'est pas enregistrée. Voulez-vous la sauvegarder dans le dossier du patient ?';
 
   @override
   String get recordLeaveSaveAndAssign => 'Enregistrer et associer';
@@ -752,7 +762,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSectionAccount => 'Compte';
 
   @override
-  String get settingsTheme => 'Theme';
+  String get settingsTheme => 'Thème';
 
   @override
   String get settingsThemeLight => 'Clair';
@@ -785,10 +795,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsFontSizeLarge => 'Grand';
 
   @override
-  String get settingsFontSizeExtraLarge => 'Tres grand';
+  String get settingsFontSizeExtraLarge => 'Très grand';
 
   @override
-  String get settingsDefaultSessionLength => 'Duree de seance par defaut';
+  String get settingsDefaultSessionLength => 'Durée de séance par défaut';
 
   @override
   String get settingsSessionLength30m => '30 min';
@@ -815,14 +825,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsComingSoon => 'Bientôt disponible';
 
   @override
-  String get settingsLogout => 'Se deconnecter';
+  String get settingsTbd => 'TBD';
 
   @override
-  String get tutorialIntroTitle => 'Decouvrir Medicail';
+  String get settingsLogout => 'Se déconnecter';
+
+  @override
+  String get tutorialIntroTitle => 'Découvrir Medicail';
 
   @override
   String get tutorialIntroDesc =>
-      'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.';
+      'Un tutoriel rapide peut vous guider dans la création d\'un dossier patient, une première consultation, puis un enregistrement rapide depuis l\'accueil.';
 
   @override
   String get tutorialIntroStart => 'Faire le tutoriel';
@@ -835,128 +848,128 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialHomePatientsDesc =>
-      'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.';
+      'Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.';
 
   @override
   String get tutorialHomeRecordTitle => 'Consultation Rapide';
 
   @override
   String get tutorialHomeRecordDesc =>
-      'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.';
+      'Depuis l\'écran d\'accueil, utilisez ce bouton pour démarrer immédiatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.';
 
   @override
   String get tutorialPatientAddTitle => 'Ajouter un patient';
 
   @override
   String get tutorialPatientAddDesc =>
-      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' pour continuer.';
+      'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut à droite pour continuer.';
 
   @override
-  String get tutorialPatientMrnTitle => 'Numero de dossier';
+  String get tutorialPatientMrnTitle => 'Numéro de dossier';
 
   @override
   String get tutorialPatientMrnDesc =>
-      'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+      'Le numéro de dossier (MRN) identifie chaque patient de manière unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
-  String get tutorialPatientFirstNameTitle => 'Prenom du patient';
+  String get tutorialPatientFirstNameTitle => 'Prénom du patient';
 
   @override
   String get tutorialPatientFirstNameDesc =>
-      'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+      'Le prénom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
   String get tutorialPatientLastNameTitle => 'Nom du patient';
 
   @override
   String get tutorialPatientLastNameDesc =>
-      'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
+      'Le nom complète l\'identité du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.';
 
   @override
-  String get tutorialPatientCreateTitle => 'Creer le dossier';
+  String get tutorialPatientCreateTitle => 'Créer le dossier';
 
   @override
   String get tutorialPatientCreateDesc =>
-      'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.';
+      'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Créer le dossier\' pour continuer la démonstration.';
 
   @override
   String get tutorialDetailConsultTitle => 'Nouvelle consultation';
 
   @override
   String get tutorialDetailConsultDesc =>
-      'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.';
+      'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.';
 
   @override
-  String get tutorialRecordTitle => 'La Dictee';
+  String get tutorialRecordTitle => 'La Dictée';
 
   @override
   String get tutorialRecordDesc =>
-      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.';
+      'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.\n\n👉 Appuyez sur le micro en surbrillance pour démarrer.';
 
   @override
-  String get tutorialRecordStopTitle => 'Arreter l\'ecoute';
+  String get tutorialRecordStopTitle => 'Arrêter l\'écoute';
 
   @override
   String get tutorialRecordStopDesc =>
-      'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.';
+      'Appuyez ici quand la consultation vocale est terminée pour mettre l\'écoute en pause.\n\n👉 Appuyez sur le bouton d\'arrêt pour mettre en pause.';
 
   @override
   String get tutorialRecordFinishTitle => 'Terminer la consultation';
 
   @override
   String get tutorialRecordFinishDesc =>
-      'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.';
+      'Validez la fin de la consultation. Vous reviendrez ensuite à l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.';
 
   @override
-  String get tutorialRecordTranscriptTitle => 'Transcription en temps reel';
+  String get tutorialRecordTranscriptTitle => 'Transcription en temps réel';
 
   @override
   String get tutorialRecordTranscriptDesc =>
-      'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.';
+      'Pendant l\'enregistrement, le texte apparaît ici en direct pour vous permettre de suivre la dictée.\n\n👉 Attendez ou appuyez sur l\'écran pour continuer.';
 
   @override
-  String get tutorialAssignPatientTitle => 'Associer a un patient';
+  String get tutorialAssignPatientTitle => 'Associer à un patient';
 
   @override
   String get tutorialAssignPatientDesc =>
-      'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.';
+      'Après un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou créer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer à un patient\' pour continuer.';
 
   @override
-  String get tutorialRestarted => 'Le tutoriel a ete reinitialise.';
+  String get tutorialRestarted => 'Le tutoriel a été réinitialisé.';
 
   @override
   String get templatesTitle => 'Pathologies';
 
   @override
-  String get templatesBuiltInSection => 'Pathologies par defaut';
+  String get templatesBuiltInSection => 'Pathologies par défaut';
 
   @override
   String get templatesUserSection => 'Mes pathologies';
 
   @override
   String get templatesUserEmpty =>
-      'Aucune pathologie personnalisee enregistree.';
+      'Aucune pathologie personnalisée enregistrée.';
 
   @override
-  String get templatesDefaultBadge => 'Defaut';
+  String get templatesDefaultBadge => 'Défaut';
 
   @override
   String get templatesVariantBadge => 'Variante';
 
   @override
-  String get templatesCustomBadge => 'Personnalise';
+  String get templatesCustomBadge => 'Personnalisé';
 
   @override
   String get templateDuplicateAction => 'Modifier en variante';
 
   @override
-  String get templateDuplicated => 'Variante creee.';
+  String get templateDuplicated => 'Variante créée.';
 
   @override
-  String get templateSaved => 'Pathologie enregistree.';
+  String get templateSaved => 'Pathologie enregistrée.';
 
   @override
-  String get templateCreateAction => 'Creer une pathologie';
+  String get templateCreateAction => 'Créer une pathologie';
 
   @override
   String get templateCreateTitle => 'Nouvelle pathologie';
@@ -997,13 +1010,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateSaveAsVariant => 'Enregistrer comme variante';
 
   @override
-  String get templateUpdate => 'Mettre a jour';
+  String get templateUpdate => 'Mettre à jour';
 
   @override
-  String get templateSaveCreate => 'Creer la pathologie';
+  String get templateSaveCreate => 'Créer la pathologie';
 
   @override
-  String get templateReset => 'Reinitialiser depuis le parent';
+  String get templateReset => 'Réinitialiser depuis le parent';
 
   @override
   String get templatePickerTitle => 'Choisir une pathologie';
@@ -1012,7 +1025,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templatePickerSearch => 'Rechercher une pathologie';
 
   @override
-  String get templatePickerEmpty => 'Aucune pathologie trouvee.';
+  String get templatePickerEmpty => 'Aucune pathologie trouvée.';
 
   @override
   String get templatePickerAction => 'Choisir une pathologie';
@@ -1023,26 +1036,26 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get templateNoneLabel => 'Aucune pathologie selectionnee';
+  String get templateNoneLabel => 'Aucune pathologie sélectionnée';
 
   @override
-  String get templateRetry => 'Reessayer';
+  String get templateRetry => 'Réessayer';
 
   @override
   String get templatesBuiltInEmpty =>
-      'Aucune pathologie par defaut disponible. Reinstallez l application.';
+      'Aucune pathologie par défaut disponible. Réinstallez l\'application.';
 
   @override
   String get patientDossierOralTab => 'Oral';
 
   @override
-  String get patientDossierWrittenTab => 'Ecrit';
+  String get patientDossierWrittenTab => 'Écrit';
 
   @override
   String get patientDossierOralEmpty => 'Aucune transcription pour ce patient';
 
   @override
-  String get patientDossierWrittenEmpty => 'Aucune note ecrite pour ce patient';
+  String get patientDossierWrittenEmpty => 'Aucune note écrite pour ce patient';
 
   @override
   String get patientDossierTranscriptTitle => 'Transcription';
@@ -1053,11 +1066,11 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get pathologySuggestionTitle => 'Pathologie suggeree';
+  String get pathologySuggestionTitle => 'Pathologie suggérée';
 
   @override
   String get pathologySuggestionDesc =>
-      'D\'apres la transcription, cette pathologie semble correspondre a la consultation.';
+      'D\'après la transcription, cette pathologie semble correspondre à la consultation.';
 
   @override
   String get pathologySuggestionApply => 'Appliquer cette pathologie';
@@ -1067,6 +1080,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pathologySuggestionSkip => 'Ignorer';
+
+  @override
+  String get pathologyMultiSuggestionTitle => 'Pathologies suggérées';
+
+  @override
+  String get pathologyMultiSuggestionDesc =>
+      'D\'après la transcription, plusieurs pathologies semblent correspondre. Cochez celles à associer à l\'enregistrement.';
+
+  @override
+  String get pathologyMultiSuggestionApply =>
+      'Associer les pathologies sélectionnées';
+
+  @override
+  String get pathologyNoneSuggestionTitle => 'Aucune pathologie détectée';
+
+  @override
+  String get pathologyNoneSuggestionDesc =>
+      'Aucune pathologie n\'a été détectée dans la transcription. Souhaitez-vous en associer une manuellement ?';
+
+  @override
+  String get pathologyNoneSuggestionAttach => 'Associer une pathologie';
 
   @override
   String get pathologyDomainLabel => 'Domaine clinique';
@@ -1080,17 +1114,17 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get pathologyPubmedResultsSection => 'Resultats PubMed';
+  String get pathologyPubmedResultsSection => 'Résultats PubMed';
 
   @override
   String get settingsSignIn => 'Se connecter';
 
   @override
   String get sessionExpiredMessage =>
-      'Session expiree, veuillez vous reconnecter';
+      'Session expirée, veuillez vous reconnecter';
 
   @override
-  String get errorToastCopied => 'Details de l\'erreur copies';
+  String get errorToastCopied => 'Détails de l\'erreur copiés';
 
   @override
   String get errorToastReport => 'Signaler l\'erreur';
@@ -1118,7 +1152,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
 
   @override
-  String get medicalWatchTitle => 'Veille medicale';
+  String get medicalWatchTitle => 'Veille médicale';
 
   @override
   String get medicalWatchNavTitle => 'Veille';
@@ -1130,22 +1164,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicalWatchFilterAll => 'Tous';
 
   @override
-  String get medicalWatchSpecialtyRehabilitation => 'Reeducation';
+  String get medicalWatchSpecialtyRehabilitation => 'Rééducation';
 
   @override
   String get medicalWatchSpecialtyMusculoskeletal => 'Musculo-squelettique';
 
   @override
-  String get medicalWatchSpecialtyExerciseTherapy => 'Therapie par l\'exercice';
+  String get medicalWatchSpecialtyExerciseTherapy => 'Thérapie par l\'exercice';
 
   @override
-  String get medicalWatchSpecialtyManualTherapy => 'Therapie manuelle';
+  String get medicalWatchSpecialtyManualTherapy => 'Thérapie manuelle';
 
   @override
   String get medicalWatchEmpty => 'Aucun article pour le moment';
 
   @override
-  String get medicalWatchSearchEmpty => 'Aucun resultat pour cette recherche';
+  String get medicalWatchSearchEmpty => 'Aucun résultat pour cette recherche';
 
   @override
   String get medicalWatchErrorLoad => 'Impossible de charger les articles';
@@ -1157,16 +1191,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicalWatchReadMore => 'Lire la suite';
 
   @override
-  String get medicalWatchReadLess => 'Reduire';
+  String get medicalWatchReadLess => 'Réduire';
 
   @override
   String get medicalWatchOpenPubmed => 'Ouvrir dans PubMed';
 
   @override
-  String get medicalWatchCopyReference => 'Copier la reference';
+  String get medicalWatchCopyReference => 'Copier la référence';
 
   @override
-  String get medicalWatchReferenceCopied => 'Reference copiee';
+  String get medicalWatchReferenceCopied => 'Référence copiée';
 
   @override
   String medicalWatchArticleCount(int count) {
@@ -1181,11 +1215,11 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get medicalWatchSyncSuccess => 'Veille synchronisee';
+  String get medicalWatchSyncSuccess => 'Veille synchronisée';
 
   @override
   String get medicalWatchOfflineHint =>
-      'Resultats hors-ligne (derniere synchronisation)';
+      'Résultats hors-ligne (dernière synchronisation)';
 
   @override
   String homeGreeting(String name) {
@@ -1219,7 +1253,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeEmptySubtitle =>
-      'Planifiez votre premiere consultation ou démarrez un enregistrement rapide';
+      'Planifiez votre première consultation ou démarrez un enregistrement rapide';
 
   @override
   String homeConsultationsToday(num count) {

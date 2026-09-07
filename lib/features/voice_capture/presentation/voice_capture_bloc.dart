@@ -14,6 +14,7 @@ import 'package:medicail/core/utils/transcript_merge_helper.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/session_pathology.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
@@ -409,11 +410,22 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _selectedTemplate = event.template;
     final session = _activeSession;
     if (session != null) {
+      final template = _selectedTemplate;
+      final pathologies = template == null
+          ? const <SessionPathology>[]
+          : [
+              SessionPathology(
+                id: template.pathologyId ?? template.pathologyKey,
+                name: template.name,
+                templateId: template.id,
+              ),
+            ];
       _activeSession = session.copyWith(
-        templateId: _selectedTemplate?.id,
-        templateName: _selectedTemplate?.name,
-        clearTemplateId: _selectedTemplate == null,
-        clearTemplateName: _selectedTemplate == null,
+        templateId: template?.id,
+        templateName: template?.name,
+        pathologies: pathologies,
+        clearTemplateId: template == null,
+        clearTemplateName: template == null,
       );
       _recordingSessionRepository.save(_activeSession!);
     }
@@ -693,14 +705,25 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
 
     final startedAt = DateTime.now();
+    final template = _selectedTemplate;
+    final pathologies = template == null
+        ? const <SessionPathology>[]
+        : [
+            SessionPathology(
+              id: template.pathologyId ?? template.pathologyKey,
+              name: template.name,
+              templateId: template.id,
+            ),
+          ];
     final session = RecordingSession(
       id: _generateSessionId(startedAt),
       patientId: patientId,
       startedAt: startedAt,
       transcript: transcript,
       status: RecordingSessionStatus.recording,
-      templateId: _selectedTemplate?.id,
-      templateName: _selectedTemplate?.name,
+      templateId: template?.id,
+      templateName: template?.name,
+      pathologies: pathologies,
     );
     _activeSession = await _recordingSessionRepository.save(session);
   }
@@ -714,13 +737,25 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       return;
     }
 
+    final template = _selectedTemplate;
+    final pathologies = template != null
+        ? [
+            SessionPathology(
+              id: template.pathologyId ?? template.pathologyKey,
+              name: template.name,
+              templateId: template.id,
+            ),
+          ]
+        : session.pathologies;
+
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
       soapNote: soapNote,
       status: RecordingSessionStatus.completed,
-      templateId: _selectedTemplate?.id ?? session.templateId,
-      templateName: _selectedTemplate?.name ?? session.templateName,
+      templateId: template?.id ?? session.templateId,
+      templateName: template?.name ?? session.templateName,
+      pathologies: pathologies,
     );
     _activeSession = await _recordingSessionRepository.save(completed);
   }
