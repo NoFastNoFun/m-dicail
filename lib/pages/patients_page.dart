@@ -17,12 +17,9 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
-import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
 
 class PatientsPage extends StatelessWidget {
   const PatientsPage({super.key});
@@ -45,8 +42,6 @@ class _PatientsView extends StatefulWidget {
 
 class _PatientsViewState extends State<_PatientsView> {
   final _searchController = TextEditingController();
-  final _addPatientKey = GlobalKey();
-  bool _didStartStepTwoShowcase = false;
 
   @override
   void initState() {
@@ -54,7 +49,7 @@ class _PatientsViewState extends State<_PatientsView> {
     _searchController.addListener(_onSearchChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _handleTutorialState(context.read<TutorialBloc>().state);
+      _registerFabAction();
     });
   }
 
@@ -64,25 +59,18 @@ class _PatientsViewState extends State<_PatientsView> {
     super.dispose();
   }
 
+  void _registerFabAction() {
+    MainShellScope.setFabPrimaryAction(context, _showCreatePatientSheet);
+  }
+
   void _onSearchChanged() {
     context.read<PatientBloc>().add(
       PatientsRequested(query: _searchController.text.trim()),
     );
   }
 
-  void _handleTutorialState(TutorialState state) {
-    if (state is! TutorialInProgress) return;
-    if (state.isTutorialStep(TutorialStepId.patientsAdd) &&
-        !_didStartStepTwoShowcase) {
-      _didStartStepTwoShowcase = true;
-      TutorialShowcaseLauncher.startWhenReady(
-        context: context,
-        key: _addPatientKey,
-      );
-    }
-  }
-
-  void _showCreatePatientSheet(BuildContext context) {
+  void _showCreatePatientSheet() {
+    context.read<TutorialBloc>().completeStep(TutorialStepId.patientsAdd);
     PatientCreationSheet.show(
       context,
       onSuccess: (patientId) => context.goPatientDetail(patientId),
@@ -108,65 +96,38 @@ class _PatientsViewState extends State<_PatientsView> {
 
         return AppScaffold(
           title: l10n.patientsTitle,
-          actions: [
-            AppShowcase(
-              key: _addPatientKey,
-              title: l10n.tutorialPatientAddTitle,
-              description: l10n.tutorialPatientAddDesc,
-              disposeOnTap: false,
-              disableBarrierInteraction: true,
-              onTargetClick: () {
-                context.read<TutorialBloc>().completeStep(
-                  TutorialStepId.patientsAdd,
-                );
-                _showCreatePatientSheet(context);
-              },
-              child: IconButton(
-                icon: Icon(Icons.add, color: context.colorScheme.onSurface),
-                onPressed: () {
-                  context.read<TutorialBloc>().completeStep(
-                    TutorialStepId.patientsAdd,
-                  );
-                  _showCreatePatientSheet(context);
-                },
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppInput(
+                variant: AppInputVariant.text,
+                label: l10n.patientSearchPlaceholder,
+                controller: _searchController,
+                prefixIcon: Icons.search,
               ),
-            ),
-          ],
-          body: BlocListener<TutorialBloc, TutorialState>(
-            listener: (context, state) => _handleTutorialState(state),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppInput(
-                  variant: AppInputVariant.text,
-                  label: l10n.patientSearchPlaceholder,
-                  controller: _searchController,
-                  prefixIcon: Icons.search,
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                AppText(
-                  l10n.patientsSectionTitle,
-                  variant: AppTextVariant.title,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Expanded(
-                  child: isLoading && patients.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : patients.isEmpty
-                      ? Center(
-                          child: AppText(
-                            l10n.patientsEmpty,
-                            variant: AppTextVariant.body,
-                            color: context.secondaryTextColor,
-                          ),
-                        )
-                      : _PatientList(
-                          patients: patients,
-                          padding: MainShellScope.scrollPaddingOf(context),
+              const SizedBox(height: AppSpacing.xl),
+              AppText(
+                l10n.patientsSectionTitle,
+                variant: AppTextVariant.title,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Expanded(
+                child: isLoading && patients.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : patients.isEmpty
+                    ? Center(
+                        child: AppText(
+                          l10n.patientsEmpty,
+                          variant: AppTextVariant.body,
+                          color: context.secondaryTextColor,
                         ),
-                ),
-              ],
-            ),
+                      )
+                    : _PatientList(
+                        patients: patients,
+                        padding: MainShellScope.scrollPaddingOf(context),
+                      ),
+              ),
+            ],
           ),
         );
       },
@@ -220,7 +181,8 @@ class _PatientListItem extends StatelessWidget {
   int _calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    if (now.month < birthDate.month || (now.month == birthDate.month && now.day < birthDate.day)) {
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
     return age;
@@ -276,7 +238,11 @@ class _PatientListItem extends StatelessWidget {
                 Row(
                   children: [
                     if (patient.birthDate != null) ...[
-                      Icon(Icons.cake_outlined, size: 16, color: context.secondaryTextColor),
+                      Icon(
+                        Icons.cake_outlined,
+                        size: 16,
+                        color: context.secondaryTextColor,
+                      ),
                       const SizedBox(width: AppSpacing.xs),
                       AppText(
                         '${_calculateAge(patient.birthDate!)} ans',
@@ -286,7 +252,11 @@ class _PatientListItem extends StatelessWidget {
                       const SizedBox(width: AppSpacing.md),
                     ],
                     if (patient.sex != null) ...[
-                      Icon(Icons.person_outline, size: 16, color: context.secondaryTextColor),
+                      Icon(
+                        Icons.person_outline,
+                        size: 16,
+                        color: context.secondaryTextColor,
+                      ),
                       const SizedBox(width: AppSpacing.xs),
                       AppText(
                         patient.sex!,
@@ -307,7 +277,11 @@ class _PatientListItem extends StatelessWidget {
                     color: context.colorScheme.primary,
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  Icon(Icons.arrow_forward, size: 16, color: context.colorScheme.primary),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 16,
+                    color: context.colorScheme.primary,
+                  ),
                 ],
               ),
             ],

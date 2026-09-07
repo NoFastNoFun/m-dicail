@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
 import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 
 sealed class SettingsState extends Equatable {
   const SettingsState();
@@ -21,24 +22,33 @@ final class SettingsLoading extends SettingsState {
 final class SettingsLoaded extends SettingsState {
   const SettingsLoaded({
     required this.themeVariant,
+    required this.customThemeColors,
     required this.fontScale,
     required this.defaultSessionLength,
   });
 
   final AppThemeVariant themeVariant;
+  final CustomThemeColors customThemeColors;
   final AppFontScale fontScale;
   final AppSessionLength defaultSessionLength;
 
   @override
-  List<Object?> get props => [themeVariant, fontScale, defaultSessionLength];
+  List<Object?> get props => [
+        themeVariant,
+        customThemeColors,
+        fontScale,
+        defaultSessionLength,
+      ];
 
   SettingsLoaded copyWith({
     AppThemeVariant? themeVariant,
+    CustomThemeColors? customThemeColors,
     AppFontScale? fontScale,
     AppSessionLength? defaultSessionLength,
   }) {
     return SettingsLoaded(
       themeVariant: themeVariant ?? this.themeVariant,
+      customThemeColors: customThemeColors ?? this.customThemeColors,
       fontScale: fontScale ?? this.fontScale,
       defaultSessionLength: defaultSessionLength ?? this.defaultSessionLength,
     );

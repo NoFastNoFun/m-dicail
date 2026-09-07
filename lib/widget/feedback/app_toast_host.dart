@@ -96,7 +96,7 @@ class AppToastHostState extends State<AppToastHost> {
     final l10n = AppLocalizations.of(context);
     show(
       overlayContext: context,
-      message: l10n.errorToastCopied,
+      message: l10n.bugReportCopied,
       type: AppToastType.success,
       duration: const Duration(seconds: 2),
     );

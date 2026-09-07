@@ -11,6 +11,7 @@ import 'package:medicail/core/screenshot/screenshot_detector.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 
 /// Listens for screenshots and shows a short-lived bug-report bottom sheet.
 class ScreenshotBugPromptHost extends StatefulWidget {
@@ -124,14 +125,19 @@ class _ScreenshotBugPromptSheetState extends State<ScreenshotBugPromptSheet> {
 
   Future<void> _report() async {
     _timer?.cancel();
+    final l10n = AppLocalizations.of(context);
+    final toastContext = AppRouter.navigatorKey.currentContext ?? context;
     if (widget.onReport != null) {
       await widget.onReport!();
     } else {
       final route = GoRouter.maybeOf(context)?.state.uri.toString();
       await BugReportLauncher.report(
-        message: AppLocalizations.of(context).screenshotBugReportMessage,
+        message: l10n.screenshotBugReportMessage,
         route: route,
       );
+      if (toastContext.mounted) {
+        AppToast.showSuccess(toastContext, l10n.bugReportCopied);
+      }
     }
     if (!mounted) return;
     Navigator.of(context).maybePop();

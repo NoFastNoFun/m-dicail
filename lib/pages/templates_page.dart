@@ -32,8 +32,25 @@ class TemplatesPage extends StatelessWidget {
   }
 }
 
-class _TemplatesView extends StatelessWidget {
+class _TemplatesView extends StatefulWidget {
   const _TemplatesView();
+
+  @override
+  State<_TemplatesView> createState() => _TemplatesViewState();
+}
+
+class _TemplatesViewState extends State<_TemplatesView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      MainShellScope.setFabPrimaryAction(
+        context,
+        () => openPathologyCreatePage(context),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +58,6 @@ class _TemplatesView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.templatesTitle,
-      actions: [
-        IconButton(
-          tooltip: l10n.templateCreateAction,
-          onPressed: () => openPathologyCreatePage(context),
-          icon: const Icon(Icons.add),
-        ),
-      ],
       body: BlocConsumer<PathologyBloc, PathologyState>(
         listener: (context, state) {
           if (state is PathologyFailure) {

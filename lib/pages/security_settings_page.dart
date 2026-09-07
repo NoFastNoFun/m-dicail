@@ -33,7 +33,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   bool _loading = true;
   bool _passkeysSupported = false;
   bool _mfaEnabled = false;
-  bool _digestOptIn = false;
   String? _otpauthUrl;
   List<String> _recoveryCodes = const [];
   List<PasskeyCredential> _passkeys = const [];
@@ -69,7 +68,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
       _passkeysSupported = await _passkeyService.isSupported();
       final user = await _authRepository.getMe();
       _mfaEnabled = user.mfaEnabled;
-      _digestOptIn = user.medicalWatchDigestOptIn;
       _recoveryEmailController.text = user.email;
       _passkeys = await _authRepository.listPasskeys();
     } catch (e) {
@@ -143,15 +141,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
           AppLocalizations.of(context).authRecoveryRequestSent,
         );
       }
-    } catch (e) {
-      if (mounted) AppToast.showError(context, e.toString());
-    }
-  }
-
-  Future<void> _toggleDigest(bool value) async {
-    try {
-      await _authRepository.setMedicalWatchDigestOptIn(value);
-      setState(() => _digestOptIn = value);
     } catch (e) {
       if (mounted) AppToast.showError(context, e.toString());
     }
@@ -318,20 +307,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                         onPressed: _requestRecovery,
                       ),
                     ],
-                  ),
-                ),
-                const Divider(),
-                AppSettingsTile(
-                  title: l10n.authDigestTitle,
-                  subtitle: l10n.authDigestHint,
-                  child: SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: AppText(
-                      l10n.authDigestOptIn,
-                      variant: AppTextVariant.body,
-                    ),
-                    value: _digestOptIn,
-                    onChanged: _toggleDigest,
                   ),
                 ),
               ],

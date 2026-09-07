@@ -1426,24 +1426,6 @@ abstract class AppLocalizations {
   /// **'Securite'**
   String get authSecurityTitle;
 
-  /// No description provided for @authDigestTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Veille medicale'**
-  String get authDigestTitle;
-
-  /// No description provided for @authDigestHint.
-  ///
-  /// In fr, this message translates to:
-  /// **'Recevoir un digest par email (bientot disponible).'**
-  String get authDigestHint;
-
-  /// No description provided for @authDigestOptIn.
-  ///
-  /// In fr, this message translates to:
-  /// **'Activer le digest email'**
-  String get authDigestOptIn;
-
   /// No description provided for @recordingDateLabel.
   ///
   /// In fr, this message translates to:
@@ -1564,6 +1546,24 @@ abstract class AppLocalizations {
   /// **'Solarized'**
   String get settingsThemeSolarized;
 
+  /// No description provided for @settingsThemeCustom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perso'**
+  String get settingsThemeCustom;
+
+  /// No description provided for @settingsThemeBackground.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arriere-plan'**
+  String get settingsThemeBackground;
+
+  /// No description provided for @settingsThemePrimary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Primaire'**
+  String get settingsThemePrimary;
+
   /// No description provided for @settingsFontSize.
   ///
   /// In fr, this message translates to:
@@ -1642,11 +1642,11 @@ abstract class AppLocalizations {
   /// **'Recommencer l\'introduction'**
   String get settingsRestartOnboarding;
 
-  /// No description provided for @settingsTbd.
+  /// No description provided for @settingsComingSoon.
   ///
   /// In fr, this message translates to:
-  /// **'TBD'**
-  String get settingsTbd;
+  /// **'Bientôt disponible'**
+  String get settingsComingSoon;
 
   /// No description provided for @settingsLogout.
   ///
@@ -1711,7 +1711,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientAddDesc.
   ///
   /// In fr, this message translates to:
-  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.'**
+  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' pour continuer.'**
   String get tutorialPatientAddDesc;
 
   /// No description provided for @tutorialPatientMrnTitle.
@@ -2157,6 +2157,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Signaler l\'erreur'**
   String get errorToastReport;
+
+  /// No description provided for @bugReportCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bug copié dans le presse papier'**
+  String get bugReportCopied;
 
   /// No description provided for @screenshotBugTitle.
   ///

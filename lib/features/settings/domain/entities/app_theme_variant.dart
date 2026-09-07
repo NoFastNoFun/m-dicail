@@ -2,6 +2,7 @@ enum AppThemeVariant {
   light,
   dark,
   solarized,
+  custom,
 }
 
 extension AppThemeVariantStorage on AppThemeVariant {

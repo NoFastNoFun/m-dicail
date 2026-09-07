@@ -702,16 +702,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authSecurityTitle => 'Securite';
 
   @override
-  String get authDigestTitle => 'Veille medicale';
-
-  @override
-  String get authDigestHint =>
-      'Recevoir un digest par email (bientot disponible).';
-
-  @override
-  String get authDigestOptIn => 'Activer le digest email';
-
-  @override
   String get recordingDateLabel => 'Date';
 
   @override
@@ -774,6 +764,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsThemeSolarized => 'Solarized';
 
   @override
+  String get settingsThemeCustom => 'Perso';
+
+  @override
+  String get settingsThemeBackground => 'Arriere-plan';
+
+  @override
+  String get settingsThemePrimary => 'Primaire';
+
+  @override
   String get settingsFontSize => 'Taille du texte';
 
   @override
@@ -813,7 +812,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsRestartOnboarding => 'Recommencer l\'introduction';
 
   @override
-  String get settingsTbd => 'TBD';
+  String get settingsComingSoon => 'Bientôt disponible';
 
   @override
   String get settingsLogout => 'Se deconnecter';
@@ -850,7 +849,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tutorialPatientAddDesc =>
-      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut a droite pour continuer.';
+      'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' pour continuer.';
 
   @override
   String get tutorialPatientMrnTitle => 'Numero de dossier';
@@ -1095,6 +1094,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorToastReport => 'Signaler l\'erreur';
+
+  @override
+  String get bugReportCopied => 'Bug copié dans le presse papier';
 
   @override
   String get screenshotBugTitle => 'Un bug détecté ?';

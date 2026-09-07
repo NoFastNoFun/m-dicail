@@ -24,10 +24,15 @@ class AppRadialActionButton extends StatefulWidget {
     super.key,
     required this.actions,
     this.anchor = AppRadialActionAnchor.center,
+    this.onPrimaryPressed,
   });
 
   final List<AppRadialAction> actions;
   final AppRadialActionAnchor anchor;
+
+  /// When set, a tap runs this action and opening the radial menu requires a
+  /// long-press. When null, a tap toggles the menu (default).
+  final VoidCallback? onPrimaryPressed;
 
   @override
   State<AppRadialActionButton> createState() => _AppRadialActionButtonState();
@@ -93,6 +98,19 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     onTap();
   }
 
+  void _onFabPressed() {
+    final primary = widget.onPrimaryPressed;
+    if (primary != null) {
+      if (_isOpen) {
+        _close();
+        return;
+      }
+      primary();
+      return;
+    }
+    _toggle();
+  }
+
   Alignment get _stackAlignment => switch (widget.anchor) {
     AppRadialActionAnchor.center => Alignment.bottomCenter,
     AppRadialActionAnchor.end => Alignment.bottomRight,
@@ -118,6 +136,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     final actionCount = widget.actions.length;
     final arc = _arcAngles;
     final showSatellites = _isOpen || _controller.value > 0;
+    final hasPrimary = widget.onPrimaryPressed != null;
 
     return TapRegion(
       onTapOutside: (_) {
@@ -176,16 +195,19 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
                     onTap: () => _onActionTap(widget.actions[i].onTap),
                   ),
                 ),
-            FloatingActionButton(
-              onPressed: _toggle,
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-              elevation: 6,
-              shape: AppRadius.stadiumBorder,
-              child: AnimatedRotation(
-                turns: _isOpen ? 0.125 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: const Icon(Icons.add, size: 28),
+            GestureDetector(
+              onLongPress: hasPrimary ? _toggle : null,
+              child: FloatingActionButton(
+                onPressed: _onFabPressed,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+                elevation: 6,
+                shape: AppRadius.stadiumBorder,
+                child: AnimatedRotation(
+                  turns: _isOpen ? 0.125 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: const Icon(Icons.add, size: 28),
+                ),
               ),
             ),
           ],

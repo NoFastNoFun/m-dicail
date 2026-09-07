@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_typography.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+
 abstract final class MainShellChrome {
   static const double fabHeight = 56;
   static const double fabNavGap = AppSpacing.sm;
@@ -27,6 +28,7 @@ abstract final class MainShellChrome {
 
 class MainShellScope extends InheritedWidget {
   const MainShellScope({
+    required this.registerFabPrimaryAction,
     required super.child,
     required this.bottomPadding,
     super.key,
@@ -34,11 +36,19 @@ class MainShellScope extends InheritedWidget {
 
   final double bottomPadding;
 
+  /// Registers a page-specific FAB tap action. Pass null to clear.
+  /// When set, FAB tap runs this action and long-press opens the radial menu.
+  final void Function(VoidCallback? action) registerFabPrimaryAction;
+
   static MainShellScope? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<MainShellScope>();
   }
 
   static bool isActive(BuildContext context) => maybeOf(context) != null;
+
+  static void setFabPrimaryAction(BuildContext context, VoidCallback? action) {
+    maybeOf(context)?.registerFabPrimaryAction(action);
+  }
 
   EdgeInsets scrollPadding() {
     return EdgeInsets.only(bottom: bottomPadding);
@@ -50,6 +60,7 @@ class MainShellScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(MainShellScope oldWidget) {
-    return bottomPadding != oldWidget.bottomPadding;
+    return bottomPadding != oldWidget.bottomPadding ||
+        registerFabPrimaryAction != oldWidget.registerFabPrimaryAction;
   }
 }

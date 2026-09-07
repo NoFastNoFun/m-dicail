@@ -11,9 +11,11 @@ import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
+import 'package:medicail/core/design_system/app_custom_theme_palettes.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
 import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_event.dart';
 import 'package:medicail/features/settings/presentation/bloc/settings_state.dart';
@@ -22,6 +24,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'package:medicail/widget/settings/app_color_swatch_picker.dart';
 import 'package:medicail/widget/settings/app_settings_group.dart';
 import 'package:medicail/widget/settings/app_settings_tile.dart';
 import 'package:medicail/widget/settings/app_stepped_slider.dart';
@@ -61,6 +64,18 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (state.themeVariant == AppThemeVariant.custom)
+                    AppSettingsTile(
+                      icon: Icons.color_lens_outlined,
+                      title: l10n.settingsThemeCustom,
+                      child: _CustomThemeColorsSection(
+                        colors: state.customThemeColors,
+                        onChanged: (colors) =>
+                            context.read<SettingsBloc>().add(
+                              SettingsCustomThemeColorsChanged(colors),
+                            ),
+                      ),
+                    ),
                   AppSettingsTile(
                     icon: Icons.format_size,
                     title: l10n.settingsFontSize,
@@ -91,6 +106,12 @@ class SettingsPage extends StatelessWidget {
                     title: l10n.settingsTemplates,
                     showChevron: true,
                     onTap: () => context.goTemplates(),
+                  ),
+                  AppSettingsTile(
+                    icon: Icons.newspaper_outlined,
+                    title: l10n.medicalWatchTitle,
+                    subtitle: l10n.settingsComingSoon,
+                    enabled: false,
                   ),
                 ],
               ),
@@ -175,6 +196,71 @@ class _ThemeSelector extends StatelessWidget {
         (value: AppThemeVariant.light, label: l10n.settingsThemeLight),
         (value: AppThemeVariant.dark, label: l10n.settingsThemeDark),
         (value: AppThemeVariant.solarized, label: l10n.settingsThemeSolarized),
+        (value: AppThemeVariant.custom, label: l10n.settingsThemeCustom),
+      ],
+    );
+  }
+}
+
+class _CustomThemeColorsSection extends StatelessWidget {
+  const _CustomThemeColorsSection({
+    required this.colors,
+    required this.onChanged,
+  });
+
+  final CustomThemeColors colors;
+  final ValueChanged<CustomThemeColors> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppText(
+          l10n.settingsThemeBackground,
+          variant: AppTextVariant.label,
+          color: context.secondaryTextColor,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppColorSwatchPicker(
+          colors: AppCustomThemePalettes.backgroundsLight,
+          selected: colors.background,
+          onChanged: (background) => onChanged(
+            colors.copyWith(background: background),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppColorSwatchPicker(
+          colors: AppCustomThemePalettes.backgroundsDark,
+          selected: colors.background,
+          onChanged: (background) => onChanged(
+            colors.copyWith(background: background),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        AppText(
+          l10n.settingsThemePrimary,
+          variant: AppTextVariant.label,
+          color: context.secondaryTextColor,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppColorSwatchPicker(
+          colors: AppCustomThemePalettes.primaryLight,
+          selected: colors.primary,
+          onChanged: (primary) => onChanged(
+            colors.copyWith(primary: primary),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppColorSwatchPicker(
+          colors: AppCustomThemePalettes.primaryDark,
+          selected: colors.primary,
+          onChanged: (primary) => onChanged(
+            colors.copyWith(primary: primary),
+          ),
+        ),
       ],
     );
   }
