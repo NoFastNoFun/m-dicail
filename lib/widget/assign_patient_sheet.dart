@@ -31,8 +31,8 @@ class AssignPatientSheet extends StatefulWidget {
 
   final String sessionId;
 
-  static void show(BuildContext context, String sessionId) {
-    showModalBottomSheet(
+  static Future<String?> show(BuildContext context, String sessionId) {
+    return showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
@@ -118,7 +118,10 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
     context.goHome();
   }
 
-  Future<void> _assignAndNavigate(BuildContext context, String patientId) async {
+  Future<void> _assignAndNavigate(
+    BuildContext context,
+    String patientId,
+  ) async {
     final tutorialBloc = context.read<TutorialBloc>();
     if (tutorialBloc.state is TutorialInProgress) {
       _completeAssignPatientTutorialStep();
@@ -129,15 +132,15 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
     try {
       final repo = getIt<RecordingSessionRepository>();
       final session = await repo.getById(widget.sessionId);
-      if (session != null) {
-        await repo.save(session.copyWith(patientId: patientId));
-      }
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Fermer la modale
-        if (context.canPop()) {
-          context.pop(); // Fermer la page de record si besoin
+      if (session == null) {
+        if (context.mounted) {
+          AppToast.showError(context, l10n.assignPatientError);
         }
-        context.goPatientDetail(patientId);
+        return;
+      }
+      await repo.save(session.copyWith(patientId: patientId));
+      if (context.mounted) {
+        Navigator.of(context).pop(patientId);
       }
     } catch (e) {
       if (context.mounted) {
@@ -153,8 +156,9 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
     final theme = Theme.of(context);
     final isTutorial =
         context.watch<TutorialBloc>().state is TutorialInProgress;
-    final sheetBorderRadius =
-        isTutorial ? AppRadius.onboardingLgBorder : AppRadius.lgBorder;
+    final sheetBorderRadius = isTutorial
+        ? AppRadius.onboardingLgBorder
+        : AppRadius.lgBorder;
 
     return Container(
       decoration: BoxDecoration(
@@ -204,10 +208,12 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
                 children: [
                   _PatientSearchTab(
                     sessionId: widget.sessionId,
-                    onAssign: (patientId) => _assignAndNavigate(context, patientId),
+                    onAssign: (patientId) =>
+                        _assignAndNavigate(context, patientId),
                   ),
                   PatientCreationSheet(
-                    onSuccess: (patientId) => _assignAndNavigate(context, patientId),
+                    onSuccess: (patientId) =>
+                        _assignAndNavigate(context, patientId),
                   ),
                 ],
               ),
@@ -245,9 +251,9 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
   }
 
   void _onSearchChanged() {
-    context
-        .read<PatientBloc>()
-        .add(PatientsRequested(query: _searchController.text.trim()));
+    context.read<PatientBloc>().add(
+      PatientsRequested(query: _searchController.text.trim()),
+    );
   }
 
   @override
@@ -269,7 +275,9 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
           Expanded(
             child: BlocBuilder<PatientBloc, PatientState>(
               builder: (context, state) {
-                final patients = state is PatientLoaded ? state.patients : <Patient>[];
+                final patients = state is PatientLoaded
+                    ? state.patients
+                    : <Patient>[];
                 final isLoading = state is PatientLoading;
 
                 if (isLoading && patients.isEmpty) {
@@ -306,7 +314,10 @@ class _PatientSearchTabState extends State<_PatientSearchTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              AppText(patient.displayName, variant: AppTextVariant.title),
+                              AppText(
+                                patient.displayName,
+                                variant: AppTextVariant.title,
+                              ),
                               const SizedBox(height: AppSpacing.xs),
                               AppText(
                                 'MRN: ${patient.mrn}',

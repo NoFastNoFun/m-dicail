@@ -11,10 +11,7 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class PathologyCreatePage extends StatefulWidget {
-  const PathologyCreatePage({
-    super.key,
-    required this.onCreate,
-  });
+  const PathologyCreatePage({super.key, required this.onCreate});
 
   final Future<void> Function(String name, PathologyDomain domain) onCreate;
 
@@ -85,19 +82,24 @@ class _PathologyCreatePageState extends State<PathologyCreatePage> {
           const SizedBox(height: AppSpacing.lg),
           AppText(l10n.pathologyDomainLabel, variant: AppTextVariant.body),
           const SizedBox(height: AppSpacing.sm),
-          ...PathologyDomain.values.map(
-            (domain) => RadioListTile<PathologyDomain>(
-              value: domain,
-              groupValue: _domain,
-              onChanged: _isSaving
-                  ? null
-                  : (value) {
-                      if (value == null) {
-                        return;
-                      }
-                      setState(() => _domain = value);
-                    },
-              title: AppText(domain.labelFr(), variant: AppTextVariant.body),
+          RadioGroup<PathologyDomain>(
+            groupValue: _domain,
+            onChanged: (value) {
+              if (_isSaving || value == null) return;
+              setState(() => _domain = value);
+            },
+            child: Column(
+              children: [
+                for (final domain in PathologyDomain.values)
+                  RadioListTile<PathologyDomain>(
+                    value: domain,
+                    enabled: !_isSaving,
+                    title: AppText(
+                      domain.labelFr(),
+                      variant: AppTextVariant.body,
+                    ),
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: AppSpacing.xl),

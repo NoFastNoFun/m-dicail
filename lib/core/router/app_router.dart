@@ -57,7 +57,8 @@ class AppRouter {
         return AppRoutes.login;
       }
 
-      if (isAuthenticated && (location == AppRoutes.login || location == AppRoutes.register)) {
+      if (isAuthenticated &&
+          (location == AppRoutes.login || location == AppRoutes.register)) {
         return AppRoutes.home;
       }
 
@@ -83,22 +84,20 @@ class AppRouter {
             child: ForgotPasswordPage(initialEmail: email),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
       GoRoute(
         path: AppRoutes.resetPassword,
-        builder: (context, state) => ResetPasswordPage(
-          token: state.uri.queryParameters['token'] ?? '',
-        ),
+        builder: (context, state) =>
+            ResetPasswordPage(token: state.uri.queryParameters['token'] ?? ''),
       ),
       GoRoute(
         path: AppRoutes.recovery,
-        builder: (context, state) => RecoveryPage(
-          token: state.uri.queryParameters['token'] ?? '',
-        ),
+        builder: (context, state) =>
+            RecoveryPage(token: state.uri.queryParameters['token'] ?? ''),
       ),
       GoRoute(
         path: AppRoutes.loginMfa,
@@ -183,15 +182,15 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.record,
         name: 'record',
-        builder: (context, state) => RecordPage(
-          patientId: state.uri.queryParameters['patientId'],
-        ),
+        builder: (context, state) =>
+            RecordPage(patientId: state.uri.queryParameters['patientId']),
       ),
       GoRoute(
         path: AppRoutes.patientDetail,
         name: 'patient-detail',
         builder: (context, state) => PatientDetailPage(
           patientId: state.pathParameters['patientId'] ?? '',
+          sessionId: state.uri.queryParameters['sessionId'],
         ),
       ),
       if (kDebugMode)
@@ -229,9 +228,12 @@ extension AppRouterNavigation on BuildContext {
       await push(AppRoutes.record);
       return;
     }
-    await push(Uri(path: AppRoutes.record, queryParameters: {
-      'patientId': patientId,
-    }).toString());
+    await push(
+      Uri(
+        path: AppRoutes.record,
+        queryParameters: {'patientId': patientId},
+      ).toString(),
+    );
   }
 
   void goPatients() => go(AppRoutes.patients);
@@ -244,10 +246,12 @@ extension AppRouterNavigation on BuildContext {
     final y = date.year.toString().padLeft(4, '0');
     final m = date.month.toString().padLeft(2, '0');
     final d = date.day.toString().padLeft(2, '0');
-    push(Uri(
-      path: AppRoutes.appointments,
-      queryParameters: {'date': '$y-$m-$d'},
-    ).toString());
+    push(
+      Uri(
+        path: AppRoutes.appointments,
+        queryParameters: {'date': '$y-$m-$d'},
+      ).toString(),
+    );
   }
 
   void goSettings() => go(AppRoutes.settings);
@@ -255,6 +259,13 @@ extension AppRouterNavigation on BuildContext {
   void goTemplates() => pushNamed('settings-templates');
 
   void goPatientDetail(String patientId) => push('/patients/$patientId');
+
+  void openCompletedConsultation(String patientId, String sessionId) =>
+      pushReplacementNamed(
+        'patient-detail',
+        pathParameters: {'patientId': patientId},
+        queryParameters: {'sessionId': sessionId},
+      );
 
   void goDebug() => push(AppRoutes.debug);
 }
