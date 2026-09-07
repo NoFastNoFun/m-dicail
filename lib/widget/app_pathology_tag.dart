@@ -10,11 +10,13 @@ class AppPathologyTag extends StatelessWidget {
     required this.label,
     this.onTap,
     this.compact = false,
+    this.icon = Icons.local_offer_outlined,
   });
 
   final String label;
   final VoidCallback? onTap;
   final bool compact;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class AppPathologyTag extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          Icons.local_offer_outlined,
+          icon,
           size: compact ? 14 : 16,
           color: foreground,
         ),

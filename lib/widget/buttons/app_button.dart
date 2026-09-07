@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
@@ -21,19 +22,19 @@ class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.enabled = true,
     this.expanded = true,
-  })  : assert(
-          layout != AppButtonLayout.text || label != null,
-          'label is required for text layout',
-        ),
-        assert(
-          layout == AppButtonLayout.text || icon != null,
-          'icon is required for icon and textWithIcon layouts',
-        ),
-        assert(
-          layout != AppButtonLayout.textWithIcon ||
-              (label != null && icon != null),
-          'label and icon are required for textWithIcon layout',
-        );
+  }) : assert(
+         layout != AppButtonLayout.text || label != null,
+         'label is required for text layout',
+       ),
+       assert(
+         layout == AppButtonLayout.text || icon != null,
+         'icon is required for icon and textWithIcon layouts',
+       ),
+       assert(
+         layout != AppButtonLayout.textWithIcon ||
+             (label != null && icon != null),
+         'label and icon are required for textWithIcon layout',
+       );
 
   final VoidCallback? onPressed;
   final AppButtonStyle style;
@@ -50,6 +51,7 @@ class AppButton extends StatelessWidget {
 
     final effectiveOnPressed = enabled && !isLoading && onPressed != null
         ? () {
+            AppHaptics.tap();
             FocusManager.instance.primaryFocus?.unfocus();
             onPressed!();
           }
@@ -70,38 +72,42 @@ class AppButton extends StatelessWidget {
 
     return switch (layout) {
       AppButtonLayout.text => _wrapSized(
-          _textButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _textButton(child, effectiveOnPressed, buttonStyle),
+      ),
       AppButtonLayout.icon => _wrapSized(
-          _iconButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _iconButton(child, effectiveOnPressed, buttonStyle),
+      ),
       AppButtonLayout.textWithIcon => _wrapSized(
-          _textButton(child, effectiveOnPressed, buttonStyle),
-        ),
+        _textButton(child, effectiveOnPressed, buttonStyle),
+      ),
     };
   }
 
   Widget _buildContent(ColorScheme colorScheme) {
     return switch (layout) {
       AppButtonLayout.text => AppText(
-          label!,
-          variant: AppTextVariant.label,
-          color: _foregroundColor(colorScheme),
-        ),
-      AppButtonLayout.icon => Icon(icon, color: _foregroundColor(colorScheme), size: 24),
+        label!,
+        variant: AppTextVariant.label,
+        color: _foregroundColor(colorScheme),
+      ),
+      AppButtonLayout.icon => Icon(
+        icon,
+        color: _foregroundColor(colorScheme),
+        size: 24,
+      ),
       AppButtonLayout.textWithIcon => Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: _foregroundColor(colorScheme), size: 20),
-            const SizedBox(width: AppSpacing.sm),
-            AppText(
-              label!,
-              variant: AppTextVariant.label,
-              color: _foregroundColor(colorScheme),
-            ),
-          ],
-        ),
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: _foregroundColor(colorScheme), size: 20),
+          const SizedBox(width: AppSpacing.sm),
+          AppText(
+            label!,
+            variant: AppTextVariant.label,
+            color: _foregroundColor(colorScheme),
+          ),
+        ],
+      ),
     };
   }
 
@@ -115,10 +121,7 @@ class AppButton extends StatelessWidget {
     }
     if (!expanded) {
       return IntrinsicWidth(
-        child: SizedBox(
-          height: AppSpacing.minTouchTarget,
-          child: child,
-        ),
+        child: SizedBox(height: AppSpacing.minTouchTarget, child: child),
       );
     }
     return SizedBox(
@@ -141,11 +144,7 @@ class AppButton extends StatelessWidget {
       );
     }
     if (style == AppButtonStyle.tertiary) {
-      return TextButton(
-        onPressed: onPressed,
-        style: buttonStyle,
-        child: child,
-      );
+      return TextButton(onPressed: onPressed, style: buttonStyle, child: child);
     }
     return OutlinedButton(
       onPressed: onPressed,
@@ -167,11 +166,7 @@ class AppButton extends StatelessWidget {
       );
     }
     if (style == AppButtonStyle.tertiary) {
-      return TextButton(
-        onPressed: onPressed,
-        style: buttonStyle,
-        child: child,
-      );
+      return TextButton(onPressed: onPressed, style: buttonStyle, child: child);
     }
     return OutlinedButton(
       onPressed: onPressed,
@@ -189,9 +184,9 @@ class AppButton extends StatelessWidget {
   RoundedRectangleBorder _resolveButtonShape(BuildContext context) {
     final themeStyle = _isFilledStyle
         ? Theme.of(context).filledButtonTheme.style
-        : style == AppButtonStyle.tertiary 
-            ? Theme.of(context).textButtonTheme.style
-            : Theme.of(context).outlinedButtonTheme.style;
+        : style == AppButtonStyle.tertiary
+        ? Theme.of(context).textButtonTheme.style
+        : Theme.of(context).outlinedButtonTheme.style;
     final resolved = themeStyle?.shape?.resolve(const {});
     if (resolved is RoundedRectangleBorder) {
       final radius = resolved.borderRadius.resolve(Directionality.of(context));
@@ -211,40 +206,37 @@ class AppButton extends StatelessWidget {
     final tapTarget = expanded
         ? MaterialTapTargetSize.padded
         : MaterialTapTargetSize.shrinkWrap;
-    final labelStyle =
-        AppTypography.label.copyWith(color: _foregroundColor(colorScheme));
+    final labelStyle = AppTypography.label.copyWith(
+      color: _foregroundColor(colorScheme),
+    );
 
     final (background, foreground, border) = switch (style) {
       AppButtonStyle.primary => (
-          colorScheme.primary,
-          colorScheme.onPrimary,
-          colorScheme.primary,
-        ),
+        colorScheme.primary,
+        colorScheme.onPrimary,
+        colorScheme.primary,
+      ),
       AppButtonStyle.secondary => (
-          Colors.transparent,
-          colorScheme.primary,
-          colorScheme.primary,
-        ),
+        Colors.transparent,
+        colorScheme.primary,
+        colorScheme.primary,
+      ),
       AppButtonStyle.tertiary => (
-          Colors.transparent,
-          colorScheme.primary,
-          Colors.transparent,
-        ),
+        Colors.transparent,
+        colorScheme.primary,
+        Colors.transparent,
+      ),
       AppButtonStyle.warning => (
-          AppColors.warning,
-          AppColors.onWarning,
-          AppColors.warning,
-        ),
+        AppColors.warning,
+        AppColors.onWarning,
+        AppColors.warning,
+      ),
       AppButtonStyle.error => (
-          colorScheme.error,
-          colorScheme.onError,
-          colorScheme.error,
-        ),
-      AppButtonStyle.info => (
-          AppColors.info,
-          AppColors.onInfo,
-          AppColors.info,
-        ),
+        colorScheme.error,
+        colorScheme.onError,
+        colorScheme.error,
+      ),
+      AppButtonStyle.info => (AppColors.info, AppColors.onInfo, AppColors.info),
     };
 
     final shape = _resolveButtonShape(context);
@@ -262,7 +254,7 @@ class AppButton extends StatelessWidget {
         tapTargetSize: tapTarget,
       );
     }
-    
+
     if (style == AppButtonStyle.tertiary) {
       return TextButton.styleFrom(
         foregroundColor: foreground,

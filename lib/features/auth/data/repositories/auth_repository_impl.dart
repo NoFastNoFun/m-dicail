@@ -239,6 +239,76 @@ class AuthRepositoryImpl implements AuthRepository {
     );
   }
 
+  @override
+  Future<User> updateProfile({String? fullName}) async {
+    final response = await _apiClient.patch<Map<String, dynamic>>(
+      '/auth/profile',
+      data: {'fullName': fullName},
+    );
+    final data = response.data;
+    if (data == null) throw const ServerException('Aucune donnee utilisateur retournee.');
+    return _mapUser(data);
+  }
+
+  @override
+  Future<User> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/auth/profile/change-password',
+      data: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+    );
+    final data = response.data;
+    if (data == null) throw const ServerException('Reponse vide.');
+    await _persistAuthResponse(data);
+    final userJson = data['user'];
+    if (userJson is Map<String, dynamic>) return _mapUser(userJson);
+    return getMe();
+  }
+
+  @override
+  Future<User> changeEmail({
+    required String newEmail,
+    String? password,
+    String? totpCode,
+    bool usePasskey = false,
+  }) async {
+    final Map<String, dynamic> body = {'newEmail': newEmail};
+    if (totpCode != null && totpCode.isNotEmpty) {
+      body['totpCode'] = totpCode;
+    }
+
+    if (usePasskey) {
+      final optionsResponse = await _apiClient.post<Map<String, dynamic>>(
+        '/auth/profile/reauth/passkey/options',
+      );
+      final options = optionsResponse.data;
+      if (options == null) throw const ServerException('Options passkey invalides.');
+      final credential = await _passkeyService.authenticate(options);
+      body['passkeyResponse'] = credential;
+    } else {
+      if (password == null || password.isEmpty) {
+        throw const ServerException('Mot de passe requis.');
+      }
+      body['password'] = password;
+    }
+
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/auth/profile/change-email',
+      data: body,
+    );
+    final data = response.data;
+    if (data == null) throw const ServerException('Reponse vide.');
+    await _persistAuthResponse(data);
+    final userJson = data['user'];
+    if (userJson is Map<String, dynamic>) return _mapUser(userJson);
+    return getMe();
+  }
+
   Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
     final accessToken = data['accessToken'];
     final refreshToken = data['refreshToken'];
