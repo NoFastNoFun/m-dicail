@@ -265,7 +265,7 @@ abstract class AppLocalizations {
   /// No description provided for @transcriptEmptyHint.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune parole captee pour le moment'**
+  /// **'Aucune parole captée pour le moment'**
   String get transcriptEmptyHint;
 
   /// No description provided for @transcriptEmptyFallback.
@@ -283,7 +283,7 @@ abstract class AppLocalizations {
   /// No description provided for @recordStatusReady.
   ///
   /// In fr, this message translates to:
-  /// **'Pret a ecouter'**
+  /// **'Prêt à écouter'**
   String get recordStatusReady;
 
   /// No description provided for @recordStatusInitializing.
@@ -295,43 +295,43 @@ abstract class AppLocalizations {
   /// No description provided for @recordStatusListening.
   ///
   /// In fr, this message translates to:
-  /// **'Ecoute en cours'**
+  /// **'Écoute en cours'**
   String get recordStatusListening;
 
   /// No description provided for @recordStatusPaused.
   ///
   /// In fr, this message translates to:
-  /// **'Ecoute en pause'**
+  /// **'Écoute en pause'**
   String get recordStatusPaused;
 
   /// No description provided for @recordStatusEnded.
   ///
   /// In fr, this message translates to:
-  /// **'Session terminee'**
+  /// **'Session terminée'**
   String get recordStatusEnded;
 
   /// No description provided for @recordNotificationTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Ecoute en cours'**
+  /// **'Écoute en cours'**
   String get recordNotificationTitle;
 
   /// No description provided for @recordNotificationBody.
   ///
   /// In fr, this message translates to:
-  /// **'Touchez pour revenir a Medicail'**
+  /// **'Touchez pour revenir à Medicail'**
   String get recordNotificationBody;
 
   /// No description provided for @recordNotificationBackgroundTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Enregistrement en arriere-plan'**
+  /// **'Enregistrement en arrière-plan'**
   String get recordNotificationBackgroundTitle;
 
   /// No description provided for @recordNotificationBackgroundBody.
   ///
   /// In fr, this message translates to:
-  /// **'L\'ecoute continue pendant que l\'ecran est eteint'**
+  /// **'L\'écoute continue pendant que l\'écran est éteint'**
   String get recordNotificationBackgroundBody;
 
   /// No description provided for @recordStatusTranscribingBackground.
@@ -373,7 +373,7 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentsEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun rendez-vous pour cette journee'**
+  /// **'Aucun rendez-vous pour cette journée'**
   String get appointmentsEmpty;
 
   /// No description provided for @appointmentsUpcomingEmpty.
@@ -397,7 +397,7 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentCreateSubmit.
   ///
   /// In fr, this message translates to:
-  /// **'Creer le rendez-vous'**
+  /// **'Créer le rendez-vous'**
   String get appointmentCreateSubmit;
 
   /// No description provided for @appointmentSaveChanges.
@@ -409,7 +409,7 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentSaved.
   ///
   /// In fr, this message translates to:
-  /// **'Rendez-vous enregistre'**
+  /// **'Rendez-vous enregistré'**
   String get appointmentSaved;
 
   /// No description provided for @appointmentEdit.
@@ -439,13 +439,13 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentPatientRequired.
   ///
   /// In fr, this message translates to:
-  /// **'Selectionnez un patient'**
+  /// **'Sélectionnez un patient'**
   String get appointmentPatientRequired;
 
   /// No description provided for @appointmentEndBeforeStart.
   ///
   /// In fr, this message translates to:
-  /// **'L\'heure de fin doit etre apres l\'heure de debut'**
+  /// **'L\'heure de fin doit être après l\'heure de début'**
   String get appointmentEndBeforeStart;
 
   /// No description provided for @appointmentKeepPatientHint.
@@ -457,19 +457,19 @@ abstract class AppLocalizations {
   /// No description provided for @appointmentStatusScheduled.
   ///
   /// In fr, this message translates to:
-  /// **'Planifie'**
+  /// **'Planifié'**
   String get appointmentStatusScheduled;
 
   /// No description provided for @appointmentStatusCancelled.
   ///
   /// In fr, this message translates to:
-  /// **'Annule'**
+  /// **'Annulé'**
   String get appointmentStatusCancelled;
 
   /// No description provided for @appointmentStatusCompleted.
   ///
   /// In fr, this message translates to:
-  /// **'Termine'**
+  /// **'Terminé'**
   String get appointmentStatusCompleted;
 
   /// No description provided for @appointmentStartTime.
@@ -505,7 +505,7 @@ abstract class AppLocalizations {
   /// No description provided for @patientFirstNameLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Prenom'**
+  /// **'Prénom'**
   String get patientFirstNameLabel;
 
   /// No description provided for @patientLastNameLabel.
@@ -517,7 +517,7 @@ abstract class AppLocalizations {
   /// No description provided for @patientCreateButton.
   ///
   /// In fr, this message translates to:
-  /// **'Creer le patient'**
+  /// **'Créer le patient'**
   String get patientCreateButton;
 
   /// No description provided for @patientOpenButton.
@@ -949,13 +949,13 @@ abstract class AppLocalizations {
   /// No description provided for @debugBackendUrlReset.
   ///
   /// In fr, this message translates to:
-  /// **'Reinitialiser'**
+  /// **'Réinitialiser'**
   String get debugBackendUrlReset;
 
   /// No description provided for @debugBackendUrlSaved.
   ///
   /// In fr, this message translates to:
-  /// **'URL backend mise a jour'**
+  /// **'URL backend mise à jour'**
   String get debugBackendUrlSaved;
 
   /// No description provided for @debugBackendUrlInvalid.
@@ -1141,7 +1141,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginWelcomeSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos donnees restent chiffrees sur cet appareil.'**
+  /// **'Connectez-vous pour synchroniser vos dossiers, ou continuez sans compte. Vos données restent chiffrées sur cet appareil.'**
   String get loginWelcomeSubtitle;
 
   /// No description provided for @loginEmailLabel.
@@ -1159,7 +1159,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginCreateAccountButton.
   ///
   /// In fr, this message translates to:
-  /// **'Creer un compte'**
+  /// **'Créer un compte'**
   String get loginCreateAccountButton;
 
   /// No description provided for @loginContinueWithoutAccount.
@@ -1207,19 +1207,19 @@ abstract class AppLocalizations {
   /// No description provided for @authForgotPasswordLink.
   ///
   /// In fr, this message translates to:
-  /// **'Mot de passe oublie ?'**
+  /// **'Mot de passe oublié ?'**
   String get authForgotPasswordLink;
 
   /// No description provided for @authForgotPasswordTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Mot de passe oublie'**
+  /// **'Mot de passe oublié'**
   String get authForgotPasswordTitle;
 
   /// No description provided for @authForgotPasswordHint.
   ///
   /// In fr, this message translates to:
-  /// **'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de reinitialisation.'**
+  /// **'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de réinitialisation.'**
   String get authForgotPasswordHint;
 
   /// No description provided for @authForgotPasswordSubmit.
@@ -1231,7 +1231,7 @@ abstract class AppLocalizations {
   /// No description provided for @authForgotPasswordSent.
   ///
   /// In fr, this message translates to:
-  /// **'Si un compte existe pour cette adresse, un email vient d\'etre envoye.'**
+  /// **'Si un compte existe pour cette adresse, un email vient d\'être envoyé.'**
   String get authForgotPasswordSent;
 
   /// No description provided for @authResetPasswordTitle.
@@ -1249,73 +1249,73 @@ abstract class AppLocalizations {
   /// No description provided for @authResetPasswordSubmit.
   ///
   /// In fr, this message translates to:
-  /// **'Reinitialiser'**
+  /// **'Réinitialiser'**
   String get authResetPasswordSubmit;
 
   /// No description provided for @authResetPasswordSuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Mot de passe mis a jour.'**
+  /// **'Mot de passe mis à jour.'**
   String get authResetPasswordSuccess;
 
   /// No description provided for @authRecoveryTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Recuperation de compte'**
+  /// **'Récupération de compte'**
   String get authRecoveryTitle;
 
   /// No description provided for @authRecoveryHint.
   ///
   /// In fr, this message translates to:
-  /// **'Confirmez la recuperation pour desactiver l\'authentification TOTP. Vos passkeys restent actives.'**
+  /// **'Confirmez la récupération pour désactiver l\'authentification TOTP. Vos passkeys restent actives.'**
   String get authRecoveryHint;
 
   /// No description provided for @authRecoveryConfirm.
   ///
   /// In fr, this message translates to:
-  /// **'Confirmer la recuperation'**
+  /// **'Confirmer la récupération'**
   String get authRecoveryConfirm;
 
   /// No description provided for @authRecoverySuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Recuperation terminee. Vous pouvez vous reconnecter.'**
+  /// **'Récupération terminée. Vous pouvez vous reconnecter.'**
   String get authRecoverySuccess;
 
   /// No description provided for @authRecoveryRequest.
   ///
   /// In fr, this message translates to:
-  /// **'Demander un lien de recuperation'**
+  /// **'Demander un lien de récupération'**
   String get authRecoveryRequest;
 
   /// No description provided for @authRecoveryRequestSent.
   ///
   /// In fr, this message translates to:
-  /// **'Si un compte existe, un email de recuperation vient d\'etre envoye.'**
+  /// **'Si un compte existe, un email de récupération vient d\'être envoyé.'**
   String get authRecoveryRequestSent;
 
   /// No description provided for @authRecoveryCodesTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Codes de recuperation'**
+  /// **'Codes de récupération'**
   String get authRecoveryCodesTitle;
 
   /// No description provided for @authBackToLogin.
   ///
   /// In fr, this message translates to:
-  /// **'Retour a la connexion'**
+  /// **'Retour à la connexion'**
   String get authBackToLogin;
 
   /// No description provided for @authMfaTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Verification en deux etapes'**
+  /// **'Vérification en deux étapes'**
   String get authMfaTitle;
 
   /// No description provided for @authMfaHint.
   ///
   /// In fr, this message translates to:
-  /// **'Entrez le code de votre application d\'authentification ou un code de recuperation.'**
+  /// **'Entrez le code de votre application d\'authentification ou un code de récupération.'**
   String get authMfaHint;
 
   /// No description provided for @authMfaCodeLabel.
@@ -1327,7 +1327,7 @@ abstract class AppLocalizations {
   /// No description provided for @authMfaVerify.
   ///
   /// In fr, this message translates to:
-  /// **'Verifier'**
+  /// **'Vérifier'**
   String get authMfaVerify;
 
   /// No description provided for @authMfaEnroll.
@@ -1345,37 +1345,37 @@ abstract class AppLocalizations {
   /// No description provided for @authMfaDisable.
   ///
   /// In fr, this message translates to:
-  /// **'Desactiver TOTP'**
+  /// **'Désactiver TOTP'**
   String get authMfaDisable;
 
   /// No description provided for @authMfaEnabled.
   ///
   /// In fr, this message translates to:
-  /// **'Active'**
+  /// **'Activé'**
   String get authMfaEnabled;
 
   /// No description provided for @authMfaDisabled.
   ///
   /// In fr, this message translates to:
-  /// **'Desactive'**
+  /// **'Désactivé'**
   String get authMfaDisabled;
 
   /// No description provided for @authMfaManualHint.
   ///
   /// In fr, this message translates to:
-  /// **'Sur mobile, copiez la cle secrete dans votre application d\'authentification.'**
+  /// **'Sur mobile, copiez la clé secrète dans votre application d\'authentification.'**
   String get authMfaManualHint;
 
   /// No description provided for @authMfaSecretLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Cle secrete'**
+  /// **'Clé secrète'**
   String get authMfaSecretLabel;
 
   /// No description provided for @authMfaCopySecret.
   ///
   /// In fr, this message translates to:
-  /// **'Copier la cle'**
+  /// **'Copier la clé'**
   String get authMfaCopySecret;
 
   /// No description provided for @authMfaCopyUri.
@@ -1387,13 +1387,13 @@ abstract class AppLocalizations {
   /// No description provided for @authMfaSecretCopied.
   ///
   /// In fr, this message translates to:
-  /// **'Cle secrete copiee'**
+  /// **'Clé secrète copiée'**
   String get authMfaSecretCopied;
 
   /// No description provided for @authMfaUriCopied.
   ///
   /// In fr, this message translates to:
-  /// **'Lien otpauth copie'**
+  /// **'Lien otpauth copié'**
   String get authMfaUriCopied;
 
   /// No description provided for @authPasskeyLogin.
@@ -1423,8 +1423,26 @@ abstract class AppLocalizations {
   /// No description provided for @authSecurityTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Securite'**
+  /// **'Sécurité'**
   String get authSecurityTitle;
+
+  /// No description provided for @authDigestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veille médicale'**
+  String get authDigestTitle;
+
+  /// No description provided for @authDigestHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir un digest par email (bientôt disponible).'**
+  String get authDigestHint;
+
+  /// No description provided for @authDigestOptIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer le digest email'**
+  String get authDigestOptIn;
 
   /// No description provided for @recordingDateLabel.
   ///
@@ -1465,13 +1483,13 @@ abstract class AppLocalizations {
   /// No description provided for @recordLeaveMessage.
   ///
   /// In fr, this message translates to:
-  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder et l\'associer a un patient ?'**
+  /// **'Cette consultation n\'est pas enregistrée. Voulez-vous la sauvegarder et l\'associer à un patient ?'**
   String get recordLeaveMessage;
 
   /// No description provided for @recordLeaveMessageWithPatient.
   ///
   /// In fr, this message translates to:
-  /// **'Cette consultation n\'est pas enregistree. Voulez-vous la sauvegarder dans le dossier du patient ?'**
+  /// **'Cette consultation n\'est pas enregistrée. Voulez-vous la sauvegarder dans le dossier du patient ?'**
   String get recordLeaveMessageWithPatient;
 
   /// No description provided for @recordLeaveSaveAndAssign.
@@ -1525,7 +1543,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTheme.
   ///
   /// In fr, this message translates to:
-  /// **'Theme'**
+  /// **'Thème'**
   String get settingsTheme;
 
   /// No description provided for @settingsThemeLight.
@@ -1591,13 +1609,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsFontSizeExtraLarge.
   ///
   /// In fr, this message translates to:
-  /// **'Tres grand'**
+  /// **'Très grand'**
   String get settingsFontSizeExtraLarge;
 
   /// No description provided for @settingsDefaultSessionLength.
   ///
   /// In fr, this message translates to:
-  /// **'Duree de seance par defaut'**
+  /// **'Durée de séance par défaut'**
   String get settingsDefaultSessionLength;
 
   /// No description provided for @settingsSessionLength30m.
@@ -1648,22 +1666,28 @@ abstract class AppLocalizations {
   /// **'Bientôt disponible'**
   String get settingsComingSoon;
 
+  /// No description provided for @settingsTbd.
+  ///
+  /// In fr, this message translates to:
+  /// **'TBD'**
+  String get settingsTbd;
+
   /// No description provided for @settingsLogout.
   ///
   /// In fr, this message translates to:
-  /// **'Se deconnecter'**
+  /// **'Se déconnecter'**
   String get settingsLogout;
 
   /// No description provided for @tutorialIntroTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Decouvrir Medicail'**
+  /// **'Découvrir Medicail'**
   String get tutorialIntroTitle;
 
   /// No description provided for @tutorialIntroDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Un tutoriel rapide peut vous guider dans la creation d\'un dossier patient, une premiere consultation, puis un enregistrement rapide depuis l\'accueil.'**
+  /// **'Un tutoriel rapide peut vous guider dans la création d\'un dossier patient, une première consultation, puis un enregistrement rapide depuis l\'accueil.'**
   String get tutorialIntroDesc;
 
   /// No description provided for @tutorialIntroStart.
@@ -1687,7 +1711,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialHomePatientsDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Cliquez ici pour acceder a la liste de vos patients ou en creer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.'**
+  /// **'Cliquez ici pour accéder à la liste de vos patients ou en créer un nouveau.\n\n👉 Appuyez sur l\'onglet \'Patients\' ci-dessous pour continuer.'**
   String get tutorialHomePatientsDesc;
 
   /// No description provided for @tutorialHomeRecordTitle.
@@ -1699,7 +1723,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialHomeRecordDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Depuis l\'ecran d\'accueil, utilisez ce bouton pour demarrer immediatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.'**
+  /// **'Depuis l\'écran d\'accueil, utilisez ce bouton pour démarrer immédiatement une consultation vocale.\n\n👉 Appuyez sur ce bouton d\'enregistrement pour continuer.'**
   String get tutorialHomeRecordDesc;
 
   /// No description provided for @tutorialPatientAddTitle.
@@ -1711,31 +1735,31 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientAddDesc.
   ///
   /// In fr, this message translates to:
-  /// **'C\'est ici que vous pouvez creer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' pour continuer.'**
+  /// **'C\'est ici que vous pouvez créer un nouveau dossier patient en renseignant ses informations de base.\n\n👉 Appuyez sur le bouton \'+\' en haut à droite pour continuer.'**
   String get tutorialPatientAddDesc;
 
   /// No description provided for @tutorialPatientMrnTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Numero de dossier'**
+  /// **'Numéro de dossier'**
   String get tutorialPatientMrnTitle;
 
   /// No description provided for @tutorialPatientMrnDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Le numero de dossier (MRN) identifie chaque patient de maniere unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  /// **'Le numéro de dossier (MRN) identifie chaque patient de manière unique.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientMrnDesc;
 
   /// No description provided for @tutorialPatientFirstNameTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Prenom du patient'**
+  /// **'Prénom du patient'**
   String get tutorialPatientFirstNameTitle;
 
   /// No description provided for @tutorialPatientFirstNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Le prenom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  /// **'Le prénom fait partie des informations de base du dossier patient.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientFirstNameDesc;
 
   /// No description provided for @tutorialPatientLastNameTitle.
@@ -1747,19 +1771,19 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialPatientLastNameDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Le nom complete l\'identite du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
+  /// **'Le nom complète l\'identité du patient. Les autres champs sont optionnels.\n\n👉 Appuyez sur le champ en surbrillance pour continuer.'**
   String get tutorialPatientLastNameDesc;
 
   /// No description provided for @tutorialPatientCreateTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Creer le dossier'**
+  /// **'Créer le dossier'**
   String get tutorialPatientCreateTitle;
 
   /// No description provided for @tutorialPatientCreateDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Creer le dossier\' pour continuer la demonstration.'**
+  /// **'Ce bouton enregistre le dossier patient une fois les informations saisies.\n\n👉 Appuyez sur \'Créer le dossier\' pour continuer la démonstration.'**
   String get tutorialPatientCreateDesc;
 
   /// No description provided for @tutorialDetailConsultTitle.
@@ -1771,31 +1795,31 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialDetailConsultDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Lancez l\'enregistrement vocal pour demarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.'**
+  /// **'Lancez l\'enregistrement vocal pour démarrer une nouvelle consultation avec ce patient.\n\n👉 Appuyez sur \'Nouvelle consultation\' pour continuer.'**
   String get tutorialDetailConsultDesc;
 
   /// No description provided for @tutorialRecordTitle.
   ///
   /// In fr, this message translates to:
-  /// **'La Dictee'**
+  /// **'La Dictée'**
   String get tutorialRecordTitle;
 
   /// No description provided for @tutorialRecordDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les donnees.\n\n👉 Appuyez sur le micro en surbrillance pour demarrer.'**
+  /// **'Appuyez sur ce bouton pour lancer l\'enregistrement vocal. L\'IA transcrira automatiquement vos paroles et anonymisera les données.\n\n👉 Appuyez sur le micro en surbrillance pour démarrer.'**
   String get tutorialRecordDesc;
 
   /// No description provided for @tutorialRecordStopTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Arreter l\'ecoute'**
+  /// **'Arrêter l\'écoute'**
   String get tutorialRecordStopTitle;
 
   /// No description provided for @tutorialRecordStopDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Appuyez ici quand la consultation vocale est terminee pour mettre l\'ecoute en pause.\n\n👉 Appuyez sur le bouton d\'arret pour mettre en pause.'**
+  /// **'Appuyez ici quand la consultation vocale est terminée pour mettre l\'écoute en pause.\n\n👉 Appuyez sur le bouton d\'arrêt pour mettre en pause.'**
   String get tutorialRecordStopDesc;
 
   /// No description provided for @tutorialRecordFinishTitle.
@@ -1807,37 +1831,37 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialRecordFinishDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Validez la fin de la consultation. Vous reviendrez ensuite a l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.'**
+  /// **'Validez la fin de la consultation. Vous reviendrez ensuite à l\'accueil pour voir le workflow Nouvel enregistrement.\n\n👉 Appuyez sur la zone en surbrillance pour enregistrer.'**
   String get tutorialRecordFinishDesc;
 
   /// No description provided for @tutorialRecordTranscriptTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Transcription en temps reel'**
+  /// **'Transcription en temps réel'**
   String get tutorialRecordTranscriptTitle;
 
   /// No description provided for @tutorialRecordTranscriptDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Pendant l\'enregistrement, le texte apparait ici en direct pour vous permettre de suivre la dictee.\n\n👉 Attendez ou appuyez sur l\'ecran pour continuer.'**
+  /// **'Pendant l\'enregistrement, le texte apparaît ici en direct pour vous permettre de suivre la dictée.\n\n👉 Attendez ou appuyez sur l\'écran pour continuer.'**
   String get tutorialRecordTranscriptDesc;
 
   /// No description provided for @tutorialAssignPatientTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Associer a un patient'**
+  /// **'Associer à un patient'**
   String get tutorialAssignPatientTitle;
 
   /// No description provided for @tutorialAssignPatientDesc.
   ///
   /// In fr, this message translates to:
-  /// **'Apres un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou creer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer a un patient\' pour continuer.'**
+  /// **'Après un nouvel enregistrement, vous pouvez choisir un patient existant avec l\'onglet Rechercher, ou créer un nouveau dossier avec l\'onglet Nouveau patient.\n\n👉 Appuyez sur \'Associer à un patient\' pour continuer.'**
   String get tutorialAssignPatientDesc;
 
   /// No description provided for @tutorialRestarted.
   ///
   /// In fr, this message translates to:
-  /// **'Le tutoriel a ete reinitialise.'**
+  /// **'Le tutoriel a été réinitialisé.'**
   String get tutorialRestarted;
 
   /// No description provided for @templatesTitle.
@@ -1849,7 +1873,7 @@ abstract class AppLocalizations {
   /// No description provided for @templatesBuiltInSection.
   ///
   /// In fr, this message translates to:
-  /// **'Pathologies par defaut'**
+  /// **'Pathologies par défaut'**
   String get templatesBuiltInSection;
 
   /// No description provided for @templatesUserSection.
@@ -1861,13 +1885,13 @@ abstract class AppLocalizations {
   /// No description provided for @templatesUserEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune pathologie personnalisee enregistree.'**
+  /// **'Aucune pathologie personnalisée enregistrée.'**
   String get templatesUserEmpty;
 
   /// No description provided for @templatesDefaultBadge.
   ///
   /// In fr, this message translates to:
-  /// **'Defaut'**
+  /// **'Défaut'**
   String get templatesDefaultBadge;
 
   /// No description provided for @templatesVariantBadge.
@@ -1879,7 +1903,7 @@ abstract class AppLocalizations {
   /// No description provided for @templatesCustomBadge.
   ///
   /// In fr, this message translates to:
-  /// **'Personnalise'**
+  /// **'Personnalisé'**
   String get templatesCustomBadge;
 
   /// No description provided for @templateDuplicateAction.
@@ -1891,19 +1915,19 @@ abstract class AppLocalizations {
   /// No description provided for @templateDuplicated.
   ///
   /// In fr, this message translates to:
-  /// **'Variante creee.'**
+  /// **'Variante créée.'**
   String get templateDuplicated;
 
   /// No description provided for @templateSaved.
   ///
   /// In fr, this message translates to:
-  /// **'Pathologie enregistree.'**
+  /// **'Pathologie enregistrée.'**
   String get templateSaved;
 
   /// No description provided for @templateCreateAction.
   ///
   /// In fr, this message translates to:
-  /// **'Creer une pathologie'**
+  /// **'Créer une pathologie'**
   String get templateCreateAction;
 
   /// No description provided for @templateCreateTitle.
@@ -1981,19 +2005,19 @@ abstract class AppLocalizations {
   /// No description provided for @templateUpdate.
   ///
   /// In fr, this message translates to:
-  /// **'Mettre a jour'**
+  /// **'Mettre à jour'**
   String get templateUpdate;
 
   /// No description provided for @templateSaveCreate.
   ///
   /// In fr, this message translates to:
-  /// **'Creer la pathologie'**
+  /// **'Créer la pathologie'**
   String get templateSaveCreate;
 
   /// No description provided for @templateReset.
   ///
   /// In fr, this message translates to:
-  /// **'Reinitialiser depuis le parent'**
+  /// **'Réinitialiser depuis le parent'**
   String get templateReset;
 
   /// No description provided for @templatePickerTitle.
@@ -2011,7 +2035,7 @@ abstract class AppLocalizations {
   /// No description provided for @templatePickerEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune pathologie trouvee.'**
+  /// **'Aucune pathologie trouvée.'**
   String get templatePickerEmpty;
 
   /// No description provided for @templatePickerAction.
@@ -2029,19 +2053,19 @@ abstract class AppLocalizations {
   /// No description provided for @templateNoneLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune pathologie selectionnee'**
+  /// **'Aucune pathologie sélectionnée'**
   String get templateNoneLabel;
 
   /// No description provided for @templateRetry.
   ///
   /// In fr, this message translates to:
-  /// **'Reessayer'**
+  /// **'Réessayer'**
   String get templateRetry;
 
   /// No description provided for @templatesBuiltInEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune pathologie par defaut disponible. Reinstallez l application.'**
+  /// **'Aucune pathologie par défaut disponible. Réinstallez l\'application.'**
   String get templatesBuiltInEmpty;
 
   /// No description provided for @patientDossierOralTab.
@@ -2053,7 +2077,7 @@ abstract class AppLocalizations {
   /// No description provided for @patientDossierWrittenTab.
   ///
   /// In fr, this message translates to:
-  /// **'Ecrit'**
+  /// **'Écrit'**
   String get patientDossierWrittenTab;
 
   /// No description provided for @patientDossierOralEmpty.
@@ -2065,7 +2089,7 @@ abstract class AppLocalizations {
   /// No description provided for @patientDossierWrittenEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune note ecrite pour ce patient'**
+  /// **'Aucune note écrite pour ce patient'**
   String get patientDossierWrittenEmpty;
 
   /// No description provided for @patientDossierTranscriptTitle.
@@ -2083,13 +2107,13 @@ abstract class AppLocalizations {
   /// No description provided for @pathologySuggestionTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Pathologie suggeree'**
+  /// **'Pathologie suggérée'**
   String get pathologySuggestionTitle;
 
   /// No description provided for @pathologySuggestionDesc.
   ///
   /// In fr, this message translates to:
-  /// **'D\'apres la transcription, cette pathologie semble correspondre a la consultation.'**
+  /// **'D\'après la transcription, cette pathologie semble correspondre à la consultation.'**
   String get pathologySuggestionDesc;
 
   /// No description provided for @pathologySuggestionApply.
@@ -2131,7 +2155,7 @@ abstract class AppLocalizations {
   /// No description provided for @pathologyPubmedResultsSection.
   ///
   /// In fr, this message translates to:
-  /// **'Resultats PubMed'**
+  /// **'Résultats PubMed'**
   String get pathologyPubmedResultsSection;
 
   /// No description provided for @settingsSignIn.
@@ -2143,13 +2167,13 @@ abstract class AppLocalizations {
   /// No description provided for @sessionExpiredMessage.
   ///
   /// In fr, this message translates to:
-  /// **'Session expiree, veuillez vous reconnecter'**
+  /// **'Session expirée, veuillez vous reconnecter'**
   String get sessionExpiredMessage;
 
   /// No description provided for @errorToastCopied.
   ///
   /// In fr, this message translates to:
-  /// **'Details de l\'erreur copies'**
+  /// **'Détails de l\'erreur copiés'**
   String get errorToastCopied;
 
   /// No description provided for @errorToastReport.
@@ -2203,7 +2227,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Veille medicale'**
+  /// **'Veille médicale'**
   String get medicalWatchTitle;
 
   /// No description provided for @medicalWatchNavTitle.
@@ -2227,7 +2251,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchSpecialtyRehabilitation.
   ///
   /// In fr, this message translates to:
-  /// **'Reeducation'**
+  /// **'Rééducation'**
   String get medicalWatchSpecialtyRehabilitation;
 
   /// No description provided for @medicalWatchSpecialtyMusculoskeletal.
@@ -2239,13 +2263,13 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchSpecialtyExerciseTherapy.
   ///
   /// In fr, this message translates to:
-  /// **'Therapie par l\'exercice'**
+  /// **'Thérapie par l\'exercice'**
   String get medicalWatchSpecialtyExerciseTherapy;
 
   /// No description provided for @medicalWatchSpecialtyManualTherapy.
   ///
   /// In fr, this message translates to:
-  /// **'Therapie manuelle'**
+  /// **'Thérapie manuelle'**
   String get medicalWatchSpecialtyManualTherapy;
 
   /// No description provided for @medicalWatchEmpty.
@@ -2257,7 +2281,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchSearchEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun resultat pour cette recherche'**
+  /// **'Aucun résultat pour cette recherche'**
   String get medicalWatchSearchEmpty;
 
   /// No description provided for @medicalWatchErrorLoad.
@@ -2281,7 +2305,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchReadLess.
   ///
   /// In fr, this message translates to:
-  /// **'Reduire'**
+  /// **'Réduire'**
   String get medicalWatchReadLess;
 
   /// No description provided for @medicalWatchOpenPubmed.
@@ -2293,13 +2317,13 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchCopyReference.
   ///
   /// In fr, this message translates to:
-  /// **'Copier la reference'**
+  /// **'Copier la référence'**
   String get medicalWatchCopyReference;
 
   /// No description provided for @medicalWatchReferenceCopied.
   ///
   /// In fr, this message translates to:
-  /// **'Reference copiee'**
+  /// **'Référence copiée'**
   String get medicalWatchReferenceCopied;
 
   /// No description provided for @medicalWatchArticleCount.
@@ -2311,13 +2335,13 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchSyncSuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Veille synchronisee'**
+  /// **'Veille synchronisée'**
   String get medicalWatchSyncSuccess;
 
   /// No description provided for @medicalWatchOfflineHint.
   ///
   /// In fr, this message translates to:
-  /// **'Resultats hors-ligne (derniere synchronisation)'**
+  /// **'Résultats hors-ligne (dernière synchronisation)'**
   String get medicalWatchOfflineHint;
 
   /// No description provided for @homeGreeting.
@@ -2377,7 +2401,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeEmptySubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Planifiez votre premiere consultation ou démarrez un enregistrement rapide'**
+  /// **'Planifiez votre première consultation ou démarrez un enregistrement rapide'**
   String get homeEmptySubtitle;
 
   /// No description provided for @homeConsultationsToday.
