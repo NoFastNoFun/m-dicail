@@ -266,7 +266,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
             runSpacing: AppSpacing.xs,
             children: [
               for (final tag in latestPathologyTags)
-                AppPathologyTag(label: tag, compact: true),
+                AppPathologyTag(
+                  label: tag,
+                  compact: true,
+                  icon: Icons.history,
+                ),
             ],
           ),
         ],
@@ -672,16 +676,17 @@ String _soapPreview(SoapNote? note) {
 }
 
 List<String> _latestSessionPathologyTags(List<RecordingSession> sessions) {
-  if (sessions.isEmpty) {
-    return const [];
+  RecordingSession? latestWithPathology;
+  for (final session in sessions) {
+    if (!session.hasPathology) {
+      continue;
+    }
+    if (latestWithPathology == null ||
+        session.startedAt.isAfter(latestWithPathology.startedAt)) {
+      latestWithPathology = session;
+    }
   }
-
-  final latest = sessions.fold<RecordingSession>(
-    sessions.first,
-    (current, candidate) =>
-        candidate.startedAt.isAfter(current.startedAt) ? candidate : current,
-  );
-  return latest.pathologyNames;
+  return latestWithPathology?.pathologyNames ?? const [];
 }
 
 class _DossierTabSelector extends StatelessWidget {

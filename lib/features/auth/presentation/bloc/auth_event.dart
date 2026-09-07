@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/features/auth/domain/entities/user.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -75,4 +76,13 @@ class AuthGuestContinueRequested extends AuthEvent {
 
 class AuthSessionExpired extends AuthEvent {
   const AuthSessionExpired();
+}
+
+class AuthUserUpdated extends AuthEvent {
+  const AuthUserUpdated(this.user);
+
+  final User user;
+
+  @override
+  List<Object?> get props => [user];
 }

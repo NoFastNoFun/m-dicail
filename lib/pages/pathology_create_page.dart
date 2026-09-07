@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/features/pathology/domain/entities/pathology_domain.dart';
+import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart';
 import 'package:medicail/features/pathology/domain/utils/pathology_labels.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
@@ -11,9 +14,10 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 
 class PathologyCreatePage extends StatefulWidget {
-  const PathologyCreatePage({super.key, required this.onCreate});
+  const PathologyCreatePage({super.key, this.onCreate});
 
-  final Future<void> Function(String name, PathologyDomain domain) onCreate;
+  /// Optional override for tests. Defaults to local repository create.
+  final Future<void> Function(String name, PathologyDomain domain)? onCreate;
 
   @override
   State<PathologyCreatePage> createState() => _PathologyCreatePageState();
@@ -45,7 +49,15 @@ class _PathologyCreatePageState extends State<PathologyCreatePage> {
     });
 
     try {
-      await widget.onCreate(name, _domain);
+      final onCreate = widget.onCreate;
+      if (onCreate != null) {
+        await onCreate(name, _domain);
+      } else {
+        await getIt<PathologyRepository>().createUserPathology(
+          name: name,
+          domain: _domain,
+        );
+      }
       if (!mounted) {
         return;
       }
@@ -66,11 +78,17 @@ class _PathologyCreatePageState extends State<PathologyCreatePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final shellPadding = MainShellScope.scrollPaddingOf(context);
 
     return AppScaffold(
       title: l10n.templateCreateTitle,
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: EdgeInsets.only(
+          left: AppSpacing.lg,
+          right: AppSpacing.lg,
+          top: AppSpacing.lg,
+          bottom: AppSpacing.lg + shellPadding.bottom,
+        ),
         children: [
           AppInput(
             variant: AppInputVariant.text,
@@ -82,25 +100,23 @@ class _PathologyCreatePageState extends State<PathologyCreatePage> {
           const SizedBox(height: AppSpacing.lg),
           AppText(l10n.pathologyDomainLabel, variant: AppTextVariant.body),
           const SizedBox(height: AppSpacing.sm),
-          RadioGroup<PathologyDomain>(
-            groupValue: _domain,
-            onChanged: (value) {
-              if (_isSaving || value == null) return;
-              setState(() => _domain = value);
-            },
-            child: Column(
-              children: [
-                for (final domain in PathologyDomain.values)
-                  RadioListTile<PathologyDomain>(
-                    value: domain,
-                    enabled: !_isSaving,
-                    title: AppText(
-                      domain.labelFr(),
-                      variant: AppTextVariant.body,
-                    ),
-                  ),
-              ],
-            ),
+          DropdownButtonFormField<PathologyDomain>(
+            // ignore: deprecated_member_use
+            value: _domain,
+            decoration: const InputDecoration(),
+            items: [
+              for (final domain in PathologyDomain.values)
+                DropdownMenuItem(
+                  value: domain,
+                  child: Text(domain.labelFr()),
+                ),
+            ],
+            onChanged: _isSaving
+                ? null
+                : (value) {
+                    if (value == null) return;
+                    setState(() => _domain = value);
+                  },
           ),
           const SizedBox(height: AppSpacing.xl),
           AppButton(

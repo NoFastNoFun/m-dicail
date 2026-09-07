@@ -217,10 +217,15 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     TutorialStepId.recordTranscriptFromPatient,
     TutorialStepId.recordStopFromPatient,
     TutorialStepId.recordFinishFromPatient,
+    TutorialStepId.quickRecordStart,
+    TutorialStepId.quickRecordTranscript,
+    TutorialStepId.quickRecordStop,
+    TutorialStepId.quickRecordFinish,
   };
 
   static const _transcriptTutorialSteps = {
     TutorialStepId.recordTranscriptFromPatient,
+    TutorialStepId.quickRecordTranscript,
   };
 
   GlobalKey _showcaseKeyForStep(TutorialStepId stepId) {
@@ -432,24 +437,37 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
 
   Future<void> _finishConsultation() async {
     final tutorialBloc = context.read<TutorialBloc>();
-    if (tutorialBloc.isCurrentStep(TutorialStepId.recordFinishFromPatient)) {
+    final stepId = tutorialBloc.state.tutorialStepId;
+    final isTutorial = tutorialBloc.state is TutorialInProgress;
+
+    if (stepId == TutorialStepId.recordFinishFromPatient) {
       _returnHomeAfterTutorialConsultation = true;
-      tutorialBloc.completeStep(TutorialStepId.recordFinishFromPatient);
+    }
+
+    if (stepId == TutorialStepId.recordFinishFromPatient ||
+        stepId == TutorialStepId.quickRecordFinish) {
+      ShowcaseView.get().dismiss();
+      tutorialBloc.completeStep(stepId!);
     }
 
     final language = Localizations.localeOf(context).languageCode;
     context.read<VoiceCaptureBloc>().add(
-      VoiceCaptureFinishConsultation(language: language),
+      VoiceCaptureFinishConsultation(
+        language: language,
+        isTutorial: isTutorial,
+      ),
     );
   }
 
   String _currentShowcaseTitle(AppLocalizations l10n) {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient) {
+    if (stepId == TutorialStepId.recordStopFromPatient ||
+        stepId == TutorialStepId.quickRecordStop) {
       return l10n.tutorialRecordStopTitle;
     }
-    if (stepId == TutorialStepId.recordFinishFromPatient) {
+    if (stepId == TutorialStepId.recordFinishFromPatient ||
+        stepId == TutorialStepId.quickRecordFinish) {
       return l10n.tutorialRecordFinishTitle;
     }
     return l10n.tutorialRecordTitle;
@@ -458,10 +476,12 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   String _currentShowcaseDescription(AppLocalizations l10n) {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient) {
+    if (stepId == TutorialStepId.recordStopFromPatient ||
+        stepId == TutorialStepId.quickRecordStop) {
       return l10n.tutorialRecordStopDesc;
     }
-    if (stepId == TutorialStepId.recordFinishFromPatient) {
+    if (stepId == TutorialStepId.recordFinishFromPatient ||
+        stepId == TutorialStepId.quickRecordFinish) {
       return l10n.tutorialRecordFinishDesc;
     }
     return l10n.tutorialRecordDesc;
@@ -470,9 +490,11 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   void _handleShowcaseTap() {
     final tutorialBloc = context.read<TutorialBloc>();
     final stepId = tutorialBloc.state.tutorialStepId;
-    if (stepId == TutorialStepId.recordStopFromPatient) {
+    if (stepId == TutorialStepId.recordStopFromPatient ||
+        stepId == TutorialStepId.quickRecordStop) {
       _stopRecording();
-    } else if (stepId == TutorialStepId.recordFinishFromPatient) {
+    } else if (stepId == TutorialStepId.recordFinishFromPatient ||
+               stepId == TutorialStepId.quickRecordFinish) {
       _finishConsultation();
     } else {
       _startRecording();
@@ -539,7 +561,12 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
 
     final bloc = context.read<VoiceCaptureBloc>();
     if (action == _RecordLeaveAction.save) {
-      bloc.add(const VoiceCaptureFinishConsultation());
+      final isTutorial = context.read<TutorialBloc>().state is TutorialInProgress;
+      final language = Localizations.localeOf(context).languageCode;
+      bloc.add(VoiceCaptureFinishConsultation(
+        language: language,
+        isTutorial: isTutorial,
+      ));
       return;
     }
 

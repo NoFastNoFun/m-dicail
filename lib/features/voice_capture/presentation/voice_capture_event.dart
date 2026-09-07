@@ -34,12 +34,13 @@ final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
-  const VoiceCaptureFinishConsultation({this.language = 'fr'});
+  const VoiceCaptureFinishConsultation({this.language = 'fr', this.isTutorial = false});
 
   final String language;
+  final bool isTutorial;
 
   @override
-  List<Object?> get props => [language];
+  List<Object?> get props => [language, isTutorial];
 }
 
 final class VoiceCaptureClearTranscript extends VoiceCaptureEvent {

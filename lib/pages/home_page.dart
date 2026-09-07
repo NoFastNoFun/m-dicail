@@ -20,6 +20,7 @@ import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/home/home_greeting_header.dart';
 import 'package:medicail/widget/home/home_recent_session_tile.dart';
 import 'package:medicail/widget/layout/app_empty_state.dart';
+import 'package:medicail/widget/buttons/app_button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -91,8 +92,6 @@ class _HomeViewState extends State<_HomeView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-
     return BlocConsumer<AppointmentBloc, AppointmentState>(
       listener: (context, state) {
         if (state is AppointmentFailure) {
@@ -125,13 +124,11 @@ class _HomeViewState extends State<_HomeView> {
                       variant: AppTextVariant.title,
                     ),
                   ),
-                  TextButton(
+                  AppButton(
                     onPressed: () => context.goAppointments(),
-                    child: AppText(
-                      l10n.appointmentsSeeAll,
-                      variant: AppTextVariant.label,
-                      color: theme.colorScheme.primary,
-                    ),
+                    label: l10n.appointmentsSeeAll,
+                    style: AppButtonStyle.tertiary,
+                    expanded: false,
                   ),
                 ],
               ),

@@ -302,6 +302,10 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
             Navigator.of(context).pop();
           }
           AppToast.showSuccess(context, l10n.patientUpdateSuccess);
+        } else if (state is PatientFailure) {
+          AppToast.showError(context, state.message);
+        } else if (state is PatientMrnConflict) {
+          AppToast.showError(context, l10n.patientMrnConflict);
         }
       },
       child: BlocListener<TutorialBloc, TutorialState>(

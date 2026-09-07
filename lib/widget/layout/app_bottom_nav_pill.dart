@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/layout/main_shell_chrome.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppBottomNavDestination {
@@ -43,14 +45,14 @@ class AppBottomNavPill extends StatefulWidget {
     super.key,
     required this.destinations,
     required this.selectedRoute,
-    required this.onDestinationSelected,
     this.showLabels = true,
+    required this.onDestinationSelected,
   });
 
   final List<AppBottomNavDestination> destinations;
   final String selectedRoute;
-  final ValueChanged<String> onDestinationSelected;
   final bool showLabels;
+  final ValueChanged<String> onDestinationSelected;
 
   @override
   State<AppBottomNavPill> createState() => _AppBottomNavPillState();
@@ -125,7 +127,12 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
         index == _selectedIndex) {
       return;
     }
-    widget.onDestinationSelected(widget.destinations[index].route);
+    _selectDestination(widget.destinations[index].route);
+  }
+
+  void _selectDestination(String route) {
+    AppHaptics.tap();
+    widget.onDestinationSelected(route);
   }
 
   void _onDragCancel() {
@@ -151,46 +158,41 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
         onHorizontalDragUpdate: _onDragUpdate,
         onHorizontalDragEnd: _onDragEnd,
         onHorizontalDragCancel: _onDragCancel,
-        child: AnimatedPadding(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: widget.showLabels ? AppSpacing.sm : AppSpacing.xs,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var i = 0; i < widget.destinations.length; i++) ...[
-                if (i > 0) const SizedBox(width: AppSpacing.xs),
-                Flexible(
-                  child: KeyedSubtree(
-                    key: _itemKeys[i],
-                    child: _buildNavItem(
-                      widget.destinations[i],
-                      widget.showLabels,
-                      i == highlightedIndex,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          width: double.infinity,
+          height: MainShellChrome.navPillHeight(context, showLabels: widget.showLabels),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xs),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < widget.destinations.length; i++) ...[
+                  Expanded(
+                    child: KeyedSubtree(
+                      key: _itemKeys[i],
+                      child: _buildNavItem(
+                        widget.destinations[i],
+                        i == highlightedIndex,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(
-    AppBottomNavDestination dest,
-    bool showLabels,
-    bool isSelected,
-  ) {
+  Widget _buildNavItem(AppBottomNavDestination dest, bool isSelected) {
     final item = _NavItem(
       destination: dest,
       isSelected: isSelected,
-      showLabel: showLabels,
-      onTap: () => widget.onDestinationSelected(dest.route),
+      showLabels: widget.showLabels,
+      onTap: () => _selectDestination(dest.route),
     );
     return dest.wrapper != null ? dest.wrapper!(item) : item;
   }
@@ -200,13 +202,13 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
     required this.isSelected,
-    required this.showLabel,
+    required this.showLabels,
     required this.onTap,
   });
 
   final AppBottomNavDestination destination;
   final bool isSelected;
-  final bool showLabel;
+  final bool showLabels;
   final VoidCallback onTap;
 
   @override
@@ -220,41 +222,59 @@ class _NavItem extends StatelessWidget {
         : theme.colorScheme.onSurface;
     final mutedColor = theme.colorScheme.onSurface.withValues(alpha: 0.65);
 
-    return Material(
-      color: backgroundColor,
-      shape: const StadiumBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const StadiumBorder(),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          constraints: BoxConstraints(minWidth: showLabel ? 56 : 44),
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: showLabel ? AppSpacing.sm : AppSpacing.xs,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isSelected ? destination.selectedIcon : destination.icon,
-                color: isSelected ? foregroundColor : mutedColor,
-                size: 22,
+    return Tooltip(
+      message: destination.label,
+      child: Semantics(
+        selected: isSelected,
+        child: Material(
+          color: backgroundColor,
+          shape: const StadiumBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            customBorder: const StadiumBorder(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs / 2,
+                vertical: AppSpacing.xs,
               ),
-              if (showLabel) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppText(
-                  destination.label,
-                  variant: AppTextVariant.caption,
-                  color: isSelected ? foregroundColor : mutedColor,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isSelected ? destination.selectedIcon : destination.icon,
+                    color: isSelected ? foregroundColor : mutedColor,
+                    size: MainShellChrome.navIconSize,
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: showLabels
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: MainShellChrome.navLabelHeight(context),
+                                child: Center(
+                                  child: AppText(
+                                    destination.label,
+                                    variant: AppTextVariant.navigation,
+                                    color: isSelected ? foregroundColor : mutedColor,
+                                    textAlign: TextAlign.center,
+                                    maxLines: MainShellChrome.navLabelMaxLines,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

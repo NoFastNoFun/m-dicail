@@ -31,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthGuestContinueRequested>(_onAuthGuestContinueRequested);
     on<AuthSessionExpired>(_onAuthSessionExpired);
+    on<AuthUserUpdated>(_onAuthUserUpdated);
 
     _sessionExpiredSubscription =
         _sessionCoordinator.onSessionExpired.listen((_) {
@@ -212,6 +213,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _authNotifier.setGuest(false);
     emit(const AuthSessionExpiredState());
     emit(const AuthUnauthenticated());
+  }
+
+  void _onAuthUserUpdated(AuthUserUpdated event, Emitter<AuthState> emit) {
+    _authNotifier.setAuthenticated(true);
+    emit(AuthAuthenticated(event.user));
   }
 
   @override

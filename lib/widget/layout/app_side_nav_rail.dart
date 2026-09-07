@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -54,7 +55,10 @@ class AppSideNavRail extends StatelessWidget {
     final item = _SideNavItem(
       destination: dest,
       selected: selected,
-      onTap: () => onDestinationSelected(dest.route),
+      onTap: () {
+        AppHaptics.tap();
+        onDestinationSelected(dest.route);
+      },
     );
     return dest.wrapper != null ? dest.wrapper!(item) : item;
   }
@@ -107,7 +111,7 @@ class _SideNavItem extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xs),
                   AppText(
                     destination.label,
-                    variant: AppTextVariant.caption,
+                    variant: AppTextVariant.navigation,
                     color: fg,
                     textAlign: TextAlign.center,
                     maxLines: 2,

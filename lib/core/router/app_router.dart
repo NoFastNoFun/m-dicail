@@ -14,6 +14,7 @@ import 'package:medicail/pages/settings_page.dart';
 import 'package:medicail/pages/medical_watch_page.dart';
 import 'package:medicail/pages/template_editor_page.dart';
 import 'package:medicail/pages/templates_page.dart';
+import 'package:medicail/pages/pathology_create_page.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -27,6 +28,7 @@ import 'package:medicail/pages/reset_password_page.dart';
 import 'package:medicail/pages/recovery_page.dart';
 import 'package:medicail/pages/mfa_login_page.dart';
 import 'package:medicail/pages/security_settings_page.dart';
+import 'package:medicail/pages/profile_settings_page.dart';
 
 @lazySingleton
 class AppRouter {
@@ -148,6 +150,10 @@ class AppRouter {
             builder: (context, state) => const SecuritySettingsPage(),
           ),
           GoRoute(
+            path: AppRoutes.settingsProfile,
+            builder: (context, state) => const ProfileSettingsPage(),
+          ),
+          GoRoute(
             path: AppRoutes.medicalWatch,
             builder: (context, state) => const MedicalWatchPage(),
           ),
@@ -164,6 +170,11 @@ class AppRouter {
                   isCreating: true,
                   pathologyId: state.uri.queryParameters['pathologyId'],
                 ),
+              ),
+              GoRoute(
+                path: 'pathology/new',
+                name: 'pathology-create',
+                builder: (context, state) => const PathologyCreatePage(),
               ),
               GoRoute(
                 path: ':templateId/edit',
