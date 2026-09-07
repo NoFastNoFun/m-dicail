@@ -980,7 +980,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get templateDeleteConfirm => 'Supprimer';
 
   @override
-  String get templateEditorTitle => 'Editer la pathologie';
+  String get templateEditorTitle => 'Modifier pathologie';
 
   @override
   String get templateNotFound => 'Pathologie introuvable.';

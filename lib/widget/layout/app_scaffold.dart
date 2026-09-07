@@ -41,7 +41,11 @@ class AppScaffold extends StatelessWidget {
   };
 
   bool _shouldShowBack(BuildContext context) {
-    if (!context.canPop()) {
+    final router = GoRouter.maybeOf(context);
+    final canPop = router != null
+        ? router.canPop()
+        : Navigator.of(context).canPop();
+    if (!canPop) {
       return false;
     }
     if (MainShellScope.isActive(context)) {
@@ -97,7 +101,13 @@ class AppScaffold extends StatelessWidget {
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
-        child: SafeArea(bottom: !insideMainShell, child: bodyChild),
+        // Top is handled by AppBar when present. Bottom stays open inside the
+        // main shell so pages can apply MainShellScope.scrollPaddingOf.
+        child: SafeArea(
+          top: hideBar,
+          bottom: !insideMainShell,
+          child: bodyChild,
+        ),
       ),
     );
   }
