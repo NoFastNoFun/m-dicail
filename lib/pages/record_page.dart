@@ -288,13 +288,12 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       if (isDemoTutorialReturn) {
         context.goHome();
       } else {
-        if (context.canPop()) {
-          context.pop();
-        }
-        context.goPatientDetail(widget.patientId!);
+        context.openCompletedConsultation(widget.patientId!, state.sessionId);
       }
     } else {
-      AssignPatientSheet.show(context, state.sessionId);
+      final patientId = await AssignPatientSheet.show(context, state.sessionId);
+      if (!mounted || patientId == null) return;
+      context.openCompletedConsultation(patientId, state.sessionId);
     }
   }
 
@@ -357,7 +356,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     final updatedSoap = template != null
         ? NoteTemplateApplicator.apply(
             template: template,
-            transcript: transcript.isNotEmpty ? transcript : soapNote.subjective,
+            transcript: transcript.isNotEmpty
+                ? transcript
+                : soapNote.subjective,
           )
         : NoteTemplateApplicator.genericSoapNote(
             transcript.isNotEmpty ? transcript : soapNote.subjective,
@@ -545,8 +546,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return null;
     }
 
-    final template =
-        await getIt<PathologyTemplateResolver>().resolveForSession(pathology);
+    final template = await getIt<PathologyTemplateResolver>().resolveForSession(
+      pathology,
+    );
     if (!context.mounted) {
       return null;
     }
@@ -645,8 +647,10 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       : AppRadius.pillBorder,
                                   dateLabel: dateLabel,
                                   sessionTitle: _patientName,
-                                  pathologyTagName: viewModel.selectedTemplate?.name,
-                                  pathologyPlaceholder: viewModel.selectedTemplate == null
+                                  pathologyTagName:
+                                      viewModel.selectedTemplate?.name,
+                                  pathologyPlaceholder:
+                                      viewModel.selectedTemplate == null
                                       ? l10n.templateNoneLabel
                                       : null,
                                   onPathologyTap: !viewModel.isProcessing

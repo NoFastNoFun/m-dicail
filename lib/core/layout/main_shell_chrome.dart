@@ -45,17 +45,26 @@ abstract final class MainShellChrome {
 class MainShellScope extends InheritedWidget {
   const MainShellScope({
     required this.navLabelsVisible,
+    required this.registerFabPrimaryAction,
     required super.child,
     super.key,
   });
 
   final bool navLabelsVisible;
 
+  /// Registers a page-specific FAB tap action. Pass null to clear.
+  /// When set, FAB tap runs this action and long-press opens the radial menu.
+  final void Function(VoidCallback? action) registerFabPrimaryAction;
+
   static MainShellScope? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<MainShellScope>();
   }
 
   static bool isActive(BuildContext context) => maybeOf(context) != null;
+
+  static void setFabPrimaryAction(BuildContext context, VoidCallback? action) {
+    maybeOf(context)?.registerFabPrimaryAction(action);
+  }
 
   EdgeInsets scrollPadding(BuildContext context) {
     return MainShellChrome.scrollPadding(
@@ -70,6 +79,7 @@ class MainShellScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(MainShellScope oldWidget) {
-    return navLabelsVisible != oldWidget.navLabelsVisible;
+    return navLabelsVisible != oldWidget.navLabelsVisible ||
+        registerFabPrimaryAction != oldWidget.registerFabPrimaryAction;
   }
 }

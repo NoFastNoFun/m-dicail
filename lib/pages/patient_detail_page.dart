@@ -45,26 +45,30 @@ Future<void> _openConsultationRecord(
   }
   if (!context.mounted) return;
   await context.goRecord(patientId: patientId);
+  if (!context.mounted) return;
   onRefresh();
 }
 
 class PatientDetailPage extends StatelessWidget {
-  const PatientDetailPage({super.key, required this.patientId});
+  const PatientDetailPage({super.key, required this.patientId, this.sessionId});
 
   final String patientId;
+  final String? sessionId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
           getIt<PatientDetailBloc>()..add(PatientDetailRequested(patientId)),
-      child: const _PatientDetailContent(),
+      child: _PatientDetailContent(sessionId: sessionId),
     );
   }
 }
 
 class _PatientDetailContent extends StatefulWidget {
-  const _PatientDetailContent();
+  const _PatientDetailContent({this.sessionId});
+
+  final String? sessionId;
 
   @override
   State<_PatientDetailContent> createState() => _PatientDetailContentState();
@@ -73,6 +77,35 @@ class _PatientDetailContent extends StatefulWidget {
 class _PatientDetailContentState extends State<_PatientDetailContent> {
   final _consultKey = GlobalKey();
   final _startedTutorialSteps = <TutorialStepId>{};
+  String? _openedSessionId;
+
+  void _openRequestedNote(PatientDetailState state) {
+    final sessionId = widget.sessionId;
+    if (state is! PatientDetailLoaded ||
+        state.patient == null ||
+        sessionId == null ||
+        _openedSessionId == sessionId) {
+      return;
+    }
+    for (final session in state.sessions) {
+      if (session.id != sessionId || session.soapNote == null) continue;
+      _openedSessionId = sessionId;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showSoapNote(
+          context,
+          session: session,
+          onRefresh: () {
+            if (!mounted) return;
+            context.read<PatientDetailBloc>().add(
+              PatientDetailRequested(state.patient!.id),
+            );
+          },
+        );
+      });
+      return;
+    }
+  }
 
   @override
   void initState() {
@@ -102,7 +135,8 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocBuilder<PatientDetailBloc, PatientDetailState>(
+    return BlocConsumer<PatientDetailBloc, PatientDetailState>(
+      listener: (context, state) => _openRequestedNote(state),
       builder: (context, state) {
         final patient = state is PatientDetailLoaded ? state.patient : null;
         final sessions = state is PatientDetailLoaded
@@ -147,6 +181,7 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
                 : _PatientDetailView(
                     patient: patient,
                     sessions: sessions,
+                    showWrittenNotes: widget.sessionId != null,
                     consultKey: _consultKey,
                     onRefresh: () {
                       context.read<PatientDetailBloc>().add(
@@ -169,19 +204,23 @@ class _PatientDetailView extends StatefulWidget {
     required this.sessions,
     required this.consultKey,
     required this.onRefresh,
+    this.showWrittenNotes = false,
   });
 
   final Patient patient;
   final List<RecordingSession> sessions;
   final GlobalKey consultKey;
   final VoidCallback onRefresh;
+  final bool showWrittenNotes;
 
   @override
   State<_PatientDetailView> createState() => _PatientDetailViewState();
 }
 
 class _PatientDetailViewState extends State<_PatientDetailView> {
-  _DossierTab _selectedTab = _DossierTab.oral;
+  late _DossierTab _selectedTab = widget.showWrittenNotes
+      ? _DossierTab.written
+      : _DossierTab.oral;
 
   int _calculateAge(DateTime birthDate) {
     final now = DateTime.now();
@@ -224,10 +263,7 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           const SizedBox(height: AppSpacing.sm),
           Align(
             alignment: Alignment.centerLeft,
-            child: AppPathologyTag(
-              label: latestPathologyTag,
-              compact: true,
-            ),
+            child: AppPathologyTag(label: latestPathologyTag, compact: true),
           ),
         ],
         const SizedBox(height: AppSpacing.sm),
@@ -243,7 +279,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           Row(
             children: [
               if (patient.birthDate != null) ...[
-                Icon(Icons.cake_outlined, size: 16, color: context.secondaryTextColor),
+                Icon(
+                  Icons.cake_outlined,
+                  size: 16,
+                  color: context.secondaryTextColor,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 AppText(
                   '${DateFormat.yMd(l10n.localeName).format(patient.birthDate!)} (${_calculateAge(patient.birthDate!)} ans)',
@@ -253,7 +293,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
                 const SizedBox(width: AppSpacing.md),
               ],
               if (patient.sex != null) ...[
-                Icon(Icons.person_outline, size: 16, color: context.secondaryTextColor),
+                Icon(
+                  Icons.person_outline,
+                  size: 16,
+                  color: context.secondaryTextColor,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 AppText(
                   patient.sex!,
@@ -265,11 +309,16 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
-        if (patient.contact?.phone != null || patient.contact?.email != null) ...[
+        if (patient.contact?.phone != null ||
+            patient.contact?.email != null) ...[
           Row(
             children: [
               if (patient.contact?.phone != null) ...[
-                Icon(Icons.phone_outlined, size: 16, color: context.secondaryTextColor),
+                Icon(
+                  Icons.phone_outlined,
+                  size: 16,
+                  color: context.secondaryTextColor,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 AppText(
                   patient.contact!.phone!,
@@ -279,7 +328,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
                 const SizedBox(width: AppSpacing.md),
               ],
               if (patient.contact?.email != null) ...[
-                Icon(Icons.email_outlined, size: 16, color: context.secondaryTextColor),
+                Icon(
+                  Icons.email_outlined,
+                  size: 16,
+                  color: context.secondaryTextColor,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 AppText(
                   patient.contact!.email!,
@@ -295,7 +348,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.home_outlined, size: 16, color: context.secondaryTextColor),
+              Icon(
+                Icons.home_outlined,
+                size: 16,
+                color: context.secondaryTextColor,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AppText(
@@ -312,7 +369,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.note_alt_outlined, size: 16, color: context.secondaryTextColor),
+              Icon(
+                Icons.note_alt_outlined,
+                size: 16,
+                color: context.secondaryTextColor,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AppText(
@@ -371,9 +432,7 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
             (session) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: _selectedTab == _DossierTab.oral
-                  ? _OralSessionListItem(
-                      session: session,
-                    )
+                  ? _OralSessionListItem(session: session)
                   : _WrittenSessionListItem(
                       session: session,
                       onRefresh: widget.onRefresh,
@@ -444,10 +503,7 @@ class _OralSessionListItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.mic_outlined,
-                    color: context.secondaryTextColor,
-                  ),
+                  Icon(Icons.mic_outlined, color: context.secondaryTextColor),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
@@ -463,6 +519,26 @@ class _OralSessionListItem extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showSoapNote(
+  BuildContext context, {
+  required RecordingSession session,
+  required VoidCallback onRefresh,
+}) {
+  final note = session.soapNote;
+  if (note == null) return;
+  SoapNoteBottomSheet.show(
+    context,
+    initialNote: note,
+    showTranscript: false,
+    onSave: (updatedNote) async {
+      await getIt<RecordingSessionRepository>().save(
+        session.copyWith(soapNote: updatedNote),
+      );
+      if (context.mounted) onRefresh();
+    },
+  );
 }
 
 class _WrittenSessionListItem extends StatelessWidget {
@@ -485,20 +561,8 @@ class _WrittenSessionListItem extends StatelessWidget {
     return InkWell(
       onTap: soapNote == null
           ? null
-          : () {
-              SoapNoteBottomSheet.show(
-                context,
-                initialNote: soapNote,
-                showTranscript: false,
-                onSave: (updatedNote) async {
-                  final repo = getIt<RecordingSessionRepository>();
-                  await repo.save(
-                    session.copyWith(soapNote: updatedNote),
-                  );
-                  onRefresh();
-                },
-              );
-            },
+          : () =>
+                _showSoapNote(context, session: session, onRefresh: onRefresh),
       borderRadius: AppRadius.mdBorder,
       child: Ink(
         decoration: BoxDecoration(

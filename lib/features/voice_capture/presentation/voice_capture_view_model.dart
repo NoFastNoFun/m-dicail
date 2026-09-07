@@ -7,6 +7,7 @@ enum VoiceCaptureSessionStatus {
   listening,
   paused,
   ended,
+  completed,
   processing,
   enhancing,
   transcribingBackground,
@@ -24,12 +25,9 @@ final class VoiceCaptureViewModel {
   factory VoiceCaptureViewModel.fromState(VoiceCaptureState state) {
     return switch (state) {
       VoiceCaptureInitial() => const VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.initializing,
-        ),
-      VoiceCaptureReady(
-        :final transcript,
-        :final selectedTemplate,
-      ) =>
+        status: VoiceCaptureSessionStatus.initializing,
+      ),
+      VoiceCaptureReady(:final transcript, :final selectedTemplate) =>
         VoiceCaptureViewModel(
           status: transcript.trim().isEmpty
               ? VoiceCaptureSessionStatus.ready
@@ -39,13 +37,10 @@ final class VoiceCaptureViewModel {
         ),
       VoiceCaptureConsultationFinished(:final transcript) =>
         VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.ended,
+          status: VoiceCaptureSessionStatus.completed,
           transcript: transcript,
         ),
-      RecordingInProgress(
-        :final transcript,
-        :final selectedTemplate,
-      ) =>
+      RecordingInProgress(:final transcript, :final selectedTemplate) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           transcript: transcript,
@@ -60,23 +55,20 @@ final class VoiceCaptureViewModel {
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
-      ListeningPaused(
-        :final transcript,
-        :final selectedTemplate,
-      ) =>
+      ListeningPaused(:final transcript, :final selectedTemplate) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.paused,
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.processing,
-          transcript: transcript,
-        ),
+        status: VoiceCaptureSessionStatus.processing,
+        transcript: transcript,
+      ),
       VoiceCaptureEnhancing(:final transcript) => VoiceCaptureViewModel(
-          status: VoiceCaptureSessionStatus.enhancing,
-          transcript: transcript,
-        ),
+        status: VoiceCaptureSessionStatus.enhancing,
+        transcript: transcript,
+      ),
       VoiceCaptureFailure(
         :final message,
         :final transcript,
@@ -130,5 +122,7 @@ final class VoiceCaptureViewModel {
 
   bool get hasUnsavedWork =>
       isConsultationOpen ||
-      (hasTranscript && status != VoiceCaptureSessionStatus.initializing);
+      (hasTranscript &&
+          status != VoiceCaptureSessionStatus.initializing &&
+          status != VoiceCaptureSessionStatus.completed);
 }

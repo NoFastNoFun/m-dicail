@@ -3,15 +3,19 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/features/settings/domain/entities/app_font_scale.dart';
 import 'package:medicail/features/settings/domain/entities/app_session_length.dart';
 import 'package:medicail/features/settings/domain/entities/app_theme_variant.dart';
+import 'package:medicail/features/settings/domain/entities/custom_theme_colors.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
 
 @lazySingleton
 class SettingsNotifier extends ChangeNotifier {
   AppThemeVariant _themeVariant = AppThemeVariant.light;
+  CustomThemeColors _customThemeColors = CustomThemeColors.defaults();
   AppFontScale _fontScale = AppFontScale.defaultScale;
   AppSessionLength _defaultSessionLength = AppSessionLengthStorage.defaultLength;
 
   AppThemeVariant get themeVariant => _themeVariant;
+
+  CustomThemeColors get customThemeColors => _customThemeColors;
 
   AppFontScale get fontScale => _fontScale;
 
@@ -24,6 +28,7 @@ class SettingsNotifier extends ChangeNotifier {
   Future<void> hydrate(UserPreferencesRepository repository) async {
     try {
       _themeVariant = await repository.readThemeVariant();
+      _customThemeColors = await repository.readCustomThemeColors();
       _fontScale = await repository.readFontScale();
       _defaultSessionLength = await repository.readDefaultSessionLength();
     } catch (_) {
@@ -34,6 +39,13 @@ class SettingsNotifier extends ChangeNotifier {
   void setThemeVariant(AppThemeVariant variant) {
     if (_themeVariant != variant) {
       _themeVariant = variant;
+      notifyListeners();
+    }
+  }
+
+  void setCustomThemeColors(CustomThemeColors colors) {
+    if (_customThemeColors != colors) {
+      _customThemeColors = colors;
       notifyListeners();
     }
   }
