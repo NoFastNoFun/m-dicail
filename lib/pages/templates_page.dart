@@ -12,10 +12,8 @@ import 'package:medicail/features/pathology/domain/entities/pathology_domain.dar
 import 'package:medicail/features/pathology/domain/entities/pathology_source.dart';
 import 'package:medicail/features/pathology/domain/utils/pathology_labels.dart';
 import 'package:medicail/features/pathology/presentation/pathology_bloc.dart';
-import 'package:medicail/features/pathology/domain/repositories/pathology_repository.dart';
 import 'package:medicail/features/pathology/presentation/pathology_event.dart';
 import 'package:medicail/features/pathology/presentation/pathology_state.dart';
-import 'package:medicail/pages/pathology_create_page.dart';
 import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -102,24 +100,11 @@ class _TemplatesView extends StatelessWidget {
 }
 
 Future<void> openPathologyCreatePage(BuildContext context) async {
-  await Navigator.of(context).push<void>(
-    MaterialPageRoute<void>(
-      builder: (innerContext) => BlocProvider.value(
-        value: context.read<PathologyBloc>(),
-        child: PathologyCreatePage(
-          onCreate: (name, domain) async {
-            await getIt<PathologyRepository>().createUserPathology(
-              name: name,
-              domain: domain,
-            );
-            if (context.mounted) {
-              context.read<PathologyBloc>().add(const PathologiesRequested());
-            }
-          },
-        ),
-      ),
-    ),
-  );
+  await context.pushNamed('pathology-create');
+  if (!context.mounted) {
+    return;
+  }
+  context.read<PathologyBloc>().add(const PathologiesRequested());
 }
 
 class _PathologiesList extends StatelessWidget {

@@ -329,7 +329,7 @@
     }
   },
   "templateDeleteConfirm": "Supprimer",
-  "templateEditorTitle": "Editer la pathologie",
+  "templateEditorTitle": "Modifier pathologie",
   "templateNotFound": "Pathologie introuvable.",
   "templateSectionTitleLabel": "Titre de section",
   "templateSectionPromptLabel": "Structure / puces",

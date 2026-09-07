@@ -1945,7 +1945,7 @@ abstract class AppLocalizations {
   /// No description provided for @templateEditorTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Editer la pathologie'**
+  /// **'Modifier pathologie'**
   String get templateEditorTitle;
 
   /// No description provided for @templateNotFound.

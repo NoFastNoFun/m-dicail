@@ -360,14 +360,19 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
         }
       },
       child: AppScaffold(
-        title: widget.isCreating
-            ? l10n.templateCreateTitle
-            : (_originalTemplate?.name.isNotEmpty == true
-                ? _originalTemplate!.name
-                : l10n.templateEditorTitle),
+        title: _editorTitle(l10n),
         body: _buildBody(context),
       ),
     );
+  }
+
+  String _editorTitle(AppLocalizations l10n) {
+    final linkingExistingPathology =
+        widget.pathologyId != null && widget.pathologyId!.isNotEmpty;
+    if (widget.isCreating && !linkingExistingPathology) {
+      return l10n.templateCreateTitle;
+    }
+    return l10n.templateEditorTitle;
   }
 
   Widget _buildBody(BuildContext context) {
@@ -389,13 +394,15 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
     final isBuiltIn = template.isBuiltIn;
     final canReset = !isBuiltIn && template.parentTemplateId != null;
     final showNameField = !isBuiltIn || widget.isCreating;
+    final linkingExistingPathology =
+        widget.pathologyId != null && widget.pathologyId!.isNotEmpty;
+    final shellBottom = MainShellScope.scrollPaddingOf(context).bottom;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           child: ListView(
-            padding: MainShellScope.scrollPaddingOf(context),
             children: [
               if (showNameField) ...[
                 AppInput(
@@ -439,7 +446,7 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
         ),
         const SizedBox(height: AppSpacing.md),
         AppButton(
-          label: widget.isCreating
+          label: widget.isCreating && !linkingExistingPathology
               ? l10n.templateSaveCreate
               : (isBuiltIn ? l10n.templateSaveAsVariant : l10n.templateUpdate),
           onPressed: () => _save(context),
@@ -452,6 +459,7 @@ class _TemplateEditorViewState extends State<_TemplateEditorView> {
             onPressed: _resetFromParent,
           ),
         ],
+        SizedBox(height: shellBottom),
       ],
     );
   }
