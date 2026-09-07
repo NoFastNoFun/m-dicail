@@ -47,4 +47,18 @@ abstract class AuthRepository {
   Future<bool> getMedicalWatchDigestOptIn();
 
   Future<void> setMedicalWatchDigestOptIn(bool value);
+
+  Future<User> updateProfile({String? fullName});
+
+  Future<User> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
+  Future<User> changeEmail({
+    required String newEmail,
+    String? password,
+    String? totpCode,
+    bool usePasskey = false,
+  });
 }

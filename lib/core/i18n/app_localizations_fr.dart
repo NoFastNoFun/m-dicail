@@ -702,6 +702,61 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authSecurityTitle => 'Sécurité';
 
   @override
+  String get settingsProfileTitle => 'Profil';
+
+  @override
+  String get settingsProfileName => 'Nom';
+
+  @override
+  String get settingsProfileNameHint => 'Votre nom affiché';
+
+  @override
+  String get settingsProfileEmail => 'Email';
+
+  @override
+  String get settingsProfileEmailHint => 'Nouvel email';
+
+  @override
+  String get settingsProfileCurrentPassword => 'Mot de passe actuel';
+
+  @override
+  String get settingsProfileNewPassword => 'Nouveau mot de passe';
+
+  @override
+  String get settingsProfileConfirmPassword => 'Confirmer le mot de passe';
+
+  @override
+  String get settingsProfilePasswordMismatch =>
+      'Les mots de passe ne correspondent pas';
+
+  @override
+  String get settingsProfileSaveName => 'Enregistrer le nom';
+
+  @override
+  String get settingsProfileChangeEmail => 'Changer l\'email';
+
+  @override
+  String get settingsProfileChangePassword => 'Changer le mot de passe';
+
+  @override
+  String get settingsProfileUsePasskey => 'Confirmer avec une passkey';
+
+  @override
+  String get settingsProfileUsePassword => 'Confirmer avec le mot de passe';
+
+  @override
+  String get settingsProfileTotpRequired => 'Code TOTP';
+
+  @override
+  String get settingsProfileNameSaved => 'Nom mis à jour';
+
+  @override
+  String get settingsProfileEmailSaved => 'Email mis à jour';
+
+  @override
+  String get settingsProfilePasswordSaved => 'Mot de passe mis à jour';
+
+  @override
   String get authDigestTitle => 'Veille médicale';
 
   @override

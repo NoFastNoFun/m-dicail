@@ -12,6 +12,7 @@ abstract final class AppRoutes {
   static const String appointments = '/appointments';
   static const String settings = '/settings';
   static const String settingsSecurity = '/settings/security';
+  static const String settingsProfile = '/settings/profile';
   static const String medicalWatch = '/medical_watch';
   static const String settingsTemplates = '/settings/templates';
   static const String templateCreate = '/settings/templates/new';

@@ -115,27 +115,50 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              AppSettingsGroup(
-                title: l10n.settingsSectionAccount,
-                children: [
-                  AppSettingsTile(
-                    icon: Icons.lock_outline,
-                    title: l10n.authSecurityTitle,
-                    showChevron: true,
-                    onTap: () => context.push(AppRoutes.settingsSecurity),
-                  ),
-                  AppSettingsTile(
-                    icon: Icons.school_outlined,
-                    title: l10n.settingsRestartOnboarding,
-                    onTap: () {
-                      context.read<TutorialBloc>().add(
-                        const TutorialStartRequested(),
-                      );
-                      AppToast.showSuccess(context, l10n.tutorialRestarted);
-                      context.go(AppRoutes.home);
-                    },
-                  ),
-                ],
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, authState) {
+                  return AppSettingsGroup(
+                    title: l10n.settingsSectionAccount,
+                    children: [
+                      if (authState is AuthAuthenticated) ...[
+                        AppSettingsTile(
+                          icon: Icons.person_outline,
+                          title: l10n.settingsProfileTitle,
+                          subtitle: [
+                            if (authState.user.fullName != null &&
+                                authState.user.fullName!.isNotEmpty)
+                              authState.user.fullName!,
+                            authState.user.email,
+                          ].join(' · '),
+                          showChevron: true,
+                          onTap: () =>
+                              context.push(AppRoutes.settingsProfile),
+                        ),
+                      ],
+                      AppSettingsTile(
+                        icon: Icons.lock_outline,
+                        title: l10n.authSecurityTitle,
+                        showChevron: true,
+                        onTap: () =>
+                            context.push(AppRoutes.settingsSecurity),
+                      ),
+                      AppSettingsTile(
+                        icon: Icons.school_outlined,
+                        title: l10n.settingsRestartOnboarding,
+                        onTap: () {
+                          context.read<TutorialBloc>().add(
+                            const TutorialStartRequested(),
+                          );
+                          AppToast.showSuccess(
+                            context,
+                            l10n.tutorialRestarted,
+                          );
+                          context.go(AppRoutes.home);
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {

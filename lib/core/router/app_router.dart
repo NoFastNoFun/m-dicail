@@ -28,6 +28,7 @@ import 'package:medicail/pages/reset_password_page.dart';
 import 'package:medicail/pages/recovery_page.dart';
 import 'package:medicail/pages/mfa_login_page.dart';
 import 'package:medicail/pages/security_settings_page.dart';
+import 'package:medicail/pages/profile_settings_page.dart';
 
 @lazySingleton
 class AppRouter {
@@ -147,6 +148,10 @@ class AppRouter {
           GoRoute(
             path: AppRoutes.settingsSecurity,
             builder: (context, state) => const SecuritySettingsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.settingsProfile,
+            builder: (context, state) => const ProfileSettingsPage(),
           ),
           GoRoute(
             path: AppRoutes.medicalWatch,

@@ -1426,6 +1426,114 @@ abstract class AppLocalizations {
   /// **'Sécurité'**
   String get authSecurityTitle;
 
+  /// No description provided for @settingsProfileTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil'**
+  String get settingsProfileTitle;
+
+  /// No description provided for @settingsProfileName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get settingsProfileName;
+
+  /// No description provided for @settingsProfileNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre nom affiché'**
+  String get settingsProfileNameHint;
+
+  /// No description provided for @settingsProfileEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get settingsProfileEmail;
+
+  /// No description provided for @settingsProfileEmailHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel email'**
+  String get settingsProfileEmailHint;
+
+  /// No description provided for @settingsProfileCurrentPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe actuel'**
+  String get settingsProfileCurrentPassword;
+
+  /// No description provided for @settingsProfileNewPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get settingsProfileNewPassword;
+
+  /// No description provided for @settingsProfileConfirmPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le mot de passe'**
+  String get settingsProfileConfirmPassword;
+
+  /// No description provided for @settingsProfilePasswordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les mots de passe ne correspondent pas'**
+  String get settingsProfilePasswordMismatch;
+
+  /// No description provided for @settingsProfileSaveName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le nom'**
+  String get settingsProfileSaveName;
+
+  /// No description provided for @settingsProfileChangeEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer l\'email'**
+  String get settingsProfileChangeEmail;
+
+  /// No description provided for @settingsProfileChangePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le mot de passe'**
+  String get settingsProfileChangePassword;
+
+  /// No description provided for @settingsProfileUsePasskey.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer avec une passkey'**
+  String get settingsProfileUsePasskey;
+
+  /// No description provided for @settingsProfileUsePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer avec le mot de passe'**
+  String get settingsProfileUsePassword;
+
+  /// No description provided for @settingsProfileTotpRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code TOTP'**
+  String get settingsProfileTotpRequired;
+
+  /// No description provided for @settingsProfileNameSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom mis à jour'**
+  String get settingsProfileNameSaved;
+
+  /// No description provided for @settingsProfileEmailSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email mis à jour'**
+  String get settingsProfileEmailSaved;
+
+  /// No description provided for @settingsProfilePasswordSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe mis à jour'**
+  String get settingsProfilePasswordSaved;
+
   /// No description provided for @authDigestTitle.
   ///
   /// In fr, this message translates to:
