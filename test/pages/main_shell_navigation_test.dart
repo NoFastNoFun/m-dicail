@@ -103,41 +103,50 @@ void main() {
         );
         final initialPadding = list.padding;
 
+        final shrunkenNavRect = Rect.fromLTRB(
+          navRect.left,
+          navRect.bottom - 48,
+          navRect.right,
+          navRect.bottom,
+        );
+        final heightDiff = navRect.height - 48;
+        final shrunkenFabRect = fabRect.translate(0, heightDiff);
+
         await tester.drag(
           find.byKey(const ValueKey(AppRoutes.home)),
           const Offset(0, -240),
         );
         await tester.pumpAndSettle();
-        expect(tester.getRect(nav), navRect);
-        expect(tester.getRect(fab), fabRect);
+        expect(tester.getRect(nav), shrunkenNavRect);
+        expect(tester.getRect(fab), shrunkenFabRect);
         expect(
           tester
               .widget<ListView>(find.byKey(const ValueKey(AppRoutes.home)))
               .padding,
           initialPadding,
         );
-        expect(find.text('Patients'), findsOneWidget);
-        expect(find.text('Réglages'), findsOneWidget);
+        expect(find.text('Patients'), findsNothing);
+        expect(find.text('Réglages'), findsNothing);
 
-        await tester.tap(find.text('Agenda'));
+        await tester.tap(find.byIcon(Icons.event_outlined));
         await tester.pump(const Duration(milliseconds: 100));
-        expect(tester.getRect(nav), navRect);
+        expect(tester.getRect(nav), shrunkenNavRect);
         await tester.pumpAndSettle();
-        expect(tester.getRect(nav), navRect);
-        expect(tester.getRect(fab), fabRect);
+        expect(tester.getRect(nav), shrunkenNavRect);
+        expect(tester.getRect(fab), shrunkenFabRect);
 
         await tester.tap(fab);
         await tester.pumpAndSettle();
-        expect(tester.getRect(nav), navRect);
-        expect(tester.getRect(fab), fabRect);
+        expect(tester.getRect(nav), shrunkenNavRect);
+        expect(tester.getRect(fab), shrunkenFabRect);
         await tester.tap(fab);
         await tester.pumpAndSettle();
 
         tester.view.viewInsets = const FakeViewPadding(bottom: 180);
         tester.view.padding = FakeViewPadding.zero;
         await tester.pumpAndSettle();
-        expect(tester.getRect(nav), navRect);
-        expect(tester.getRect(fab), fabRect);
+        expect(tester.getRect(nav), shrunkenNavRect);
+        expect(tester.getRect(fab), shrunkenFabRect);
         expect(tester.takeException(), isNull);
       });
     }

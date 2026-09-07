@@ -45,11 +45,13 @@ class AppBottomNavPill extends StatefulWidget {
     super.key,
     required this.destinations,
     required this.selectedRoute,
+    this.showLabels = true,
     required this.onDestinationSelected,
   });
 
   final List<AppBottomNavDestination> destinations;
   final String selectedRoute;
+  final bool showLabels;
   final ValueChanged<String> onDestinationSelected;
 
   @override
@@ -156,9 +158,11 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
         onHorizontalDragUpdate: _onDragUpdate,
         onHorizontalDragEnd: _onDragEnd,
         onHorizontalDragCancel: _onDragCancel,
-        child: SizedBox(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
           width: double.infinity,
-          height: MainShellChrome.navPillHeight(context),
+          height: MainShellChrome.navPillHeight(context, showLabels: widget.showLabels),
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.xs),
             child: Row(
@@ -187,6 +191,7 @@ class _AppBottomNavPillState extends State<AppBottomNavPill> {
     final item = _NavItem(
       destination: dest,
       isSelected: isSelected,
+      showLabels: widget.showLabels,
       onTap: () => _selectDestination(dest.route),
     );
     return dest.wrapper != null ? dest.wrapper!(item) : item;
@@ -197,11 +202,13 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
     required this.isSelected,
+    required this.showLabels,
     required this.onTap,
   });
 
   final AppBottomNavDestination destination;
   final bool isSelected;
+  final bool showLabels;
   final VoidCallback onTap;
 
   @override
@@ -240,19 +247,30 @@ class _NavItem extends StatelessWidget {
                     color: isSelected ? foregroundColor : mutedColor,
                     size: MainShellChrome.navIconSize,
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  SizedBox(
-                    height: MainShellChrome.navLabelHeight(context),
-                    child: Center(
-                      child: AppText(
-                        destination.label,
-                        variant: AppTextVariant.navigation,
-                        color: isSelected ? foregroundColor : mutedColor,
-                        textAlign: TextAlign.center,
-                        maxLines: MainShellChrome.navLabelMaxLines,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: showLabels
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: MainShellChrome.navLabelHeight(context),
+                                child: Center(
+                                  child: AppText(
+                                    destination.label,
+                                    variant: AppTextVariant.navigation,
+                                    color: isSelected ? foregroundColor : mutedColor,
+                                    textAlign: TextAlign.center,
+                                    maxLines: MainShellChrome.navLabelMaxLines,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ],
               ),

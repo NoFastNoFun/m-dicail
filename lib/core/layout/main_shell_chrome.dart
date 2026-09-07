@@ -17,13 +17,11 @@ abstract final class MainShellChrome {
         .ceilToDouble();
   }
 
-  static double navPillHeight(BuildContext context) {
+  static double navPillHeight(BuildContext context, {bool showLabels = true}) {
     // Two padding layers, an icon, a gap and space for accessible labels.
-    return (AppSpacing.xs * 4 +
-            navIconSize +
-            AppSpacing.xs +
-            navLabelHeight(context))
-        .clamp(72.0, double.infinity);
+    final labelSpace = showLabels ? navLabelHeight(context) : 0.0;
+    return (AppSpacing.xs * 4 + navIconSize + labelSpace)
+        .clamp(showLabels ? 72.0 : 48.0, double.infinity);
   }
 }
 

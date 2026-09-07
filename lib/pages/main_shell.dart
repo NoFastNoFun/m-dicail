@@ -54,6 +54,7 @@ class _MainShellState extends State<MainShell> {
   double _navPillHeight = 72.0;
   double _bottomPadding = 0.0;
   double _maxSafeBottom = 0.0;
+  bool _navLabelsVisible = true;
 
   @override
   void initState() {
@@ -62,6 +63,20 @@ class _MainShellState extends State<MainShell> {
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
     });
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification ||
+        notification is ScrollEndNotification) {
+      final metrics = notification.metrics;
+      if (!metrics.hasPixels) return false;
+
+      final atTop = metrics.pixels <= metrics.minScrollExtent + 8;
+      if (atTop != _navLabelsVisible) {
+        setState(() => _navLabelsVisible = atTop);
+      }
+    }
+    return false;
   }
 
   @override
@@ -90,7 +105,7 @@ class _MainShellState extends State<MainShell> {
         _bottomPadding =
             AppSpacing.xl + MainShellChrome.fabHeight + AppSpacing.lg;
       } else {
-        _navPillHeight = MainShellChrome.navPillHeight(context);
+        _navPillHeight = MainShellChrome.navPillHeight(context, showLabels: true);
         _bottomPadding = MainShellChrome.navLift +
             _navPillHeight +
             _maxSafeBottom +
@@ -345,9 +360,12 @@ class _MainShellState extends State<MainShell> {
 
     final tabIndex = indexOfBottomNavDestination(destinations, location);
 
-    final pageBody = BlocListener<TutorialBloc, TutorialState>(
-      listener: (context, state) => _handleTutorialState(state),
-      child: AppTabSlideSwitcher(tabIndex: tabIndex, child: widget.child),
+    final pageBody = NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
+      child: BlocListener<TutorialBloc, TutorialState>(
+        listener: (context, state) => _handleTutorialState(state),
+        child: AppTabSlideSwitcher(tabIndex: tabIndex, child: widget.child),
+      ),
     );
 
     final quickRecordFab = _buildQuickRecordFab(l10n);
@@ -415,6 +433,7 @@ class _MainShellState extends State<MainShell> {
                             child: AppBottomNavPill(
                               destinations: destinations,
                               selectedRoute: location,
+                              showLabels: _navLabelsVisible,
                               onDestinationSelected: _onDestinationSelected,
                             ),
                           ),

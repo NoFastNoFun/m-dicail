@@ -169,7 +169,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureFinishConsultation event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    final roughTranscript = _currentTranscript;
+    var roughTranscript = _currentTranscript;
+    if (event.isTutorial && roughTranscript.trim().isEmpty) {
+      roughTranscript = 'Voici une consultation fictive pour le tutoriel.';
+      _segmentBase = roughTranscript;
+      _updateActiveSessionTranscriptInMemory(roughTranscript);
+    }
+    
     final sessionId = _activeSession?.id ?? '';
 
     if (sessionId.isEmpty) {
