@@ -37,6 +37,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     PatientCreated event,
     Emitter<PatientState> emit,
   ) async {
+    emit(const PatientLoading());
     try {
       final now = DateTime.now();
       final patient = Patient(
@@ -73,6 +74,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     PatientUpdated event,
     Emitter<PatientState> emit,
   ) async {
+    emit(const PatientLoading());
     try {
       final existingPatient = await _patientRepository.getById(event.id);
       if (existingPatient == null) {
