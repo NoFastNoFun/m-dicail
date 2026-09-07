@@ -17,14 +17,43 @@ class AppTabSlideSwitcher extends StatefulWidget {
   State<AppTabSlideSwitcher> createState() => _AppTabSlideSwitcherState();
 }
 
-class _AppTabSlideSwitcherState extends State<AppTabSlideSwitcher> {
+class _AppTabSlideSwitcherState extends State<AppTabSlideSwitcher>
+    with SingleTickerProviderStateMixin {
   double _direction = 1;
+  late final AnimationController _controller;
+  late final CurvedAnimation _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: AppTabSlideSwitcher.duration,
+      value: 1,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animation.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(AppTabSlideSwitcher oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.tabIndex != oldWidget.tabIndex) {
       _direction = widget.tabIndex >= oldWidget.tabIndex ? 1 : -1;
+      if (MediaQuery.disableAnimationsOf(context)) {
+        _controller.value = 1;
+      } else {
+        _controller.forward(from: 0);
+      }
     }
   }
 
@@ -33,37 +62,16 @@ class _AppTabSlideSwitcherState extends State<AppTabSlideSwitcher> {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return ClipRect(
-      child: AnimatedSwitcher(
-        duration: reduceMotion ? Duration.zero : AppTabSlideSwitcher.duration,
-        layoutBuilder: (currentChild, previousChildren) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              ...previousChildren,
-              ?currentChild,
-            ],
-          );
-        },
-        transitionBuilder: (child, animation) {
-          final isIncoming = child.key == ValueKey(widget.tabIndex);
-          return SlideTransition(
-            position:
-                Tween<Offset>(
-                  begin: Offset(isIncoming ? _direction : -_direction, 0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  ),
-                ),
-            child: child,
-          );
-        },
-        child: KeyedSubtree(
-          key: ValueKey(widget.tabIndex),
-          child: SizedBox.expand(child: widget.child),
-        ),
+      // ShellRoute owns a single Navigator with a GlobalKey. Keeping an outgoing
+      // copy in AnimatedSwitcher mounts that Navigator twice during tab changes.
+      child: SlideTransition(
+        position: reduceMotion
+            ? const AlwaysStoppedAnimation(Offset.zero)
+            : Tween<Offset>(
+                begin: Offset(_direction, 0),
+                end: Offset.zero,
+              ).animate(_animation),
+        child: SizedBox.expand(child: widget.child),
       ),
     );
   }

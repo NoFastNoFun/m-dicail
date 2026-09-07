@@ -30,7 +30,7 @@ class MainShell extends StatefulWidget {
   final Widget child;
 
   static EdgeInsets scrollPadding(BuildContext context) {
-    return MainShellScope.maybeOf(context)?.scrollPadding(context) ??
+    return MainShellScope.maybeOf(context)?.scrollPadding() ??
         EdgeInsets.zero;
   }
 
@@ -46,9 +46,14 @@ class _MainShellState extends State<MainShell> {
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
   String? _lastLocation;
-  bool _navLabelsVisible = true;
 
   int? _lastSeenTutorialStep;
+
+  Size? _lastSize;
+  TextScaler? _lastTextScaler;
+  double _navPillHeight = 72.0;
+  double _bottomPadding = 0.0;
+  double _maxSafeBottom = 0.0;
 
   @override
   void initState() {
@@ -57,6 +62,41 @@ class _MainShellState extends State<MainShell> {
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final size = MediaQuery.sizeOf(context);
+    final textScaler = MediaQuery.textScalerOf(context);
+
+    // Track max safe bottom to prevent layout jumping during inertial scroll
+    // on Android devices where viewPadding.bottom fluctuates.
+    final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
+    final maxSafeBottomChanged = safeBottom > _maxSafeBottom;
+    if (maxSafeBottomChanged) {
+      _maxSafeBottom = safeBottom;
+    }
+
+    if (_lastSize != size ||
+        _lastTextScaler != textScaler ||
+        maxSafeBottomChanged) {
+      _lastSize = size;
+      _lastTextScaler = textScaler;
+
+      final useSideNav = AppLayout.useSideNavigation(context);
+      if (useSideNav) {
+        _bottomPadding =
+            AppSpacing.xl + MainShellChrome.fabHeight + AppSpacing.lg;
+      } else {
+        _navPillHeight = MainShellChrome.navPillHeight(context);
+        _bottomPadding = MainShellChrome.navLift +
+            _navPillHeight +
+            _maxSafeBottom +
+            AppSpacing.sm;
+      }
+    }
   }
 
   void _handleTutorialState(TutorialState state) {
@@ -174,37 +214,6 @@ class _MainShellState extends State<MainShell> {
       return;
     }
     context.goRecord();
-  }
-
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification ||
-        notification is ScrollEndNotification) {
-      final metrics = notification.metrics;
-      if (!metrics.hasPixels) {
-        return false;
-      }
-
-      final atTop = metrics.pixels <= metrics.minScrollExtent + 8;
-      if (atTop != _navLabelsVisible) {
-        setState(() => _navLabelsVisible = atTop);
-      }
-    }
-
-    return false;
-  }
-
-  void _resetNavLabels() {
-    if (!_navLabelsVisible) {
-      setState(() => _navLabelsVisible = true);
-    }
-  }
-
-  void _scheduleNavLabelReset() {
-    if (_navLabelsVisible) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _resetNavLabels();
-    });
   }
 
   void _onDestinationSelected(String route) {
@@ -325,8 +334,6 @@ class _MainShellState extends State<MainShell> {
 
     if (_lastLocation != location) {
       _lastLocation = location;
-      // Never setState during build — it corrupts mouse tracking on desktop.
-      _scheduleNavLabelReset();
       if (location == AppRoutes.home) {
         _didStartQuickRecordShowcase = false;
       }
@@ -340,10 +347,7 @@ class _MainShellState extends State<MainShell> {
 
     final pageBody = BlocListener<TutorialBloc, TutorialState>(
       listener: (context, state) => _handleTutorialState(state),
-      child: NotificationListener<ScrollNotification>(
-        onNotification: _handleScrollNotification,
-        child: AppTabSlideSwitcher(tabIndex: tabIndex, child: widget.child),
-      ),
+      child: AppTabSlideSwitcher(tabIndex: tabIndex, child: widget.child),
     );
 
     final quickRecordFab = _buildQuickRecordFab(l10n);
@@ -385,8 +389,8 @@ class _MainShellState extends State<MainShell> {
                 left: 0,
                 right: 0,
                 bottom: MainShellChrome.navLift,
-                child: SafeArea(
-                  top: false,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: _maxSafeBottom),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -411,7 +415,6 @@ class _MainShellState extends State<MainShell> {
                             child: AppBottomNavPill(
                               destinations: destinations,
                               selectedRoute: location,
-                              showLabels: _navLabelsVisible,
                               onDestinationSelected: _onDestinationSelected,
                             ),
                           ),
@@ -425,10 +428,9 @@ class _MainShellState extends State<MainShell> {
           );
 
     return MainShellScope(
-      navLabelsVisible: _navLabelsVisible,
+      bottomPadding: _bottomPadding,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        extendBody: !useSideNav,
         resizeToAvoidBottomInset: false,
         body: shellBody,
       ),

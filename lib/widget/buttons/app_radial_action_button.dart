@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 
@@ -67,6 +68,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
   }
 
   void _toggle() {
+    AppHaptics.tap();
     setState(() {
       _isOpen = !_isOpen;
       if (_isOpen) {
@@ -86,27 +88,28 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
   }
 
   void _onActionTap(VoidCallback onTap) {
+    AppHaptics.tap();
     _close();
     onTap();
   }
 
   Alignment get _stackAlignment => switch (widget.anchor) {
-        AppRadialActionAnchor.center => Alignment.bottomCenter,
-        AppRadialActionAnchor.end => Alignment.bottomRight,
-      };
+    AppRadialActionAnchor.center => Alignment.bottomCenter,
+    AppRadialActionAnchor.end => Alignment.bottomRight,
+  };
 
   double get _width => switch (widget.anchor) {
-        AppRadialActionAnchor.center => _orbitRadius * 2 + _fabSize,
-        AppRadialActionAnchor.end => _orbitRadius + _fabSize,
-      };
+    AppRadialActionAnchor.center => _orbitRadius * 2 + _fabSize,
+    AppRadialActionAnchor.end => _orbitRadius + _fabSize,
+  };
 
   ({double startAngle, double endAngle}) get _arcAngles =>
       switch (widget.anchor) {
         AppRadialActionAnchor.center => (startAngle: math.pi, endAngle: 0.0),
         AppRadialActionAnchor.end => (
-            startAngle: math.pi,
-            endAngle: math.pi * 1.5,
-          ),
+          startAngle: math.pi,
+          endAngle: math.pi * 1.5,
+        ),
       };
 
   @override
@@ -119,89 +122,88 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
     return TapRegion(
       onTapOutside: (_) {
         if (_isOpen) {
-          _toggle();
+          _close();
         }
       },
       child: SizedBox(
         width: _width,
-        height: showSatellites ? _orbitRadius + _fabSize + AppSpacing.xl : _fabSize,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: _stackAlignment,
-        children: [
-          if (showSatellites)
-            for (var i = 0; i < actionCount; i++)
-              AnimatedBuilder(
-                animation: _expandAnimation,
-                builder: (context, child) {
-                  final progress = _expandAnimation.value;
-                  final motionProgress = progress.clamp(0.0, 1.0);
-                  final angle = arc.startAngle +
-                      (arc.endAngle - arc.startAngle) *
-                          (i / (actionCount - 1).clamp(1, 999));
-                  final dx = math.cos(angle) * _orbitRadius * motionProgress;
-                  final dy = math.sin(angle) * _orbitRadius * motionProgress;
-                  final edgeInset = (_fabSize - _satelliteSize) / 2;
-                  final interactive = progress > 0.05;
+        height: showSatellites
+            ? _orbitRadius + _fabSize + AppSpacing.xl
+            : _fabSize,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: _stackAlignment,
+          children: [
+            if (showSatellites)
+              for (var i = 0; i < actionCount; i++)
+                AnimatedBuilder(
+                  animation: _expandAnimation,
+                  builder: (context, child) {
+                    final progress = _expandAnimation.value;
+                    final motionProgress = progress.clamp(0.0, 1.0);
+                    final angle =
+                        arc.startAngle +
+                        (arc.endAngle - arc.startAngle) *
+                            (i / (actionCount - 1).clamp(1, 999));
+                    final dx = math.cos(angle) * _orbitRadius * motionProgress;
+                    final dy = math.sin(angle) * _orbitRadius * motionProgress;
+                    final edgeInset = (_fabSize - _satelliteSize) / 2;
+                    final interactive = progress > 0.05;
 
-                  final satellite = IgnorePointer(
-                    ignoring: !interactive,
-                    child: _animatedSatellite(progress, child),
-                  );
+                    final satellite = IgnorePointer(
+                      ignoring: !interactive,
+                      child: _animatedSatellite(progress, child),
+                    );
 
-                  return switch (widget.anchor) {
-                    AppRadialActionAnchor.center => Positioned(
+                    return switch (widget.anchor) {
+                      AppRadialActionAnchor.center => Positioned(
                         bottom: edgeInset - dy,
-                        left: (_orbitRadius + _fabSize / 2) +
+                        left:
+                            (_orbitRadius + _fabSize / 2) +
                             dx -
                             _satelliteSize / 2,
                         child: satellite,
                       ),
-                    AppRadialActionAnchor.end => Positioned(
+                      AppRadialActionAnchor.end => Positioned(
                         bottom: edgeInset - dy,
                         right: edgeInset - dx,
                         child: satellite,
                       ),
-                  };
-                },
-                child: _SatelliteButton(
-                  action: widget.actions[i],
-                  onTap: () => _onActionTap(widget.actions[i].onTap),
+                    };
+                  },
+                  child: _SatelliteButton(
+                    action: widget.actions[i],
+                    onTap: () => _onActionTap(widget.actions[i].onTap),
+                  ),
                 ),
+            FloatingActionButton(
+              onPressed: _toggle,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              elevation: 6,
+              shape: AppRadius.stadiumBorder,
+              child: AnimatedRotation(
+                turns: _isOpen ? 0.125 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: const Icon(Icons.add, size: 28),
               ),
-          FloatingActionButton(
-            onPressed: _toggle,
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            elevation: 6,
-            shape: AppRadius.stadiumBorder,
-            child: AnimatedRotation(
-              turns: _isOpen ? 0.125 : 0,
-              duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.add, size: 28),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _animatedSatellite(double progress, Widget? child) {
     return Opacity(
       opacity: progress.clamp(0.0, 1.0),
-      child: Transform.scale(
-        scale: progress.clamp(0.0, 1.15),
-        child: child,
-      ),
+      child: Transform.scale(scale: progress.clamp(0.0, 1.15), child: child),
     );
   }
 }
 
 class _SatelliteButton extends StatelessWidget {
-  const _SatelliteButton({
-    required this.action,
-    required this.onTap,
-  });
+  const _SatelliteButton({required this.action, required this.onTap});
 
   final AppRadialAction action;
   final VoidCallback onTap;

@@ -58,14 +58,22 @@ abstract final class AppTypography {
     color: AppColors.textSecondary,
   );
 
+  static const TextStyle navigation = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0,
+    height: 1.3,
+  );
+
   static TextTheme get textTheme => const TextTheme(
-        displayLarge: display,
-        headlineMedium: headline,
-        titleMedium: title,
-        bodyLarge: body,
-        bodyMedium: body,
-        labelLarge: label,
-        labelMedium: label,
-        bodySmall: caption,
-      );
+    displayLarge: display,
+    headlineMedium: headline,
+    titleMedium: title,
+    bodyLarge: body,
+    bodyMedium: body,
+    labelLarge: label,
+    labelMedium: label,
+    bodySmall: caption,
+  );
 }

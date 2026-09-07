@@ -210,12 +210,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.factory<_i488.SettingsBloc>(
-      () => _i488.SettingsBloc(
-        gh<_i460.UserPreferencesRepository>(),
-        gh<_i713.SettingsNotifier>(),
-      ),
-    );
     gh.lazySingleton<_i356.OfflineAudioTranscriptionService>(
       () => _i356.WhisperOfflineAudioTranscriptionService(),
     );
@@ -255,6 +249,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i297.NoteTemplateBloc>(
       () => _i297.NoteTemplateBloc(gh<_i144.NoteTemplateRepository>()),
+    );
+    gh.factory<_i488.SettingsBloc>(
+      () => _i488.SettingsBloc(
+        gh<_i460.UserPreferencesRepository>(),
+        gh<_i713.SettingsNotifier>(),
+      ),
     );
     gh.lazySingleton<_i367.DesktopDebugBackendUrlStore>(
       () => _i367.DesktopDebugBackendUrlStore(

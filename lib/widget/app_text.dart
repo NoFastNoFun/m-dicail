@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_typography.dart';
 
-enum AppTextVariant { display, headline, title, body, label, caption }
+enum AppTextVariant {
+  display,
+  headline,
+  title,
+  body,
+  label,
+  caption,
+  navigation,
+}
 
 class AppText extends StatelessWidget {
   const AppText(
@@ -32,6 +40,7 @@ class AppText extends StatelessWidget {
       AppTextVariant.body => AppTypography.body,
       AppTextVariant.label => AppTypography.label,
       AppTextVariant.caption => AppTypography.caption,
+      AppTextVariant.navigation => AppTypography.navigation,
     };
 
     final themeStyle = switch (variant) {
@@ -42,6 +51,7 @@ class AppText extends StatelessWidget {
         theme.textTheme.bodyLarge ?? theme.textTheme.bodyMedium,
       AppTextVariant.label => theme.textTheme.labelLarge,
       AppTextVariant.caption => theme.textTheme.bodySmall,
+      AppTextVariant.navigation => theme.textTheme.labelSmall,
     };
 
     final defaultColor = variant == AppTextVariant.caption
