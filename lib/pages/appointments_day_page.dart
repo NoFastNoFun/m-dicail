@@ -55,12 +55,20 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
       widget.initialDay.day,
     );
     appointmentChangeNotifier.addListener(_onAppointmentsChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _registerFabAction();
+    });
   }
 
   @override
   void dispose() {
     appointmentChangeNotifier.removeListener(_onAppointmentsChanged);
     super.dispose();
+  }
+
+  void _registerFabAction() {
+    MainShellScope.setFabPrimaryAction(context, _openCreate);
   }
 
   void _onAppointmentsChanged() {
@@ -96,13 +104,6 @@ class _AppointmentsDayViewState extends State<_AppointmentsDayView> {
 
         return AppScaffold(
           title: l10n.appointmentsDayTitle,
-          actions: [
-            IconButton(
-              tooltip: l10n.appointmentCreateTitle,
-              onPressed: _openCreate,
-              icon: const Icon(Icons.add),
-            ),
-          ],
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

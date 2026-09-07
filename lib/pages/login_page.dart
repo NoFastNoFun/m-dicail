@@ -78,16 +78,17 @@ class _LoginPageState extends State<LoginPage> {
           },
           child: LayoutBuilder(
             builder: (context, constraints) {
+              const padding = EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.xxl,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              );
               return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.xxl,
-                  AppSpacing.lg,
-                  AppSpacing.xl,
-                ),
+                padding: padding,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight - AppSpacing.xxl,
+                    minHeight: constraints.maxHeight - padding.vertical,
                   ),
                   child: AppFormConstraint(
                     child: AutofillGroup(
