@@ -918,7 +918,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsAiEnhanceSubtitle =>
-      'Envoie l\'enregistrement au cloud pour une transcription améliorée';
+      'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.';
+
+  @override
+  String get transcriptAiPendingHint =>
+      'Mode IA : la transcription sera disponible après avoir terminé la consultation.';
 
   @override
   String get settingsAiEnhanceWarning =>

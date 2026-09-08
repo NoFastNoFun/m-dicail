@@ -21,6 +21,7 @@ final class VoiceCaptureViewModel {
     this.transcript = '',
     this.localTranscript = '',
     this.aiTranscript = '',
+    this.isAiCapture = false,
     this.errorMessage,
     this.selectedTemplate,
   });
@@ -43,9 +44,14 @@ final class VoiceCaptureViewModel {
           status: VoiceCaptureSessionStatus.completed,
           transcript: transcript,
         ),
-      RecordingInProgress(:final transcript, :final selectedTemplate) =>
+      RecordingInProgress(
+        :final transcript,
+        :final selectedTemplate,
+        :final isAiCapture,
+      ) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
+          isAiCapture: isAiCapture,
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
@@ -58,9 +64,14 @@ final class VoiceCaptureViewModel {
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
-      ListeningPaused(:final transcript, :final selectedTemplate) =>
+      ListeningPaused(
+        :final transcript,
+        :final selectedTemplate,
+        :final isAiCapture,
+      ) =>
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.paused,
+          isAiCapture: isAiCapture,
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
@@ -102,6 +113,7 @@ final class VoiceCaptureViewModel {
   final String transcript;
   final String localTranscript;
   final String aiTranscript;
+  final bool isAiCapture;
   final String? errorMessage;
   final NoteTemplate? selectedTemplate;
 

@@ -144,7 +144,7 @@ class _CompareColumn extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             FilledButton(
-              onPressed: onChoose,
+              onPressed: transcript.trim().isEmpty ? null : onChoose,
               child: Text(buttonLabel),
             ),
           ],

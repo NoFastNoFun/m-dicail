@@ -10,6 +10,9 @@ abstract class BackgroundAudioRecorder {
 
   Future<void> start({required String sessionId});
 
+  /// Pauses capture while retaining the file; [start] resumes it.
+  Future<void> pause();
+
   Future<String?> stop();
 
   Future<void> cancel();
@@ -21,6 +24,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
 
   final AudioRecorder _recorder;
   String? _activePath;
+  bool _isPaused = false;
 
   @override
   bool get isRecording => _activePath != null;
@@ -28,6 +32,10 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   @override
   Future<void> start({required String sessionId}) async {
     if (_activePath != null) {
+      if (_isPaused) {
+        await _recorder.resume();
+        _isPaused = false;
+      }
       return;
     }
 
@@ -56,9 +64,18 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   }
 
   @override
+  Future<void> pause() async {
+    if (_activePath != null && !_isPaused) {
+      await _recorder.pause();
+      _isPaused = true;
+    }
+  }
+
+  @override
   Future<String?> stop() async {
     final path = _activePath;
     _activePath = null;
+    _isPaused = false;
     if (path == null) {
       return null;
     }
@@ -77,6 +94,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   Future<void> cancel() async {
     final path = _activePath;
     _activePath = null;
+    _isPaused = false;
     if (await _recorder.isRecording()) {
       await _recorder.stop();
     }

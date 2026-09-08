@@ -7,6 +7,7 @@ import 'package:medicail/core/audio/background_audio_recorder.dart';
 import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
 import 'package:medicail/core/audio/recording_notification_service.dart';
 import 'package:medicail/core/error/failure.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/medical_terms/medical_term_correction_service.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/core/utils/punctuation_helper.dart';
@@ -63,11 +64,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   RecordingSession? _activeSession;
   bool _isHandlingLifecycle = false;
   bool _isBackgroundCapture = false;
+  bool _captureForAi = false;
   String _segmentBase = '';
   String _lastRawText = '';
   NoteTemplate? _selectedTemplate;
   String _pendingFinishLanguage = 'fr';
-  bool _pendingTranscriptIsAi = false;
 
   List<String> _transitions = const [];
   String _wordPeriod = '';
@@ -75,8 +76,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   static const _notificationTitle = 'Ecoute en cours';
   static const _notificationBody = 'Touchez pour revenir a Medicail';
-  static const _notificationBackgroundTitle =
-      'Enregistrement en arriere-plan';
+  static const _notificationBackgroundTitle = 'Enregistrement en arriere-plan';
   static const _notificationBackgroundBody =
       "L'enregistrement audio continue pendant que l'ecran est eteint";
   static const _micReleaseDelay = Duration(milliseconds: 250);
@@ -86,7 +86,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     try {
-      await _audioCaptureService.initialize();
+      if (!await _userPreferencesRepository.readAiEnhanceEnabled()) {
+        await _audioCaptureService.initialize();
+      }
       await _recordingNotificationService.ensureInitialized();
       await _medicalTermCorrectionService.warmUp();
       emit(const VoiceCaptureReady());
@@ -111,22 +113,34 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _wordPeriod = event.wordPeriod;
     _wordComma = event.wordComma;
     try {
-      await _audioCaptureService.initialize();
+      // Keep one capture mode throughout a consultation, including pauses.
+      if (_activeSession == null) {
+        _captureForAi = await _userPreferencesRepository.readAiEnhanceEnabled();
+      }
+      if (!_captureForAi) {
+        await _audioCaptureService.initialize();
+      }
       await _ensureActiveSessionStarted(
         currentTranscript,
         patientId: event.patientId,
       );
-      await _ensureSessionAudioStarted();
       await _recordingNotificationService.start(
         title: _notificationTitle,
         body: _notificationBody,
       );
-      await _startListeningSession();
+      if (_captureForAi) {
+        await _backgroundAudioRecorder.start(sessionId: _activeSession!.id);
+      } else {
+        await _startListeningSession();
+      }
       _isBackgroundCapture = false;
-      emit(RecordingInProgress(
-        transcript: currentTranscript,
-        selectedTemplate: _selectedTemplate,
-      ));
+      emit(
+        RecordingInProgress(
+          transcript: currentTranscript,
+          selectedTemplate: _selectedTemplate,
+          isAiCapture: _captureForAi,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(currentTranscript);
       await _stopRecordingInfrastructure();
@@ -146,7 +160,11 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   ) async {
     try {
       await _stopListeningAndNotification();
-      await _discardSessionAudio();
+      if (_captureForAi) {
+        await _backgroundAudioRecorder.pause();
+      } else {
+        await _discardSessionAudio();
+      }
       await _saveActiveSessionTranscript(_currentTranscript);
       var transcript = _currentTranscript.trim();
       if (transcript.isNotEmpty && !transcript.endsWith('.')) {
@@ -156,10 +174,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       }
       _segmentBase = transcript;
       _lastRawText = '';
-      emit(ListeningPaused(
-        transcript: _currentTranscript,
-        selectedTemplate: _selectedTemplate,
-      ));
+      emit(
+        ListeningPaused(
+          transcript: _currentTranscript,
+          selectedTemplate: _selectedTemplate,
+          isAiCapture: _captureForAi,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(_currentTranscript);
       emit(
@@ -196,7 +217,6 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
 
     _pendingFinishLanguage = event.language;
-    _pendingTranscriptIsAi = false;
 
     String? audioPath;
     try {
@@ -204,43 +224,54 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       audioPath = await _stopSessionAudio();
 
       var transcriptForProcess = roughTranscript;
+      if (_captureForAi && audioPath == null) {
+        throw const AudioException(
+          'Aucun fichier audio disponible pour la transcription.',
+        );
+      }
       if (audioPath != null) {
-        final aiEnhanceEnabled =
-            await _userPreferencesRepository.readAiEnhanceEnabled();
+        final aiEnhanceEnabled = await _userPreferencesRepository
+            .readAiEnhanceEnabled();
+        String? enhanced;
         if (aiEnhanceEnabled) {
           emit(VoiceCaptureEnhancing(transcript: roughTranscript));
           try {
-            final enhanced =
-                await _enhancedTranscriptionRepository
-                    .transcribeFile(
-                      filePath: audioPath,
-                      sessionId: sessionId,
-                      language: event.language,
-                    )
-                    .timeout(const Duration(minutes: 2));
-            if (enhanced.isNotEmpty) {
-              emit(
-                VoiceCaptureTranscriptCompare(
-                  localTranscript: roughTranscript,
-                  aiTranscript: enhanced,
-                  selectedTemplate: _selectedTemplate,
-                ),
-              );
-              return;
+            enhanced = await _enhancedTranscriptionRepository
+                .transcribeFile(
+                  filePath: audioPath,
+                  sessionId: sessionId,
+                  language: event.language,
+                )
+                .timeout(const Duration(minutes: 2));
+          } catch (_) {
+            // A local transcription remains available when the network fails.
+          }
+        }
+        if (_captureForAi || enhanced == null || enhanced.isEmpty) {
+          try {
+            final offlineText = await _offlineAudioTranscriptionService
+                .transcribeFile(audioPath, language: event.language);
+            if (offlineText.isNotEmpty) {
+              transcriptForProcess = AnonymizationHelper.anonymize(offlineText);
             }
           } catch (_) {
-            try {
-              final offlineText = await _offlineAudioTranscriptionService
-                  .transcribeFile(audioPath, language: event.language);
-              if (offlineText.isNotEmpty) {
-                transcriptForProcess =
-                    AnonymizationHelper.anonymize(offlineText);
-                await _saveActiveSessionTranscript(transcriptForProcess);
-              }
-            } catch (_) {
-              transcriptForProcess = roughTranscript;
-            }
+            // Keep the existing transcript or the successful cloud result.
           }
+        }
+        if (enhanced != null && enhanced.trim().isNotEmpty) {
+          emit(
+            VoiceCaptureTranscriptCompare(
+              localTranscript: transcriptForProcess,
+              aiTranscript: AnonymizationHelper.anonymize(enhanced),
+              selectedTemplate: _selectedTemplate,
+            ),
+          );
+          return;
+        }
+        if (_captureForAi && transcriptForProcess.trim().isEmpty) {
+          throw const AudioException(
+            'La transcription a échoué ou ne contient aucune parole. Veuillez réessayer.',
+          );
         }
       }
 
@@ -289,7 +320,6 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     final chosen = event.useAi ? current.aiTranscript : current.localTranscript;
     final transcriptIsAi = event.useAi;
-    _pendingTranscriptIsAi = transcriptIsAi;
 
     try {
       final anonymized = AnonymizationHelper.anonymize(chosen);
@@ -352,7 +382,6 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _segmentBase = '';
     _lastRawText = '';
     _activeSession = null;
-    _pendingTranscriptIsAi = false;
     emit(
       VoiceCaptureConsultationFinished(
         sessionId: sessionId,
@@ -402,7 +431,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureListeningSessionEnded event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    if (state is! RecordingInProgress || _isBackgroundCapture) {
+    if (state is! RecordingInProgress ||
+        _isBackgroundCapture ||
+        _captureForAi) {
       return;
     }
 
@@ -417,10 +448,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     try {
       await _saveActiveSessionTranscript(transcript);
       await _startListeningSession();
-      emit(RecordingInProgress(
-        transcript: transcript,
-        selectedTemplate: _selectedTemplate,
-      ));
+      emit(
+        RecordingInProgress(
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
     } catch (error) {
       await _failActiveSession(transcript);
       await _stopRecordingInfrastructure();
@@ -438,7 +471,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureTranscriptUpdated event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    if (state is! RecordingInProgress || _isBackgroundCapture) {
+    if (state is! RecordingInProgress ||
+        _isBackgroundCapture ||
+        _captureForAi) {
       return;
     }
 
@@ -458,9 +493,10 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       final maxOverlap = _lastRawText.length < event.rawText.length
           ? _lastRawText.length
           : event.rawText.length;
-      
+
       bool hasOverlap = false;
-      if (event.rawText.startsWith(_lastRawText) || _lastRawText.startsWith(event.rawText)) {
+      if (event.rawText.startsWith(_lastRawText) ||
+          _lastRawText.startsWith(event.rawText)) {
         hasOverlap = true;
       } else {
         for (var overlap = maxOverlap; overlap > 0; overlap--) {
@@ -498,10 +534,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       _lastRawText = ''; // Reset so the next text doesn't overlap with nothing
     }
 
-    emit(RecordingInProgress(
-      transcript: corrected,
-      selectedTemplate: _selectedTemplate,
-    ));
+    emit(
+      RecordingInProgress(
+        transcript: corrected,
+        selectedTemplate: _selectedTemplate,
+      ),
+    );
   }
 
   void _onTemplateSelected(
@@ -554,11 +592,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         title: _notificationBackgroundTitle,
         body: _notificationBackgroundBody,
       );
-      emit(RecordingInProgress(
-        transcript: _currentTranscript,
-        selectedTemplate: _selectedTemplate,
-        isBackgroundCapture: true,
-      ));
+      emit(
+        RecordingInProgress(
+          transcript: _currentTranscript,
+          selectedTemplate: _selectedTemplate,
+          isBackgroundCapture: true,
+          isAiCapture: _captureForAi,
+        ),
+      );
     } catch (error) {
       _isBackgroundCapture = false;
       await _failActiveSession(_currentTranscript);
@@ -590,10 +631,28 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _isHandlingLifecycle = true;
     final baseTranscript = _currentTranscript;
     try {
-      emit(VoiceCaptureTranscribingBackground(
-        transcript: baseTranscript,
-        selectedTemplate: _selectedTemplate,
-      ));
+      if (_captureForAi) {
+        // The same WAV continues recording while the screen is off.
+        _isBackgroundCapture = false;
+        await _recordingNotificationService.update(
+          title: _notificationTitle,
+          body: _notificationBody,
+        );
+        emit(
+          RecordingInProgress(
+            transcript: baseTranscript,
+            selectedTemplate: _selectedTemplate,
+            isAiCapture: true,
+          ),
+        );
+        return;
+      }
+      emit(
+        VoiceCaptureTranscribingBackground(
+          transcript: baseTranscript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
 
       final audioPath = await _stopSessionAudio();
       _isBackgroundCapture = false;
@@ -616,10 +675,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         body: _notificationBody,
       );
       await _startListeningSession();
-      emit(RecordingInProgress(
-        transcript: mergedTranscript,
-        selectedTemplate: _selectedTemplate,
-      ));
+      emit(
+        RecordingInProgress(
+          transcript: mergedTranscript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
     } catch (error) {
       _isBackgroundCapture = false;
       await _failActiveSession(baseTranscript);
@@ -639,27 +700,30 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   VoiceCaptureState _stateWithSelectedTemplate(String transcript) {
     return switch (state) {
       VoiceCaptureReady() => VoiceCaptureReady(
-          transcript: transcript,
-          selectedTemplate: _selectedTemplate,
-        ),
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+      ),
       RecordingInProgress(:final isBackgroundCapture) => RecordingInProgress(
-          transcript: transcript,
-          selectedTemplate: _selectedTemplate,
-          isBackgroundCapture: isBackgroundCapture,
-        ),
-      VoiceCaptureTranscribingBackground() => VoiceCaptureTranscribingBackground(
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+        isBackgroundCapture: isBackgroundCapture,
+        isAiCapture: _captureForAi,
+      ),
+      VoiceCaptureTranscribingBackground() =>
+        VoiceCaptureTranscribingBackground(
           transcript: transcript,
           selectedTemplate: _selectedTemplate,
         ),
       ListeningPaused() => ListeningPaused(
-          transcript: transcript,
-          selectedTemplate: _selectedTemplate,
-        ),
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+        isAiCapture: _captureForAi,
+      ),
       VoiceCaptureFailure(:final message) => VoiceCaptureFailure(
-          message,
-          transcript: transcript,
-          selectedTemplate: _selectedTemplate,
-        ),
+        message,
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+      ),
       VoiceCaptureEnhancing() => VoiceCaptureEnhancing(transcript: transcript),
       VoiceCaptureTranscriptCompare(:final aiTranscript) =>
         VoiceCaptureTranscriptCompare(
@@ -667,11 +731,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
           aiTranscript: aiTranscript,
           selectedTemplate: _selectedTemplate,
         ),
-      VoiceCaptureProcessing() => VoiceCaptureProcessing(transcript: transcript),
+      VoiceCaptureProcessing() => VoiceCaptureProcessing(
+        transcript: transcript,
+      ),
       _ => VoiceCaptureReady(
-          transcript: transcript,
-          selectedTemplate: _selectedTemplate,
-        ),
+        transcript: transcript,
+        selectedTemplate: _selectedTemplate,
+      ),
     };
   }
 

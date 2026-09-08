@@ -84,8 +84,9 @@ void main() {
     medicalTermCorrection = _MockMedicalTermCorrectionService();
     userPreferences = _MockUserPreferencesRepository();
 
-    when(() => userPreferences.readAiEnhanceEnabled())
-        .thenAnswer((_) async => true);
+    when(
+      () => userPreferences.readAiEnhanceEnabled(),
+    ).thenAnswer((_) async => false);
     when(() => audioCapture.initialize()).thenAnswer((_) async => true);
     when(() => audioCapture.isListening).thenReturn(false);
     when(
@@ -96,8 +97,9 @@ void main() {
     ).thenAnswer((_) async {});
     when(() => audioCapture.stopListening()).thenAnswer((_) async {});
 
-    when(() => notificationService.ensureInitialized())
-        .thenAnswer((_) async {});
+    when(
+      () => notificationService.ensureInitialized(),
+    ).thenAnswer((_) async {});
     when(
       () => notificationService.start(
         title: any(named: 'title'),
@@ -113,8 +115,9 @@ void main() {
     when(() => notificationService.stop()).thenAnswer((_) async {});
 
     when(() => backgroundRecorder.isRecording).thenReturn(false);
-    when(() => backgroundRecorder.start(sessionId: any(named: 'sessionId')))
-        .thenAnswer((_) async {
+    when(
+      () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
+    ).thenAnswer((_) async {
       when(() => backgroundRecorder.isRecording).thenReturn(true);
     });
     when(() => backgroundRecorder.stop()).thenAnswer((_) async {
@@ -124,6 +127,7 @@ void main() {
     when(() => backgroundRecorder.cancel()).thenAnswer((_) async {
       when(() => backgroundRecorder.isRecording).thenReturn(false);
     });
+    when(() => backgroundRecorder.pause()).thenAnswer((_) async {});
 
     when(
       () => offlineTranscription.transcribeFile(
@@ -186,8 +190,183 @@ void main() {
   }
 
   group('VoiceCaptureBloc dual capture', () {
+    group('AI recording preference', () {
+      setUp(() {
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/session.wav';
+        });
+      });
+
+      test(
+        'keeps audio without starting the competing live microphone',
+        () async {
+          final bloc = buildBloc();
+          addTearDown(bloc.close);
+          await seedListening(bloc);
+          expect(backgroundRecorder.isRecording, isTrue);
+          expect((bloc.state as RecordingInProgress).isAiCapture, isTrue);
+          verifyNever(() => backgroundRecorder.cancel());
+          verifyNever(() => audioCapture.initialize());
+          verifyNever(
+            () => audioCapture.startListening(
+              onResult: any(named: 'onResult'),
+              onListeningEnded: any(named: 'onListeningEnded'),
+            ),
+          );
+          bloc.add(const VoiceCaptureListeningSessionEnded());
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          expect(backgroundRecorder.isRecording, isTrue);
+          verifyNever(() => backgroundRecorder.cancel());
+        },
+      );
+
+      for (final resume in [false, true]) {
+        test('uploads retained audio after pause, resume=$resume', () async {
+          final bloc = buildBloc();
+          addTearDown(bloc.close);
+          await seedListening(bloc);
+          bloc.add(const VoiceCaptureStopRecording());
+          await bloc.stream.firstWhere((s) => s is ListeningPaused);
+          verify(() => backgroundRecorder.pause()).called(1);
+          verifyNever(() => backgroundRecorder.cancel());
+          verifyNever(() => backgroundRecorder.stop());
+          if (resume) {
+            bloc.add(const VoiceCaptureStartRecording());
+            await bloc.stream.firstWhere((s) => s is RecordingInProgress);
+          }
+          bloc.add(const VoiceCaptureFinishConsultation());
+          await bloc.stream.firstWhere(
+            (s) => s is VoiceCaptureTranscriptCompare,
+          );
+          verify(
+            () => enhancedTranscription.transcribeFile(
+              filePath: '/tmp/session.wav',
+              sessionId: any(named: 'sessionId'),
+              language: 'fr',
+            ),
+          ).called(1);
+        });
+      }
+
+      test('retains the same audio across background and foreground', () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        bloc.add(const VoiceCaptureAppBackgrounded());
+        await bloc.stream.firstWhere(
+          (s) => s is RecordingInProgress && s.isBackgroundCapture,
+        );
+        bloc.add(const VoiceCaptureAppForegrounded());
+        await bloc.stream.firstWhere(
+          (s) => s is RecordingInProgress && !s.isBackgroundCapture,
+        );
+        verifyNever(() => backgroundRecorder.stop());
+        verifyNever(() => backgroundRecorder.cancel());
+        verify(
+          () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
+        ).called(1);
+        bloc.add(const VoiceCaptureFinishConsultation());
+        await bloc.stream.firstWhere((s) => s is VoiceCaptureTranscriptCompare);
+        verify(
+          () => enhancedTranscription.transcribeFile(
+            filePath: '/tmp/session.wav',
+            sessionId: any(named: 'sessionId'),
+            language: 'fr',
+          ),
+        ).called(1);
+      });
+
+      test('does not upload if AI is disabled before finishing', () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => false);
+        when(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer((_) async => 'transcription locale');
+        bloc.add(const VoiceCaptureFinishConsultation());
+        await bloc.stream.firstWhere(
+          (s) => s is VoiceCaptureConsultationFinished,
+        );
+        verifyNever(
+          () => enhancedTranscription.transcribeFile(
+            filePath: any(named: 'filePath'),
+            sessionId: any(named: 'sessionId'),
+            language: any(named: 'language'),
+          ),
+        );
+      });
+
+      test(
+        'reports failed transcriptions instead of saving an empty note',
+        () async {
+          final bloc = buildBloc();
+          addTearDown(bloc.close);
+          when(
+            () => enhancedTranscription.transcribeFile(
+              filePath: any(named: 'filePath'),
+              sessionId: any(named: 'sessionId'),
+              language: any(named: 'language'),
+            ),
+          ).thenThrow(Exception('unreachable'));
+          await seedListening(bloc);
+          bloc.add(const VoiceCaptureFinishConsultation());
+          await bloc.stream.firstWhere((s) => s is VoiceCaptureFailure);
+          verifyNever(
+            () => noteProcessing.process(
+              sessionId: any(named: 'sessionId'),
+              rawText: any(named: 'rawText'),
+              language: any(named: 'language'),
+            ),
+          );
+        },
+      );
+
+      test('discards audio without uploading', () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        await bloc.stream.firstWhere((s) => s is VoiceCaptureReady);
+        verify(() => backgroundRecorder.cancel()).called(1);
+        verifyNever(
+          () => enhancedTranscription.transcribeFile(
+            filePath: any(named: 'filePath'),
+            sessionId: any(named: 'sessionId'),
+            language: any(named: 'language'),
+          ),
+        );
+      });
+    });
+
+    test('does not call Groq when the preference is disabled', () async {
+      final bloc = buildBloc();
+      addTearDown(bloc.close);
+      await seedListening(bloc);
+      bloc.add(const VoiceCaptureFinishConsultation());
+      await bloc.stream.firstWhere(
+        (s) => s is VoiceCaptureConsultationFinished,
+      );
+      verifyNever(
+        () => enhancedTranscription.transcribeFile(
+          filePath: any(named: 'filePath'),
+          sessionId: any(named: 'sessionId'),
+          language: any(named: 'language'),
+        ),
+      );
+    });
+
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'starts live STT and session audio when recording begins',
+      'starts only live STT when AI is disabled',
       build: buildBloc,
       act: (bloc) async {
         await seedListening(bloc);
@@ -201,9 +380,9 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(
+        verifyNever(
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
-        ).called(1);
+        );
         verify(
           () => audioCapture.startListening(
             onResult: any(named: 'onResult'),
@@ -222,8 +401,7 @@ void main() {
         clearInteractions(audioCapture);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
-          (state) =>
-              state is RecordingInProgress && state.isBackgroundCapture,
+          (state) => state is RecordingInProgress && state.isBackgroundCapture,
         );
       },
       expect: () => [
@@ -267,8 +445,7 @@ void main() {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureAppBackgrounded());
         await bloc.stream.firstWhere(
-          (state) =>
-              state is RecordingInProgress && state.isBackgroundCapture,
+          (state) => state is RecordingInProgress && state.isBackgroundCapture,
         );
         when(() => backgroundRecorder.isRecording).thenReturn(true);
         clearInteractions(audioCapture);
@@ -276,8 +453,7 @@ void main() {
         clearInteractions(backgroundRecorder);
         bloc.add(const VoiceCaptureAppForegrounded());
         await bloc.stream.firstWhere(
-          (state) =>
-              state is RecordingInProgress && !state.isBackgroundCapture,
+          (state) => state is RecordingInProgress && !state.isBackgroundCapture,
         );
       },
       expect: () => [
@@ -289,15 +465,13 @@ void main() {
           true,
         ),
         isA<VoiceCaptureTranscribingBackground>(),
-        isA<RecordingInProgress>().having(
-          (s) => s.isBackgroundCapture,
-          'isBackgroundCapture',
-          false,
-        ).having(
-          (s) => s.transcript,
-          'transcript',
-          contains('texte hors ligne'),
-        ),
+        isA<RecordingInProgress>()
+            .having((s) => s.isBackgroundCapture, 'isBackgroundCapture', false)
+            .having(
+              (s) => s.transcript,
+              'transcript',
+              contains('texte hors ligne'),
+            ),
       ],
       verify: (_) {
         verify(() => backgroundRecorder.stop()).called(1);
@@ -320,6 +494,9 @@ void main() {
       'enhances from session audio then waits for transcript choice',
       build: buildBloc,
       setUp: () {
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
         when(() => backgroundRecorder.stop()).thenAnswer((_) async {
           when(() => backgroundRecorder.isRecording).thenReturn(false);
           return '/tmp/session.wav';
@@ -327,7 +504,6 @@ void main() {
       },
       act: (bloc) async {
         await seedListening(bloc);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
@@ -341,8 +517,11 @@ void main() {
         const VoiceCaptureReady(),
         isA<RecordingInProgress>(),
         isA<VoiceCaptureEnhancing>(),
-        isA<VoiceCaptureTranscriptCompare>()
-            .having((s) => s.aiTranscript, 'aiTranscript', 'texte ameliore'),
+        isA<VoiceCaptureTranscriptCompare>().having(
+          (s) => s.aiTranscript,
+          'aiTranscript',
+          'texte ameliore',
+        ),
         isA<VoiceCaptureProcessing>(),
         isA<VoiceCaptureConsultationFinished>().having(
           (s) => s.transcript,
@@ -372,6 +551,15 @@ void main() {
       'choosing local transcript skips AI text',
       build: buildBloc,
       setUp: () {
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
+        when(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer((_) async => 'bonjour patient');
         when(() => backgroundRecorder.stop()).thenAnswer((_) async {
           when(() => backgroundRecorder.isRecording).thenReturn(false);
           return '/tmp/session.wav';
@@ -391,13 +579,6 @@ void main() {
       },
       act: (bloc) async {
         await seedListening(bloc);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
-        bloc.add(const VoiceCaptureTranscriptUpdated('bonjour patient'));
-        await bloc.stream.firstWhere(
-          (state) =>
-              state is RecordingInProgress &&
-              state.transcript.contains('bonjour'),
-        );
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
@@ -419,9 +600,12 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'falls back to rough transcript when enhance fails',
+      'falls back to offline transcript when enhance fails',
       build: buildBloc,
       setUp: () {
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
         when(() => backgroundRecorder.stop()).thenAnswer((_) async {
           when(() => backgroundRecorder.isRecording).thenReturn(false);
           return '/tmp/session.wav';
@@ -438,7 +622,7 @@ void main() {
             any(),
             language: any(named: 'language'),
           ),
-        ).thenThrow(Exception('offline fail'));
+        ).thenAnswer((_) async => 'bonjour patient');
         when(
           () => noteProcessing.process(
             sessionId: any(named: 'sessionId'),
@@ -454,13 +638,6 @@ void main() {
       },
       act: (bloc) async {
         await seedListening(bloc);
-        when(() => backgroundRecorder.isRecording).thenReturn(true);
-        bloc.add(const VoiceCaptureTranscriptUpdated('bonjour patient'));
-        await bloc.stream.firstWhere(
-          (state) =>
-              state is RecordingInProgress &&
-              state.transcript.contains('bonjour'),
-        );
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureConsultationFinished,
@@ -548,15 +725,21 @@ void main() {
         );
       },
       verify: (_) {
-        final savedSessions = verify(() => sessionRepository.save(captureAny()))
-            .captured
-            .cast<RecordingSession>();
+        final savedSessions = verify(
+          () => sessionRepository.save(captureAny()),
+        ).captured.cast<RecordingSession>();
         final completed = savedSessions.lastWhere(
           (session) => session.status == RecordingSessionStatus.completed,
         );
         expect(completed.templateId, 'builtin_ankle_sprain');
-        expect(completed.soapNote?.subjective, contains('douleur a la cheville'));
-        expect(completed.soapNote?.subjective, contains('Motif de consultation'));
+        expect(
+          completed.soapNote?.subjective,
+          contains('douleur a la cheville'),
+        );
+        expect(
+          completed.soapNote?.subjective,
+          contains('Motif de consultation'),
+        );
         expect(completed.soapNote?.objective, contains('Inspection'));
         expect(completed.soapNote?.assessment, contains('Grade'));
         expect(completed.soapNote?.plan, contains('Traitement'));
@@ -592,7 +775,8 @@ void main() {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureDiscardConsultation());
         await bloc.stream.firstWhere(
-          (state) => state is VoiceCaptureReady && bloc.state is VoiceCaptureReady,
+          (state) =>
+              state is VoiceCaptureReady && bloc.state is VoiceCaptureReady,
         );
       },
       expect: () => [
@@ -624,26 +808,29 @@ void main() {
       },
     );
 
-    test('ignores STT session end while background capture is active', () async {
-      final bloc = buildBloc();
-      await seedListening(bloc);
-      when(() => backgroundRecorder.isRecording).thenReturn(true);
-      bloc.add(const VoiceCaptureAppBackgrounded());
-      await bloc.stream.firstWhere(
-        (state) => state is RecordingInProgress && state.isBackgroundCapture,
-      );
+    test(
+      'ignores STT session end while background capture is active',
+      () async {
+        final bloc = buildBloc();
+        await seedListening(bloc);
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        bloc.add(const VoiceCaptureAppBackgrounded());
+        await bloc.stream.firstWhere(
+          (state) => state is RecordingInProgress && state.isBackgroundCapture,
+        );
 
-      clearInteractions(audioCapture);
-      bloc.add(const VoiceCaptureListeningSessionEnded());
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+        clearInteractions(audioCapture);
+        bloc.add(const VoiceCaptureListeningSessionEnded());
+        await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      verifyNever(
-        () => audioCapture.startListening(
-          onResult: any(named: 'onResult'),
-          onListeningEnded: any(named: 'onListeningEnded'),
-        ),
-      );
-      await bloc.close();
-    });
+        verifyNever(
+          () => audioCapture.startListening(
+            onResult: any(named: 'onResult'),
+            onListeningEnded: any(named: 'onListeningEnded'),
+          ),
+        );
+        await bloc.close();
+      },
+    );
   });
 }

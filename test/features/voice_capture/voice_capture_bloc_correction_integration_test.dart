@@ -84,7 +84,7 @@ void main() {
     userPreferences = _MockUserPreferencesRepository();
 
     when(() => userPreferences.readAiEnhanceEnabled())
-        .thenAnswer((_) async => true);
+        .thenAnswer((_) async => false);
 
     when(() => audioCapture.initialize()).thenAnswer((_) async => true);
     when(() => audioCapture.isListening).thenReturn(false);

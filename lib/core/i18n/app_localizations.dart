@@ -1849,8 +1849,14 @@ abstract class AppLocalizations {
   /// No description provided for @settingsAiEnhanceSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Envoie l\'enregistrement au cloud pour une transcription améliorée'**
+  /// **'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.'**
   String get settingsAiEnhanceSubtitle;
+
+  /// No description provided for @transcriptAiPendingHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode IA : la transcription sera disponible après avoir terminé la consultation.'**
+  String get transcriptAiPendingHint;
 
   /// No description provided for @settingsAiEnhanceWarning.
   ///

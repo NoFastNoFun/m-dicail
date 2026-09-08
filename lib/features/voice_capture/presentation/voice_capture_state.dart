@@ -13,10 +13,7 @@ final class VoiceCaptureInitial extends VoiceCaptureState {
 }
 
 final class VoiceCaptureReady extends VoiceCaptureState {
-  const VoiceCaptureReady({
-    this.transcript = '',
-    this.selectedTemplate,
-  });
+  const VoiceCaptureReady({this.transcript = '', this.selectedTemplate});
 
   final String transcript;
   final NoteTemplate? selectedTemplate;
@@ -76,14 +73,21 @@ final class RecordingInProgress extends VoiceCaptureState {
     required this.transcript,
     this.selectedTemplate,
     this.isBackgroundCapture = false,
+    this.isAiCapture = false,
   });
 
   final String transcript;
   final NoteTemplate? selectedTemplate;
   final bool isBackgroundCapture;
+  final bool isAiCapture;
 
   @override
-  List<Object?> get props => [transcript, selectedTemplate, isBackgroundCapture];
+  List<Object?> get props => [
+    transcript,
+    selectedTemplate,
+    isBackgroundCapture,
+    isAiCapture,
+  ];
 }
 
 final class VoiceCaptureTranscribingBackground extends VoiceCaptureState {
@@ -103,13 +107,15 @@ final class ListeningPaused extends VoiceCaptureState {
   const ListeningPaused({
     required this.transcript,
     this.selectedTemplate,
+    this.isAiCapture = false,
   });
 
   final String transcript;
   final NoteTemplate? selectedTemplate;
+  final bool isAiCapture;
 
   @override
-  List<Object?> get props => [transcript, selectedTemplate];
+  List<Object?> get props => [transcript, selectedTemplate, isAiCapture];
 }
 
 final class VoiceCaptureFailure extends VoiceCaptureState {

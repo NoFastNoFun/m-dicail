@@ -766,7 +766,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                               },
                               child: AppRecordTranscriptView(
                                 transcript: viewModel.transcript,
-                                emptyHint: l10n.transcriptEmptyHint,
+                                emptyHint: viewModel.isAiCapture
+                                    ? l10n.transcriptAiPendingHint
+                                    : l10n.transcriptEmptyHint,
                               ),
                             ),
                           ),
