@@ -10,6 +10,10 @@ abstract class AppSessionStorage {
   Future<String?> readRememberedEmail();
 
   Future<void> writeRememberedEmail(String? email);
+
+  Future<bool> readBiometricLockEnabled();
+
+  Future<void> writeBiometricLockEnabled(bool enabled);
 }
 
 @LazySingleton(as: AppSessionStorage)
@@ -18,6 +22,7 @@ class SecureAppSessionStorage implements AppSessionStorage {
 
   static const String _onboardingKey = 'onboarding_completed';
   static const String _rememberedEmailKey = 'remembered_email';
+  static const String _biometricLockKey = 'biometric_lock_enabled';
 
   final FlutterSecureStorage _storage;
 
@@ -55,6 +60,24 @@ class SecureAppSessionStorage implements AppSessionStorage {
       _storage,
       key: _rememberedEmailKey,
       value: trimmed.isEmpty ? null : trimmed,
+    );
+  }
+
+  @override
+  Future<bool> readBiometricLockEnabled() async {
+    final value = await SecureStorageSafe.read(
+      _storage,
+      key: _biometricLockKey,
+    );
+    return value == 'true';
+  }
+
+  @override
+  Future<void> writeBiometricLockEnabled(bool enabled) async {
+    await SecureStorageSafe.write(
+      _storage,
+      key: _biometricLockKey,
+      value: enabled ? 'true' : 'false',
     );
   }
 }

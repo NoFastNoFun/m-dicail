@@ -1468,6 +1468,60 @@ abstract class AppLocalizations {
   /// **'Passkeys non disponibles sur cette plateforme.'**
   String get authPasskeyUnsupported;
 
+  /// No description provided for @authBiometricLockTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouillage biométrique'**
+  String get authBiometricLockTitle;
+
+  /// No description provided for @authBiometricLockSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déverrouillez l\'application pour accéder à vos données.'**
+  String get authBiometricLockSubtitle;
+
+  /// No description provided for @authBiometricLockSettingsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouiller l\'application au démarrage et au retour depuis l\'arrière-plan.'**
+  String get authBiometricLockSettingsSubtitle;
+
+  /// No description provided for @authBiometricUnlock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déverrouiller'**
+  String get authBiometricUnlock;
+
+  /// No description provided for @authBiometricUnlockReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déverrouiller Medicail'**
+  String get authBiometricUnlockReason;
+
+  /// No description provided for @authBiometricEnableReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer le verrouillage biométrique'**
+  String get authBiometricEnableReason;
+
+  /// No description provided for @authBiometricDisableReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver le verrouillage biométrique'**
+  String get authBiometricDisableReason;
+
+  /// No description provided for @authBiometricAuthFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Authentification biométrique échouée.'**
+  String get authBiometricAuthFailed;
+
+  /// No description provided for @authBiometricUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biométrie non disponible sur cet appareil.'**
+  String get authBiometricUnavailable;
+
   /// No description provided for @authSecurityTitle.
   ///
   /// In fr, this message translates to:

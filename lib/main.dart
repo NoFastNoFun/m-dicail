@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:medicail/app/medicail_app.dart';
+import 'package:medicail/core/auth/app_lock_controller.dart';
 import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart';
 import 'package:medicail/core/di/injection.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   await AppSystemUi.configure();
   await configureDependencies();
   await getIt<SettingsNotifier>().hydrate(getIt<UserPreferencesRepository>());
+  await getIt<AppLockController>().hydrate();
   if (isDesktopDebugBackendUrlEnabled) {
     await getIt<DesktopDebugBackendUrlStore>().hydrate();
   }

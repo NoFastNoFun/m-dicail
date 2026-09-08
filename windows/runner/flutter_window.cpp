@@ -2,7 +2,17 @@
 
 #include <optional>
 
+#include <flutter/standard_method_codec.h>
+
 #include "flutter/generated_plugin_registrant.h"
+
+#ifndef WDA_EXCLUDEFROMCAPTURE
+#define WDA_EXCLUDEFROMCAPTURE 0x00000011
+#endif
+
+#ifndef WDA_NONE
+#define WDA_NONE 0x00000000
+#endif
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -27,6 +37,38 @@ bool FlutterWindow::OnCreate() {
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
+  screen_protection_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(),
+          "dev.nf2.medicail/screen_protection",
+          &flutter::StandardMethodCodec::GetInstance());
+
+  HWND hwnd = GetHandle();
+  screen_protection_channel_->SetMethodCallHandler(
+      [hwnd](const flutter::MethodCall<flutter::EncodableValue>& call,
+             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
+                 result) {
+        if (call.method_name() == "setEnabled") {
+          bool enabled = false;
+          if (const auto* args =
+                  std::get_if<flutter::EncodableMap>(call.arguments())) {
+            auto it = args->find(flutter::EncodableValue("enabled"));
+            if (it != args->end()) {
+              if (const auto* value = std::get_if<bool>(&it->second)) {
+                enabled = *value;
+              }
+            }
+          }
+          if (hwnd != nullptr) {
+            SetWindowDisplayAffinity(
+                hwnd, enabled ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE);
+          }
+          result->Success();
+          return;
+        }
+        result->NotImplemented();
+      });
+
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
   });
@@ -40,6 +82,7 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  screen_protection_channel_.reset();
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }

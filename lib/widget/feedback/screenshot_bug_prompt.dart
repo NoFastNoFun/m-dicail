@@ -7,6 +7,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/error/bug_report_launcher.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
+import 'package:medicail/core/screenshot/screen_protection.dart';
 import 'package:medicail/core/screenshot/screenshot_detector.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
@@ -52,6 +53,12 @@ class _ScreenshotBugPromptHostState extends State<ScreenshotBugPromptHost> {
     if (_sheetOpen) return;
     final navContext = AppRouter.navigatorKey.currentContext;
     if (navContext == null || !navContext.mounted) return;
+
+    final location = GoRouter.maybeOf(navContext)?.state.uri.path ?? '';
+    if (ScreenProtectionController.isSensitiveLocation(location)) {
+      return;
+    }
+
     _showSheet(navContext);
   }
 

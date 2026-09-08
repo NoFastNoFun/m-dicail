@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medicail/core/auth/app_lock_controller.dart';
+import 'package:medicail/core/auth/biometric_auth_service.dart';
 import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
@@ -26,12 +28,17 @@ class SecuritySettingsPage extends StatefulWidget {
 class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   final _authRepository = getIt<AuthRepository>();
   final _passkeyService = getIt<PasskeyService>();
+  final _biometricAuth = getIt<BiometricAuthService>();
+  final _appLock = getIt<AppLockController>();
   final _mfaCodeController = TextEditingController();
   final _disableCodeController = TextEditingController();
   final _recoveryEmailController = TextEditingController();
 
   bool _loading = true;
+  bool _accountLoaded = false;
   bool _passkeysSupported = false;
+  bool _biometricsAvailable = false;
+  bool _biometricLockEnabled = false;
   bool _mfaEnabled = false;
   String? _otpauthUrl;
   List<String> _recoveryCodes = const [];
@@ -66,15 +73,43 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     setState(() => _loading = true);
     try {
       _passkeysSupported = await _passkeyService.isSupported();
+      _biometricsAvailable = await _biometricAuth.isAvailable();
+      if (!_appLock.isHydrated) {
+        await _appLock.hydrate();
+      }
+      _biometricLockEnabled = _appLock.isEnabled;
+    } catch (_) {
+      _biometricsAvailable = false;
+    }
+
+    try {
       final user = await _authRepository.getMe();
       _mfaEnabled = user.mfaEnabled;
       _recoveryEmailController.text = user.email;
       _passkeys = await _authRepository.listPasskeys();
+      _accountLoaded = true;
     } catch (e) {
-      if (mounted) AppToast.showError(context, e.toString());
+      _accountLoaded = false;
+      // Guest / offline: still show biometric lock if available.
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _toggleBiometricLock(bool enabled) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await _appLock.setEnabled(
+      enabled,
+      reason: enabled
+          ? l10n.authBiometricEnableReason
+          : l10n.authBiometricDisableReason,
+    );
+    if (!mounted) return;
+    if (!ok) {
+      AppToast.showError(context, l10n.authBiometricAuthFailed);
+      return;
+    }
+    setState(() => _biometricLockEnabled = enabled);
   }
 
   Future<void> _startMfaEnroll() async {
@@ -158,157 +193,171 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
           : ListView(
               padding: MainShellScope.scrollPaddingOf(context),
               children: [
-                AppSettingsTile(
-                  title: l10n.authMfaTitle,
-                  subtitle:
-                      _mfaEnabled ? l10n.authMfaEnabled : l10n.authMfaDisabled,
-                  child: _mfaEnabled
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            AppInput(
-                              variant: AppInputVariant.text,
-                              label: l10n.authMfaCodeLabel,
-                              controller: _disableCodeController,
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            AppButton(
-                              label: l10n.authMfaDisable,
-                              style: AppButtonStyle.secondary,
-                              onPressed: _disableMfa,
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (_otpauthUrl != null) ...[
-                              AppText(
-                                l10n.authMfaManualHint,
-                                variant: AppTextVariant.body,
-                                color: context.secondaryTextColor,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              if (secret != null) ...[
-                                AppText(
-                                  l10n.authMfaSecretLabel,
-                                  variant: AppTextVariant.label,
-                                  color: context.secondaryTextColor,
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                SelectableText(
-                                  secret,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                        fontFamily: 'monospace',
-                                        letterSpacing: 1.2,
-                                      ),
-                                ),
-                                const SizedBox(height: AppSpacing.sm),
-                                AppButton(
-                                  label: l10n.authMfaCopySecret,
-                                  style: AppButtonStyle.secondary,
-                                  onPressed: () => _copyText(
-                                    secret,
-                                    l10n.authMfaSecretCopied,
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.sm),
-                              ],
-                              AppButton(
-                                label: l10n.authMfaCopyUri,
-                                style: AppButtonStyle.tertiary,
-                                onPressed: () => _copyText(
-                                  _otpauthUrl!,
-                                  l10n.authMfaUriCopied,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              Center(
-                                child: QrImageView(
-                                  data: _otpauthUrl!,
-                                  size: 180,
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.md),
+                if (_biometricsAvailable) ...[
+                  AppSettingsTile(
+                    title: l10n.authBiometricLockTitle,
+                    subtitle: l10n.authBiometricLockSettingsSubtitle,
+                    trailing: Switch(
+                      value: _biometricLockEnabled,
+                      onChanged: _toggleBiometricLock,
+                    ),
+                  ),
+                  const Divider(),
+                ],
+                if (_accountLoaded) ...[
+                  AppSettingsTile(
+                    title: l10n.authMfaTitle,
+                    subtitle: _mfaEnabled
+                        ? l10n.authMfaEnabled
+                        : l10n.authMfaDisabled,
+                    child: _mfaEnabled
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
                               AppInput(
                                 variant: AppInputVariant.text,
                                 label: l10n.authMfaCodeLabel,
-                                controller: _mfaCodeController,
+                                controller: _disableCodeController,
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               AppButton(
-                                label: l10n.authMfaConfirm,
-                                onPressed: _confirmMfa,
+                                label: l10n.authMfaDisable,
+                                style: AppButtonStyle.secondary,
+                                onPressed: _disableMfa,
                               ),
-                            ] else
-                              AppButton(
-                                label: l10n.authMfaEnroll,
-                                onPressed: _startMfaEnroll,
-                              ),
-                          ],
-                        ),
-                ),
-                if (_recoveryCodes.isNotEmpty) ...[
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (_otpauthUrl != null) ...[
+                                AppText(
+                                  l10n.authMfaManualHint,
+                                  variant: AppTextVariant.body,
+                                  color: context.secondaryTextColor,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                if (secret != null) ...[
+                                  AppText(
+                                    l10n.authMfaSecretLabel,
+                                    variant: AppTextVariant.label,
+                                    color: context.secondaryTextColor,
+                                  ),
+                                  const SizedBox(height: AppSpacing.xs),
+                                  SelectableText(
+                                    secret,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontFamily: 'monospace',
+                                          letterSpacing: 1.2,
+                                        ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.sm),
+                                  AppButton(
+                                    label: l10n.authMfaCopySecret,
+                                    style: AppButtonStyle.secondary,
+                                    onPressed: () => _copyText(
+                                      secret,
+                                      l10n.authMfaSecretCopied,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.sm),
+                                ],
+                                AppButton(
+                                  label: l10n.authMfaCopyUri,
+                                  style: AppButtonStyle.tertiary,
+                                  onPressed: () => _copyText(
+                                    _otpauthUrl!,
+                                    l10n.authMfaUriCopied,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Center(
+                                  child: QrImageView(
+                                    data: _otpauthUrl!,
+                                    size: 180,
+                                    backgroundColor: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                AppInput(
+                                  variant: AppInputVariant.text,
+                                  label: l10n.authMfaCodeLabel,
+                                  controller: _mfaCodeController,
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                AppButton(
+                                  label: l10n.authMfaConfirm,
+                                  onPressed: _confirmMfa,
+                                ),
+                              ] else
+                                AppButton(
+                                  label: l10n.authMfaEnroll,
+                                  onPressed: _startMfaEnroll,
+                                ),
+                            ],
+                          ),
+                  ),
+                  if (_recoveryCodes.isNotEmpty) ...[
+                    const Divider(),
+                    AppSettingsTile(
+                      title: l10n.authRecoveryCodesTitle,
+                      child: AppText(
+                        _recoveryCodes.join('\n'),
+                        variant: AppTextVariant.body,
+                      ),
+                    ),
+                  ],
                   const Divider(),
                   AppSettingsTile(
-                    title: l10n.authRecoveryCodesTitle,
-                    child: AppText(
-                      _recoveryCodes.join('\n'),
-                      variant: AppTextVariant.body,
+                    title: l10n.authPasskeysTitle,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final passkey in _passkeys)
+                          ListTile(
+                            title: Text(passkey.deviceName ?? passkey.id),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              onPressed: () => _deletePasskey(passkey.id),
+                            ),
+                          ),
+                        if (_passkeysSupported)
+                          AppButton(
+                            label: l10n.authPasskeyAdd,
+                            onPressed: _addPasskey,
+                          )
+                        else
+                          AppText(
+                            l10n.authPasskeyUnsupported,
+                            variant: AppTextVariant.body,
+                          ),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  AppSettingsTile(
+                    title: l10n.authRecoveryTitle,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppInput(
+                          variant: AppInputVariant.email,
+                          label: l10n.loginEmailLabel,
+                          controller: _recoveryEmailController,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppButton(
+                          label: l10n.authRecoveryRequest,
+                          style: AppButtonStyle.secondary,
+                          onPressed: _requestRecovery,
+                        ),
+                      ],
                     ),
                   ),
                 ],
-                const Divider(),
-                AppSettingsTile(
-                  title: l10n.authPasskeysTitle,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final passkey in _passkeys)
-                        ListTile(
-                          title: Text(passkey.deviceName ?? passkey.id),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () => _deletePasskey(passkey.id),
-                          ),
-                        ),
-                      if (_passkeysSupported)
-                        AppButton(
-                          label: l10n.authPasskeyAdd,
-                          onPressed: _addPasskey,
-                        )
-                      else
-                        AppText(
-                          l10n.authPasskeyUnsupported,
-                          variant: AppTextVariant.body,
-                        ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                AppSettingsTile(
-                  title: l10n.authRecoveryTitle,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AppInput(
-                        variant: AppInputVariant.email,
-                        label: l10n.loginEmailLabel,
-                        controller: _recoveryEmailController,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      AppButton(
-                        label: l10n.authRecoveryRequest,
-                        style: AppButtonStyle.secondary,
-                        onPressed: _requestRecovery,
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
     );

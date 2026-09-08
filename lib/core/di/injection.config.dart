@@ -24,7 +24,9 @@ import 'package:medicail/core/audio/offline_audio_transcription_service.dart'
 import 'package:medicail/core/audio/recording_notification_service.dart'
     as _i117;
 import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
+import 'package:medicail/core/auth/app_lock_controller.dart' as _i1061;
 import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
+import 'package:medicail/core/auth/biometric_auth_service.dart' as _i590;
 import 'package:medicail/core/auth/passkey_service.dart' as _i332;
 import 'package:medicail/core/config/app_config.dart' as _i155;
 import 'package:medicail/core/config/app_info.dart' as _i305;
@@ -48,6 +50,7 @@ import 'package:medicail/core/network/interceptors/token_refresh_interceptor.dar
     as _i987;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
+import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
 import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
     as _i587;
@@ -156,6 +159,9 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appInfoModule = _$AppInfoModule();
     final registerModule = _$RegisterModule();
+    gh.lazySingleton<_i590.BiometricAuthService>(
+      () => _i590.BiometricAuthService(),
+    );
     gh.lazySingleton<_i332.PasskeyService>(() => _i332.PasskeyService());
     gh.lazySingleton<_i155.AppConfig>(() => _i155.AppConfig());
     await gh.lazySingletonAsync<_i655.PackageInfo>(
@@ -270,10 +276,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i305.AppInfo>(
       () => _i305.AppInfo(gh<_i655.PackageInfo>()),
     );
+    gh.lazySingleton<_i456.ScreenProtectionController>(
+      () => _i456.ScreenProtectionController(gh<_i583.GoRouter>()),
+    );
     gh.lazySingleton<_i367.DesktopDebugBackendUrlStore>(
       () => _i367.DesktopDebugBackendUrlStore(
         gh<_i558.FlutterSecureStorage>(),
         gh<_i155.AppConfig>(),
+      ),
+    );
+    gh.lazySingleton<_i1061.AppLockController>(
+      () => _i1061.AppLockController(
+        gh<_i345.AppSessionStorage>(),
+        gh<_i590.BiometricAuthService>(),
+        gh<_i541.AuthNotifier>(),
       ),
     );
     gh.lazySingleton<_i663.PathologyTemplateResolver>(

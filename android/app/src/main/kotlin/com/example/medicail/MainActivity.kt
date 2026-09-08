@@ -2,15 +2,18 @@ package dev.nf2.medicail
 
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.core.view.WindowCompat
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
     private var screenshotEventSink: EventChannel.EventSink? = null
     private var screenCaptureCallback: Any? = null
     private var isListening = false
+    private var screenProtectionEnabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -37,12 +40,38 @@ class MainActivity : FlutterActivity() {
                 }
             },
         )
+
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "dev.nf2.medicail/screen_protection",
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "setEnabled" -> {
+                    val enabled = call.argument<Boolean>("enabled") ?: false
+                    setScreenProtectionEnabled(enabled)
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun setScreenProtectionEnabled(enabled: Boolean) {
+        screenProtectionEnabled = enabled
+        if (enabled) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
     }
 
     override fun onStart() {
         super.onStart()
         if (isListening) {
             registerScreenCaptureCallbackIfNeeded()
+        }
+        if (screenProtectionEnabled) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
 

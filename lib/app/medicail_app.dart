@@ -8,6 +8,7 @@ import 'package:medicail/core/deeplink/auth_deeplink_listener.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/app_system_ui.dart';
+import 'package:medicail/core/screenshot/screen_protection.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
@@ -16,6 +17,8 @@ import 'package:medicail/features/settings/presentation/bloc/settings_event.dart
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/widget/auth/app_lock_gate.dart';
+import 'package:medicail/widget/auth/sensitive_route_privacy_overlay.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/feedback/app_toast_host.dart';
 import 'package:medicail/widget/feedback/screenshot_bug_prompt.dart';
@@ -31,6 +34,7 @@ class MedicailApp extends StatefulWidget {
 
 class _MedicailAppState extends State<MedicailApp> {
   AuthDeeplinkListener? _deeplinkListener;
+  ScreenProtectionController? _screenProtection;
 
   @override
   void initState() {
@@ -38,11 +42,13 @@ class _MedicailAppState extends State<MedicailApp> {
     ShowcaseView.register();
     _deeplinkListener = AuthDeeplinkListener(router: getIt<GoRouter>());
     unawaited(_deeplinkListener!.start());
+    _screenProtection = getIt<ScreenProtectionController>()..start();
   }
 
   @override
   void dispose() {
     _deeplinkListener?.dispose();
+    _screenProtection?.disposeController();
     super.dispose();
   }
 
@@ -104,7 +110,11 @@ class _MedicailAppState extends State<MedicailApp> {
                     },
                     child: AppToastHost(
                       child: ScreenshotBugPromptHost(
-                        child: child ?? const SizedBox.shrink(),
+                        child: SensitiveRoutePrivacyOverlay(
+                          child: AppLockGate(
+                            child: child ?? const SizedBox.shrink(),
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -43,6 +43,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Medicail utilise le microphone pour la dictée vocale pendant les séances.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Medicail utilise Face ID pour verrouiller l'accès aux données patients.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Medicail convertit votre voix en texte localement sur l'appareil.</string>
 	<key>UIBackgroundModes</key>

@@ -724,6 +724,37 @@ class AppLocalizationsFr extends AppLocalizations {
       'Passkeys non disponibles sur cette plateforme.';
 
   @override
+  String get authBiometricLockTitle => 'Verrouillage biométrique';
+
+  @override
+  String get authBiometricLockSubtitle =>
+      'Déverrouillez l\'application pour accéder à vos données.';
+
+  @override
+  String get authBiometricLockSettingsSubtitle =>
+      'Verrouiller l\'application au démarrage et au retour depuis l\'arrière-plan.';
+
+  @override
+  String get authBiometricUnlock => 'Déverrouiller';
+
+  @override
+  String get authBiometricUnlockReason => 'Déverrouiller Medicail';
+
+  @override
+  String get authBiometricEnableReason => 'Activer le verrouillage biométrique';
+
+  @override
+  String get authBiometricDisableReason =>
+      'Désactiver le verrouillage biométrique';
+
+  @override
+  String get authBiometricAuthFailed => 'Authentification biométrique échouée.';
+
+  @override
+  String get authBiometricUnavailable =>
+      'Biométrie non disponible sur cet appareil.';
+
+  @override
   String get authSecurityTitle => 'Sécurité';
 
   @override
