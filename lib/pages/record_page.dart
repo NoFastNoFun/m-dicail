@@ -32,7 +32,9 @@ import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
+import 'package:medicail/widget/record/app_record_processing_overlay.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
+import 'package:medicail/widget/record/app_transcript_compare_panel.dart';
 import 'package:medicail/widget/templates/pathology_attach_prompt_sheet.dart';
 import 'package:medicail/widget/templates/pathology_multi_suggestion_sheet.dart';
 import 'package:medicail/widget/templates/pathology_picker_sheet.dart';
@@ -45,7 +47,6 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_showcase_launcher.dart';
-import 'package:medicail/widget/record/app_record_processing_overlay.dart';
 
 enum _RecordLeaveAction { save, discard, cancel }
 
@@ -666,12 +667,14 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         return Stack(
           children: [
             PopScope(
-              canPop: !viewModel.hasUnsavedWork && !viewModel.isProcessing,
+              canPop: !viewModel.hasUnsavedWork &&
+                  !viewModel.isProcessing &&
+                  !viewModel.isComparingTranscripts,
               onPopInvokedWithResult: (didPop, _) {
                 if (didPop) {
                   return;
                 }
-                if (viewModel.isProcessing) {
+                if (viewModel.isProcessing || viewModel.isComparingTranscripts) {
                   return;
                 }
                 _handleLeaveRequest(context);
@@ -713,7 +716,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       viewModel.selectedTemplate == null
                                       ? l10n.templateNoneLabel
                                       : null,
-                                  onPathologyTap: !viewModel.isProcessing
+                                  onPathologyTap: !viewModel.isProcessing &&
+                                          !viewModel.isComparingTranscripts
                                       ? () => _pickTemplate(context)
                                       : null,
                                   elapsedLabel: _formatElapsed(_elapsed),
@@ -804,7 +808,24 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                 ),
               ),
             ),
-            if (viewModel.isProcessing)
+            if (viewModel.isComparingTranscripts)
+              Positioned.fill(
+                child: AppTranscriptComparePanel(
+                  localTranscript: viewModel.localTranscript,
+                  aiTranscript: viewModel.aiTranscript,
+                  onSelectLocal: () {
+                    context.read<VoiceCaptureBloc>().add(
+                      const VoiceCaptureTranscriptChoiceSelected(useAi: false),
+                    );
+                  },
+                  onSelectAi: () {
+                    context.read<VoiceCaptureBloc>().add(
+                      const VoiceCaptureTranscriptChoiceSelected(useAi: true),
+                    );
+                  },
+                ),
+              )
+            else if (viewModel.isProcessing)
               Positioned.fill(
                 child: AppRecordProcessingOverlay(
                   isTranscribingBackground: viewModel.isTranscribingBackground,

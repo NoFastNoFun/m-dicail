@@ -60,6 +60,9 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
       if (model.transcript.isNotEmpty) {
         payload['transcript'] = model.transcript;
       }
+      if (model.transcriptIsAi) {
+        payload['transcript_is_ai'] = true;
+      }
       if (model.patientId != null && model.patientId!.isNotEmpty) {
         payload['patient_id'] = model.patientId;
       }
@@ -79,6 +82,7 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
     final payload = <String, dynamic>{
       'status': model.status.name,
       'transcript': model.transcript,
+      'transcript_is_ai': model.transcriptIsAi,
     };
     if (model.endedAt != null) {
       payload['ended_at'] = model.endedAt!.toIso8601String();

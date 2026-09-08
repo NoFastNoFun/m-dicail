@@ -33,6 +33,29 @@ void main() {
     expect(restored.pathologyNames, ['Lombalgie', 'Cervicalgie']);
   });
 
+  test('round-trips transcript_is_ai in JSON', () {
+    final model = RecordingSessionModel(
+      id: 'recording_ai',
+      startedAt: DateTime.utc(2026, 1, 1),
+      status: RecordingSessionStatus.completed,
+      transcript: 'texte ia',
+      transcriptIsAi: true,
+    );
+
+    final restored = RecordingSessionModel.fromJson(model.toJson());
+
+    expect(restored.transcriptIsAi, isTrue);
+    expect(restored.transcript, 'texte ia');
+    expect(
+      RecordingSessionModel.fromJson({
+        'id': 'recording_legacy',
+        'started_at': '2026-01-01T00:00:00.000Z',
+        'status': 'completed',
+      }).transcriptIsAi,
+      isFalse,
+    );
+  });
+
   test('pathologyNames falls back to legacy templateName', () {
     final model = RecordingSessionModel.fromJson({
       'id': 'recording_legacy',

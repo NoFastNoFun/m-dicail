@@ -317,7 +317,7 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'enhances from session audio then processes note on finish',
+      'enhances from session audio then waits for transcript choice',
       build: buildBloc,
       setUp: () {
         when(() => backgroundRecorder.stop()).thenAnswer((_) async {
@@ -330,6 +330,10 @@ void main() {
         when(() => backgroundRecorder.isRecording).thenReturn(true);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureTranscriptCompare,
+        );
+        bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
+        await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureConsultationFinished,
         );
       },
@@ -337,6 +341,8 @@ void main() {
         const VoiceCaptureReady(),
         isA<RecordingInProgress>(),
         isA<VoiceCaptureEnhancing>(),
+        isA<VoiceCaptureTranscriptCompare>()
+            .having((s) => s.aiTranscript, 'aiTranscript', 'texte ameliore'),
         isA<VoiceCaptureProcessing>(),
         isA<VoiceCaptureConsultationFinished>().having(
           (s) => s.transcript,
@@ -356,6 +362,56 @@ void main() {
           () => noteProcessing.process(
             sessionId: any(named: 'sessionId'),
             rawText: 'texte ameliore',
+            language: 'fr',
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<VoiceCaptureBloc, VoiceCaptureState>(
+      'choosing local transcript skips AI text',
+      build: buildBloc,
+      setUp: () {
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/session.wav';
+        });
+        when(
+          () => noteProcessing.process(
+            sessionId: any(named: 'sessionId'),
+            rawText: any(named: 'rawText'),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer(
+          (invocation) async => SoapNoteResult(
+            processedText: invocation.namedArguments[#rawText] as String,
+            soapNote: const SoapNote(),
+          ),
+        );
+      },
+      act: (bloc) async {
+        await seedListening(bloc);
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        bloc.add(const VoiceCaptureTranscriptUpdated('bonjour patient'));
+        await bloc.stream.firstWhere(
+          (state) =>
+              state is RecordingInProgress &&
+              state.transcript.contains('bonjour'),
+        );
+        bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureTranscriptCompare,
+        );
+        bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: false));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureConsultationFinished,
+        );
+      },
+      verify: (_) {
+        verify(
+          () => noteProcessing.process(
+            sessionId: any(named: 'sessionId'),
+            rawText: any(named: 'rawText', that: contains('bonjour')),
             language: 'fr',
           ),
         ).called(1);

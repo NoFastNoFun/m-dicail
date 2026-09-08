@@ -469,6 +469,7 @@ class _OralSessionListItem extends StatelessWidget {
           context,
           transcript: session.transcript,
           recordedAt: session.startedAt,
+          isAi: session.transcriptIsAi,
         );
       },
       borderRadius: AppRadius.mdBorder,
@@ -517,9 +518,24 @@ class _OralSessionListItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(Icons.mic_outlined, color: context.secondaryTextColor),
+                  Icon(
+                    session.transcriptIsAi
+                        ? Icons.auto_awesome
+                        : Icons.mic_outlined,
+                    color: session.transcriptIsAi
+                        ? theme.colorScheme.primary
+                        : context.secondaryTextColor,
+                  ),
                 ],
               ),
+              if (session.transcriptIsAi) ...[
+                const SizedBox(height: AppSpacing.xs),
+                AppText(
+                  l10n.transcriptAiGeneratedLabel,
+                  variant: AppTextVariant.caption,
+                  color: theme.colorScheme.primary,
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               AppText(
                 session.transcript,

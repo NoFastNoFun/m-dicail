@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/widget/app_text.dart';
 
 class AppSteppedSlider extends StatelessWidget {
@@ -10,6 +11,7 @@ class AppSteppedSlider extends StatelessWidget {
     required this.onChanged,
     this.minLabel,
     this.maxLabel,
+    this.valueLabel,
   });
 
   final List<String> steps;
@@ -17,12 +19,13 @@ class AppSteppedSlider extends StatelessWidget {
   final ValueChanged<int> onChanged;
   final String? minLabel;
   final String? maxLabel;
+  final String? valueLabel;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final clampedValue = value.clamp(0, steps.length - 1);
-    final currentLabel = steps[clampedValue];
+    final currentLabel = valueLabel ?? steps[clampedValue];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,7 +43,12 @@ class AppSteppedSlider extends StatelessWidget {
           label: currentLabel,
           activeColor: theme.colorScheme.primary,
           inactiveColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-          onChanged: (next) => onChanged(next.round()),
+          onChanged: (next) {
+            final rounded = next.round();
+            if (rounded == clampedValue) return;
+            AppHaptics.tap();
+            onChanged(rounded);
+          },
         ),
         if (minLabel != null || maxLabel != null)
           Padding(

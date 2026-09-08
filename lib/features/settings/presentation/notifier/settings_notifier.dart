@@ -11,7 +11,7 @@ class SettingsNotifier extends ChangeNotifier {
   AppThemeVariant _themeVariant = AppThemeVariant.light;
   CustomThemeColors _customThemeColors = CustomThemeColors.defaults();
   AppFontScale _fontScale = AppFontScale.defaultScale;
-  AppSessionLength _defaultSessionLength = AppSessionLengthStorage.defaultLength;
+  AppSessionLength _defaultSessionLength = AppSessionLength.defaultLength;
   bool _aiEnhanceEnabled = false;
 
   AppThemeVariant get themeVariant => _themeVariant;

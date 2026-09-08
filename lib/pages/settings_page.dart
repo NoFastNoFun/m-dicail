@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
@@ -8,6 +9,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_routes.dart';
+import 'package:medicail/core/utils/app_haptics.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
@@ -23,6 +25,7 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/app_text_field.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/settings/app_color_swatch_picker.dart';
 import 'package:medicail/widget/settings/app_settings_group.dart';
@@ -339,7 +342,7 @@ class _FontScaleSelector extends StatelessWidget {
   }
 }
 
-class _SessionLengthSelector extends StatelessWidget {
+class _SessionLengthSelector extends StatefulWidget {
   const _SessionLengthSelector({
     required this.selected,
     required this.onChanged,
@@ -347,6 +350,87 @@ class _SessionLengthSelector extends StatelessWidget {
 
   final AppSessionLength selected;
   final ValueChanged<AppSessionLength> onChanged;
+
+  @override
+  State<_SessionLengthSelector> createState() => _SessionLengthSelectorState();
+}
+
+class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
+  late bool _customEnabled;
+  late final TextEditingController _hoursController;
+  late final TextEditingController _minutesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _customEnabled = !widget.selected.isPreset;
+    final hours = widget.selected.totalMinutes ~/ 60;
+    final minutes = widget.selected.totalMinutes % 60;
+    _hoursController = TextEditingController(
+      text: _customEnabled && hours > 0 ? '$hours' : (_customEnabled ? '0' : ''),
+    );
+    _minutesController = TextEditingController(
+      text: _customEnabled ? '$minutes' : '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _hoursController.dispose();
+    _minutesController.dispose();
+    super.dispose();
+  }
+
+  String _formatDuration(int totalMinutes) {
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    if (hours == 0) return '$minutes min';
+    if (minutes == 0) return '$hours h';
+    return '$hours h $minutes';
+  }
+
+  void _onPresetSelected(int index) {
+    setState(() {
+      _customEnabled = false;
+      _hoursController.clear();
+      _minutesController.clear();
+    });
+    widget.onChanged(AppSessionLength.presets[index]);
+  }
+
+  void _onCustomToggled(bool enabled) {
+    AppHaptics.tap();
+    if (enabled) {
+      final length = widget.selected;
+      final hours = length.totalMinutes ~/ 60;
+      final minutes = length.totalMinutes % 60;
+      setState(() {
+        _customEnabled = true;
+        _hoursController.text = '$hours';
+        _minutesController.text = '$minutes';
+      });
+      return;
+    }
+
+    setState(() {
+      _customEnabled = false;
+      _hoursController.clear();
+      _minutesController.clear();
+    });
+    final presetIndex =
+        widget.selected.presetIndex ?? widget.selected.closestPresetIndex;
+    widget.onChanged(AppSessionLength.presets[presetIndex]);
+  }
+
+  void _emitCustomFromFields() {
+    final hours = int.tryParse(_hoursController.text.trim()) ?? 0;
+    final minutes = int.tryParse(_minutesController.text.trim()) ?? 0;
+    if (hours == 0 && minutes == 0) return;
+
+    widget.onChanged(
+      AppSessionLength.fromHoursAndMinutes(hours: hours, minutes: minutes),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -360,12 +444,100 @@ class _SessionLengthSelector extends StatelessWidget {
       l10n.settingsSessionLength2h,
     ];
 
-    return AppSteppedSlider(
-      steps: stepLabels,
-      value: selected.index,
-      minLabel: l10n.settingsSessionLength30m,
-      maxLabel: l10n.settingsSessionLength2h,
-      onChanged: (index) => onChanged(AppSessionLength.values[index]),
+    final sliderIndex =
+        widget.selected.presetIndex ?? widget.selected.closestPresetIndex;
+    final valueLabel = _customEnabled
+        ? _formatDuration(widget.selected.totalMinutes)
+        : stepLabels[sliderIndex];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppSteppedSlider(
+          steps: stepLabels,
+          value: sliderIndex,
+          valueLabel: valueLabel,
+          minLabel: l10n.settingsSessionLength30m,
+          maxLabel: l10n.settingsSessionLength2h,
+          onChanged: _onPresetSelected,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            Expanded(
+              child: AppText(
+                l10n.settingsSessionLengthCustom,
+                variant: AppTextVariant.label,
+              ),
+            ),
+            Switch(
+              value: _customEnabled,
+              onChanged: _onCustomToggled,
+            ),
+          ],
+        ),
+        if (_customEnabled) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: AppInput(
+                  variant: AppInputVariant.number,
+                  label: l10n.settingsSessionLengthHours,
+                  controller: _hoursController,
+                  hint: '0',
+                  validator: (_) => null,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(2),
+                  ],
+                  onChanged: (_) => _emitCustomFromFields(),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.sm,
+                  right: AppSpacing.md,
+                  top: AppSpacing.xl,
+                ),
+                child: AppText(
+                  l10n.settingsSessionLengthHoursUnit,
+                  variant: AppTextVariant.label,
+                  color: context.secondaryTextColor,
+                ),
+              ),
+              Expanded(
+                child: AppInput(
+                  variant: AppInputVariant.number,
+                  label: l10n.settingsSessionLengthMinutes,
+                  controller: _minutesController,
+                  hint: '0',
+                  validator: (_) => null,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  onChanged: (_) => _emitCustomFromFields(),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.sm,
+                  top: AppSpacing.xl,
+                ),
+                child: AppText(
+                  l10n.settingsSessionLengthMinutesUnit,
+                  variant: AppTextVariant.label,
+                  color: context.secondaryTextColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 }

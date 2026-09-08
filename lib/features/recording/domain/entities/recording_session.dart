@@ -17,6 +17,7 @@ class RecordingSession extends Equatable {
     this.patientId,
     this.endedAt,
     this.transcript = '',
+    this.transcriptIsAi = false,
     this.soapNote,
     this.templateId,
     this.templateName,
@@ -28,6 +29,7 @@ class RecordingSession extends Equatable {
   final DateTime startedAt;
   final DateTime? endedAt;
   final String transcript;
+  final bool transcriptIsAi;
   final SoapNote? soapNote;
   final RecordingSessionStatus status;
   final String? templateId;
@@ -57,6 +59,7 @@ class RecordingSession extends Equatable {
     DateTime? startedAt,
     DateTime? endedAt,
     String? transcript,
+    bool? transcriptIsAi,
     SoapNote? soapNote,
     RecordingSessionStatus? status,
     String? templateId,
@@ -74,6 +77,7 @@ class RecordingSession extends Equatable {
       startedAt: startedAt ?? this.startedAt,
       endedAt: clearEndedAt ? null : endedAt ?? this.endedAt,
       transcript: transcript ?? this.transcript,
+      transcriptIsAi: transcriptIsAi ?? this.transcriptIsAi,
       soapNote: clearSoapNote ? null : soapNote ?? this.soapNote,
       status: status ?? this.status,
       templateId: clearTemplateId ? null : templateId ?? this.templateId,
@@ -90,6 +94,7 @@ class RecordingSession extends Equatable {
         startedAt,
         endedAt,
         transcript,
+        transcriptIsAi,
         soapNote,
         status,
         templateId,

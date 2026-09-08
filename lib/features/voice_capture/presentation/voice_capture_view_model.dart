@@ -10,6 +10,7 @@ enum VoiceCaptureSessionStatus {
   completed,
   processing,
   enhancing,
+  comparingTranscripts,
   transcribingBackground,
   failure,
 }
@@ -18,6 +19,8 @@ final class VoiceCaptureViewModel {
   const VoiceCaptureViewModel({
     required this.status,
     this.transcript = '',
+    this.localTranscript = '',
+    this.aiTranscript = '',
     this.errorMessage,
     this.selectedTemplate,
   });
@@ -69,6 +72,18 @@ final class VoiceCaptureViewModel {
         status: VoiceCaptureSessionStatus.enhancing,
         transcript: transcript,
       ),
+      VoiceCaptureTranscriptCompare(
+        :final localTranscript,
+        :final aiTranscript,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.comparingTranscripts,
+          transcript: localTranscript,
+          localTranscript: localTranscript,
+          aiTranscript: aiTranscript,
+          selectedTemplate: selectedTemplate,
+        ),
       VoiceCaptureFailure(
         :final message,
         :final transcript,
@@ -85,6 +100,8 @@ final class VoiceCaptureViewModel {
 
   final VoiceCaptureSessionStatus status;
   final String transcript;
+  final String localTranscript;
+  final String aiTranscript;
   final String? errorMessage;
   final NoteTemplate? selectedTemplate;
 
@@ -102,13 +119,19 @@ final class VoiceCaptureViewModel {
   bool get canStart =>
       (status == VoiceCaptureSessionStatus.ready ||
           status == VoiceCaptureSessionStatus.paused) &&
-      !isProcessing;
+      !isProcessing &&
+      !isComparingTranscripts;
 
-  bool get canStop => isListening && !isProcessing;
+  bool get canStop => isListening && !isProcessing && !isComparingTranscripts;
 
-  bool get canFinishConsultation => isConsultationOpen && !isProcessing;
+  bool get canFinishConsultation =>
+      isConsultationOpen && !isProcessing && !isComparingTranscripts;
 
-  bool get canClear => !isConsultationOpen && hasTranscript && !isProcessing;
+  bool get canClear =>
+      !isConsultationOpen &&
+      hasTranscript &&
+      !isProcessing &&
+      !isComparingTranscripts;
 
   bool get isProcessing =>
       status == VoiceCaptureSessionStatus.processing ||
@@ -117,11 +140,15 @@ final class VoiceCaptureViewModel {
 
   bool get isEnhancing => status == VoiceCaptureSessionStatus.enhancing;
 
+  bool get isComparingTranscripts =>
+      status == VoiceCaptureSessionStatus.comparingTranscripts;
+
   bool get isTranscribingBackground =>
       status == VoiceCaptureSessionStatus.transcribingBackground;
 
   bool get hasUnsavedWork =>
       isConsultationOpen ||
+      isComparingTranscripts ||
       (hasTranscript &&
           status != VoiceCaptureSessionStatus.initializing &&
           status != VoiceCaptureSessionStatus.completed);

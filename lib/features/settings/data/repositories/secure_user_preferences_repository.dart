@@ -66,7 +66,7 @@ class SecureUserPreferencesRepository implements UserPreferencesRepository {
   @override
   Future<AppSessionLength> readDefaultSessionLength() async {
     final value = await _storage.read(key: _sessionLengthKey);
-    return AppSessionLengthStorage.fromStorageKey(value);
+    return AppSessionLength.fromStorageKey(value);
   }
 
   @override

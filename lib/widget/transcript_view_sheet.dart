@@ -12,15 +12,18 @@ class TranscriptViewSheet extends StatelessWidget {
     super.key,
     required this.transcript,
     required this.recordedAt,
+    this.isAi = false,
   });
 
   final String transcript;
   final DateTime recordedAt;
+  final bool isAi;
 
   static Future<void> show(
     BuildContext context, {
     required String transcript,
     required DateTime recordedAt,
+    bool isAi = false,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -34,6 +37,7 @@ class TranscriptViewSheet extends StatelessWidget {
       builder: (context) => TranscriptViewSheet(
         transcript: transcript,
         recordedAt: recordedAt,
+        isAi: isAi,
       ),
     );
   }
@@ -42,6 +46,7 @@ class TranscriptViewSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = l10n.localeName;
+    final theme = Theme.of(context);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -61,9 +66,23 @@ class TranscriptViewSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppText(
-                            l10n.patientDossierTranscriptTitle,
-                            variant: AppTextVariant.headline,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppText(
+                                  l10n.patientDossierTranscriptTitle,
+                                  variant: AppTextVariant.headline,
+                                ),
+                              ),
+                              if (isAi) ...[
+                                const SizedBox(width: AppSpacing.sm),
+                                Icon(
+                                  Icons.auto_awesome,
+                                  size: 20,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ],
+                            ],
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           AppText(
@@ -72,6 +91,14 @@ class TranscriptViewSheet extends StatelessWidget {
                             variant: AppTextVariant.caption,
                             color: AppColors.textSecondary,
                           ),
+                          if (isAi) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(
+                              l10n.transcriptAiGeneratedLabel,
+                              variant: AppTextVariant.caption,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
                         ],
                       ),
                     ),

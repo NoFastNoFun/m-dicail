@@ -274,6 +274,48 @@ abstract class AppLocalizations {
   /// **'Transcription vide'**
   String get transcriptEmptyFallback;
 
+  /// No description provided for @transcriptAiGeneratedLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription IA'**
+  String get transcriptAiGeneratedLabel;
+
+  /// No description provided for @recordTranscriptCompareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir la transcription'**
+  String get recordTranscriptCompareTitle;
+
+  /// No description provided for @recordTranscriptCompareHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.'**
+  String get recordTranscriptCompareHint;
+
+  /// No description provided for @recordTranscriptCompareLocal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Locale'**
+  String get recordTranscriptCompareLocal;
+
+  /// No description provided for @recordTranscriptCompareAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'IA'**
+  String get recordTranscriptCompareAi;
+
+  /// No description provided for @recordTranscriptCompareChooseLocal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir locale'**
+  String get recordTranscriptCompareChooseLocal;
+
+  /// No description provided for @recordTranscriptCompareChooseAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir IA'**
+  String get recordTranscriptCompareChooseAi;
+
   /// No description provided for @buttonClear.
   ///
   /// In fr, this message translates to:
@@ -1761,6 +1803,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'2 h'**
   String get settingsSessionLength2h;
+
+  /// No description provided for @settingsSessionLengthCustom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalisée'**
+  String get settingsSessionLengthCustom;
+
+  /// No description provided for @settingsSessionLengthHours.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heures'**
+  String get settingsSessionLengthHours;
+
+  /// No description provided for @settingsSessionLengthMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Minutes'**
+  String get settingsSessionLengthMinutes;
+
+  /// No description provided for @settingsSessionLengthHoursUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'h'**
+  String get settingsSessionLengthHoursUnit;
+
+  /// No description provided for @settingsSessionLengthMinutesUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'min'**
+  String get settingsSessionLengthMinutesUnit;
 
   /// No description provided for @settingsTemplates.
   ///

@@ -49,7 +49,9 @@ class HomeRecentSessionTile extends StatelessWidget {
                     borderRadius: AppRadius.smBorder,
                   ),
                   child: Icon(
-                    Icons.description_outlined,
+                    session.transcriptIsAi
+                        ? Icons.auto_awesome
+                        : Icons.description_outlined,
                     size: 20,
                     color: theme.colorScheme.primary,
                   ),
@@ -71,6 +73,14 @@ class HomeRecentSessionTile extends StatelessWidget {
                         variant: AppTextVariant.caption,
                         color: context.secondaryTextColor,
                       ),
+                      if (session.transcriptIsAi) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          AppLocalizations.of(context).transcriptAiGeneratedLabel,
+                          variant: AppTextVariant.caption,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ],
                       const SizedBox(height: AppSpacing.xs),
                       AppText(
                         snippet,

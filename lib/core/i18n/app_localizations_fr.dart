@@ -100,6 +100,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transcriptEmptyFallback => 'Transcription vide';
 
   @override
+  String get transcriptAiGeneratedLabel => 'Transcription IA';
+
+  @override
+  String get recordTranscriptCompareTitle => 'Choisir la transcription';
+
+  @override
+  String get recordTranscriptCompareHint =>
+      'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.';
+
+  @override
+  String get recordTranscriptCompareLocal => 'Locale';
+
+  @override
+  String get recordTranscriptCompareAi => 'IA';
+
+  @override
+  String get recordTranscriptCompareChooseLocal => 'Choisir locale';
+
+  @override
+  String get recordTranscriptCompareChooseAi => 'Choisir IA';
+
+  @override
   String get buttonClear => 'Effacer';
 
   @override
@@ -872,6 +894,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsSessionLength2h => '2 h';
+
+  @override
+  String get settingsSessionLengthCustom => 'Personnalisée';
+
+  @override
+  String get settingsSessionLengthHours => 'Heures';
+
+  @override
+  String get settingsSessionLengthMinutes => 'Minutes';
+
+  @override
+  String get settingsSessionLengthHoursUnit => 'h';
+
+  @override
+  String get settingsSessionLengthMinutesUnit => 'min';
 
   @override
   String get settingsTemplates => 'Pathologies';

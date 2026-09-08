@@ -10,6 +10,7 @@ final class RecordingSessionModel extends RecordingSession {
     super.patientId,
     super.endedAt,
     super.transcript,
+    super.transcriptIsAi,
     super.soapNote,
     super.templateId,
     super.templateName,
@@ -23,6 +24,7 @@ final class RecordingSessionModel extends RecordingSession {
       startedAt: session.startedAt,
       endedAt: session.endedAt,
       transcript: session.transcript,
+      transcriptIsAi: session.transcriptIsAi,
       soapNote: session.soapNote,
       status: session.status,
       templateId: session.templateId,
@@ -46,6 +48,9 @@ final class RecordingSessionModel extends RecordingSession {
       ),
       endedAt: _parseNullableDate(json['ended_at'] ?? json['endedAt']),
       transcript: json['transcript'] as String? ?? '',
+      transcriptIsAi: _parseBool(
+        json['transcript_is_ai'] ?? json['transcriptIsAi'],
+      ),
       soapNote: (json['soap_note'] != null || json['soapNote'] != null)
           ? SoapNote.fromJson(
               (json['soap_note'] ?? json['soapNote']) as Map<String, dynamic>,
@@ -65,6 +70,7 @@ final class RecordingSessionModel extends RecordingSession {
       'started_at': startedAt.toIso8601String(),
       'ended_at': endedAt?.toIso8601String(),
       'transcript': transcript,
+      'transcript_is_ai': transcriptIsAi,
       'soap_note': soapNote?.toJson(),
       'status': status.name,
       'template_id': templateId,
@@ -92,6 +98,16 @@ final class RecordingSessionModel extends RecordingSession {
       return null;
     }
     return DateTime.parse(value);
+  }
+
+  static bool _parseBool(Object? value) {
+    if (value is bool) {
+      return value;
+    }
+    if (value is String) {
+      return value.toLowerCase() == 'true';
+    }
+    return false;
   }
 
   static RecordingSessionStatus _parseStatus(String? value) {

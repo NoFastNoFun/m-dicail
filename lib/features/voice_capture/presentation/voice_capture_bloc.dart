@@ -40,6 +40,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureStartRecording>(_onStartRecording);
     on<VoiceCaptureStopRecording>(_onStopRecording);
     on<VoiceCaptureFinishConsultation>(_onFinishConsultation);
+    on<VoiceCaptureTranscriptChoiceSelected>(_onTranscriptChoiceSelected);
     on<VoiceCaptureClearTranscript>(_onClearTranscript);
     on<VoiceCaptureDiscardConsultation>(_onDiscardConsultation);
     on<VoiceCaptureListeningSessionEnded>(_onListeningSessionEnded);
@@ -65,6 +66,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   String _segmentBase = '';
   String _lastRawText = '';
   NoteTemplate? _selectedTemplate;
+  String _pendingFinishLanguage = 'fr';
+  bool _pendingTranscriptIsAi = false;
 
   List<String> _transitions = const [];
   String _wordPeriod = '';
@@ -179,7 +182,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       _segmentBase = roughTranscript;
       _updateActiveSessionTranscriptInMemory(roughTranscript);
     }
-    
+
     final sessionId = _activeSession?.id ?? '';
 
     if (sessionId.isEmpty) {
@@ -191,6 +194,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
       return;
     }
+
+    _pendingFinishLanguage = event.language;
+    _pendingTranscriptIsAi = false;
 
     String? audioPath;
     try {
@@ -213,8 +219,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
                     )
                     .timeout(const Duration(minutes: 2));
             if (enhanced.isNotEmpty) {
-              transcriptForProcess = AnonymizationHelper.anonymize(enhanced);
-              await _saveActiveSessionTranscript(transcriptForProcess);
+              emit(
+                VoiceCaptureTranscriptCompare(
+                  localTranscript: roughTranscript,
+                  aiTranscript: enhanced,
+                  selectedTemplate: _selectedTemplate,
+                ),
+              );
+              return;
             }
           } catch (_) {
             try {
@@ -232,37 +244,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         }
       }
 
-      transcriptForProcess = await _medicalTermCorrectionService.correct(
-        transcriptForProcess,
-      );
-
-      emit(VoiceCaptureProcessing(transcript: transcriptForProcess));
-
-      final result = await _noteProcessingRepository.process(
+      await _finalizeConsultation(
+        emit: emit,
         sessionId: sessionId,
-        rawText: transcriptForProcess,
+        transcriptForProcess: transcriptForProcess,
         language: event.language,
-      ).timeout(const Duration(minutes: 1));
-
-      final soapNote = _selectedTemplate != null
-          ? NoteTemplateApplicator.apply(
-              template: _selectedTemplate,
-              transcript: result.processedText,
-            )
-          : result.soapNote;
-
-       await _completeActiveSession(
-        transcript: result.processedText,
-        soapNote: soapNote,
+        transcriptIsAi: false,
       );
-
-      _segmentBase = '';
-    _lastRawText = '';
-      _activeSession = null;
-      emit(VoiceCaptureConsultationFinished(
-        sessionId: sessionId,
-        transcript: result.processedText,
-      ));
     } catch (error) {
       emit(
         VoiceCaptureFailure(
@@ -278,13 +266,109 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
   }
 
+  Future<void> _onTranscriptChoiceSelected(
+    VoiceCaptureTranscriptChoiceSelected event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    final current = state;
+    if (current is! VoiceCaptureTranscriptCompare) {
+      return;
+    }
+
+    final sessionId = _activeSession?.id ?? '';
+    if (sessionId.isEmpty) {
+      emit(
+        VoiceCaptureFailure(
+          'Aucune session active',
+          transcript: current.localTranscript,
+          selectedTemplate: current.selectedTemplate,
+        ),
+      );
+      return;
+    }
+
+    final chosen = event.useAi ? current.aiTranscript : current.localTranscript;
+    final transcriptIsAi = event.useAi;
+    _pendingTranscriptIsAi = transcriptIsAi;
+
+    try {
+      final anonymized = AnonymizationHelper.anonymize(chosen);
+      await _saveActiveSessionTranscript(
+        anonymized,
+        transcriptIsAi: transcriptIsAi,
+      );
+      await _finalizeConsultation(
+        emit: emit,
+        sessionId: sessionId,
+        transcriptForProcess: anonymized,
+        language: _pendingFinishLanguage,
+        transcriptIsAi: transcriptIsAi,
+      );
+    } catch (error) {
+      emit(
+        VoiceCaptureFailure(
+          Failure.fromException(error).message,
+          transcript: chosen,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
+    }
+  }
+
+  Future<void> _finalizeConsultation({
+    required Emitter<VoiceCaptureState> emit,
+    required String sessionId,
+    required String transcriptForProcess,
+    required String language,
+    required bool transcriptIsAi,
+  }) async {
+    transcriptForProcess = await _medicalTermCorrectionService.correct(
+      transcriptForProcess,
+    );
+
+    emit(VoiceCaptureProcessing(transcript: transcriptForProcess));
+
+    final result = await _noteProcessingRepository
+        .process(
+          sessionId: sessionId,
+          rawText: transcriptForProcess,
+          language: language,
+        )
+        .timeout(const Duration(minutes: 1));
+
+    final soapNote = _selectedTemplate != null
+        ? NoteTemplateApplicator.apply(
+            template: _selectedTemplate,
+            transcript: result.processedText,
+          )
+        : result.soapNote;
+
+    await _completeActiveSession(
+      transcript: result.processedText,
+      soapNote: soapNote,
+      transcriptIsAi: transcriptIsAi,
+    );
+
+    _segmentBase = '';
+    _lastRawText = '';
+    _activeSession = null;
+    _pendingTranscriptIsAi = false;
+    emit(
+      VoiceCaptureConsultationFinished(
+        sessionId: sessionId,
+        transcript: result.processedText,
+      ),
+    );
+  }
+
   void _onClearTranscript(
     VoiceCaptureClearTranscript event,
     Emitter<VoiceCaptureState> emit,
   ) {
     if (state is RecordingInProgress ||
         state is VoiceCaptureTranscribingBackground ||
-        state is VoiceCaptureEnhancing) {
+        state is VoiceCaptureEnhancing ||
+        state is VoiceCaptureTranscriptCompare) {
       return;
     }
     _segmentBase = '';
@@ -577,6 +661,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
           selectedTemplate: _selectedTemplate,
         ),
       VoiceCaptureEnhancing() => VoiceCaptureEnhancing(transcript: transcript),
+      VoiceCaptureTranscriptCompare(:final aiTranscript) =>
+        VoiceCaptureTranscriptCompare(
+          localTranscript: transcript,
+          aiTranscript: aiTranscript,
+          selectedTemplate: _selectedTemplate,
+        ),
       VoiceCaptureProcessing() => VoiceCaptureProcessing(transcript: transcript),
       _ => VoiceCaptureReady(
           transcript: transcript,
@@ -700,6 +790,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       VoiceCaptureFailure(:final transcript) => transcript,
       VoiceCaptureProcessing(:final transcript) => transcript,
       VoiceCaptureEnhancing(:final transcript) => transcript,
+      VoiceCaptureTranscriptCompare(:final localTranscript) => localTranscript,
       VoiceCaptureConsultationFinished(:final transcript) => transcript,
       _ => '',
     };
@@ -748,6 +839,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   Future<void> _completeActiveSession({
     required String transcript,
     required SoapNote soapNote,
+    bool transcriptIsAi = false,
   }) async {
     final session = _activeSession;
     if (session == null) {
@@ -768,6 +860,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     final completed = session.copyWith(
       endedAt: DateTime.now(),
       transcript: transcript,
+      transcriptIsAi: transcriptIsAi,
       soapNote: soapNote,
       status: RecordingSessionStatus.completed,
       templateId: template?.id ?? session.templateId,
@@ -791,22 +884,34 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _activeSession = await _recordingSessionRepository.save(failed);
   }
 
-  void _updateActiveSessionTranscriptInMemory(String transcript) {
+  void _updateActiveSessionTranscriptInMemory(
+    String transcript, {
+    bool? transcriptIsAi,
+  }) {
     final session = _activeSession;
     if (session == null) {
       return;
     }
 
-    _activeSession = session.copyWith(transcript: transcript);
+    _activeSession = session.copyWith(
+      transcript: transcript,
+      transcriptIsAi: transcriptIsAi,
+    );
   }
 
-  Future<void> _saveActiveSessionTranscript(String transcript) async {
+  Future<void> _saveActiveSessionTranscript(
+    String transcript, {
+    bool? transcriptIsAi,
+  }) async {
     final session = _activeSession;
     if (session == null) {
       return;
     }
 
-    final updated = session.copyWith(transcript: transcript);
+    final updated = session.copyWith(
+      transcript: transcript,
+      transcriptIsAi: transcriptIsAi,
+    );
     _activeSession = updated;
     await _recordingSessionRepository.save(updated);
   }
