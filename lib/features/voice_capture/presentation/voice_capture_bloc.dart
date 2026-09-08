@@ -236,13 +236,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         if (aiEnhanceEnabled) {
           emit(VoiceCaptureEnhancing(transcript: roughTranscript));
           try {
-            enhanced = await _enhancedTranscriptionRepository
-                .transcribeFile(
-                  filePath: audioPath,
-                  sessionId: sessionId,
-                  language: event.language,
-                )
-                .timeout(const Duration(minutes: 2));
+            // The repository owns HTTP timeouts. Await audio preparation too,
+            // so the source is not deleted while native compression uses it.
+            enhanced = await _enhancedTranscriptionRepository.transcribeFile(
+              filePath: audioPath,
+              sessionId: sessionId,
+              language: event.language,
+            );
           } catch (_) {
             // A local transcription remains available when the network fails.
           }
