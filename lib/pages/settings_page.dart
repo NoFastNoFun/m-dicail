@@ -115,6 +115,29 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
+              AppSettingsGroup(
+                title: l10n.settingsSectionAi,
+                children: [
+                  AppSettingsTile(
+                    icon: Icons.auto_awesome_outlined,
+                    title: l10n.settingsAiEnhance,
+                    subtitle: l10n.settingsAiEnhanceSubtitle,
+                    trailing: Switch(
+                      value: state.aiEnhanceEnabled,
+                      onChanged: (enabled) => context.read<SettingsBloc>().add(
+                        SettingsAiEnhanceChanged(enabled),
+                      ),
+                    ),
+                    child: state.aiEnhanceEnabled
+                        ? AppText(
+                            l10n.settingsAiEnhanceWarning,
+                            variant: AppTextVariant.caption,
+                            color: Theme.of(context).colorScheme.error,
+                          )
+                        : null,
+                  ),
+                ],
+              ),
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
                   return AppSettingsGroup(

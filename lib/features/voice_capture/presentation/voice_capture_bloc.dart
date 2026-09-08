@@ -19,6 +19,7 @@ import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 
@@ -33,6 +34,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     this._backgroundAudioRecorder,
     this._offlineAudioTranscriptionService,
     this._medicalTermCorrectionService,
+    this._userPreferencesRepository,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -55,6 +57,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   final BackgroundAudioRecorder _backgroundAudioRecorder;
   final OfflineAudioTranscriptionService _offlineAudioTranscriptionService;
   final MedicalTermCorrectionService _medicalTermCorrectionService;
+  final UserPreferencesRepository _userPreferencesRepository;
 
   RecordingSession? _activeSession;
   bool _isHandlingLifecycle = false;
@@ -196,27 +199,35 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
       var transcriptForProcess = roughTranscript;
       if (audioPath != null) {
-        emit(VoiceCaptureEnhancing(transcript: roughTranscript));
-        try {
-          final enhanced = await _enhancedTranscriptionRepository.transcribeFile(
-            filePath: audioPath,
-            sessionId: sessionId,
-            language: event.language,
-          ).timeout(const Duration(minutes: 2));
-          if (enhanced.isNotEmpty) {
-            transcriptForProcess = AnonymizationHelper.anonymize(enhanced);
-            await _saveActiveSessionTranscript(transcriptForProcess);
-          }
-        } catch (_) {
+        final aiEnhanceEnabled =
+            await _userPreferencesRepository.readAiEnhanceEnabled();
+        if (aiEnhanceEnabled) {
+          emit(VoiceCaptureEnhancing(transcript: roughTranscript));
           try {
-            final offlineText = await _offlineAudioTranscriptionService
-                .transcribeFile(audioPath, language: event.language);
-            if (offlineText.isNotEmpty) {
-              transcriptForProcess = AnonymizationHelper.anonymize(offlineText);
+            final enhanced =
+                await _enhancedTranscriptionRepository
+                    .transcribeFile(
+                      filePath: audioPath,
+                      sessionId: sessionId,
+                      language: event.language,
+                    )
+                    .timeout(const Duration(minutes: 2));
+            if (enhanced.isNotEmpty) {
+              transcriptForProcess = AnonymizationHelper.anonymize(enhanced);
               await _saveActiveSessionTranscript(transcriptForProcess);
             }
           } catch (_) {
-            transcriptForProcess = roughTranscript;
+            try {
+              final offlineText = await _offlineAudioTranscriptionService
+                  .transcribeFile(audioPath, language: event.language);
+              if (offlineText.isNotEmpty) {
+                transcriptForProcess =
+                    AnonymizationHelper.anonymize(offlineText);
+                await _saveActiveSessionTranscript(transcriptForProcess);
+              }
+            } catch (_) {
+              transcriptForProcess = roughTranscript;
+            }
           }
         }
       }

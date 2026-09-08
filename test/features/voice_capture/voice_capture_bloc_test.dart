@@ -14,6 +14,7 @@ import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -42,6 +43,9 @@ class _MockOfflineAudioTranscriptionService extends Mock
 class _MockMedicalTermCorrectionService extends Mock
     implements MedicalTermCorrectionService {}
 
+class _MockUserPreferencesRepository extends Mock
+    implements UserPreferencesRepository {}
+
 void _fallbackOnResult(String text, {bool isFinal = false}) {}
 
 void _fallbackOnListeningEnded() {}
@@ -55,6 +59,7 @@ void main() {
   late _MockBackgroundAudioRecorder backgroundRecorder;
   late _MockOfflineAudioTranscriptionService offlineTranscription;
   late _MockMedicalTermCorrectionService medicalTermCorrection;
+  late _MockUserPreferencesRepository userPreferences;
 
   setUpAll(() {
     registerFallbackValue(_fallbackOnResult);
@@ -77,7 +82,10 @@ void main() {
     backgroundRecorder = _MockBackgroundAudioRecorder();
     offlineTranscription = _MockOfflineAudioTranscriptionService();
     medicalTermCorrection = _MockMedicalTermCorrectionService();
+    userPreferences = _MockUserPreferencesRepository();
 
+    when(() => userPreferences.readAiEnhanceEnabled())
+        .thenAnswer((_) async => true);
     when(() => audioCapture.initialize()).thenAnswer((_) async => true);
     when(() => audioCapture.isListening).thenReturn(false);
     when(
@@ -166,6 +174,7 @@ void main() {
       backgroundRecorder,
       offlineTranscription,
       medicalTermCorrection,
+      userPreferences,
     );
   }
 

@@ -1642,6 +1642,12 @@ abstract class AppLocalizations {
   /// **'Consultations'**
   String get settingsSectionSession;
 
+  /// No description provided for @settingsSectionAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Intelligence artificielle'**
+  String get settingsSectionAi;
+
   /// No description provided for @settingsSectionAccount.
   ///
   /// In fr, this message translates to:
@@ -1761,6 +1767,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Pathologies'**
   String get settingsTemplates;
+
+  /// No description provided for @settingsAiEnhance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Amélioration IA de la transcription'**
+  String get settingsAiEnhance;
+
+  /// No description provided for @settingsAiEnhanceSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoie l\'enregistrement au cloud pour une transcription améliorée'**
+  String get settingsAiEnhanceSubtitle;
+
+  /// No description provided for @settingsAiEnhanceWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.'**
+  String get settingsAiEnhanceWarning;
 
   /// No description provided for @settingsRestartOnboarding.
   ///

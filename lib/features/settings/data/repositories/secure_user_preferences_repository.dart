@@ -15,6 +15,7 @@ class SecureUserPreferencesRepository implements UserPreferencesRepository {
   static const String _customBackgroundKey = 'custom_theme_background';
   static const String _fontScaleKey = 'font_scale';
   static const String _sessionLengthKey = 'default_session_length';
+  static const String _aiEnhanceEnabledKey = 'ai_enhance_enabled';
 
   final FlutterSecureStorage _storage;
 
@@ -71,5 +72,19 @@ class SecureUserPreferencesRepository implements UserPreferencesRepository {
   @override
   Future<void> writeDefaultSessionLength(AppSessionLength length) async {
     await _storage.write(key: _sessionLengthKey, value: length.storageKey);
+  }
+
+  @override
+  Future<bool> readAiEnhanceEnabled() async {
+    final value = await _storage.read(key: _aiEnhanceEnabledKey);
+    return value == 'true';
+  }
+
+  @override
+  Future<void> writeAiEnhanceEnabled(bool enabled) async {
+    await _storage.write(
+      key: _aiEnhanceEnabledKey,
+      value: enabled ? 'true' : 'false',
+    );
   }
 }

@@ -21,6 +21,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           customThemeColors: settingsNotifier.customThemeColors,
           fontScale: settingsNotifier.fontScale,
           defaultSessionLength: settingsNotifier.defaultSessionLength,
+          aiEnhanceEnabled: settingsNotifier.aiEnhanceEnabled,
         ),
       ) {
     on<SettingsLoadRequested>(_onLoadRequested);
@@ -28,6 +29,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsCustomThemeColorsChanged>(_onCustomThemeColorsChanged);
     on<SettingsFontScaleChanged>(_onFontScaleChanged);
     on<SettingsDefaultSessionLengthChanged>(_onDefaultSessionLengthChanged);
+    on<SettingsAiEnhanceChanged>(_onAiEnhanceChanged);
   }
 
   final UserPreferencesRepository _repository;
@@ -45,12 +47,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     CustomThemeColors customThemeColors = CustomThemeColors.defaults();
     AppFontScale fontScale = AppFontScale.defaultScale;
     AppSessionLength defaultSessionLength = AppSessionLength.hour1;
+    var aiEnhanceEnabled = false;
 
     try {
       themeVariant = await _repository.readThemeVariant();
       customThemeColors = await _repository.readCustomThemeColors();
       fontScale = await _repository.readFontScale();
       defaultSessionLength = await _repository.readDefaultSessionLength();
+      aiEnhanceEnabled = await _repository.readAiEnhanceEnabled();
     } catch (e) {
       // Ignore secure storage errors and use defaults
     }
@@ -59,12 +63,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     _settingsNotifier.setCustomThemeColors(customThemeColors);
     _settingsNotifier.setFontScale(fontScale);
     _settingsNotifier.setDefaultSessionLength(defaultSessionLength);
+    _settingsNotifier.setAiEnhanceEnabled(aiEnhanceEnabled);
 
     emit(SettingsLoaded(
       themeVariant: themeVariant,
       customThemeColors: customThemeColors,
       fontScale: fontScale,
       defaultSessionLength: defaultSessionLength,
+      aiEnhanceEnabled: aiEnhanceEnabled,
     ));
   }
 
@@ -125,6 +131,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final current = state;
     if (current is SettingsLoaded) {
       emit(current.copyWith(defaultSessionLength: event.length));
+    }
+  }
+
+  Future<void> _onAiEnhanceChanged(
+    SettingsAiEnhanceChanged event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _repository.writeAiEnhanceEnabled(event.enabled);
+    } catch (_) {}
+    _settingsNotifier.setAiEnhanceEnabled(event.enabled);
+
+    final current = state;
+    if (current is SettingsLoaded) {
+      emit(current.copyWith(aiEnhanceEnabled: event.enabled));
     }
   }
 }

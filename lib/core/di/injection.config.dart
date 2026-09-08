@@ -408,6 +408,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i162.BackgroundAudioRecorder>(),
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
+        gh<_i460.UserPreferencesRepository>(),
       ),
     );
     gh.factory<_i79.PathologyBloc>(

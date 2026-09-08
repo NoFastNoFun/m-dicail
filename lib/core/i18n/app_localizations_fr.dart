@@ -814,6 +814,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSectionSession => 'Consultations';
 
   @override
+  String get settingsSectionAi => 'Intelligence artificielle';
+
+  @override
   String get settingsSectionAccount => 'Compte';
 
   @override
@@ -872,6 +875,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsTemplates => 'Pathologies';
+
+  @override
+  String get settingsAiEnhance => 'Amélioration IA de la transcription';
+
+  @override
+  String get settingsAiEnhanceSubtitle =>
+      'Envoie l\'enregistrement au cloud pour une transcription améliorée';
+
+  @override
+  String get settingsAiEnhanceWarning =>
+      'L\'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.';
 
   @override
   String get settingsRestartOnboarding => 'Recommencer l\'introduction';
