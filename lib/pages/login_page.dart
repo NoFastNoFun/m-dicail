@@ -4,16 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
+import 'package:medicail/core/di/injection.dart';
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_routes.dart';
+import 'package:medicail/core/storage/app_session_storage.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_event.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
 import 'package:medicail/widget/app_button.dart';
+import 'package:medicail/widget/app_checkbox.dart';
 import 'package:medicail/widget/app_scaffold.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
-import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/inputs/input_validation_l10n.dart';
 
@@ -28,6 +31,26 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _sessionStorage = getIt<AppSessionStorage>();
+
+  bool _rememberEmail = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreRememberedEmail();
+  }
+
+  Future<void> _restoreRememberedEmail() async {
+    final email = await _sessionStorage.readRememberedEmail();
+    if (!mounted || email == null) {
+      return;
+    }
+    setState(() {
+      _emailController.text = email;
+      _rememberEmail = true;
+    });
+  }
 
   @override
   void dispose() {
@@ -46,8 +69,22 @@ class _LoginPageState extends State<LoginPage> {
     return resolveInputValidationMessage(l10n, key);
   }
 
-  void _submit() {
+  Future<void> _persistRememberedEmail() async {
+    if (_rememberEmail) {
+      await _sessionStorage.writeRememberedEmail(
+        _emailController.text.trim(),
+      );
+    } else {
+      await _sessionStorage.writeRememberedEmail(null);
+    }
+  }
+
+  Future<void> _submit() async {
     if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
+      await _persistRememberedEmail();
+      if (!mounted) {
+        return;
+      }
       context.read<AuthBloc>().add(
         AuthLoginRequested(
           email: _emailController.text.trim(),
@@ -150,6 +187,15 @@ class _LoginPageState extends State<LoginPage> {
                                   color: context.colorScheme.primary,
                                 ),
                               ),
+                            ),
+                            AppCheckbox(
+                              label: l10n.loginRememberEmail,
+                              value: _rememberEmail,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberEmail = value ?? false;
+                                });
+                              },
                             ),
                             const SizedBox(height: AppSpacing.xl),
                             BlocBuilder<AuthBloc, AuthState>(

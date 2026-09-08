@@ -4,6 +4,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
 class AppTranscriptComparePanel extends StatelessWidget {
   const AppTranscriptComparePanel({
@@ -65,6 +66,7 @@ class AppTranscriptComparePanel extends StatelessWidget {
                         buttonLabel: l10n.recordTranscriptCompareChooseAi,
                         onChoose: onSelectAi,
                         emphasize: true,
+                        showEuAiLabel: true,
                       ),
                     ),
                   ],
@@ -86,6 +88,7 @@ class _CompareColumn extends StatelessWidget {
     required this.buttonLabel,
     required this.onChoose,
     this.emphasize = false,
+    this.showEuAiLabel = false,
   });
 
   final String title;
@@ -94,6 +97,7 @@ class _CompareColumn extends StatelessWidget {
   final String buttonLabel;
   final VoidCallback onChoose;
   final bool emphasize;
+  final bool showEuAiLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +135,13 @@ class _CompareColumn extends StatelessWidget {
                 ),
               ],
             ),
+            if (showEuAiLabel) ...[
+              const SizedBox(height: AppSpacing.sm),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: AppEuAiLabel(kind: EuAiLabelKind.generated),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             Expanded(
               child: SingleChildScrollView(

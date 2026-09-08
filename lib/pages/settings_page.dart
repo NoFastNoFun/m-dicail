@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicail/core/config/app_info.dart';
+import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
@@ -215,6 +217,34 @@ class SettingsPage extends StatelessWidget {
                             context.push(AppRoutes.login);
                           }
                         },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Builder(
+                builder: (context) {
+                  final appInfo = getIt<AppInfo>();
+                  return AppSettingsGroup(
+                    title: l10n.settingsSectionAbout,
+                    children: [
+                      AppSettingsTile(
+                        icon: Icons.info_outline,
+                        title: appInfo.appName.isNotEmpty
+                            ? appInfo.appName
+                            : l10n.appTitle,
+                        subtitle:
+                            '${l10n.settingsAppVersion}: ${appInfo.version}',
+                      ),
+                      AppSettingsTile(
+                        icon: Icons.build_outlined,
+                        title: l10n.settingsAppBuild,
+                        subtitle: appInfo.buildNumber,
+                      ),
+                      AppSettingsTile(
+                        icon: Icons.apps_outlined,
+                        title: l10n.settingsAppPackage,
+                        subtitle: appInfo.packageName,
                       ),
                     ],
                   );

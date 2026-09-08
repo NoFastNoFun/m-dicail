@@ -582,6 +582,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginCreateAccountButton => 'Créer un compte';
 
   @override
+  String get loginRememberEmail => 'Se souvenir de l\'adresse email';
+
+  @override
   String get loginContinueWithoutAccount => 'Continuer sans compte';
 
   @override
@@ -939,6 +942,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsLogout => 'Se déconnecter';
+
+  @override
+  String get settingsSectionAbout => 'À propos';
+
+  @override
+  String get settingsAppVersion => 'Version';
+
+  @override
+  String get settingsAppBuild => 'Build';
+
+  @override
+  String get settingsAppPackage => 'Identifiant';
+
+  @override
+  String get euAiLabelGenerated => 'Contenu généré par l\'IA';
+
+  @override
+  String get euAiLabelModified => 'Contenu modifié par l\'IA';
 
   @override
   String get tutorialIntroTitle => 'Découvrir Medicail';

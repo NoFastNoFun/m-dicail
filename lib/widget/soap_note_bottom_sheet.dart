@@ -8,6 +8,7 @@ import 'package:medicail/widget/app_button.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
 class SoapNoteBottomSheet extends StatefulWidget {
   const SoapNoteBottomSheet({
@@ -111,9 +112,17 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: AppText(
-                        l10n.soapNoteTitle,
-                        variant: AppTextVariant.headline,
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: AppText(
+                              l10n.soapNoteTitle,
+                              variant: AppTextVariant.headline,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          const AppEuAiLabel(kind: EuAiLabelKind.generated),
+                        ],
                       ),
                     ),
                     IconButton(

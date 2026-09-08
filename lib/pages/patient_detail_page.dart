@@ -20,6 +20,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:medicail/widget/transcript_view_sheet.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 import 'package:medicail/widget/app_pathology_tag.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -530,11 +531,7 @@ class _OralSessionListItem extends StatelessWidget {
               ),
               if (session.transcriptIsAi) ...[
                 const SizedBox(height: AppSpacing.xs),
-                AppText(
-                  l10n.transcriptAiGeneratedLabel,
-                  variant: AppTextVariant.caption,
-                  color: theme.colorScheme.primary,
-                ),
+                const AppEuAiLabel(kind: EuAiLabelKind.generated),
               ],
               const SizedBox(height: AppSpacing.md),
               AppText(
