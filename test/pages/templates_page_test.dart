@@ -82,8 +82,8 @@ void main() {
 
     expect(find.text('Pathologie 0'), findsOneWidget);
     expect(find.text('Pathologie 9'), findsOneWidget);
-    expect(find.text('Pathologies par defaut'), findsOneWidget);
-    expect(find.text('Creer une pathologie'), findsWidgets);
+    expect(find.text('Pathologies par défaut'), findsOneWidget);
+    expect(find.text('Créer une pathologie'), findsWidgets);
 
     addTearDown(() => tester.binding.setSurfaceSize(null));
   });

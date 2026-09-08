@@ -15,6 +15,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:medicail/core/audio/audio_capture_service.dart' as _i21;
+import 'package:medicail/core/audio/audio_compression_service.dart' as _i74;
 import 'package:medicail/core/audio/audio_playback_service.dart' as _i366;
 import 'package:medicail/core/audio/background_audio_recorder.dart' as _i162;
 import 'package:medicail/core/audio/just_audio_playback_service.dart' as _i475;
@@ -26,6 +27,7 @@ import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
 import 'package:medicail/core/auth/passkey_service.dart' as _i332;
 import 'package:medicail/core/config/app_config.dart' as _i155;
+import 'package:medicail/core/config/app_info.dart' as _i305;
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
     as _i367;
 import 'package:medicail/core/di/register_module.dart' as _i91;
@@ -143,17 +145,23 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart'
     as _i306;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
+import 'package:package_info_plus/package_info_plus.dart' as _i655;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final appInfoModule = _$AppInfoModule();
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i332.PasskeyService>(() => _i332.PasskeyService());
     gh.lazySingleton<_i155.AppConfig>(() => _i155.AppConfig());
+    await gh.lazySingletonAsync<_i655.PackageInfo>(
+      () => appInfoModule.packageInfo(),
+      preResolve: true,
+    );
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
     );
@@ -172,6 +180,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i985.AssetPathologyDataSource(),
     );
     gh.lazySingleton<_i713.SettingsNotifier>(() => _i713.SettingsNotifier());
+    gh.lazySingleton<_i74.AudioCompressionService>(
+      () => _i74.NativeAudioCompressionService(),
+    );
     gh.lazySingleton<_i879.MedicalTermCorrectionService>(
       () =>
           _i879.MedicalTermCorrectionService(gh<_i711.MedicalRootDictionary>()),
@@ -256,6 +267,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i713.SettingsNotifier>(),
       ),
     );
+    gh.lazySingleton<_i305.AppInfo>(
+      () => _i305.AppInfo(gh<_i655.PackageInfo>()),
+    );
     gh.lazySingleton<_i367.DesktopDebugBackendUrlStore>(
       () => _i367.DesktopDebugBackendUrlStore(
         gh<_i558.FlutterSecureStorage>(),
@@ -284,10 +298,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i987.TokenRefreshInterceptor>(),
       ),
     );
+    gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i218.ApiEnhancedTranscriptionRepository>(
       () => _i218.ApiEnhancedTranscriptionRepository(
         gh<_i361.Dio>(),
         gh<_i155.AppConfig>(),
+        gh<_i74.AudioCompressionService>(),
       ),
     );
     gh.lazySingleton<_i734.EnhancedTranscriptionRepository>(
@@ -296,7 +312,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i587.ApiAppointmentRepository>(
       () => _i587.ApiAppointmentRepository(gh<_i1005.ApiClient>()),
     );
@@ -380,6 +395,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i794.VoiceCaptureBloc>(
+      () => _i794.VoiceCaptureBloc(
+        gh<_i21.AudioCaptureService>(),
+        gh<_i814.RecordingSessionRepository>(),
+        gh<_i341.NoteProcessingRepository>(),
+        gh<_i734.EnhancedTranscriptionRepository>(),
+        gh<_i117.RecordingNotificationService>(),
+        gh<_i162.BackgroundAudioRecorder>(),
+        gh<_i356.OfflineAudioTranscriptionService>(),
+        gh<_i879.MedicalTermCorrectionService>(),
+        gh<_i460.UserPreferencesRepository>(),
+      ),
+    );
     gh.factory<_i306.TutorialBloc>(
       () => _i306.TutorialBloc(
         gh<_i79.TutorialRepository>(),
@@ -398,23 +426,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i814.RecordingSessionRepository>(),
       ),
     );
-    gh.factory<_i794.VoiceCaptureBloc>(
-      () => _i794.VoiceCaptureBloc(
-        gh<_i21.AudioCaptureService>(),
-        gh<_i814.RecordingSessionRepository>(),
-        gh<_i341.NoteProcessingRepository>(),
-        gh<_i734.EnhancedTranscriptionRepository>(),
-        gh<_i117.RecordingNotificationService>(),
-        gh<_i162.BackgroundAudioRecorder>(),
-        gh<_i356.OfflineAudioTranscriptionService>(),
-        gh<_i879.MedicalTermCorrectionService>(),
-      ),
-    );
     gh.factory<_i79.PathologyBloc>(
       () => _i79.PathologyBloc(gh<_i865.PathologyRepository>()),
     );
     return this;
   }
 }
+
+class _$AppInfoModule extends _i305.AppInfoModule {}
 
 class _$RegisterModule extends _i91.RegisterModule {}

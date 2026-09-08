@@ -20,6 +20,7 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/patient_creation_sheet.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:medicail/widget/transcript_view_sheet.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 import 'package:medicail/widget/app_pathology_tag.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -469,6 +470,7 @@ class _OralSessionListItem extends StatelessWidget {
           context,
           transcript: session.transcript,
           recordedAt: session.startedAt,
+          isAi: session.transcriptIsAi,
         );
       },
       borderRadius: AppRadius.mdBorder,
@@ -517,9 +519,20 @@ class _OralSessionListItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(Icons.mic_outlined, color: context.secondaryTextColor),
+                  Icon(
+                    session.transcriptIsAi
+                        ? Icons.auto_awesome
+                        : Icons.mic_outlined,
+                    color: session.transcriptIsAi
+                        ? theme.colorScheme.primary
+                        : context.secondaryTextColor,
+                  ),
                 ],
               ),
+              if (session.transcriptIsAi) ...[
+                const SizedBox(height: AppSpacing.xs),
+                const AppEuAiLabel(kind: EuAiLabelKind.generated),
+              ],
               const SizedBox(height: AppSpacing.md),
               AppText(
                 session.transcript,

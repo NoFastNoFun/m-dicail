@@ -11,7 +11,8 @@ class SettingsNotifier extends ChangeNotifier {
   AppThemeVariant _themeVariant = AppThemeVariant.light;
   CustomThemeColors _customThemeColors = CustomThemeColors.defaults();
   AppFontScale _fontScale = AppFontScale.defaultScale;
-  AppSessionLength _defaultSessionLength = AppSessionLengthStorage.defaultLength;
+  AppSessionLength _defaultSessionLength = AppSessionLength.defaultLength;
+  bool _aiEnhanceEnabled = false;
 
   AppThemeVariant get themeVariant => _themeVariant;
 
@@ -20,6 +21,8 @@ class SettingsNotifier extends ChangeNotifier {
   AppFontScale get fontScale => _fontScale;
 
   AppSessionLength get defaultSessionLength => _defaultSessionLength;
+
+  bool get aiEnhanceEnabled => _aiEnhanceEnabled;
 
   Duration get defaultSessionDuration => _defaultSessionLength.duration;
 
@@ -31,6 +34,7 @@ class SettingsNotifier extends ChangeNotifier {
       _customThemeColors = await repository.readCustomThemeColors();
       _fontScale = await repository.readFontScale();
       _defaultSessionLength = await repository.readDefaultSessionLength();
+      _aiEnhanceEnabled = await repository.readAiEnhanceEnabled();
     } catch (_) {
       // Keep defaults if secure storage is unavailable.
     }
@@ -60,6 +64,13 @@ class SettingsNotifier extends ChangeNotifier {
   void setDefaultSessionLength(AppSessionLength length) {
     if (_defaultSessionLength != length) {
       _defaultSessionLength = length;
+      notifyListeners();
+    }
+  }
+
+  void setAiEnhanceEnabled(bool enabled) {
+    if (_aiEnhanceEnabled != enabled) {
+      _aiEnhanceEnabled = enabled;
       notifyListeners();
     }
   }

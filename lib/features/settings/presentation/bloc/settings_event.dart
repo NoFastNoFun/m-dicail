@@ -50,3 +50,12 @@ final class SettingsDefaultSessionLengthChanged extends SettingsEvent {
   @override
   List<Object?> get props => [length];
 }
+
+final class SettingsAiEnhanceChanged extends SettingsEvent {
+  const SettingsAiEnhanceChanged(this.enabled);
+
+  final bool enabled;
+
+  @override
+  List<Object?> get props => [enabled];
+}

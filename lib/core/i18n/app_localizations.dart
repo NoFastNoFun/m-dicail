@@ -274,6 +274,48 @@ abstract class AppLocalizations {
   /// **'Transcription vide'**
   String get transcriptEmptyFallback;
 
+  /// No description provided for @transcriptAiGeneratedLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription IA'**
+  String get transcriptAiGeneratedLabel;
+
+  /// No description provided for @recordTranscriptCompareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir la transcription'**
+  String get recordTranscriptCompareTitle;
+
+  /// No description provided for @recordTranscriptCompareHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.'**
+  String get recordTranscriptCompareHint;
+
+  /// No description provided for @recordTranscriptCompareLocal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Locale'**
+  String get recordTranscriptCompareLocal;
+
+  /// No description provided for @recordTranscriptCompareAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'IA'**
+  String get recordTranscriptCompareAi;
+
+  /// No description provided for @recordTranscriptCompareChooseLocal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir locale'**
+  String get recordTranscriptCompareChooseLocal;
+
+  /// No description provided for @recordTranscriptCompareChooseAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir IA'**
+  String get recordTranscriptCompareChooseAi;
+
   /// No description provided for @buttonClear.
   ///
   /// In fr, this message translates to:
@@ -1162,6 +1204,12 @@ abstract class AppLocalizations {
   /// **'Créer un compte'**
   String get loginCreateAccountButton;
 
+  /// No description provided for @loginRememberEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se souvenir de l\'adresse email'**
+  String get loginRememberEmail;
+
   /// No description provided for @loginContinueWithoutAccount.
   ///
   /// In fr, this message translates to:
@@ -1642,6 +1690,12 @@ abstract class AppLocalizations {
   /// **'Consultations'**
   String get settingsSectionSession;
 
+  /// No description provided for @settingsSectionAi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Intelligence artificielle'**
+  String get settingsSectionAi;
+
   /// No description provided for @settingsSectionAccount.
   ///
   /// In fr, this message translates to:
@@ -1756,11 +1810,65 @@ abstract class AppLocalizations {
   /// **'2 h'**
   String get settingsSessionLength2h;
 
+  /// No description provided for @settingsSessionLengthCustom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalisée'**
+  String get settingsSessionLengthCustom;
+
+  /// No description provided for @settingsSessionLengthHours.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heures'**
+  String get settingsSessionLengthHours;
+
+  /// No description provided for @settingsSessionLengthMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Minutes'**
+  String get settingsSessionLengthMinutes;
+
+  /// No description provided for @settingsSessionLengthHoursUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'h'**
+  String get settingsSessionLengthHoursUnit;
+
+  /// No description provided for @settingsSessionLengthMinutesUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'min'**
+  String get settingsSessionLengthMinutesUnit;
+
   /// No description provided for @settingsTemplates.
   ///
   /// In fr, this message translates to:
   /// **'Pathologies'**
   String get settingsTemplates;
+
+  /// No description provided for @settingsAiEnhance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Amélioration IA de la transcription'**
+  String get settingsAiEnhance;
+
+  /// No description provided for @settingsAiEnhanceSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.'**
+  String get settingsAiEnhanceSubtitle;
+
+  /// No description provided for @transcriptAiPendingHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode IA : la transcription sera disponible après avoir terminé la consultation.'**
+  String get transcriptAiPendingHint;
+
+  /// No description provided for @settingsAiEnhanceWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.'**
+  String get settingsAiEnhanceWarning;
 
   /// No description provided for @settingsRestartOnboarding.
   ///
@@ -1785,6 +1893,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se déconnecter'**
   String get settingsLogout;
+
+  /// No description provided for @settingsSectionAbout.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get settingsSectionAbout;
+
+  /// No description provided for @settingsAppVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version'**
+  String get settingsAppVersion;
+
+  /// No description provided for @settingsAppBuild.
+  ///
+  /// In fr, this message translates to:
+  /// **'Build'**
+  String get settingsAppBuild;
+
+  /// No description provided for @settingsAppPackage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant'**
+  String get settingsAppPackage;
+
+  /// No description provided for @euAiLabelGenerated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu généré par l\'IA'**
+  String get euAiLabelGenerated;
+
+  /// No description provided for @euAiLabelModified.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu modifié par l\'IA'**
+  String get euAiLabelModified;
 
   /// No description provided for @tutorialIntroTitle.
   ///

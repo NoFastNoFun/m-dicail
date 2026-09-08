@@ -100,6 +100,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transcriptEmptyFallback => 'Transcription vide';
 
   @override
+  String get transcriptAiGeneratedLabel => 'Transcription IA';
+
+  @override
+  String get recordTranscriptCompareTitle => 'Choisir la transcription';
+
+  @override
+  String get recordTranscriptCompareHint =>
+      'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.';
+
+  @override
+  String get recordTranscriptCompareLocal => 'Locale';
+
+  @override
+  String get recordTranscriptCompareAi => 'IA';
+
+  @override
+  String get recordTranscriptCompareChooseLocal => 'Choisir locale';
+
+  @override
+  String get recordTranscriptCompareChooseAi => 'Choisir IA';
+
+  @override
   String get buttonClear => 'Effacer';
 
   @override
@@ -560,6 +582,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginCreateAccountButton => 'Créer un compte';
 
   @override
+  String get loginRememberEmail => 'Se souvenir de l\'adresse email';
+
+  @override
   String get loginContinueWithoutAccount => 'Continuer sans compte';
 
   @override
@@ -814,6 +839,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSectionSession => 'Consultations';
 
   @override
+  String get settingsSectionAi => 'Intelligence artificielle';
+
+  @override
   String get settingsSectionAccount => 'Compte';
 
   @override
@@ -871,7 +899,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSessionLength2h => '2 h';
 
   @override
+  String get settingsSessionLengthCustom => 'Personnalisée';
+
+  @override
+  String get settingsSessionLengthHours => 'Heures';
+
+  @override
+  String get settingsSessionLengthMinutes => 'Minutes';
+
+  @override
+  String get settingsSessionLengthHoursUnit => 'h';
+
+  @override
+  String get settingsSessionLengthMinutesUnit => 'min';
+
+  @override
   String get settingsTemplates => 'Pathologies';
+
+  @override
+  String get settingsAiEnhance => 'Amélioration IA de la transcription';
+
+  @override
+  String get settingsAiEnhanceSubtitle =>
+      'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.';
+
+  @override
+  String get transcriptAiPendingHint =>
+      'Mode IA : la transcription sera disponible après avoir terminé la consultation.';
+
+  @override
+  String get settingsAiEnhanceWarning =>
+      'L\'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.';
 
   @override
   String get settingsRestartOnboarding => 'Recommencer l\'introduction';
@@ -884,6 +942,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsLogout => 'Se déconnecter';
+
+  @override
+  String get settingsSectionAbout => 'À propos';
+
+  @override
+  String get settingsAppVersion => 'Version';
+
+  @override
+  String get settingsAppBuild => 'Build';
+
+  @override
+  String get settingsAppPackage => 'Identifiant';
+
+  @override
+  String get euAiLabelGenerated => 'Contenu généré par l\'IA';
+
+  @override
+  String get euAiLabelModified => 'Contenu modifié par l\'IA';
 
   @override
   String get tutorialIntroTitle => 'Découvrir Medicail';

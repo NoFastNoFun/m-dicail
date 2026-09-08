@@ -6,21 +6,25 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
 class TranscriptViewSheet extends StatelessWidget {
   const TranscriptViewSheet({
     super.key,
     required this.transcript,
     required this.recordedAt,
+    this.isAi = false,
   });
 
   final String transcript;
   final DateTime recordedAt;
+  final bool isAi;
 
   static Future<void> show(
     BuildContext context, {
     required String transcript,
     required DateTime recordedAt,
+    bool isAi = false,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -34,6 +38,7 @@ class TranscriptViewSheet extends StatelessWidget {
       builder: (context) => TranscriptViewSheet(
         transcript: transcript,
         recordedAt: recordedAt,
+        isAi: isAi,
       ),
     );
   }
@@ -61,9 +66,21 @@ class TranscriptViewSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppText(
-                            l10n.patientDossierTranscriptTitle,
-                            variant: AppTextVariant.headline,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppText(
+                                  l10n.patientDossierTranscriptTitle,
+                                  variant: AppTextVariant.headline,
+                                ),
+                              ),
+                              if (isAi) ...[
+                                const SizedBox(width: AppSpacing.sm),
+                                const AppEuAiLabel(
+                                  kind: EuAiLabelKind.generated,
+                                ),
+                              ],
+                            ],
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           AppText(

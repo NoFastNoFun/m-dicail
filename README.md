@@ -22,6 +22,19 @@ dependance a des services IA distants.
 - Dart
 - Approche local-first
 
+## Compression des enregistrements IA
+
+Avant l'envoi au service IA, `AudioCompressionService` prepare une copie M4A
+(AAC) du WAV via les codecs natifs (`audio_decoder`). Le depot
+`ApiEnhancedTranscriptionRepository` envoie cette copie uniquement si elle est
+plus petite, avec le type MIME audio correspondant. Si la conversion echoue,
+l'envoi utilise le WAV initial. Le WAV reste disponible pour Whisper local ; la
+copie temporaire est supprimee apres l'envoi, y compris en cas d'erreur reseau.
+
+La compression reduit le volume transfere. La facturation Whisper de Groq depend
+de la duree audio, pas de la taille du fichier :
+https://console.groq.com/docs/speech-to-text
+
 ## Prerequis
 
 Avant de lancer le projet:

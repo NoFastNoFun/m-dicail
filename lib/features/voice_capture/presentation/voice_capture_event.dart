@@ -43,6 +43,15 @@ final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
   List<Object?> get props => [language, isTutorial];
 }
 
+final class VoiceCaptureTranscriptChoiceSelected extends VoiceCaptureEvent {
+  const VoiceCaptureTranscriptChoiceSelected({required this.useAi});
+
+  final bool useAi;
+
+  @override
+  List<Object?> get props => [useAi];
+}
+
 final class VoiceCaptureClearTranscript extends VoiceCaptureEvent {
   const VoiceCaptureClearTranscript();
 }

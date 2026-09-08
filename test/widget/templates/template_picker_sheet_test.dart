@@ -71,7 +71,7 @@ void main() {
 
     expect(find.text('Entorse de cheville'), findsOneWidget);
     expect(find.text('Lombalgie'), findsOneWidget);
-    expect(find.text('Pathologies par defaut'), findsOneWidget);
+    expect(find.text('Pathologies par défaut'), findsOneWidget);
 
     await tester.tap(find.text('Lombalgie'));
     await tester.pumpAndSettle();

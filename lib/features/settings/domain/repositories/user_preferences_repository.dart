@@ -19,4 +19,8 @@ abstract class UserPreferencesRepository {
   Future<AppSessionLength> readDefaultSessionLength();
 
   Future<void> writeDefaultSessionLength(AppSessionLength length);
+
+  Future<bool> readAiEnhanceEnabled();
+
+  Future<void> writeAiEnhanceEnabled(bool enabled);
 }

@@ -25,12 +25,14 @@ final class SettingsLoaded extends SettingsState {
     required this.customThemeColors,
     required this.fontScale,
     required this.defaultSessionLength,
+    this.aiEnhanceEnabled = false,
   });
 
   final AppThemeVariant themeVariant;
   final CustomThemeColors customThemeColors;
   final AppFontScale fontScale;
   final AppSessionLength defaultSessionLength;
+  final bool aiEnhanceEnabled;
 
   @override
   List<Object?> get props => [
@@ -38,6 +40,7 @@ final class SettingsLoaded extends SettingsState {
         customThemeColors,
         fontScale,
         defaultSessionLength,
+        aiEnhanceEnabled,
       ];
 
   SettingsLoaded copyWith({
@@ -45,12 +48,14 @@ final class SettingsLoaded extends SettingsState {
     CustomThemeColors? customThemeColors,
     AppFontScale? fontScale,
     AppSessionLength? defaultSessionLength,
+    bool? aiEnhanceEnabled,
   }) {
     return SettingsLoaded(
       themeVariant: themeVariant ?? this.themeVariant,
       customThemeColors: customThemeColors ?? this.customThemeColors,
       fontScale: fontScale ?? this.fontScale,
       defaultSessionLength: defaultSessionLength ?? this.defaultSessionLength,
+      aiEnhanceEnabled: aiEnhanceEnabled ?? this.aiEnhanceEnabled,
     );
   }
 }

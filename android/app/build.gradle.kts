@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -70,4 +71,12 @@ android {
 
 flutter {
     source = "../.."
+}
+
+android.applicationVariants.configureEach {
+    outputs.configureEach {
+        val output = this as BaseVariantOutputImpl
+        val abi = output.getFilter(com.android.build.OutputFile.ABI) ?: "universal"
+        output.outputFileName = "medicail-${versionName}-${abi}.apk"
+    }
 }
