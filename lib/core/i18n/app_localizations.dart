@@ -1204,6 +1204,12 @@ abstract class AppLocalizations {
   /// **'Créer un compte'**
   String get loginCreateAccountButton;
 
+  /// No description provided for @loginRememberEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se souvenir de l\'adresse email'**
+  String get loginRememberEmail;
+
   /// No description provided for @loginContinueWithoutAccount.
   ///
   /// In fr, this message translates to:
@@ -1887,6 +1893,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se déconnecter'**
   String get settingsLogout;
+
+  /// No description provided for @settingsSectionAbout.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get settingsSectionAbout;
+
+  /// No description provided for @settingsAppVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version'**
+  String get settingsAppVersion;
+
+  /// No description provided for @settingsAppBuild.
+  ///
+  /// In fr, this message translates to:
+  /// **'Build'**
+  String get settingsAppBuild;
+
+  /// No description provided for @settingsAppPackage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant'**
+  String get settingsAppPackage;
+
+  /// No description provided for @euAiLabelGenerated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu généré par l\'IA'**
+  String get euAiLabelGenerated;
+
+  /// No description provided for @euAiLabelModified.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu modifié par l\'IA'**
+  String get euAiLabelModified;
 
   /// No description provided for @tutorialIntroTitle.
   ///

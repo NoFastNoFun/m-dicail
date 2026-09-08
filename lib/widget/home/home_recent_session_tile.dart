@@ -7,6 +7,7 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/widget/app_text.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
 class HomeRecentSessionTile extends StatelessWidget {
   const HomeRecentSessionTile({super.key, required this.session});
@@ -75,11 +76,7 @@ class HomeRecentSessionTile extends StatelessWidget {
                       ),
                       if (session.transcriptIsAi) ...[
                         const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          AppLocalizations.of(context).transcriptAiGeneratedLabel,
-                          variant: AppTextVariant.caption,
-                          color: theme.colorScheme.primary,
-                        ),
+                        const AppEuAiLabel(kind: EuAiLabelKind.generated),
                       ],
                       const SizedBox(height: AppSpacing.xs),
                       AppText(

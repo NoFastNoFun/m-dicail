@@ -27,6 +27,7 @@ import 'package:medicail/core/audio/speech_to_text_service_impl.dart' as _i439;
 import 'package:medicail/core/auth/auth_session_coordinator.dart' as _i712;
 import 'package:medicail/core/auth/passkey_service.dart' as _i332;
 import 'package:medicail/core/config/app_config.dart' as _i155;
+import 'package:medicail/core/config/app_info.dart' as _i305;
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart'
     as _i367;
 import 'package:medicail/core/di/register_module.dart' as _i91;
@@ -144,17 +145,23 @@ import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart'
     as _i306;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
+import 'package:package_info_plus/package_info_plus.dart' as _i655;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final appInfoModule = _$AppInfoModule();
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i332.PasskeyService>(() => _i332.PasskeyService());
     gh.lazySingleton<_i155.AppConfig>(() => _i155.AppConfig());
+    await gh.lazySingletonAsync<_i655.PackageInfo>(
+      () => appInfoModule.packageInfo(),
+      preResolve: true,
+    );
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
     );
@@ -259,6 +266,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i460.UserPreferencesRepository>(),
         gh<_i713.SettingsNotifier>(),
       ),
+    );
+    gh.lazySingleton<_i305.AppInfo>(
+      () => _i305.AppInfo(gh<_i655.PackageInfo>()),
     );
     gh.lazySingleton<_i367.DesktopDebugBackendUrlStore>(
       () => _i367.DesktopDebugBackendUrlStore(
@@ -422,5 +432,7 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$AppInfoModule extends _i305.AppInfoModule {}
 
 class _$RegisterModule extends _i91.RegisterModule {}

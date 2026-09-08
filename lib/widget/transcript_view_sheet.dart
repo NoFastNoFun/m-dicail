@@ -6,6 +6,7 @@ import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
+import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
 class TranscriptViewSheet extends StatelessWidget {
   const TranscriptViewSheet({
@@ -46,7 +47,6 @@ class TranscriptViewSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = l10n.localeName;
-    final theme = Theme.of(context);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -76,10 +76,8 @@ class TranscriptViewSheet extends StatelessWidget {
                               ),
                               if (isAi) ...[
                                 const SizedBox(width: AppSpacing.sm),
-                                Icon(
-                                  Icons.auto_awesome,
-                                  size: 20,
-                                  color: theme.colorScheme.primary,
+                                const AppEuAiLabel(
+                                  kind: EuAiLabelKind.generated,
                                 ),
                               ],
                             ],
@@ -91,14 +89,6 @@ class TranscriptViewSheet extends StatelessWidget {
                             variant: AppTextVariant.caption,
                             color: AppColors.textSecondary,
                           ),
-                          if (isAi) ...[
-                            const SizedBox(height: AppSpacing.xs),
-                            AppText(
-                              l10n.transcriptAiGeneratedLabel,
-                              variant: AppTextVariant.caption,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ],
                         ],
                       ),
                     ),
