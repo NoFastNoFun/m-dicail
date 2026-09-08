@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/storage/secure_storage_safe.dart';
 
 abstract class AppSessionStorage {
   Future<bool> hasCompletedOnboarding();
@@ -22,18 +23,25 @@ class SecureAppSessionStorage implements AppSessionStorage {
 
   @override
   Future<bool> hasCompletedOnboarding() async {
-    final value = await _storage.read(key: _onboardingKey);
+    final value = await SecureStorageSafe.read(_storage, key: _onboardingKey);
     return value == 'true';
   }
 
   @override
   Future<void> markOnboardingCompleted() async {
-    await _storage.write(key: _onboardingKey, value: 'true');
+    await SecureStorageSafe.write(
+      _storage,
+      key: _onboardingKey,
+      value: 'true',
+    );
   }
 
   @override
   Future<String?> readRememberedEmail() async {
-    final value = await _storage.read(key: _rememberedEmailKey);
+    final value = await SecureStorageSafe.read(
+      _storage,
+      key: _rememberedEmailKey,
+    );
     if (value == null || value.trim().isEmpty) {
       return null;
     }
@@ -43,10 +51,10 @@ class SecureAppSessionStorage implements AppSessionStorage {
   @override
   Future<void> writeRememberedEmail(String? email) async {
     final trimmed = email?.trim() ?? '';
-    if (trimmed.isEmpty) {
-      await _storage.delete(key: _rememberedEmailKey);
-      return;
-    }
-    await _storage.write(key: _rememberedEmailKey, value: trimmed);
+    await SecureStorageSafe.write(
+      _storage,
+      key: _rememberedEmailKey,
+      value: trimmed.isEmpty ? null : trimmed,
+    );
   }
 }

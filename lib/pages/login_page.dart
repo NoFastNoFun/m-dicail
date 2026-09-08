@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,14 +44,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _restoreRememberedEmail() async {
-    final email = await _sessionStorage.readRememberedEmail();
-    if (!mounted || email == null) {
-      return;
+    try {
+      final email = await _sessionStorage.readRememberedEmail();
+      if (!mounted || email == null) {
+        return;
+      }
+      setState(() {
+        _emailController.text = email;
+        _rememberEmail = true;
+      });
+    } catch (_) {
+      // Ignore restore failures; login must still work.
     }
-    setState(() {
-      _emailController.text = email;
-      _rememberEmail = true;
-    });
   }
 
   @override
@@ -70,27 +76,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _persistRememberedEmail() async {
-    if (_rememberEmail) {
-      await _sessionStorage.writeRememberedEmail(
-        _emailController.text.trim(),
-      );
-    } else {
-      await _sessionStorage.writeRememberedEmail(null);
+    try {
+      if (_rememberEmail) {
+        await _sessionStorage.writeRememberedEmail(
+          _emailController.text.trim(),
+        );
+      } else {
+        await _sessionStorage.writeRememberedEmail(null);
+      }
+    } catch (_) {
+      // Remember-email is best-effort; never block sign-in.
     }
   }
 
-  Future<void> _submit() async {
+  void _submit() {
     if (_enableMockAdmin || (_formKey.currentState?.validate() ?? false)) {
-      await _persistRememberedEmail();
-      if (!mounted) {
-        return;
-      }
       context.read<AuthBloc>().add(
         AuthLoginRequested(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         ),
       );
+      unawaited(_persistRememberedEmail());
     }
   }
 
@@ -164,6 +171,15 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
+                            AppCheckbox(
+                              label: l10n.loginRememberEmail,
+                              value: _rememberEmail,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberEmail = value ?? false;
+                                });
+                              },
+                            ),
                             const SizedBox(height: AppSpacing.md),
                             AppInput(
                               variant: AppInputVariant.password,
@@ -187,15 +203,6 @@ class _LoginPageState extends State<LoginPage> {
                                   color: context.colorScheme.primary,
                                 ),
                               ),
-                            ),
-                            AppCheckbox(
-                              label: l10n.loginRememberEmail,
-                              value: _rememberEmail,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberEmail = value ?? false;
-                                });
-                              },
                             ),
                             const SizedBox(height: AppSpacing.xl),
                             BlocBuilder<AuthBloc, AuthState>(

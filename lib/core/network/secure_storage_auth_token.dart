@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
+import 'package:medicail/core/storage/secure_storage_safe.dart';
 
 @LazySingleton(as: AuthTokenStorage)
 class SecureStorageAuthToken implements AuthTokenStorage {
@@ -12,15 +13,16 @@ class SecureStorageAuthToken implements AuthTokenStorage {
   final FlutterSecureStorage _storage;
 
   @override
-  Future<String?> readToken() => _storage.read(key: _accessTokenKey);
+  Future<String?> readToken() =>
+      SecureStorageSafe.read(_storage, key: _accessTokenKey);
 
   @override
   Future<String?> readRefreshToken() =>
-      _storage.read(key: _refreshTokenKey);
+      SecureStorageSafe.read(_storage, key: _refreshTokenKey);
 
   @override
   Future<void> writeToken(String token) =>
-      _storage.write(key: _accessTokenKey, value: token);
+      SecureStorageSafe.write(_storage, key: _accessTokenKey, value: token);
 
   @override
   Future<void> writeTokens({
@@ -28,16 +30,24 @@ class SecureStorageAuthToken implements AuthTokenStorage {
     required String refreshToken,
   }) async {
     await Future.wait([
-      _storage.write(key: _accessTokenKey, value: accessToken),
-      _storage.write(key: _refreshTokenKey, value: refreshToken),
+      SecureStorageSafe.write(
+        _storage,
+        key: _accessTokenKey,
+        value: accessToken,
+      ),
+      SecureStorageSafe.write(
+        _storage,
+        key: _refreshTokenKey,
+        value: refreshToken,
+      ),
     ]);
   }
 
   @override
   Future<void> clearToken() async {
     await Future.wait([
-      _storage.delete(key: _accessTokenKey),
-      _storage.delete(key: _refreshTokenKey),
+      SecureStorageSafe.delete(_storage, key: _accessTokenKey),
+      SecureStorageSafe.delete(_storage, key: _refreshTokenKey),
     ]);
   }
 }
