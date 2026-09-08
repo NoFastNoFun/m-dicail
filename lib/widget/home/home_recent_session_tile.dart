@@ -60,8 +60,9 @@ class HomeRecentSessionTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        session.templateName ??
-                            AppLocalizations.of(context).recordTitle,
+                        session.pathologyNames.isNotEmpty
+                            ? session.pathologyNames.join(', ')
+                            : AppLocalizations.of(context).recordTitle,
                         variant: AppTextVariant.label,
                       ),
                       const SizedBox(height: AppSpacing.xs),

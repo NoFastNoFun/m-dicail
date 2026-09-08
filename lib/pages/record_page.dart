@@ -33,8 +33,11 @@ import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
+import 'package:medicail/widget/templates/pathology_attach_prompt_sheet.dart';
+import 'package:medicail/widget/templates/pathology_multi_suggestion_sheet.dart';
 import 'package:medicail/widget/templates/pathology_picker_sheet.dart';
 import 'package:medicail/widget/templates/pathology_suggestion_sheet.dart';
+import 'package:medicail/features/recording/domain/entities/session_pathology.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
@@ -316,12 +319,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return;
     }
 
-    final hasPathology =
-        session.templateId != null &&
-        session.templateId!.isNotEmpty &&
-        session.templateName != null &&
-        session.templateName!.isNotEmpty;
-    if (hasPathology) {
+    if (session.hasPathology) {
       return;
     }
 
@@ -330,32 +328,47 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return;
     }
 
-    final suggestion = PathologySuggestionMatcher.suggest(
+    final suggestions = PathologySuggestionMatcher.suggestAll(
       transcript: state.transcript,
       pathologies: pathologies,
     );
-    if (suggestion == null) {
+
+    List<Pathology>? selected;
+    if (suggestions.length == 1) {
+      final one = await PathologySuggestionSheet.show(
+        context,
+        suggestion: suggestions.first,
+        pathologies: pathologies,
+      );
+      selected = one == null ? null : [one];
+    } else if (suggestions.length > 1) {
+      selected = await PathologyMultiSuggestionSheet.show(
+        context,
+        suggestions: suggestions,
+        pathologies: pathologies,
+      );
+    } else {
+      final one = await PathologyAttachPromptSheet.show(
+        context,
+        pathologies: pathologies,
+      );
+      selected = one == null ? null : [one];
+    }
+
+    if (!mounted || selected == null || selected.isEmpty) {
       return;
     }
 
-    final selected = await PathologySuggestionSheet.show(
-      context,
-      suggestion: suggestion,
-      pathologies: pathologies,
-    );
-    if (!mounted || selected == null) {
-      return;
-    }
-
-    await _applyPathologyToSession(session, selected);
+    await _applyPathologiesToSession(session, selected);
   }
 
-  Future<void> _applyPathologyToSession(
+  Future<void> _applyPathologiesToSession(
     RecordingSession session,
-    Pathology pathology,
+    List<Pathology> selected,
   ) async {
+    final primary = selected.first;
     final resolver = getIt<PathologyTemplateResolver>();
-    final template = await resolver.resolveTemplate(pathology);
+    final template = await resolver.resolveTemplate(primary);
     final transcript = session.transcript;
     final soapNote = session.soapNote ?? const SoapNote();
     final updatedSoap = template != null
@@ -369,10 +382,30 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
             transcript.isNotEmpty ? transcript : soapNote.subjective,
           );
 
+    final sessionPathologies = <SessionPathology>[];
+    for (var i = 0; i < selected.length; i++) {
+      final pathology = selected[i];
+      String? pathologyTemplateId;
+      if (i == 0) {
+        pathologyTemplateId = template?.id ?? pathology.templateId;
+      } else {
+        final resolved = await resolver.resolveTemplate(pathology);
+        pathologyTemplateId = resolved?.id ?? pathology.templateId;
+      }
+      sessionPathologies.add(
+        SessionPathology(
+          id: pathology.id,
+          name: pathology.name,
+          templateId: pathologyTemplateId,
+        ),
+      );
+    }
+
     await getIt<RecordingSessionRepository>().save(
       session.copyWith(
-        templateId: template?.id ?? pathology.id,
-        templateName: pathology.name,
+        templateId: template?.id ?? primary.id,
+        templateName: primary.name,
+        pathologies: sessionPathologies,
         soapNote: updatedSoap,
       ),
     );

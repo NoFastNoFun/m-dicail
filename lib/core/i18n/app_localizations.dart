@@ -2242,6 +2242,42 @@ abstract class AppLocalizations {
   /// **'Ignorer'**
   String get pathologySuggestionSkip;
 
+  /// No description provided for @pathologyMultiSuggestionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pathologies suggérées'**
+  String get pathologyMultiSuggestionTitle;
+
+  /// No description provided for @pathologyMultiSuggestionDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'D\'après la transcription, plusieurs pathologies semblent correspondre. Cochez celles à associer à l\'enregistrement.'**
+  String get pathologyMultiSuggestionDesc;
+
+  /// No description provided for @pathologyMultiSuggestionApply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer les pathologies sélectionnées'**
+  String get pathologyMultiSuggestionApply;
+
+  /// No description provided for @pathologyNoneSuggestionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune pathologie détectée'**
+  String get pathologyNoneSuggestionTitle;
+
+  /// No description provided for @pathologyNoneSuggestionDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune pathologie n\'a été détectée dans la transcription. Souhaitez-vous en associer une manuellement ?'**
+  String get pathologyNoneSuggestionDesc;
+
+  /// No description provided for @pathologyNoneSuggestionAttach.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer une pathologie'**
+  String get pathologyNoneSuggestionAttach;
+
   /// No description provided for @pathologyDomainLabel.
   ///
   /// In fr, this message translates to:

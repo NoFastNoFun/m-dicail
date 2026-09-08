@@ -1,4 +1,5 @@
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
+import 'package:medicail/features/recording/domain/entities/session_pathology.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 
 final class RecordingSessionModel extends RecordingSession {
@@ -12,6 +13,7 @@ final class RecordingSessionModel extends RecordingSession {
     super.soapNote,
     super.templateId,
     super.templateName,
+    super.pathologies,
   });
 
   factory RecordingSessionModel.fromEntity(RecordingSession session) {
@@ -25,23 +27,34 @@ final class RecordingSessionModel extends RecordingSession {
       status: session.status,
       templateId: session.templateId,
       templateName: session.templateName,
+      pathologies: session.pathologies,
     );
   }
 
   factory RecordingSessionModel.fromJson(Map<String, dynamic> json) {
+    final pathologies = _parsePathologies(json['pathologies']);
+    final templateId =
+        json['template_id'] as String? ?? json['templateId'] as String?;
+    final templateName =
+        json['template_name'] as String? ?? json['templateName'] as String?;
+
     return RecordingSessionModel(
       id: json['id'] as String,
       patientId: json['patient_id'] as String? ?? json['patientId'] as String?,
-      startedAt: DateTime.parse(json['started_at'] as String? ?? json['startedAt'] as String),
+      startedAt: DateTime.parse(
+        json['started_at'] as String? ?? json['startedAt'] as String,
+      ),
       endedAt: _parseNullableDate(json['ended_at'] ?? json['endedAt']),
       transcript: json['transcript'] as String? ?? '',
       soapNote: (json['soap_note'] != null || json['soapNote'] != null)
-          ? SoapNote.fromJson((json['soap_note'] ?? json['soapNote']) as Map<String, dynamic>)
+          ? SoapNote.fromJson(
+              (json['soap_note'] ?? json['soapNote']) as Map<String, dynamic>,
+            )
           : null,
       status: _parseStatus(json['status'] as String?),
-      templateId: json['template_id'] as String? ?? json['templateId'] as String?,
-      templateName:
-          json['template_name'] as String? ?? json['templateName'] as String?,
+      templateId: templateId,
+      templateName: templateName,
+      pathologies: pathologies,
     );
   }
 
@@ -56,7 +69,22 @@ final class RecordingSessionModel extends RecordingSession {
       'status': status.name,
       'template_id': templateId,
       'template_name': templateName,
+      'pathologies': pathologies.map((p) => p.toJson()).toList(),
     };
+  }
+
+  static List<SessionPathology> _parsePathologies(Object? value) {
+    if (value is! List) {
+      return const [];
+    }
+    return value
+        .whereType<Map>()
+        .map(
+          (item) => SessionPathology.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+        .toList();
   }
 
   static DateTime? _parseNullableDate(Object? value) {

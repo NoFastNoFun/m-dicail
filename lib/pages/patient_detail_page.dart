@@ -254,20 +254,24 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
     final emptyLabel = _selectedTab == _DossierTab.oral
         ? l10n.patientDossierOralEmpty
         : l10n.patientDossierWrittenEmpty;
-    final latestPathologyTag = _latestSessionPathologyTag(widget.sessions);
+    final latestPathologyTags = _latestSessionPathologyTags(widget.sessions);
 
     return ListView(
       children: [
         AppText(patient.displayName, variant: AppTextVariant.headline),
-        if (latestPathologyTag != null) ...[
+        if (latestPathologyTags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: AppPathologyTag(
-              label: latestPathologyTag,
-              compact: true,
-              icon: Icons.history,
-            ),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              for (final tag in latestPathologyTags)
+                AppPathologyTag(
+                  label: tag,
+                  compact: true,
+                  icon: Icons.history,
+                ),
+            ],
           ),
         ],
         const SizedBox(height: AppSpacing.sm),
@@ -496,12 +500,18 @@ class _OralSessionListItem extends StatelessWidget {
                           variant: AppTextVariant.caption,
                           color: context.secondaryTextColor,
                         ),
-                        if (session.templateName != null &&
-                            session.templateName!.isNotEmpty) ...[
+                        if (session.pathologyNames.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.sm),
-                          AppPathologyTag(
-                            label: session.templateName!,
-                            compact: true,
+                          Wrap(
+                            spacing: AppSpacing.xs,
+                            runSpacing: AppSpacing.xs,
+                            children: [
+                              for (final name in session.pathologyNames)
+                                AppPathologyTag(
+                                  label: name,
+                                  compact: true,
+                                ),
+                            ],
                           ),
                         ],
                       ],
@@ -597,12 +607,18 @@ class _WrittenSessionListItem extends StatelessWidget {
                           variant: AppTextVariant.caption,
                           color: context.secondaryTextColor,
                         ),
-                        if (session.templateName != null &&
-                            session.templateName!.isNotEmpty) ...[
+                        if (session.pathologyNames.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.sm),
-                          AppPathologyTag(
-                            label: session.templateName!,
-                            compact: true,
+                          Wrap(
+                            spacing: AppSpacing.xs,
+                            runSpacing: AppSpacing.xs,
+                            children: [
+                              for (final name in session.pathologyNames)
+                                AppPathologyTag(
+                                  label: name,
+                                  compact: true,
+                                ),
+                            ],
                           ),
                         ],
                       ],
@@ -659,11 +675,10 @@ String _soapPreview(SoapNote? note) {
   return '';
 }
 
-String? _latestSessionPathologyTag(List<RecordingSession> sessions) {
+List<String> _latestSessionPathologyTags(List<RecordingSession> sessions) {
   RecordingSession? latestWithPathology;
   for (final session in sessions) {
-    final name = session.templateName?.trim();
-    if (name == null || name.isEmpty) {
+    if (!session.hasPathology) {
       continue;
     }
     if (latestWithPathology == null ||
@@ -671,7 +686,7 @@ String? _latestSessionPathologyTag(List<RecordingSession> sessions) {
       latestWithPathology = session;
     }
   }
-  return latestWithPathology?.templateName?.trim();
+  return latestWithPathology?.pathologyNames ?? const [];
 }
 
 class _DossierTabSelector extends StatelessWidget {

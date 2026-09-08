@@ -1137,6 +1137,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pathologySuggestionSkip => 'Ignorer';
 
   @override
+  String get pathologyMultiSuggestionTitle => 'Pathologies suggérées';
+
+  @override
+  String get pathologyMultiSuggestionDesc =>
+      'D\'après la transcription, plusieurs pathologies semblent correspondre. Cochez celles à associer à l\'enregistrement.';
+
+  @override
+  String get pathologyMultiSuggestionApply =>
+      'Associer les pathologies sélectionnées';
+
+  @override
+  String get pathologyNoneSuggestionTitle => 'Aucune pathologie détectée';
+
+  @override
+  String get pathologyNoneSuggestionDesc =>
+      'Aucune pathologie n\'a été détectée dans la transcription. Souhaitez-vous en associer une manuellement ?';
+
+  @override
+  String get pathologyNoneSuggestionAttach => 'Associer une pathologie';
+
+  @override
   String get pathologyDomainLabel => 'Domaine clinique';
 
   @override

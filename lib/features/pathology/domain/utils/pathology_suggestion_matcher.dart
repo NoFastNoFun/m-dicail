@@ -29,22 +29,35 @@ abstract final class PathologySuggestionMatcher {
     required List<Pathology> pathologies,
     int minScore = 2,
   }) {
+    final all = suggestAll(
+      transcript: transcript,
+      pathologies: pathologies,
+      minScore: minScore,
+    );
+    return all.isEmpty ? null : all.first;
+  }
+
+  static List<PathologySuggestion> suggestAll({
+    required String transcript,
+    required List<Pathology> pathologies,
+    int minScore = 2,
+  }) {
     final normalized = _normalize(transcript);
     if (normalized.isEmpty || pathologies.isEmpty) {
-      return null;
+      return const [];
     }
 
-    PathologySuggestion? best;
+    final matches = <PathologySuggestion>[];
     for (final pathology in pathologies) {
       final score = _scorePathology(normalized, pathology);
       if (score < minScore) {
         continue;
       }
-      if (best == null || score > best.score) {
-        best = PathologySuggestion(pathology: pathology, score: score);
-      }
+      matches.add(PathologySuggestion(pathology: pathology, score: score));
     }
-    return best;
+
+    matches.sort((a, b) => b.score.compareTo(a.score));
+    return matches;
   }
 
   static int _scorePathology(String normalizedTranscript, Pathology pathology) {
