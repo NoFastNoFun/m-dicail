@@ -488,5 +488,2007 @@
         "order": 5
       }
     ]
+  },
+  {
+    "id": "builtin_rotator_cuff",
+    "pathologyKey": "rotator_cuff",
+    "name": "Lesion de la coiffe des rotateurs",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Mecanisme (traumatique / atraumatique degeneratif) :\n- Douleur nocturne / EVA :\n- Limitation fonctionnelle (gestes au-dessus de la tete) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes actives et passives (goniometre) :\n- Force musculaire (dynamometre) :\n- Tests speciaux (Jobe, Hawkins, Neer) :\n- Dyskinesie scapulaire associee :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Tendon(s) suspecte(s) atteint(s) :\n- Facteurs extrinseques / intrinseques identifies :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Phase du protocole de reeducation (RCP) :\n- Correction des facteurs modifiables :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_hip_osteoarthritis",
+    "pathologyKey": "hip_osteoarthritis",
+    "name": "Coxarthrose",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / localisation de la douleur :\n- EVA repos / marche :\n- Retentissement fonctionnel (marche, escaliers, chaussage) :\n- Facteurs de risque (surpoids, activite) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes articulaires (flexion, rotation interne) :\n- Tests fonctionnels (Timed Up and Go, 30s chair stand) :\n- Equilibre (appui unipodal chronometre, 4-square step test) :\n- Force musculaire (moyens fessiers, quadriceps) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade fonctionnel / limitation d'activite :\n- Risque de chute :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Renforcement individualise (fessiers, quadriceps) et mobilite :\n- Reeducation de la marche et de l'equilibre :\n- Education (gestion du poids, activite physique) :\n- Suivi et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_plantar_fasciitis",
+    "pathologyKey": "plantar_fasciitis",
+    "name": "Fasciite plantaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur au talon face plantaire :\n- Douleur aux premiers pas du matin :\n- Facteurs de risque (IMC, station debout, course) :\n- EVA repos / marche :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitude de dorsiflexion de cheville :\n- Palpation de l'insertion du fascia plantaire :\n- Marche et appui :\n- Force des flechisseurs des orteils / eversion-inversion :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Categorie ICF (douleur talon avec limitation de mobilite) :\n- Facteurs limitants identifies :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Etirements (gastrocnemien, soleaire, fascia plantaire) :\n- Renforcement (flechisseurs des orteils, triceps sural) :\n- Orthese / education (chaussage, charge) :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_achilles_tendinopathy",
+    "pathologyKey": "achilles_tendinopathy",
+    "name": "Tendinopathie achilleenne",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur au tendon d'Achille :\n- Douleur au reveil / a l'echauffement / apres effort :\n- Type d'activite (course, sauts) et volume d'entrainement :\n- Score VISA-A si disponible :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Palpation et epaississement tendineux (portion mediane) :\n- Amplitude de dorsiflexion de cheville :\n- Mise en charge unipodale / saut :\n- Force du triceps sural :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade (reactif / degeneratif) et retentissement fonctionnel :\n- Facteurs de charge/entrainement a corriger :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Programme d'exercices en charge (excentrique / lourd-lent) :\n- Gestion de la charge d'entrainement :\n- Education et suivi (VISA-A) :\n- Reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_shoulder_impingement",
+    "pathologyKey": "shoulder_impingement",
+    "name": "Conflit sous-acromial",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur a l'elevation du bras :\n- Douleur nocturne / EVA :\n- Gestes declenchants (activites au-dessus de la tete) :\n- Retentissement fonctionnel et professionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitude d'abduction et de rotation externe :\n- Force en rotation externe et abduction :\n- Tests cliniques groupes (impingement) :\n- Dyskinesie scapulaire :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Structure(s) suspectee(s) (supra-epineux, bourse) :\n- Facteurs contribuants identifies :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercice therapeutique en premiere intention :\n- Education du patient (hygiene de vie, ergonomie) :\n- Reevaluation et adaptation de charge :\n- Orientation si echec (infiltration, imagerie) :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_fibromyalgia",
+    "pathologyKey": "fibromyalgia",
+    "name": "Fibromyalgie",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur diffuse (duree > 3 mois) :\n- Fatigue, troubles du sommeil :\n- EVA douleur / echelle de severite :\n- Facteurs aggravants (stress, activite) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Palpation des zones douloureuses :\n- Capacite physique (endurance, marche) :\n- Niveau d'activite physique habituel :\n- Signes de sensibilisation centrale :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Retentissement global (douleur, fatigue, sommeil, humeur) :\n- Niveau de tolerance a l'effort :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Programme d'exercice personnalise (aerobie faible intensite puis progression) :\n- Renforcement musculaire progressif :\n- Education a la gestion de la douleur et du stress :\n- Suivi et adaptation de charge :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_herniated_disc",
+    "pathologyKey": "herniated_disc",
+    "name": "Hernie discale",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / lombalgie avec irradiation :\n- Trajet de la douleur (dermatome) :\n- Paresthesies / engourdissement :\n- Facteurs aggravants-soulageants (position, toux) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test de Lasegue / SLR :\n- Testing myotomal (force segmentaire) :\n- Reflexes osteotendineux :\n- Sensibilite dermatomale :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau radiculaire suspecte :\n- Signes de gravite (syndrome de la queue de cheval) a exclure :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement conservateur (education, exercice, mobilisation) :\n- Gestion de la douleur et de l'activite :\n- Suivi et criteres d'orientation (infiltration, avis chirurgical) :\n- Reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_scapular_dyskinesia",
+    "pathologyKey": "scapular_dyskinesia",
+    "name": "Dyskinesie scapulaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur d'epaule associee :\n- Sport ou activite avec gestes au-dessus de la tete :\n- Sensation d'instabilite ou de fatigabilite :\n- EVA et retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Observation dynamique de l'omoplate (elevation/abaissement du bras) :\n- Test yes/no de dyskinesie scapulaire :\n- Force des stabilisateurs scapulaires (trapeze, dentele anterieur) :\n- Souplesse (petit pectoral, grand dorsal) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type de dyskinesie observee :\n- Pathologie associee (conflit, instabilite) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation du controle scapulaire et renforcement des stabilisateurs :\n- Etirements des structures raccourcies :\n- Reintegration au geste sportif/professionnel :\n- Reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_tmj_disorder",
+    "pathologyKey": "tmj_disorder",
+    "name": "Trouble temporo-mandibulaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur mandibulaire ou temporale :\n- Bruits articulaires (clic, crepitation) :\n- Limitation d'ouverture buccale / blocage :\n- Facteurs associes (bruxisme, stress, cervicalgie) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitude d'ouverture buccale (mesure en mm) :\n- Palpation musculaire (masseter, temporal) et articulaire :\n- Trajectoire d'ouverture/fermeture :\n- Examen cervical associe :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type de trouble (musculaire, articulaire, mixte) :\n- Retentissement fonctionnel (mastication, parole) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercices d'ouverture buccale auto-administres :\n- Therapie manuelle (mobilisation articulaire, tissus mous) :\n- Education (gestion du bruxisme, posture) :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_hip_fracture",
+    "pathologyKey": "hip_fracture",
+    "name": "Fracture de hanche",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Type de fracture et chirurgie realisee :\n- Douleur (EVA) et statut de mise en charge autorisee :\n- Niveau fonctionnel anterieur (marche, aides techniques) :\n- Contexte medical (comorbidites, orientation orthogeriatrique) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Transferts et verticalisation :\n- Perimetre de marche et aide technique utilisee :\n- Force musculaire (membre inferieur) :\n- Equilibre :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau de mise en charge et de mobilite actuel :\n- Risque de chute et de perte d'autonomie :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Mobilisation precoce (transferts, verticalisation, marche) :\n- Renforcement progressif haute intensite et equilibre :\n- Programme quotidien et education (domicile) :\n- Suivi multidisciplinaire (orthogeriatrie) :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_meniscus_tear",
+    "pathologyKey": "meniscus_tear",
+    "name": "Lesion meniscale",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / mecanisme (torsion, pivot) :\n- Localisation de la douleur (interligne articulaire) :\n- Blocage / derobement du genou :\n- EVA et retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Epanchement articulaire :\n- Amplitudes actives et passives :\n- Palpation de l'interligne articulaire :\n- Marche et accroupissement :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Suspicion menisque interne/externe :\n- Association avec autre lesion (LCA) a exclure :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Traitement conservateur (renforcement, controle de l'oedeme) :\n- Reprise progressive des activites :\n- Suivi et criteres d'orientation chirurgicale :\n- Reevaluation :",
+        "order": 3
+      },
+      {
+        "id": "meniscal_tests",
+        "kind": "custom",
+        "title": "Tests meniscaux",
+        "prompt": "- McMurray :\n- Thessaly :\n- Sensibilite de l'interligne articulaire :",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "builtin_carpal_tunnel",
+    "pathologyKey": "carpal_tunnel",
+    "name": "Syndrome du canal carpien",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / paresthesies (territoire median) :\n- Reveil nocturne par les symptomes :\n- Perte de force / de dexterite (prehension) :\n- Facteurs professionnels / gestes repetitifs :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test de Phalen :\n- Signe de Tinel :\n- Sensibilite dans le territoire du nerf median :\n- Force de prehension et pince pouce-index :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Severite (intermittente/permanente, atrophie thenarienne) :\n- Necessite d'un EMG / avis medical :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Attelle de repos nocturne :\n- Glissements neuro-tendineux et mobilisation :\n- Ergonomie du poste de travail :\n- Suivi et orientation si echec :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_anterior_knee_pain",
+    "pathologyKey": "anterior_knee_pain",
+    "name": "Syndrome femoro-patellaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / douleur retro- ou peri-patellaire :\n- Facteurs declenchants (escaliers, accroupissement, position assise prolongee) :\n- Evolution (insidieuse, activite sportive) :\n- EVA et retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Alignement du membre inferieur (dynamique, squat) :\n- Force du quadriceps et des abducteurs/rotateurs de hanche :\n- Palpation retro-patellaire et testing rotulien :\n- Souplesse (quadriceps, ischio-jambiers, bandelette ilio-tibiale) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Facteurs contribuants identifies (hanche, genou, pied) :\n- Retentissement sur les activites sportives/quotidiennes :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Renforcement combine hanche et genou :\n- Orthese plantaire si indique :\n- Education et modification d'activite :\n- Suivi et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_stroke_rehab",
+    "pathologyKey": "stroke_rehab",
+    "name": "Reeducation post-AVC",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Date et type d'AVC (ischemique / hemorragique) :\n- Deficits ressentis (moteur, sensitif, langage) :\n- Objectifs fonctionnels du patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Bilan moteur (force, tonus, spasticite)\n- Amplitudes articulaires et sensibilite\n- Equilibre assis / debout et transferts\n- Marche et endurance",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau de deficience et limitation fonctionnelle :\n- Risque de chute :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement a la tache (transferts, marche, prehension) :\n- Renforcement et exercices actifs :\n- Suivi et reevaluation :",
+        "order": 3
+      },
+      {
+        "id": "upper_limb",
+        "kind": "custom",
+        "title": "Membre superieur",
+        "prompt": "- Prevention douleur d'epaule :\n- Reduction oedeme de la main :\n- Therapie par contrainte induite / imagerie motrice :",
+        "order": 4
+      },
+      {
+        "id": "gait_training",
+        "kind": "custom",
+        "title": "Mobilite / Marche",
+        "prompt": "- Entrainement sit-to-stand :\n- Marche sur tapis roulant :\n- Stimulation electrique fonctionnelle :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_parkinson",
+    "pathologyKey": "parkinson",
+    "name": "Maladie de Parkinson",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Anciennete et stade de la maladie :\n- Symptomes moteurs (tremblement, rigidite, bradykinesie) :\n- Chutes recentes et peur de chuter :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Score UPDRS (partie motrice)\n- Timed Up and Go\n- Test de marche 10 metres\n- Berg Balance Scale / Mini-BESTest",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade de severite :\n- Risque de chute :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Frequence 2-3 seances / semaine, 30-60 min :\n- Exercices d'equilibre et de marche :\n- Renforcement et mobilite :\n- Reevaluation a 2-12 semaines :",
+        "order": 3
+      },
+      {
+        "id": "motor_scale",
+        "kind": "custom",
+        "title": "Echelle UPDRS",
+        "prompt": "- UPDRS partie III (motrice) :\n- Freezing of Gait Questionnaire :",
+        "order": 4
+      },
+      {
+        "id": "balance_gait",
+        "kind": "custom",
+        "title": "Equilibre / Marche",
+        "prompt": "- Berg Balance Scale :\n- Mini-BESTest :\n- Timed Up and Go :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_multiple_sclerosis",
+    "pathologyKey": "multiple_sclerosis",
+    "name": "Sclerose en plaques",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Type de SEP (poussee-remission, progressive) :\n- Symptomes principaux (fatigue, spasticite, equilibre) :\n- Objectifs fonctionnels du patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Force musculaire et tonus (spasticite)\n- Equilibre statique et dynamique (Berg Balance Scale)\n- Marche (10 metres, 6 minutes)\n- Coordination et sensibilite",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau de limitation fonctionnelle :\n- Facteurs aggravants (chaleur, fatigue) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement aerobie modere (20-40 min, 3x / semaine) :\n- Renforcement (2-3 series de 8-12 repetitions, 2x / semaine) :\n- Etirements et exercices d'equilibre :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "symptom_management",
+        "kind": "custom",
+        "title": "Gestion des symptomes",
+        "prompt": "- Fatigue : conservation d'energie, refroidissement\n- Spasticite : etirements, hydrotherapie\n- Troubles cognitifs : double tache",
+        "order": 4
+      },
+      {
+        "id": "multidisciplinary",
+        "kind": "custom",
+        "title": "Suivi multidisciplinaire",
+        "prompt": "- Coordination kinesitherapeute / ergotherapeute / neurologue :\n- Teleconsultation / exercices a domicile :\n- Reevaluation des objectifs :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_spinal_cord_injury",
+    "pathologyKey": "spinal_cord_injury",
+    "name": "Lesion medullaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Niveau et date de la lesion :\n- Caractere complet / incomplet :\n- Objectifs fonctionnels du patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Testing musculaire manuel (MMT)\n- Amplitudes articulaires (methode zero neutre)\n- Spasticite (echelle de Penn)\n- Equilibre et marche (Berg Balance Scale, Mini-BESTest)",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau neurologique (echelle ASIA) :\n- Limitation fonctionnelle (activite / participation) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Mise en charge et verticalisation :\n- Entrainement locomoteur (tapis avec soutien de poids, robotise) :\n- Stimulation electrique fonctionnelle :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "functional_tests",
+        "kind": "custom",
+        "title": "Tests fonctionnels",
+        "prompt": "- Test de marche 6 minutes :\n- Test de marche 10 metres :\n- Test de marche 2 minutes :",
+        "order": 4
+      },
+      {
+        "id": "specific_interventions",
+        "kind": "custom",
+        "title": "Interventions specifiques",
+        "prompt": "- Aquatherapie :\n- Entrainement dual-task :\n- Therapie de mouvement individualisee selon le pattern de paralysie :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_peripheral_neuropathy",
+    "pathologyKey": "peripheral_neuropathy",
+    "name": "Neuropathie peripherique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Etiologie suspectee (diabete, chimiotherapie, entrapment, hereditaire) :\n- Symptomes sensitifs (paresthesies, douleur neuropathique) :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Examen sensitivo-moteur (proprioception, sensibilite a la douleur)\n- Force musculaire des extremites atteintes\n- Equilibre statique et dynamique\n- Marche et mobilite fonctionnelle",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type de neuropathie (axonale / demyelinisante) :\n- Limitation fonctionnelle :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Programme d'exercices (force, endurance, proprioception) :\n- Agents physiques (laser, ultrasons, vibrations) :\n- Orthese si entrapment ou trouble hereditaire :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "workup",
+        "kind": "custom",
+        "title": "Bilan complementaire",
+        "prompt": "- Examen electrodiagnostique (EDx) :\n- Imagerie (echographie, IRM) si site de compression suspecte :",
+        "order": 4
+      },
+      {
+        "id": "specific_care",
+        "kind": "custom",
+        "title": "Prise en charge specifique",
+        "prompt": "- Neuropathie diabetique : vibrations, education podologique\n- Neuropathie d'entrapment : orthese, exercices neurodynamiques\n- Neuropathie hereditaire : renforcement, gestion de la fatigue",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_vestibular_disorder",
+    "pathologyKey": "vestibular_disorder",
+    "name": "Trouble vestibulaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Type de vertige (rotatoire, instabilite) :\n- Facteurs declenchants (mouvements de tete, position) :\n- Score au Dizziness Handicap Inventory (DHI) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Head Impulse Test (vHIT)\n- Nystagmus (Dix-Hallpike si suspicion de VPPB)\n- Equilibre statique et dynamique\n- Dynamic Gait Index (DGI)",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type d'atteinte vestibulaire (unilaterale / bilaterale) :\n- Limitation fonctionnelle :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercices de stabilisation du regard (VORx1, VORx2) :\n- Exercices d'equilibre et de marche :\n- Habituation aux mouvements declenchants :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "dhi_scale",
+        "kind": "custom",
+        "title": "Echelle DHI",
+        "prompt": "- Score physique :\n- Score fonctionnel :\n- Score emotionnel :",
+        "order": 4
+      },
+      {
+        "id": "vestibular_tests",
+        "kind": "custom",
+        "title": "Tests vestibulaires",
+        "prompt": "- vHIT :\n- Romberg / Romberg sensibilise :\n- Dynamic Gait Index :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_traumatic_brain_injury",
+    "pathologyKey": "traumatic_brain_injury",
+    "name": "Traumatisme cranien",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Mecanisme et date du traumatisme :\n- Symptomes actuels (cephalees, vertiges, troubles visuels) :\n- Objectifs fonctionnels du patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Examen cervical et thoracique\n- Fonction vestibulo-oculomotrice (VOMS)\n- Tolerance a l'effort / dysautonomie\n- Fonction motrice et equilibre",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Systemes impliques (cervical, vestibulaire, oculomoteur, autonome) :\n- Limitation fonctionnelle :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation vestibulo-oculaire :\n- Reeducation cervicale :\n- Reintroduction graduee de l'effort :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "voms",
+        "kind": "custom",
+        "title": "VOMS",
+        "prompt": "- Poursuite lisse :\n- Saccades :\n- Convergence :\n- Reflexe vestibulo-oculaire :",
+        "order": 4
+      },
+      {
+        "id": "exertion_tolerance",
+        "kind": "custom",
+        "title": "Tolerance a l'effort",
+        "prompt": "- Test d'effort gradue (protocole de Buffalo) :\n- Symptomes a l'effort :\n- Seuil d'exacerbation :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_cerebral_palsy",
+    "pathologyKey": "cerebral_palsy",
+    "name": "Infirmité motrice cerebrale",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Niveau GMFCS :\n- Objectifs fonctionnels de l'enfant / de la famille :\n- Aides techniques utilisees :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes articulaires et tonus\n- Analyse de la marche\n- Prehension et usage de la main\n- Equilibre et transferts",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau GMFCS et fonction actuelle :\n- Objectifs prioritaires (mobilite, prehension, autonomie) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement oriente vers un but (goal-directed training) :\n- Marche au sol +/- tapis roulant :\n- Therapie bimanuelle / contrainte induite pour la main :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "gmfcs",
+        "kind": "custom",
+        "title": "GMFCS",
+        "prompt": "- Niveau I-V :\n- Evolution depuis derniere evaluation :",
+        "order": 4
+      },
+      {
+        "id": "goal_directed",
+        "kind": "custom",
+        "title": "Entrainement oriente vers un but",
+        "prompt": "- Choix collaboratif de l'objectif :\n- Analyse de la tache :\n- Pratique structuree et feedback :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_guillain_barre",
+    "pathologyKey": "guillain_barre",
+    "name": "Syndrome de Guillain-Barre",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Date de debut et evolution des symptomes :\n- Deficit sensitivo-moteur ressenti :\n- Niveau de fatigue :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Testing musculaire manuel (membres superieurs et inferieurs)\n- Amplitudes articulaires\n- Sensibilite et proprioception\n- Mobilite fonctionnelle (transferts, deambulation)",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Phase de la maladie (aigue, plateau, recuperation) :\n- Limitation fonctionnelle (AM-PAC) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercices actifs progressifs sans surmenage :\n- Conservation d'energie :\n- Progression fonctionnelle (lit -> fauteuil -> debout -> marche) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "functional_assessment",
+        "kind": "custom",
+        "title": "Bilan fonctionnel",
+        "prompt": "- Score AM-PAC :\n- Force de prehension :\n- Coordination (doigt-nez) :",
+        "order": 4
+      },
+      {
+        "id": "progression",
+        "kind": "custom",
+        "title": "Progression therapeutique",
+        "prompt": "- Exercices en decharge / antigravitaires :\n- Aide technique a la marche :\n- Escaliers :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_bell_palsy",
+    "pathologyKey": "bell_palsy",
+    "name": "Paralysie faciale peripherique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Date d'apparition :\n- Cote atteint :\n- Retentissement (alimentation, elocution, oeil) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Symetrie faciale au repos et au mouvement\n- Fermeture palpebrale\n- Mimiques (sourire, froncement, gonflement des joues)\n- Synkinesies",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Grade House-Brackmann :\n- Score Sunnybrook :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercices faciaux (mimique, etirement, renforcement) :\n- Biofeedback (miroir ou instrumental) :\n- Prevention des synkinesies :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "facial_scales",
+        "kind": "custom",
+        "title": "Echelle House-Brackmann / Sunnybrook",
+        "prompt": "- Grade House-Brackmann (I-VI) :\n- Score Sunnybrook :\n- Facial Disability Index :",
+        "order": 4
+      },
+      {
+        "id": "facial_exercises",
+        "kind": "custom",
+        "title": "Exercices faciaux",
+        "prompt": "- Mouvements du front :\n- Mouvements des yeux :\n- Mouvements de la bouche / joues :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_migraine",
+    "pathologyKey": "migraine",
+    "name": "Migraine",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Frequence des crises (jours / mois) :\n- Type (episodique < 15 j / chronique >= 15 j) :\n- Facteurs declenchants :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Examen cervical (mobilite, palpation)\n- Posture\n- Tolerance a l'effort\n- Facteurs musculo-squelettiques associes",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Score MIDAS / HIT-6 :\n- Impact fonctionnel :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercice aerobie modere (3x / semaine, 8 semaines) :\n- Education et gestion du stress :\n- Progression graduee (eviter le declenchement) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "scales",
+        "kind": "custom",
+        "title": "Echelles",
+        "prompt": "- MIDAS :\n- HIT-6 :\n- EVA / NPRS de la douleur :",
+        "order": 4
+      },
+      {
+        "id": "exercise_program",
+        "kind": "custom",
+        "title": "Programme d'exercice",
+        "prompt": "- Type (aerobie, yoga, renforcement) :\n- Frequence et intensite (64-76% FC max) :\n- Tolerance et declenchement a l'effort :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_spondylolisthesis",
+    "pathologyKey": "spondylolisthesis",
+    "name": "Spondylolisthesis",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Duree des symptomes :\n- Irradiation :\n- Impact fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Step-off sign\n- Passive Lumbar Extension Test\n- Prone Instability Test\n- Active Straight Leg Raise",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau et grade du glissement :\n- Instabilite suspectee :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Education et reduction de la kinesiophobie :\n- Renforcement des stabilisateurs (transverse, multifides) :\n- Progression graduee (decharge vers charge) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "questionnaires",
+        "kind": "custom",
+        "title": "Questionnaires",
+        "prompt": "- Oswestry Disability Index :\n- Fear Avoidance Beliefs Questionnaire :\n- STarT Back Tool :",
+        "order": 4
+      },
+      {
+        "id": "stabilization_program",
+        "kind": "custom",
+        "title": "Programme de stabilisation",
+        "prompt": "- Frequence initiale (1x / semaine) :\n- Progression (surfaces instables) :\n- Duree totale (5-12 seances sur 2-4 mois) :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_thoracic_outlet",
+    "pathologyKey": "thoracic_outlet",
+    "name": "Syndrome du defile thoraco-brachial",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Douleur / paresthesies du membre superieur :\n- Facteurs positionnels (bras leve) :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Elevated Arm Stress Test (EAST)\n- Test d'Adson\n- Palpation du defile (bande scalenique)\n- Tension neurale (ulnaire, median, radial)",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type de TOS suspecte (neurogene / vasculaire) :\n- Structures impliquees :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Correction posturale :\n- Etirement des scalenes et du petit pectoral :\n- Stabilisation scapulaire et mobilisation neurale :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "provocation_tests",
+        "kind": "custom",
+        "title": "Tests de provocation",
+        "prompt": "- EAST :\n- Adson :\n- Roos :",
+        "order": 4
+      },
+      {
+        "id": "specific_rehab",
+        "kind": "custom",
+        "title": "Reeducation specifique",
+        "prompt": "- Mobilisation de la premiere cote :\n- Renforcement de la ceinture scapulaire :\n- Education aux activites de la vie quotidienne :",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "builtin_copd",
+    "pathologyKey": "copd",
+    "name": "Bronchopneumopathie chronique obstructive",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Dyspnee (echelle mMRC) :\n- Tabagisme (paquets-annees) :\n- Retentissement sur activites quotidiennes :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Auscultation pulmonaire :\n- SpO2 au repos / a l'effort :\n- Test de marche de 6 minutes (6MWT) :\n- Force musculaire peripherique (quadriceps, prehension) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade de severite (GOLD) :\n- Dyspnee/fatigue post-effort (echelle de Borg) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reentrainement a l'effort (endurance / fractionne) :\n- Renforcement musculaire (2-3x/sem, 50-85% 1RM) :\n- Reeducation respiratoire (levres pincees, diaphragmatique) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "exercise_tests",
+        "kind": "custom",
+        "title": "Tests d'effort",
+        "prompt": "- 6MWT / test de marche navette :\n- Sit-to-stand test :\n- Epreuve d'effort cardio-pulmonaire (si disponible) :",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "builtin_cystic_fibrosis",
+    "pathologyKey": "cystic_fibrosis",
+    "name": "Mucoviscidose",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Encombrement bronchique (frequence, aspect des secretions) :\n- Dyspnee / toux :\n- Observance du traitement habituel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Auscultation pulmonaire :\n- SpO2 :\n- Volume/aspect des secretions expectorees :\n- Tolerance a l'effort (test de marche navette) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- VEMS / EFR (donnees medicales) :\n- Efficacite du drainage bronchique :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Technique de desencombrement (ACBT, drainage autogene, PEP) :\n- Reentrainement a l'effort :\n- Education du patient / autonomisation :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "clearance_techniques",
+        "kind": "custom",
+        "title": "Techniques de desencombrement",
+        "prompt": "- Drainage postural + percussions :\n- Pression expiratoire positive (PEP) :\n- Cycle actif de respiration (ACBT) :",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "builtin_heart_failure",
+    "pathologyKey": "heart_failure",
+    "name": "Insuffisance cardiaque",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Dyspnee (classe NYHA) :\n- Prise de poids / oedemes recents :\n- Fatigue / tolerance a l'effort :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Frequence cardiaque et tension arterielle :\n- Auscultation cardio-pulmonaire, oedemes des membres inferieurs :\n- Test de marche de 6 minutes :\n- Force musculaire (prehension, quadriceps) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Signes de decompensation (poids, dyspnee, FC de repos) :\n- Stabilite clinique pour l'effort :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reentrainement aerobie progressif (FITT-VP) :\n- Renforcement musculaire (2-3x/sem, sous le seuil ischemique) :\n- Education (signes d'alerte, autosurveillance) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "warning_signs",
+        "kind": "custom",
+        "title": "Signes d'alerte a l'effort",
+        "prompt": "- Douleur thoracique / angor :\n- Dyspnee ou vertiges severes :\n- Arythmie ressentie :",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "builtin_post_covid",
+    "pathologyKey": "post_covid",
+    "name": "Syndrome post-COVID",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Fatigue / malaise post-effort :\n- Dyspnee, palpitations :\n- Retentissement sur activites quotidiennes :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test de marche de 6 minutes (6MWT) :\n- SpO2 au repos / a l'effort :\n- Qualite de vie (EQ-5D-5L) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Presence de malaise post-effort (PEM) :\n- Niveau de fatigue :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation respiratoire supervisee :\n- Gestion de l'energie (pacing), eviter le surmenage :\n- Surveillance continue des symptomes :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_asthma",
+    "pathologyKey": "asthma",
+    "name": "Asthme",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Frequence et declencheurs des crises :\n- Symptomes d'hyperventilation :\n- Traitement de fond en cours :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Auscultation pulmonaire :\n- Spirometrie (donnees medicales) :\n- Questionnaire de controle de l'asthme (ACQ) :\n- Qualite de vie (AQLQ) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau de controle de l'asthme :\n- Composante d'hyperventilation / anxiete associee (HADS) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation respiratoire (respiration diaphragmatique, controle du souffle) :\n- Education a la gestion des crises :\n- Reentrainement a l'effort progressif :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_pulmonary_rehab",
+    "pathologyKey": "pulmonary_rehab",
+    "name": "Reeducation respiratoire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / pathologie respiratoire sous-jacente :\n- Dyspnee (echelle mMRC) :\n- Retentissement sur les activites quotidiennes :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test de marche de 6 minutes (6MWT) ou test de marche navette :\n- SpO2 au repos / a l'effort :\n- Force musculaire peripherique :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Capacite fonctionnelle actuelle :\n- Dyspnee/fatigue percue (echelle de Borg) :\n- Objectifs du programme :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reentrainement en endurance (3-4x/sem, 60-90% pic) :\n- Renforcement musculaire (2-3x/sem) :\n- Entrainement des muscles inspiratoires :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_cardiac_rehab",
+    "pathologyKey": "cardiac_rehab",
+    "name": "Reeducation cardiaque",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / evenement cardiaque recent :\n- Symptomes a l'effort (dyspnee, douleur thoracique) :\n- Facteurs de risque cardiovasculaire :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test d'effort ou test de marche de 6 minutes :\n- Frequence cardiaque et tension arterielle de repos :\n- Force musculaire (1RM estime) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Statut clinique / stabilite pour l'effort :\n- Phase de rehabilitation (1, 2 ou 3) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement aerobie progressif (FITT-VP) :\n- Renforcement musculaire (2-3x/sem, non consecutifs) :\n- Education (facteurs de risque, signes d'alerte) :\n- Suivi :",
+        "order": 3
+      },
+      {
+        "id": "warning_signs",
+        "kind": "custom",
+        "title": "Signes d'alerte a surveiller",
+        "prompt": "- Douleur thoracique / angor :\n- TA systolique >= 250 ou diastolique >= 115 mmHg :\n- Arythmie, malaise :",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "builtin_accidental_falls",
+    "pathologyKey": "accidental_falls",
+    "name": "Prevention des chutes",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Antecedents de chutes (nombre, circonstances) :\n- Peur de tomber :\n- Environnement a domicile :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Timed Up and Go (TUG) :\n- Berg Balance Scale :\n- Test unipodal / tandem stance :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau de risque de chute :\n- Facteurs contributifs identifies :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement de l'equilibre (quotidien) :\n- Renforcement musculaire des membres inferieurs :\n- Double tache (dual-task) :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_osteoporosis",
+    "pathologyKey": "osteoporosis",
+    "name": "Osteoporose",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Antecedents de fracture (notamment vertebrale) :\n- Douleur rachidienne :\n- Niveau d'activite physique habituel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Posture / alignement rachidien :\n- Force des extenseurs du rachis :\n- Equilibre (test unipodal, TUG) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Presence de fracture vertebrale :\n- Niveau de risque de chute/fracture :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Entrainement quotidien de l'equilibre :\n- Renforcement des extenseurs du rachis :\n- Education aux techniques de protection rachidienne :\n- Intensite adaptee (moderee si fracture vertebrale) :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_sarcopenia",
+    "pathologyKey": "sarcopenia",
+    "name": "Sarcopenie",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Perte de poids / de force ressentie :\n- Difficultes dans les activites quotidiennes :\n- Depistage SARC-F :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Force de prehension (dynamometrie) :\n- Vitesse de marche :\n- Chair stand test :\n- Timed Up and Go :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Criteres EWGSOP2 (force / masse / performance) :\n- Severite (modele F-A-C-S) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Renforcement musculaire progressif :\n- Reentrainement a la marche :\n- Conseils nutritionnels (orientation si besoin) :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_hip_replacement",
+    "pathologyKey": "hip_replacement",
+    "name": "Reeducation prothese de hanche",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / date de l'intervention :\n- Douleur (EVA) :\n- Niveau d'appui autorise :\n- Autonomie pour les transferts :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes articulaires de hanche :\n- Force des abducteurs de hanche :\n- Analyse de la marche (aide technique) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Respect des precautions post-operatoires :\n- Niveau fonctionnel actuel :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Mobilisation precoce et transferts :\n- Renforcement des abducteurs (excentrique en phase tardive) :\n- Reeducation a la marche :\n- Education aux activites de la vie quotidienne :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_knee_replacement",
+    "pathologyKey": "knee_replacement",
+    "name": "Reeducation prothese de genou",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / date de l'intervention :\n- Douleur (EVA) :\n- Niveau d'appui autorise :\n- Autonomie pour les transferts :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitudes articulaires de genou (flexion/extension) :\n- Force du quadriceps :\n- Analyse de la marche (aide technique) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau fonctionnel actuel :\n- Epanchement / inflammation :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Mobilisation precoce, recuperation des amplitudes :\n- Renforcement quadriceps / ischio-jambiers :\n- Reeducation proprioceptive et a la marche :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_rheumatoid_arthritis",
+    "pathologyKey": "rheumatoid_arthritis",
+    "name": "Polyarthrite rhumatoide",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Articulations douloureuses / gonflees :\n- Raideur matinale (duree) :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Bilan articulaire (mobilite, gonflement) :\n- Force musculaire :\n- Evaluation selon le Core Set ICF pour la PR :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Niveau d'activite de la maladie :\n- Profil de traitement (education seule / supervision courte / intensive) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercice actif progressif :\n- Education a la protection articulaire :\n- Conservation d'energie :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_idiopathic_scoliosis",
+    "pathologyKey": "idiopathic_scoliosis",
+    "name": "Scoliose idiopathique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation :\n- Antecedents familiaux de scoliose :\n- Douleur (localisation, EVA) :\n- Perception de l'asymetrie par le patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Test d'Adams et angle de rotation du tronc (ATR) :\n- Indices de symetrie du tronc (ATSI / POTSI) :\n- Angle de Cobb (radiographie) :\n- Stade de Risser :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type et localisation de la courbure :\n- Risque de progression :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Exercices specifiques de scoliose (PSSE, methode Schroth/FITS) :\n- Indication de corset le cas echeant :\n- Suivi radiographique et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_developmental_delay",
+    "pathologyKey": "developmental_delay",
+    "name": "Retard de developpement moteur",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation / inquietude parentale :\n- Antecedents (grossesse, naissance, developpement) :\n- Etapes motrices atteintes (tenue de tete, assis, marche) :\n- Contexte familial et scolaire :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Echelle de developpement moteur (Peabody, GMFM) :\n- Observation des competences motrices selon l'age :\n- Tonus musculaire et reflexes :\n- Coordination et equilibre :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Ecart par rapport aux etapes motrices attendues :\n- Suspicion de trouble associe :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Programme de stimulation motrice adapte a l'age :\n- Orientation pluridisciplinaire si besoin :\n- Suivi et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_torticollis",
+    "pathologyKey": "torticollis",
+    "name": "Torticolis congenital",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation (torticolis observe par les parents) :\n- Antecedents perinataux (presentation, accouchement) :\n- Age de l'enfant et age d'apparition :\n- Preference posturale / cote favori :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitude de rotation et inclinaison cervicale (CROM) :\n- Palpation du sternocleidomastoidien (masse, epaississement) :\n- Symetrie craniofaciale :\n- Etapes motrices associees :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Severite du torticolis :\n- Limitation fonctionnelle :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Etirements et positionnement actif :\n- Conseils aux parents (tummy time, portage) :\n- Suivi et criteres de sortie :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_plagiocephaly",
+    "pathologyKey": "plagiocephaly",
+    "name": "Plagiocephalie",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation (asymetrie cranienne observee) :\n- Position de sommeil et habitudes de portage :\n- Preference posturale de la tete :\n- Antecedents (grossesse, accouchement, torticolis associe) :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Mesure de la forme du crane (plagiocephalometrie) :\n- Amplitude cervicale passive :\n- Evaluation de la preference positionnelle :\n- Recherche d'un torticolis musculaire associe :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Severite de l'asymetrie :\n- Torticolis associe ou non :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Conseils de repositionnement et temps sur le ventre :\n- Kinesitherapie si preference posturale/torticolis :\n- Orientation vers casque orthopedique si indication :\n- Suivi de la correction :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_incontinence",
+    "pathologyKey": "incontinence",
+    "name": "Incontinence urinaire",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation et type de fuites (effort, urgence, mixte) :\n- Frequence et circonstances des fuites (calendrier mictionnel) :\n- Retentissement sur la qualite de vie :\n- Antecedents obstetricaux et chirurgicaux :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Evaluation de la force et de l'endurance du plancher pelvien (palpation digitale) :\n- Test a la toux / effort :\n- Coordination abdomino-perineale :\n- Examen postural et respiratoire :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type d'incontinence identifie :\n- Facteurs de risque associes :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Renforcement du plancher pelvien (PFMT) :\n- Biofeedback / electrostimulation si indique :\n- Reeducation comportementale et calendrier mictionnel :\n- Suivi et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_pelvic_pain",
+    "pathologyKey": "pelvic_pain",
+    "name": "Douleur pelvienne chronique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation et localisation de la douleur :\n- Duree d'evolution (>6 mois) et facteurs declenchants :\n- EVA et impact fonctionnel/sexuel :\n- Antecedents gynecologiques/urologiques/chirurgicaux :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Analyse du schema de mouvement (bassin, hanche, rachis) :\n- Palpation de la paroi abdominale et du plancher pelvien :\n- Tonus et sensibilite du plancher pelvien :\n- Mobilite de hanche et du rachis lombaire :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Composante musculosquelettique vs viscerale :\n- Facteurs psychosociaux associes (catastrophisme) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation du plancher pelvien (relachement, therapie manuelle) :\n- Approche multidisciplinaire (gynecologie, psychologie) :\n- Techniques de pleine conscience / gestion de la douleur :\n- Suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_lymphedema",
+    "pathologyKey": "lymphedema",
+    "name": "Lymphoedeme",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation (gonflement, lourdeur) :\n- Antecedents (chirurgie, radiotherapie, curage ganglionnaire) :\n- Evolution du gonflement dans le temps :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Mesure du volume/perimetre du membre (comparatif) :\n- Stade du lymphoedeme :\n- Etat cutane :\n- Amplitudes articulaires :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Stade et severite du lymphoedeme :\n- Facteurs de risque associes :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Therapie decongestive complexe (drainage lymphatique manuel, bandages) :\n- Exercices et compression (manchon/bas) :\n- Education aux soins de la peau et autogestion :\n- Suivi de la reduction volumetrique :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_breast_cancer_rehab",
+    "pathologyKey": "breast_cancer_rehab",
+    "name": "Reeducation post-cancer du sein",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation et type de chirurgie (tumorectomie, mastectomie, curage) :\n- Traitements associes (radiotherapie, chimiotherapie) :\n- Douleur et fatigue :\n- Retentissement fonctionnel sur le membre superieur :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Amplitude articulaire de l'epaule (goniometrie/inclinometrie) :\n- Force musculaire du membre superieur :\n- Signes de lymphoedeme (perimetrie) :\n- Etat de la cicatrice :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Deficit fonctionnel identifie (epaule, lymphoedeme) :\n- Phase du parcours de soins :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Reeducation progressive de l'amplitude et de la force de l'epaule :\n- Prevention/prise en charge du lymphoedeme :\n- Programme d'activite physique adapte :\n- Surveillance prospective et suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_amputation",
+    "pathologyKey": "amputation",
+    "name": "Reeducation post-amputation",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation, niveau et cause de l'amputation :\n- Antecedents (vasculaire, traumatique, etc.) :\n- Douleur (moignon, membre fantome) :\n- Objectifs fonctionnels du patient :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Examen du moignon (cicatrisation, volume, forme) :\n- Amplitude articulaire et force des membres :\n- Niveau de mobilite fonctionnelle (classification K) :\n- Equilibre et transferts :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Phase de reeducation (pre-prothetique / prothetique) :\n- Niveau fonctionnel K estime :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Soins du moignon et bandage (rigide/semi-rigide) :\n- Renforcement et travail de l'equilibre pre-prothetique :\n- Education du patient et de l'aidant :\n- Entrainement a l'appareillage et suivi transdisciplinaire :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_burns",
+    "pathologyKey": "burns",
+    "name": "Reeducation post-brulure",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation, surface et profondeur de la brulure :\n- Date et mecanisme de la brulure :\n- Douleur et demangeaisons :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Evaluation de la cicatrice (Vancouver Scar Scale) :\n- Amplitude articulaire et retractions :\n- Oedeme et etat cutane :\n- Score d'activite fonctionnelle (FAB) :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Risque de retraction/hypertrophie cicatricielle :\n- Limitation fonctionnelle identifiee :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Positionnement et attelles anti-retraction :\n- Pressotherapie / silicone :\n- Mobilisation et etirements progressifs :\n- Massage cicatriciel et suivi :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_chronic_pain",
+    "pathologyKey": "chronic_pain",
+    "name": "Douleur chronique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation et historique de la douleur (>3 mois) :\n- Localisation, EVA, facteurs aggravants/soulageants :\n- Croyances sur la douleur et catastrophisme :\n- Retentissement fonctionnel, social et emotionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Examen fonctionnel et articulaire cible :\n- Mecanisme de la douleur (nociceptif/neuropathique/sensibilisation centrale) :\n- Signes de kinesiophobie / evitement :\n- Facteurs de maintien identifies :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Type de douleur et facteurs biopsychosociaux dominants :\n- Comorbidites associees (anxiete, depression) :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Education a la neurophysiologie de la douleur (PNE) :\n- Reeducation active et graduelle (exposition graduee) :\n- Approche biopsychosociale pluridisciplinaire :\n- Suivi et reevaluation :",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "builtin_edema",
+    "pathologyKey": "edema",
+    "name": "Oedeme chronique",
+    "sections": [
+      {
+        "id": "subjective",
+        "kind": "subjective",
+        "title": "Subjectif",
+        "prompt": "- Motif de consultation (gonflement, lourdeur des membres) :\n- Anciennete et evolution de l'oedeme :\n- Antecedents (veineux, cardiaque, renal, immobilisation) :\n- Retentissement fonctionnel :",
+        "order": 0
+      },
+      {
+        "id": "objective",
+        "kind": "objective",
+        "title": "Objectif",
+        "prompt": "- Mesure du perimetre/volume du membre :\n- Test du godet :\n- Etat cutane et circulation veineuse :\n- Amplitude articulaire :",
+        "order": 1
+      },
+      {
+        "id": "assessment",
+        "kind": "assessment",
+        "title": "Evaluation",
+        "prompt": "- Origine probable de l'oedeme :\n- Severite et stade :\n- Objectifs de seance :",
+        "order": 2
+      },
+      {
+        "id": "plan",
+        "kind": "plan",
+        "title": "Plan",
+        "prompt": "- Therapie de compression (bandages, bas de contention) :\n- Drainage lymphatique manuel et exercices :\n- Surveillance de la reduction volumetrique :\n- Suivi :",
+        "order": 3
+      }
+    ]
   }
 ]
