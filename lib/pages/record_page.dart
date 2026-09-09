@@ -19,7 +19,7 @@ import 'package:medicail/features/pathology/domain/repositories/pathology_reposi
 import 'package:medicail/features/pathology/domain/utils/pathology_suggestion_matcher.dart';
 import 'package:medicail/features/pathology/domain/utils/pathology_template_resolver.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
-import 'package:medicail/features/note_template/domain/utils/note_template_applicator.dart';
+import 'package:medicail/features/recording/domain/utils/session_pathology_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
@@ -360,29 +360,21 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return;
     }
 
-    await _applyPathologiesToSession(session, selected);
+    await _applyPathologiesToSession(
+      session,
+      selected,
+      prefillLocalSoap: !state.soapGeneratedByAi,
+    );
   }
 
   Future<void> _applyPathologiesToSession(
     RecordingSession session,
-    List<Pathology> selected,
-  ) async {
+    List<Pathology> selected, {
+    required bool prefillLocalSoap,
+  }) async {
     final primary = selected.first;
     final resolver = getIt<PathologyTemplateResolver>();
     final template = await resolver.resolveTemplate(primary);
-    final transcript = session.transcript;
-    final soapNote = session.soapNote ?? const SoapNote();
-    final updatedSoap = template != null
-        ? NoteTemplateApplicator.apply(
-            template: template,
-            transcript: transcript.isNotEmpty
-                ? transcript
-                : soapNote.subjective,
-          )
-        : NoteTemplateApplicator.genericSoapNote(
-            transcript.isNotEmpty ? transcript : soapNote.subjective,
-          );
-
     final sessionPathologies = <SessionPathology>[];
     for (var i = 0; i < selected.length; i++) {
       final pathology = selected[i];
@@ -403,11 +395,11 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     }
 
     await getIt<RecordingSessionRepository>().save(
-      session.copyWith(
-        templateId: template?.id ?? primary.id,
-        templateName: primary.name,
+      SessionPathologyApplicator.apply(
+        session: session,
         pathologies: sessionPathologies,
-        soapNote: updatedSoap,
+        primaryTemplate: template,
+        prefillLocalSoap: prefillLocalSoap,
       ),
     );
   }

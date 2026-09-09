@@ -358,15 +358,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     emit(VoiceCaptureProcessing(transcript: transcriptForProcess));
 
-    final result = await _noteProcessingRepository
-        .process(
-          sessionId: sessionId,
-          rawText: transcriptForProcess,
-          language: language,
-        )
-        .timeout(const Duration(minutes: 1));
+    // The HTTP repository owns the timeout (SOAP generation can exceed a minute).
+    final result = await _noteProcessingRepository.process(
+      sessionId: sessionId,
+      rawText: transcriptForProcess,
+      language: language,
+    );
 
-    final soapNote = _selectedTemplate != null
+    final soapNote = !result.isAiGenerated && _selectedTemplate != null
         ? NoteTemplateApplicator.apply(
             template: _selectedTemplate,
             transcript: result.processedText,
@@ -386,6 +385,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       VoiceCaptureConsultationFinished(
         sessionId: sessionId,
         transcript: result.processedText,
+        soapGeneratedByAi: result.isAiGenerated,
       ),
     );
   }

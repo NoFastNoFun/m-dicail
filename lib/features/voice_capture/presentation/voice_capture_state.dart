@@ -26,13 +26,15 @@ final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
   const VoiceCaptureConsultationFinished({
     required this.sessionId,
     this.transcript = '',
+    this.soapGeneratedByAi = false,
   });
 
   final String sessionId;
   final String transcript;
+  final bool soapGeneratedByAi;
 
   @override
-  List<Object?> get props => [sessionId, transcript];
+  List<Object?> get props => [sessionId, transcript, soapGeneratedByAi];
 }
 
 final class VoiceCaptureProcessing extends VoiceCaptureState {

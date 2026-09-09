@@ -190,6 +190,69 @@ void main() {
   }
 
   group('VoiceCaptureBloc dual capture', () {
+    test(
+      'keeps generated AI SOAP with a preselected local template and local transcription',
+      () async {
+        const aiSoap = SoapNote(
+          subjective: 'Douleur au dos et au genou',
+          objective: 'Mesures dictées',
+          assessment: 'Évaluation dictée',
+          plan: 'Plan dicté',
+        );
+        when(
+          () => noteProcessing.process(
+            sessionId: any(named: 'sessionId'),
+            rawText: any(named: 'rawText'),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer(
+          (_) async => const SoapNoteResult(
+            processedText: 'Transcription locale',
+            soapNote: aiSoap,
+            isAiGenerated: true,
+          ),
+        );
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        bloc.add(
+          const VoiceCaptureTemplateSelected(
+            NoteTemplate(
+              id: 'knee',
+              pathologyKey: 'knee',
+              name: 'Genou',
+              source: NoteTemplateSource.builtIn,
+              sections: [
+                NoteSection(
+                  id: 'objective',
+                  kind: NoteSectionKind.objective,
+                  title: 'O',
+                  prompt: 'Trame locale',
+                  order: 0,
+                ),
+              ],
+            ),
+          ),
+        );
+        await seedListening(bloc);
+        bloc.add(const VoiceCaptureFinishConsultation());
+        final finished =
+            await bloc.stream.firstWhere(
+                  (s) => s is VoiceCaptureConsultationFinished,
+                )
+                as VoiceCaptureConsultationFinished;
+        expect(finished.soapGeneratedByAi, isTrue);
+        final saved = verify(
+          () => sessionRepository.save(captureAny()),
+        ).captured.cast<RecordingSession>();
+        final completed = saved.lastWhere(
+          (s) => s.status == RecordingSessionStatus.completed,
+        );
+        expect(completed.soapNote, aiSoap);
+        expect(completed.transcriptIsAi, isFalse);
+        expect(completed.pathologyNames, ['Genou']);
+      },
+    );
+
     group('AI recording preference', () {
       setUp(() {
         when(

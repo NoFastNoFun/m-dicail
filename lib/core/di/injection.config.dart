@@ -112,6 +112,8 @@ import 'package:medicail/features/patient/presentation/detail/patient_detail_blo
     as _i802;
 import 'package:medicail/features/patient/presentation/patient_bloc.dart'
     as _i301;
+import 'package:medicail/features/recording/data/repositories/api_ai_note_processing_repository.dart'
+    as _i835;
 import 'package:medicail/features/recording/data/repositories/api_enhanced_transcription_repository.dart'
     as _i218;
 import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart'
@@ -322,6 +324,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i74.AudioCompressionService>(),
       ),
     );
+    gh.factory<_i835.ApiAiNoteProcessingRepository>(
+      () => _i835.ApiAiNoteProcessingRepository(
+        gh<_i1005.ApiClient>(),
+        gh<_i155.AppConfig>(),
+      ),
+    );
     gh.lazySingleton<_i734.EnhancedTranscriptionRepository>(
       () => _i896.DynamicEnhancedTranscriptionRepository(
         gh<_i218.ApiEnhancedTranscriptionRepository>(),
@@ -360,6 +368,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i341.NoteProcessingRepository>(
+      () => _i668.DynamicNoteProcessingRepository(
+        gh<_i430.ApiNoteProcessingRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i835.ApiAiNoteProcessingRepository>(),
+        gh<_i460.UserPreferencesRepository>(),
+      ),
+    );
     gh.factory<_i250.AuthBloc>(
       () => _i250.AuthBloc(
         gh<_i790.AuthRepository>(),
@@ -395,12 +411,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i435.MedicalWatchBloc>(
       () => _i435.MedicalWatchBloc(gh<_i348.MedicalWatchRepository>()),
-    );
-    gh.lazySingleton<_i341.NoteProcessingRepository>(
-      () => _i668.DynamicNoteProcessingRepository(
-        gh<_i430.ApiNoteProcessingRepository>(),
-        gh<_i760.AuthTokenStorage>(),
-      ),
     );
     gh.lazySingleton<_i865.PathologyRepository>(
       () => _i157.PathologyRepositoryImpl(
