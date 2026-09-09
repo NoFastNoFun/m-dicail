@@ -21,7 +21,6 @@ import 'package:medicail/features/pathology/domain/utils/pathology_template_reso
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/recording/domain/utils/session_pathology_applicator.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
-import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
