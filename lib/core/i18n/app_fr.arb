@@ -11,6 +11,7 @@
   "errorGeneric": "Une erreur est survenue",
   "errorNetwork": "Problème de connexion",
   "errorServer": "Erreur serveur",
+  "recordErrorInvalidSoapNote": "La note SOAP reçue est incomplète ou invalide. Veuillez réessayer.",
   "errorAudio": "Microphone indisponible",
   "audioPlayerTitle": "Audio brut",
   "audioPlayerPlay": "Lire",

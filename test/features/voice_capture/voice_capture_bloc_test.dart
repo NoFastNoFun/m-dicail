@@ -11,6 +11,7 @@ import 'package:medicail/features/note_template/domain/entities/note_template.da
 import 'package:medicail/features/note_template/domain/entities/note_template_source.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
+import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -190,6 +191,67 @@ void main() {
   }
 
   group('VoiceCaptureBloc dual capture', () {
+    for (final chooseTranscript in [false, true]) {
+      test(
+        'invalid SOAP keeps the draft and exposes a localizable error (choice: $chooseTranscript)',
+        () async {
+          when(
+            () => noteProcessing.process(
+              sessionId: any(named: 'sessionId'),
+              rawText: any(named: 'rawText'),
+              language: any(named: 'language'),
+            ),
+          ).thenThrow(const InvalidSoapNoteException());
+          if (chooseTranscript) {
+            when(
+              () => userPreferences.readAiEnhanceEnabled(),
+            ).thenAnswer((_) async => true);
+            when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+              when(() => backgroundRecorder.isRecording).thenReturn(false);
+              return '/tmp/session.wav';
+            });
+            when(
+              () => offlineTranscription.transcribeFile(
+                any(),
+                language: any(named: 'language'),
+              ),
+            ).thenAnswer((_) async => 'Texte à conserver.');
+          }
+          final bloc = buildBloc();
+          addTearDown(bloc.close);
+          await seedListening(bloc);
+          if (!chooseTranscript) {
+            bloc.add(const VoiceCaptureTranscriptUpdated('Texte à conserver.'));
+            await bloc.stream.firstWhere(
+              (state) =>
+                  state is RecordingInProgress && state.transcript.isNotEmpty,
+            );
+          }
+          bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+          if (chooseTranscript) {
+            await bloc.stream.firstWhere(
+              (state) => state is VoiceCaptureTranscriptCompare,
+            );
+            bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: false));
+          }
+          final failure =
+              await bloc.stream.firstWhere(
+                    (state) => state is VoiceCaptureFailure,
+                  )
+                  as VoiceCaptureFailure;
+          expect(failure.errorCode, VoiceCaptureErrorCode.invalidSoapNote);
+          expect(failure.transcript, isNotEmpty);
+          final saved = verify(
+            () => sessionRepository.save(captureAny()),
+          ).captured.cast<RecordingSession>();
+          expect(
+            saved.where((s) => s.status == RecordingSessionStatus.completed),
+            isEmpty,
+          );
+        },
+      );
+    }
+
     test(
       'keeps generated AI SOAP with a preselected local template and local transcription',
       () async {

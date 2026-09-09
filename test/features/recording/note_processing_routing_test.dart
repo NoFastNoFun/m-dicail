@@ -8,6 +8,7 @@ import 'package:medicail/core/network/interceptors/auth_interceptor.dart';
 import 'package:medicail/features/recording/data/repositories/api_ai_note_processing_repository.dart';
 import 'package:medicail/features/recording/data/repositories/api_note_processing_repository.dart';
 import 'package:medicail/features/recording/data/repositories/dynamic_note_processing_repository.dart';
+import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -166,7 +167,7 @@ void main() {
           rawText: 'Douleur',
           language: 'fr',
         ),
-        throwsA(isA<ServerException>()),
+        throwsA(isA<InvalidSoapNoteException>()),
       );
       expect(requests, hasLength(1));
     },

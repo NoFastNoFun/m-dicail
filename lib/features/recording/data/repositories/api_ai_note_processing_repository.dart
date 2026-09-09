@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/config/app_config.dart';
-import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/api_client.dart';
 import 'package:medicail/core/utils/anonymization_helper.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
+import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 
 @injectable
@@ -36,7 +36,7 @@ class ApiAiNoteProcessingRepository implements NoteProcessingRepository {
           'assessment',
           'plan',
         ].any((section) => soap[section] is! String)) {
-      throw const ServerException('Réponse de génération SOAP invalide.');
+      throw const InvalidSoapNoteException();
     }
     return SoapNoteResult(
       processedText: data?['processed_text'] as String? ?? text,

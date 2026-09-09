@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// **'Erreur serveur'**
   String get errorServer;
 
+  /// No description provided for @recordErrorInvalidSoapNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'La note SOAP reçue est incomplète ou invalide. Veuillez réessayer.'**
+  String get recordErrorInvalidSoapNote;
+
   /// No description provided for @errorAudio.
   ///
   /// In fr, this message translates to:

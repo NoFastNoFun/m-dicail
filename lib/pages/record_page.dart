@@ -486,7 +486,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         stepId == TutorialStepId.quickRecordStop) {
       _stopRecording();
     } else if (stepId == TutorialStepId.recordFinishFromPatient ||
-               stepId == TutorialStepId.quickRecordFinish) {
+        stepId == TutorialStepId.quickRecordFinish) {
       _finishConsultation();
     } else {
       _startRecording();
@@ -553,12 +553,15 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
 
     final bloc = context.read<VoiceCaptureBloc>();
     if (action == _RecordLeaveAction.save) {
-      final isTutorial = context.read<TutorialBloc>().state is TutorialInProgress;
+      final isTutorial =
+          context.read<TutorialBloc>().state is TutorialInProgress;
       final language = Localizations.localeOf(context).languageCode;
-      bloc.add(VoiceCaptureFinishConsultation(
-        language: language,
-        isTutorial: isTutorial,
-      ));
+      bloc.add(
+        VoiceCaptureFinishConsultation(
+          language: language,
+          isTutorial: isTutorial,
+        ),
+      );
       return;
     }
 
@@ -653,19 +656,22 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       },
       builder: (context, state) {
         final viewModel = VoiceCaptureViewModel.fromState(state);
+        final errorMessage = viewModel.localizedErrorMessage(l10n);
         final theme = Theme.of(context);
 
         return Stack(
           children: [
             PopScope(
-              canPop: !viewModel.hasUnsavedWork &&
+              canPop:
+                  !viewModel.hasUnsavedWork &&
                   !viewModel.isProcessing &&
                   !viewModel.isComparingTranscripts,
               onPopInvokedWithResult: (didPop, _) {
                 if (didPop) {
                   return;
                 }
-                if (viewModel.isProcessing || viewModel.isComparingTranscripts) {
+                if (viewModel.isProcessing ||
+                    viewModel.isComparingTranscripts) {
                   return;
                 }
                 _handleLeaveRequest(context);
@@ -707,7 +713,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       viewModel.selectedTemplate == null
                                       ? l10n.templateNoneLabel
                                       : null,
-                                  onPathologyTap: !viewModel.isProcessing &&
+                                  onPathologyTap:
+                                      !viewModel.isProcessing &&
                                           !viewModel.isComparingTranscripts
                                       ? () => _pickTemplate(context)
                                       : null,
@@ -730,10 +737,10 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                               );
                             },
                           ),
-                          if (viewModel.errorMessage != null) ...[
+                          if (errorMessage != null) ...[
                             const SizedBox(height: AppSpacing.md),
                             AppText(
-                              viewModel.errorMessage!,
+                              errorMessage,
                               variant: AppTextVariant.body,
                               color: AppColors.error,
                             ),

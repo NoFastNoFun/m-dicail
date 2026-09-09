@@ -284,8 +284,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
     } catch (error) {
       emit(
-        VoiceCaptureFailure(
-          Failure.fromException(error).message,
+        VoiceCaptureFailure.fromException(
+          error,
           transcript: roughTranscript,
           selectedTemplate: _selectedTemplate,
         ),
@@ -336,8 +336,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
     } catch (error) {
       emit(
-        VoiceCaptureFailure(
-          Failure.fromException(error).message,
+        VoiceCaptureFailure.fromException(
+          error,
           transcript: chosen,
           selectedTemplate: _selectedTemplate,
         ),
@@ -719,11 +719,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         selectedTemplate: _selectedTemplate,
         isAiCapture: _captureForAi,
       ),
-      VoiceCaptureFailure(:final message) => VoiceCaptureFailure(
-        message,
-        transcript: transcript,
-        selectedTemplate: _selectedTemplate,
-      ),
+      VoiceCaptureFailure(:final message, :final errorCode) =>
+        VoiceCaptureFailure(
+          message,
+          errorCode: errorCode,
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
       VoiceCaptureEnhancing() => VoiceCaptureEnhancing(transcript: transcript),
       VoiceCaptureTranscriptCompare(:final aiTranscript) =>
         VoiceCaptureTranscriptCompare(
