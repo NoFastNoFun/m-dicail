@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
-import 'package:medicail/widget/app_text.dart';
 
 class AppRecordProcessingOverlay extends StatefulWidget {
   const AppRecordProcessingOverlay({
@@ -150,12 +149,7 @@ class _AppRecordProcessingOverlayState extends State<AppRecordProcessingOverlay>
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  AppText(
-                    message,
-                    variant: AppTextVariant.body,
-                    color: AppColors.highContrastWhite,
-                    textAlign: TextAlign.center,
-                  ),
+                  _ProcessingStatusText(message: message),
                 ],
               ),
             ),
@@ -174,13 +168,39 @@ class _AppRecordProcessingOverlayState extends State<AppRecordProcessingOverlay>
               color: AppColors.highContrastWhite,
             ),
             const SizedBox(height: AppSpacing.md),
-            AppText(
-              message,
-              variant: AppTextVariant.body,
-              color: AppColors.highContrastWhite,
-            ),
+            _ProcessingStatusText(message: message),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProcessingStatusText extends StatelessWidget {
+  const _ProcessingStatusText({required this.message});
+
+  final String message;
+
+  static const TextStyle _style = TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.15,
+    height: 1.5,
+    color: AppColors.highContrastWhite,
+    decoration: TextDecoration.none,
+    decorationColor: Color(0x00000000),
+    decorationThickness: 0,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle(
+      style: _style,
+      child: Text(
+        message,
+        style: _style,
+        textAlign: TextAlign.center,
       ),
     );
   }

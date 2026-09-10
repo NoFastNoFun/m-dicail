@@ -9,7 +9,7 @@ import 'package:medicail/core/utils/transcript_word_diff.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 
-class AppTranscriptComparePanel extends StatelessWidget {
+class AppTranscriptComparePanel extends StatefulWidget {
   const AppTranscriptComparePanel({
     super.key,
     required this.localTranscript,
@@ -26,12 +26,65 @@ class AppTranscriptComparePanel extends StatelessWidget {
   static const double _sideBySideMinWidth = 700;
 
   @override
+  State<AppTranscriptComparePanel> createState() =>
+      _AppTranscriptComparePanelState();
+}
+
+class _AppTranscriptComparePanelState extends State<AppTranscriptComparePanel> {
+  final ScrollController _localScrollController = ScrollController();
+  final ScrollController _aiScrollController = ScrollController();
+  bool _syncingScroll = false;
+
+  @override
+  void dispose() {
+    _localScrollController.dispose();
+    _aiScrollController.dispose();
+    super.dispose();
+  }
+
+  void _syncScroll({
+    required ScrollController source,
+    required ScrollController target,
+  }) {
+    if (_syncingScroll) return;
+    if (!source.hasClients || !target.hasClients) return;
+
+    final sourceMax = source.position.maxScrollExtent;
+    final targetMax = target.position.maxScrollExtent;
+    if (sourceMax <= 0 && targetMax <= 0) return;
+
+    final ratio = sourceMax <= 0 ? 0.0 : (source.offset / sourceMax);
+    final nextOffset =
+        (ratio * targetMax).clamp(0.0, targetMax > 0 ? targetMax : 0.0);
+    if ((target.offset - nextOffset).abs() < 0.5) return;
+
+    _syncingScroll = true;
+    target.jumpTo(nextOffset);
+    _syncingScroll = false;
+  }
+
+  bool _onLocalScroll(ScrollNotification notification) {
+    if (notification is! ScrollUpdateNotification) return false;
+    _syncScroll(source: _localScrollController, target: _aiScrollController);
+    return false;
+  }
+
+  bool _onAiScroll(ScrollNotification notification) {
+    if (notification is! ScrollUpdateNotification) return false;
+    _syncScroll(source: _aiScrollController, target: _localScrollController);
+    return false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final diff = TranscriptWordDiff.compare(localTranscript, aiTranscript);
-    final localEmpty = localTranscript.trim().isEmpty;
-    final aiEmpty = aiTranscript.trim().isEmpty;
+    final diff = TranscriptWordDiff.compare(
+      widget.localTranscript,
+      widget.aiTranscript,
+    );
+    final localEmpty = widget.localTranscript.trim().isEmpty;
+    final aiEmpty = widget.aiTranscript.trim().isEmpty;
 
     return Material(
       color: theme.scaffoldBackgroundColor,
@@ -56,26 +109,31 @@ class AppTranscriptComparePanel extends StatelessWidget {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final sideBySide =
-                        constraints.maxWidth >= _sideBySideMinWidth;
+                        constraints.maxWidth >=
+                        AppTranscriptComparePanel._sideBySideMinWidth;
                     final localColumn = _CompareColumn(
                       title: l10n.recordTranscriptCompareLocal,
                       titleIcon: Icons.mic_none_outlined,
-                      transcript: localTranscript,
+                      transcript: widget.localTranscript,
                       spans: localEmpty ? const [] : diff.left,
                       emptyLabel: l10n.transcriptEmptyFallback,
                       buttonLabel: l10n.recordTranscriptCompareChooseLocal,
-                      onChoose: onSelectLocal,
+                      onChoose: widget.onSelectLocal,
+                      scrollController: _localScrollController,
+                      onScrollNotification: _onLocalScroll,
                     );
                     final aiColumn = _CompareColumn(
                       title: l10n.recordTranscriptCompareAi,
                       titleIcon: Icons.auto_awesome,
-                      transcript: aiTranscript,
+                      transcript: widget.aiTranscript,
                       spans: aiEmpty ? const [] : diff.right,
                       emptyLabel: l10n.transcriptEmptyFallback,
                       buttonLabel: l10n.recordTranscriptCompareChooseAi,
-                      onChoose: onSelectAi,
+                      onChoose: widget.onSelectAi,
                       emphasize: true,
                       showEuAiLabel: true,
+                      scrollController: _aiScrollController,
+                      onScrollNotification: _onAiScroll,
                     );
 
                     if (sideBySide) {
@@ -117,6 +175,8 @@ class _CompareColumn extends StatelessWidget {
     required this.emptyLabel,
     required this.buttonLabel,
     required this.onChoose,
+    required this.scrollController,
+    required this.onScrollNotification,
     this.emphasize = false,
     this.showEuAiLabel = false,
   });
@@ -128,6 +188,8 @@ class _CompareColumn extends StatelessWidget {
   final String emptyLabel;
   final String buttonLabel;
   final VoidCallback onChoose;
+  final ScrollController scrollController;
+  final NotificationListenerCallback<ScrollNotification> onScrollNotification;
   final bool emphasize;
   final bool showEuAiLabel;
 
@@ -177,13 +239,17 @@ class _CompareColumn extends StatelessWidget {
             ],
             const SizedBox(height: AppSpacing.sm),
             Expanded(
-              child: SingleChildScrollView(
-                child: isEmpty
-                    ? AppText(
-                        emptyLabel,
-                        variant: AppTextVariant.body,
-                      )
-                    : _AppTranscriptDiffText(spans: spans),
+              child: NotificationListener<ScrollNotification>(
+                onNotification: onScrollNotification,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: isEmpty
+                      ? AppText(
+                          emptyLabel,
+                          variant: AppTextVariant.body,
+                        )
+                      : _AppTranscriptDiffText(spans: spans),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -209,6 +275,9 @@ class _AppTranscriptDiffText extends StatelessWidget {
     final baseStyle = AppTypography.body.copyWith(
       color: theme.textTheme.bodyLarge?.color ??
           theme.colorScheme.onSurface,
+      decoration: TextDecoration.none,
+      decorationColor: Colors.transparent,
+      decorationThickness: 0,
     );
     final highlightStyle = baseStyle.copyWith(
       fontWeight: FontWeight.w600,
