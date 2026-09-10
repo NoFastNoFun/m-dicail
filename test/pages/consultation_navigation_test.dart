@@ -18,6 +18,7 @@ import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -107,6 +108,7 @@ void main() {
     getIt.registerFactory<VoiceCaptureBloc>(() => voice);
     getIt.registerSingleton<PatientRepository>(patients);
     getIt.registerSingleton<RecordingSessionRepository>(sessions);
+    getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerFactory<PatientDetailBloc>(
       () => PatientDetailBloc(patients, sessions),
     );
