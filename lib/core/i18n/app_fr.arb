@@ -33,7 +33,7 @@
   "transcriptEmptyFallback": "Transcription vide",
   "transcriptAiGeneratedLabel": "Transcription IA",
   "recordTranscriptCompareTitle": "Choisir la transcription",
-  "recordTranscriptCompareHint": "Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.",
+  "recordTranscriptCompareHint": "Comparez la version locale et la version IA. Les mots différents sont surlignés (majuscules et ponctuation ignorées, sauf les traits d'union). Choisissez celle à conserver et relisez toujours avant de valider.",
   "recordTranscriptCompareLocal": "Locale",
   "recordTranscriptCompareAi": "IA",
   "recordTranscriptCompareChooseLocal": "Choisir locale",

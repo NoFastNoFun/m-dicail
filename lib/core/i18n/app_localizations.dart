@@ -295,7 +295,7 @@ abstract class AppLocalizations {
   /// No description provided for @recordTranscriptCompareHint.
   ///
   /// In fr, this message translates to:
-  /// **'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.'**
+  /// **'Comparez la version locale et la version IA. Les mots différents sont surlignés (majuscules et ponctuation ignorées, sauf les traits d\'union). Choisissez celle à conserver et relisez toujours avant de valider.'**
   String get recordTranscriptCompareHint;
 
   /// No description provided for @recordTranscriptCompareLocal.
