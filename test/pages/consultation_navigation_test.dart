@@ -111,6 +111,7 @@ void main() {
     getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerSingleton<PatientRepository>(patients);
     getIt.registerSingleton<RecordingSessionRepository>(sessions);
+    getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerFactory<PatientDetailBloc>(
       () => PatientDetailBloc(patients, sessions),
     );
