@@ -111,7 +111,6 @@ void main() {
     getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerSingleton<PatientRepository>(patients);
     getIt.registerSingleton<RecordingSessionRepository>(sessions);
-    getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerFactory<PatientDetailBloc>(
       () => PatientDetailBloc(patients, sessions),
     );
@@ -172,67 +171,101 @@ void main() {
 
   for (final useAi in [false, true]) {
     for (final withHistory in [false, true]) {
-      testWidgets(
-        'discard leaves recording (AI: $useAi, history: $withHistory)',
-        (tester) async {
-          await tester.binding.setSurfaceSize(const Size(1000, 1600));
-          addTearDown(() => tester.binding.setSurfaceSize(null));
-          final router = GoRouter(
-            initialLocation: withHistory ? AppRoutes.home : AppRoutes.record,
-            routes: [
-              GoRoute(
-                path: AppRoutes.home,
-                builder: (_, _) =>
-                    const Scaffold(body: Text('Home destination')),
+      for (final associatedPatientId in [null, patient.id]) {
+        testWidgets(
+          'discard goes to the patient dossier or home (AI: $useAi, history: $withHistory, patient: $associatedPatientId)',
+          (tester) async {
+            await tester.binding.setSurfaceSize(const Size(1000, 1600));
+            addTearDown(() => tester.binding.setSurfaceSize(null));
+            final recordLocation = Uri(
+              path: AppRoutes.record,
+              queryParameters: associatedPatientId == null
+                  ? null
+                  : {'patientId': associatedPatientId},
+            ).toString();
+            final router = GoRouter(
+              initialLocation: withHistory
+                  ? AppRoutes.settings
+                  : recordLocation,
+              routes: [
+                GoRoute(
+                  path: AppRoutes.settings,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Previous screen')),
+                ),
+                GoRoute(
+                  path: AppRoutes.home,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Home destination')),
+                ),
+                GoRoute(
+                  path: AppRoutes.record,
+                  builder: (_, state) => RecordPage(
+                    patientId: state.uri.queryParameters['patientId'],
+                  ),
+                ),
+                GoRoute(
+                  path: '${AppRoutes.patients}/:patientId',
+                  name: 'patient-detail',
+                  builder: (_, state) => Scaffold(
+                    body: Text('Patient ${state.pathParameters['patientId']}'),
+                  ),
+                ),
+              ],
+            );
+            addTearDown(router.dispose);
+            await tester.pumpWidget(
+              BlocProvider<TutorialBloc>.value(
+                value: tutorial,
+                child: MaterialApp.router(
+                  routerConfig: router,
+                  locale: const Locale('fr'),
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                ),
               ),
-              GoRoute(
-                path: AppRoutes.record,
-                builder: (_, _) => const RecordPage(),
+            );
+            if (withHistory) {
+              router.push(recordLocation);
+            }
+            await tester.pumpAndSettle();
+            voiceStates.add(
+              RecordingInProgress(
+                transcript: 'Texte non sauvegardé.',
+                isAiCapture: useAi,
               ),
-            ],
-          );
-          addTearDown(router.dispose);
-          await tester.pumpWidget(
-            BlocProvider<TutorialBloc>.value(
-              value: tutorial,
-              child: MaterialApp.router(
-                routerConfig: router,
-                locale: const Locale('fr'),
-                supportedLocales: AppLocalizations.supportedLocales,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
+            );
+            await tester.pump();
+            final l10n = AppLocalizations.of(
+              tester.element(find.byType(RecordPage)),
+            );
+            tester
+                .widget<AppRecordHeaderCard>(find.byType(AppRecordHeaderCard))
+                .onBack();
+            await tester.pumpAndSettle();
+            await tester.tap(find.text(l10n.recordLeaveDiscard));
+            await tester.pumpAndSettle();
+            verify(
+              () => voice.add(const VoiceCaptureDiscardConsultation()),
+            ).called(1);
+            voiceStates.add(const VoiceCaptureReady());
+            await tester.pumpAndSettle();
+            expect(find.byType(RecordPage), findsNothing);
+            expect(
+              find.text(
+                associatedPatientId == null
+                    ? 'Home destination'
+                    : 'Patient $associatedPatientId',
               ),
-            ),
-          );
-          if (withHistory) {
-            router.push(AppRoutes.record);
-          }
-          await tester.pumpAndSettle();
-          voiceStates.add(
-            RecordingInProgress(
-              transcript: 'Texte non sauvegardé.',
-              isAiCapture: useAi,
-            ),
-          );
-          await tester.pump();
-          final l10n = AppLocalizations.of(
-            tester.element(find.byType(RecordPage)),
-          );
-          tester
-              .widget<AppRecordHeaderCard>(find.byType(AppRecordHeaderCard))
-              .onBack();
-          await tester.pumpAndSettle();
-          await tester.tap(find.text(l10n.recordLeaveDiscard));
-          await tester.pumpAndSettle();
-          verify(
-            () => voice.add(const VoiceCaptureDiscardConsultation()),
-          ).called(1);
-          voiceStates.add(const VoiceCaptureReady());
-          await tester.pumpAndSettle();
-          expect(find.byType(RecordPage), findsNothing);
-          expect(find.text('Home destination'), findsOneWidget);
-          expect(tester.takeException(), isNull);
-        },
-      );
+              findsOneWidget,
+            );
+            expect(find.text('Previous screen'), findsNothing);
+            expect(router.canPop(), isFalse);
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
     }
   }
 

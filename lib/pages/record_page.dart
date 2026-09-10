@@ -509,8 +509,12 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   }
 
   void _leaveRecordPage() {
-    if (context.canPop()) {
-      context.pop();
+    final patientId = widget.patientId;
+    if (patientId != null && patientId.isNotEmpty) {
+      context.goNamed(
+        'patient-detail',
+        pathParameters: {'patientId': patientId},
+      );
     } else {
       context.goHome();
     }
