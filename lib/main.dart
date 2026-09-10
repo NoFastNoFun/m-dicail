@@ -12,7 +12,9 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterForegroundTask.initCommunicationPort();
+  if (!isDesktopPlatform) {
+    FlutterForegroundTask.initCommunicationPort();
+  }
   await AppSystemUi.configure();
   await configureDependencies();
   await getIt<SettingsNotifier>().hydrate(getIt<UserPreferencesRepository>());

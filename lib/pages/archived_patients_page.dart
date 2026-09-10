@@ -21,31 +21,28 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
-import 'package:medicail/widget/patient_creation_sheet.dart';
-import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
-import 'package:medicail/features/tutorial/presentation/tutorial_step_extensions.dart';
 
-class PatientsPage extends StatelessWidget {
-  const PatientsPage({super.key});
+class ArchivedPatientsPage extends StatelessWidget {
+  const ArchivedPatientsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PatientBloc>()..add(const PatientsRequested()),
-      child: const _PatientsView(),
+      create: (_) =>
+          getIt<PatientBloc>()..add(const PatientsRequested(archived: true)),
+      child: const _ArchivedPatientsView(),
     );
   }
 }
 
-class _PatientsView extends StatefulWidget {
-  const _PatientsView();
+class _ArchivedPatientsView extends StatefulWidget {
+  const _ArchivedPatientsView();
 
   @override
-  State<_PatientsView> createState() => _PatientsViewState();
+  State<_ArchivedPatientsView> createState() => _ArchivedPatientsViewState();
 }
 
-class _PatientsViewState extends State<_PatientsView> {
+class _ArchivedPatientsViewState extends State<_ArchivedPatientsView> {
   final _searchController = TextEditingController();
   Timer? _searchDebounce;
   List<Patient> _patients = const [];
@@ -54,10 +51,6 @@ class _PatientsViewState extends State<_PatientsView> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _registerFabAction();
-    });
   }
 
   @override
@@ -67,53 +60,46 @@ class _PatientsViewState extends State<_PatientsView> {
     super.dispose();
   }
 
-  void _registerFabAction() {
-    MainShellScope.setFabPrimaryAction(context, _showCreatePatientSheet);
-  }
-
   void _onSearchChanged() {
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       context.read<PatientBloc>().add(
-        PatientsRequested(query: _searchController.text.trim()),
+        PatientsRequested(
+          query: _searchController.text.trim(),
+          archived: true,
+        ),
       );
     });
   }
 
-  void _reloadPatients() {
-    context.read<PatientBloc>().add(
-      PatientsRequested(query: _searchController.text.trim()),
+  Future<void> _reloadPatients() async {
+    final bloc = context.read<PatientBloc>();
+    final reloaded = bloc.stream.firstWhere(
+      (state) => state is PatientLoaded || state is PatientFailure,
     );
-  }
-
-  Future<void> _openArchivedPatients() async {
-    await context.pushArchivedPatients();
-    if (!mounted) return;
-    _reloadPatients();
+    bloc.add(
+      PatientsRequested(
+        query: _searchController.text.trim(),
+        archived: true,
+      ),
+    );
+    await reloaded;
   }
 
   Future<void> _openPatientDetail(Patient patient) async {
     await context.pushPatientDetail(patient.id);
     if (!mounted) return;
-    _reloadPatients();
+    await _reloadPatients();
   }
 
-  void _showCreatePatientSheet() {
-    context.read<TutorialBloc>().completeStep(TutorialStepId.patientsAdd);
-    PatientCreationSheet.show(
-      context,
-      onSuccess: (patientId) => context.goPatientDetail(patientId),
-    );
-  }
-
-  Future<bool> _archivePatient(Patient patient) async {
+  Future<bool> _deletePatient(Patient patient) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await AppDialog.show<bool>(
       context,
       variant: AppDialogVariant.standard,
-      title: l10n.patientArchiveTitle,
-      body: AppText(l10n.patientArchiveBody, variant: AppTextVariant.body),
+      title: l10n.patientDeleteTitle,
+      body: AppText(l10n.patientDeleteBody, variant: AppTextVariant.body),
       actionsBuilder: (dialogContext) => [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -122,32 +108,63 @@ class _PatientsViewState extends State<_PatientsView> {
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(true),
           child: AppText(
-            l10n.patientArchiveConfirm,
+            l10n.patientDeleteConfirm,
             variant: AppTextVariant.label,
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.error,
           ),
         ),
       ],
     );
     if (confirmed != true || !mounted) return false;
     try {
-      await getIt<PatientRepository>().archive(patient.id);
+      await getIt<PatientRepository>().delete(patient.id);
       if (!mounted) return false;
-      final bloc = context.read<PatientBloc>();
-      final reloaded = bloc.stream.firstWhere(
-        (state) => state is PatientLoaded || state is PatientFailure,
-      );
-      bloc.add(PatientsRequested(query: _searchController.text.trim()));
-      await reloaded;
+      await _reloadPatients();
       if (!mounted) return false;
-      if (bloc.state is PatientFailure) return false;
-      AppToast.showSuccess(context, l10n.patientArchiveSuccess);
+      if (context.read<PatientBloc>().state is PatientFailure) return false;
+      AppToast.showSuccess(context, l10n.patientDeleteSuccess);
       return true;
     } catch (error) {
       if (mounted) {
         AppToast.showError(context, Failure.fromException(error).message);
       }
       return false;
+    }
+  }
+
+  Future<void> _restore(Patient patient) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.patientUnarchiveTitle,
+      body: AppText(l10n.patientUnarchiveBody, variant: AppTextVariant.body),
+      actionsBuilder: (dialogContext) => [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: AppText(
+            l10n.patientUnarchiveConfirm,
+            variant: AppTextVariant.label,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      await getIt<PatientRepository>().unarchive(patient.id);
+      if (!mounted) return;
+      await _reloadPatients();
+      if (!mounted) return;
+      AppToast.showSuccess(context, l10n.patientUnarchiveSuccess);
+    } catch (error) {
+      if (mounted) {
+        AppToast.showError(context, Failure.fromException(error).message);
+      }
     }
   }
 
@@ -160,9 +177,6 @@ class _PatientsViewState extends State<_PatientsView> {
         if (state is PatientFailure) {
           AppToast.showError(context, state.message);
         }
-        if (state is PatientMrnConflict) {
-          AppToast.showError(context, l10n.patientMrnConflict);
-        }
       },
       builder: (context, state) {
         if (state is PatientLoaded) {
@@ -171,14 +185,7 @@ class _PatientsViewState extends State<_PatientsView> {
         final isLoading = state is PatientLoading;
 
         return AppScaffold(
-          title: l10n.patientsTitle,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.archive_outlined),
-              tooltip: l10n.patientsArchivedOpenTooltip,
-              onPressed: _openArchivedPatients,
-            ),
-          ],
+          title: l10n.patientsArchivedTitle,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -189,26 +196,22 @@ class _PatientsViewState extends State<_PatientsView> {
                 prefixIcon: Icons.search,
               ),
               const SizedBox(height: AppSpacing.xl),
-              AppText(
-                l10n.patientsSectionTitle,
-                variant: AppTextVariant.title,
-              ),
-              const SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: isLoading && _patients.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : _patients.isEmpty
                     ? Center(
                         child: AppText(
-                          l10n.patientsEmpty,
+                          l10n.patientsArchivedEmpty,
                           variant: AppTextVariant.body,
                           color: context.secondaryTextColor,
                         ),
                       )
-                    : _PatientList(
+                    : _ArchivedPatientList(
                         patients: _patients,
                         padding: MainShellScope.scrollPaddingOf(context),
-                        onArchive: _archivePatient,
+                        onDelete: _deletePatient,
+                        onRestore: _restore,
                         onOpen: _openPatientDetail,
                       ),
               ),
@@ -220,17 +223,19 @@ class _PatientsViewState extends State<_PatientsView> {
   }
 }
 
-class _PatientList extends StatelessWidget {
-  const _PatientList({
+class _ArchivedPatientList extends StatelessWidget {
+  const _ArchivedPatientList({
     required this.patients,
     required this.padding,
-    required this.onArchive,
+    required this.onDelete,
+    required this.onRestore,
     required this.onOpen,
   });
 
   final List<Patient> patients;
   final EdgeInsets padding;
-  final Future<bool> Function(Patient patient) onArchive;
+  final Future<bool> Function(Patient patient) onDelete;
+  final Future<void> Function(Patient patient) onRestore;
   final Future<void> Function(Patient patient) onOpen;
 
   @override
@@ -244,9 +249,10 @@ class _PatientList extends StatelessWidget {
         separatorBuilder: (context, index) =>
             const SizedBox(height: AppSpacing.md),
         itemBuilder: (context, index) {
-          return _PatientListItem(
+          return _ArchivedPatientListItem(
             patient: patients[index],
-            onArchive: onArchive,
+            onDelete: onDelete,
+            onRestore: onRestore,
             onOpen: onOpen,
           );
         },
@@ -263,9 +269,10 @@ class _PatientList extends StatelessWidget {
       ),
       itemCount: patients.length,
       itemBuilder: (context, index) {
-        return _PatientListItem(
+        return _ArchivedPatientListItem(
           patient: patients[index],
-          onArchive: onArchive,
+          onDelete: onDelete,
+          onRestore: onRestore,
           onOpen: onOpen,
         );
       },
@@ -273,26 +280,18 @@ class _PatientList extends StatelessWidget {
   }
 }
 
-class _PatientListItem extends StatelessWidget {
-  const _PatientListItem({
+class _ArchivedPatientListItem extends StatelessWidget {
+  const _ArchivedPatientListItem({
     required this.patient,
-    required this.onArchive,
+    required this.onDelete,
+    required this.onRestore,
     required this.onOpen,
   });
 
   final Patient patient;
-  final Future<bool> Function(Patient patient) onArchive;
+  final Future<bool> Function(Patient patient) onDelete;
+  final Future<void> Function(Patient patient) onRestore;
   final Future<void> Function(Patient patient) onOpen;
-
-  int _calculateAge(DateTime birthDate) {
-    final now = DateTime.now();
-    int age = now.year - birthDate.year;
-    if (now.month < birthDate.month ||
-        (now.month == birthDate.month && now.day < birthDate.day)) {
-      age--;
-    }
-    return age;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -300,19 +299,19 @@ class _PatientListItem extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Dismissible(
-      key: ValueKey('patient-archive-${patient.id}'),
+      key: ValueKey('patient-delete-${patient.id}'),
       direction: DismissDirection.endToStart,
-      confirmDismiss: (_) => onArchive(patient),
+      confirmDismiss: (_) => onDelete(patient),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
+          color: theme.colorScheme.errorContainer,
           borderRadius: AppRadius.mdBorder,
         ),
         child: Icon(
-          Icons.archive_outlined,
-          color: theme.colorScheme.onPrimaryContainer,
+          Icons.delete_outline,
+          color: theme.colorScheme.onErrorContainer,
         ),
       ),
       child: InkWell(
@@ -355,44 +354,18 @@ class _PatientListItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (patient.birthDate != null || patient.sex != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
-                      if (patient.birthDate != null) ...[
-                        Icon(
-                          Icons.cake_outlined,
-                          size: 16,
-                          color: context.secondaryTextColor,
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        AppText(
-                          '${_calculateAge(patient.birthDate!)} ans',
-                          variant: AppTextVariant.caption,
-                          color: context.secondaryTextColor,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                      ],
-                      if (patient.sex != null) ...[
-                        Icon(
-                          Icons.person_outline,
-                          size: 16,
-                          color: context.secondaryTextColor,
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        AppText(
-                          patient.sex!,
-                          variant: AppTextVariant.caption,
-                          color: context.secondaryTextColor,
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
                 const SizedBox(height: AppSpacing.md),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    TextButton.icon(
+                      onPressed: () => onRestore(patient),
+                      icon: const Icon(Icons.unarchive_outlined, size: 18),
+                      label: AppText(
+                        l10n.patientRestoreButton,
+                        variant: AppTextVariant.label,
+                      ),
+                    ),
+                    const Spacer(),
                     AppText(
                       l10n.patientOpenButton,
                       variant: AppTextVariant.label,

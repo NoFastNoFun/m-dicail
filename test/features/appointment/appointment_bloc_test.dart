@@ -51,7 +51,8 @@ class _FakePatientRepository implements PatientRepository {
   Future<void> delete(String id) async {}
 
   @override
-  Future<List<Patient>> getAll({String? query}) async => [];
+  Future<List<Patient>> getAll({String? query, bool archived = false}) async =>
+      [];
 
   @override
   Future<Patient?> getById(String id) async {
@@ -69,6 +70,18 @@ class _FakePatientRepository implements PatientRepository {
 
   @override
   Future<Patient> save(Patient patient) async => patient;
+
+  @override
+  Future<Patient> archive(String id) async {
+    final patient = await getById(id);
+    return patient!.copyWith(archivedAt: DateTime.now());
+  }
+
+  @override
+  Future<Patient> unarchive(String id) async {
+    final patient = await getById(id);
+    return patient!.copyWith(clearArchivedAt: true);
+  }
 }
 
 void main() {

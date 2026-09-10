@@ -550,6 +550,24 @@ abstract class AppLocalizations {
   /// **'Aucun patient pour le moment'**
   String get patientsEmpty;
 
+  /// No description provided for @patientsArchivedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients archivés'**
+  String get patientsArchivedTitle;
+
+  /// No description provided for @patientsArchivedEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun patient archivé'**
+  String get patientsArchivedEmpty;
+
+  /// No description provided for @patientsArchivedOpenTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients archivés'**
+  String get patientsArchivedOpenTooltip;
+
   /// No description provided for @patientFirstNameLabel.
   ///
   /// In fr, this message translates to:
@@ -609,6 +627,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune consultation pour ce patient'**
   String get patientSessionsEmpty;
+
+  /// No description provided for @patientArchiveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver le patient ?'**
+  String get patientArchiveTitle;
+
+  /// No description provided for @patientArchiveBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le patient sera déplacé dans les archives. Vous pourrez le restaurer plus tard.'**
+  String get patientArchiveBody;
+
+  /// No description provided for @patientArchiveConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver'**
+  String get patientArchiveConfirm;
+
+  /// No description provided for @patientArchiveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient archivé'**
+  String get patientArchiveSuccess;
+
+  /// No description provided for @patientUnarchiveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer le patient ?'**
+  String get patientUnarchiveTitle;
+
+  /// No description provided for @patientUnarchiveBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le patient réapparaîtra dans la liste active.'**
+  String get patientUnarchiveBody;
+
+  /// No description provided for @patientUnarchiveConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer'**
+  String get patientUnarchiveConfirm;
+
+  /// No description provided for @patientUnarchiveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient restauré'**
+  String get patientUnarchiveSuccess;
+
+  /// No description provided for @patientDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le patient ?'**
+  String get patientDeleteTitle;
+
+  /// No description provided for @patientDeleteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. Le patient, ses rendez-vous et ses consultations seront définitivement supprimés.'**
+  String get patientDeleteBody;
+
+  /// No description provided for @patientDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get patientDeleteConfirm;
+
+  /// No description provided for @patientDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patient supprimé'**
+  String get patientDeleteSuccess;
+
+  /// No description provided for @patientRestoreButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer'**
+  String get patientRestoreButton;
+
+  /// No description provided for @sessionDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la consultation ?'**
+  String get sessionDeleteTitle;
+
+  /// No description provided for @sessionDeleteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. La transcription et la note associées seront perdues.'**
+  String get sessionDeleteBody;
+
+  /// No description provided for @sessionDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get sessionDeleteConfirm;
+
+  /// No description provided for @sessionDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultation supprimée'**
+  String get sessionDeleteSuccess;
 
   /// No description provided for @sessionStatusDraft.
   ///

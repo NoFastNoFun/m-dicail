@@ -14,6 +14,7 @@ class Patient extends Equatable {
     this.contact,
     this.notes,
     this.metadata,
+    this.archivedAt,
   });
 
   final String id;
@@ -25,10 +26,13 @@ class Patient extends Equatable {
   final Contact? contact;
   final String? notes;
   final Map<String, dynamic>? metadata;
+  final DateTime? archivedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
 
   String get displayName => '$firstName $lastName'.trim();
+
+  bool get isArchived => archivedAt != null;
 
   Patient copyWith({
     String? id,
@@ -40,6 +44,7 @@ class Patient extends Equatable {
     Contact? contact,
     String? notes,
     Map<String, dynamic>? metadata,
+    DateTime? archivedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool clearBirthDate = false,
@@ -47,6 +52,7 @@ class Patient extends Equatable {
     bool clearContact = false,
     bool clearNotes = false,
     bool clearMetadata = false,
+    bool clearArchivedAt = false,
   }) {
     return Patient(
       id: id ?? this.id,
@@ -58,6 +64,7 @@ class Patient extends Equatable {
       contact: clearContact ? null : contact ?? this.contact,
       notes: clearNotes ? null : notes ?? this.notes,
       metadata: clearMetadata ? null : metadata ?? this.metadata,
+      archivedAt: clearArchivedAt ? null : archivedAt ?? this.archivedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -74,6 +81,7 @@ class Patient extends Equatable {
         contact,
         notes,
         metadata,
+        archivedAt,
         createdAt,
         updatedAt,
       ];

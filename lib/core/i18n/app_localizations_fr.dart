@@ -249,6 +249,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientsEmpty => 'Aucun patient pour le moment';
 
   @override
+  String get patientsArchivedTitle => 'Patients archivés';
+
+  @override
+  String get patientsArchivedEmpty => 'Aucun patient archivé';
+
+  @override
+  String get patientsArchivedOpenTooltip => 'Patients archivés';
+
+  @override
   String get patientFirstNameLabel => 'Prénom';
 
   @override
@@ -277,6 +286,61 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get patientSessionsEmpty => 'Aucune consultation pour ce patient';
+
+  @override
+  String get patientArchiveTitle => 'Archiver le patient ?';
+
+  @override
+  String get patientArchiveBody =>
+      'Le patient sera déplacé dans les archives. Vous pourrez le restaurer plus tard.';
+
+  @override
+  String get patientArchiveConfirm => 'Archiver';
+
+  @override
+  String get patientArchiveSuccess => 'Patient archivé';
+
+  @override
+  String get patientUnarchiveTitle => 'Restaurer le patient ?';
+
+  @override
+  String get patientUnarchiveBody =>
+      'Le patient réapparaîtra dans la liste active.';
+
+  @override
+  String get patientUnarchiveConfirm => 'Restaurer';
+
+  @override
+  String get patientUnarchiveSuccess => 'Patient restauré';
+
+  @override
+  String get patientDeleteTitle => 'Supprimer le patient ?';
+
+  @override
+  String get patientDeleteBody =>
+      'Cette action est irréversible. Le patient, ses rendez-vous et ses consultations seront définitivement supprimés.';
+
+  @override
+  String get patientDeleteConfirm => 'Supprimer';
+
+  @override
+  String get patientDeleteSuccess => 'Patient supprimé';
+
+  @override
+  String get patientRestoreButton => 'Restaurer';
+
+  @override
+  String get sessionDeleteTitle => 'Supprimer la consultation ?';
+
+  @override
+  String get sessionDeleteBody =>
+      'Cette action est irréversible. La transcription et la note associées seront perdues.';
+
+  @override
+  String get sessionDeleteConfirm => 'Supprimer';
+
+  @override
+  String get sessionDeleteSuccess => 'Consultation supprimée';
 
   @override
   String get sessionStatusDraft => 'Brouillon';

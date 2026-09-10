@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/audio/recording_foreground_task.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 abstract class RecordingNotificationService {
@@ -35,7 +36,7 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
 
   @override
   Future<void> ensureInitialized() async {
-    if (_initialized) {
+    if (isDesktopPlatform || _initialized) {
       return;
     }
 
@@ -63,6 +64,10 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
 
   @override
   Future<void> requestPermissions() async {
+    if (isDesktopPlatform) {
+      return;
+    }
+
     final notificationPermission =
         await FlutterForegroundTask.checkNotificationPermission();
     if (notificationPermission != NotificationPermission.granted) {
@@ -82,6 +87,10 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
     required String title,
     required String body,
   }) async {
+    if (isDesktopPlatform) {
+      return;
+    }
+
     await ensureInitialized();
     await requestPermissions();
 
@@ -104,6 +113,9 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
     required String title,
     required String body,
   }) async {
+    if (isDesktopPlatform) {
+      return;
+    }
     if (!await FlutterForegroundTask.isRunningService) {
       return;
     }
@@ -115,6 +127,9 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
 
   @override
   Future<void> stop() async {
+    if (isDesktopPlatform) {
+      return;
+    }
     if (!await FlutterForegroundTask.isRunningService) {
       return;
     }

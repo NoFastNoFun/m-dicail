@@ -14,6 +14,7 @@ final class PatientModel extends Patient {
     super.contact,
     super.notes,
     super.metadata,
+    super.archivedAt,
   });
 
   factory PatientModel.fromEntity(Patient patient) {
@@ -27,6 +28,7 @@ final class PatientModel extends Patient {
       contact: patient.contact,
       notes: patient.notes,
       metadata: patient.metadata,
+      archivedAt: patient.archivedAt,
       createdAt: patient.createdAt,
       updatedAt: patient.updatedAt,
     );
@@ -45,6 +47,7 @@ final class PatientModel extends Patient {
           : null,
       notes: json['notes'] as String?,
       metadata: json['patient_metadata'] as Map<String, dynamic>? ?? json['metadata'] as Map<String, dynamic>?,
+      archivedAt: _parseNullableDateTime(json['archived_at'] ?? json['archivedAt']),
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
       updatedAt: _parseDate(json['updated_at'] ?? json['updatedAt']),
     );
@@ -63,6 +66,7 @@ final class PatientModel extends Patient {
       'contact': contact?.toJson(),
       'notes': notes,
       'patient_metadata': metadata,
+      'archived_at': archivedAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -76,6 +80,13 @@ final class PatientModel extends Patient {
   }
 
   static DateTime? _parseNullableDate(Object? value) {
+    if (value is! String || value.isEmpty) {
+      return null;
+    }
+    return DateTime.parse(value);
+  }
+
+  static DateTime? _parseNullableDateTime(Object? value) {
     if (value is! String || value.isEmpty) {
       return null;
     }

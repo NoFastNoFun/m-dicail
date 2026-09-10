@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/auth/app_lock_controller.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
@@ -39,18 +40,28 @@ class _AppLockGateState extends State<AppLockGate>
       if (_authNotifier.canAccessApp && _lockController.shouldShowLock) {
         unawaited(_tryUnlock());
       }
-      if (mounted) setState(() {});
+      _scheduleSetState();
     };
     _authNotifier.addListener(_authListener!);
-    _lockListener = () {
-      if (mounted) setState(() {});
-    };
+    _lockListener = _scheduleSetState;
     _lockController.addListener(_lockListener!);
-    _routerListener = () {
-      if (mounted) setState(() {});
-    };
+    _routerListener = _scheduleSetState;
     _router.routerDelegate.addListener(_routerListener!);
-    unawaited(_bootstrap());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_bootstrap());
+    });
+  }
+
+  void _scheduleSetState() {
+    if (!mounted) return;
+    if (context.owner?.debugBuilding ?? false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+      SchedulerBinding.instance.ensureVisualUpdate();
+      return;
+    }
+    setState(() {});
   }
 
   Future<void> _bootstrap() async {
@@ -96,7 +107,7 @@ class _AppLockGateState extends State<AppLockGate>
   }
 
   bool _isPublicAuthRoute() {
-    final location = _router.state.uri.toString();
+    final location = _router.routerDelegate.currentConfiguration.uri.toString();
     return location == AppRoutes.login ||
         location == AppRoutes.register ||
         location.startsWith(AppRoutes.forgotPassword) ||
@@ -115,55 +126,73 @@ class _AppLockGateState extends State<AppLockGate>
   Widget build(BuildContext context) {
     final showLock =
         _lockController.shouldShowLock && !_isPublicAuthRoute();
-    if (!showLock) return widget.child;
 
-    final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
+    // Keep [widget.child] (GoRouter's Navigator, GlobalKey) in a stable slot.
+    // Returning the child unwrapped when unlocked remounts that GlobalKey.
     return Stack(
       fit: StackFit.expand,
       children: [
         widget.child,
-        ColoredBox(
-          color: colorScheme.surface,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Icon(
-                    Icons.lock_outline,
-                    size: 56,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  AppText(
-                    l10n.authBiometricLockTitle,
-                    variant: AppTextVariant.title,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  AppText(
-                    l10n.authBiometricLockSubtitle,
-                    variant: AppTextVariant.body,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  AppButton(
-                    label: l10n.authBiometricUnlock,
-                    isLoading: _lockController.isAuthenticating,
-                    onPressed: _lockController.isAuthenticating
-                        ? null
-                        : _tryUnlock,
-                  ),
-                ],
+        if (showLock)
+          _LockCover(
+            isAuthenticating: _lockController.isAuthenticating,
+            onUnlock: _tryUnlock,
+          ),
+      ],
+    );
+  }
+}
+
+class _LockCover extends StatelessWidget {
+  const _LockCover({
+    required this.isAuthenticating,
+    required this.onUnlock,
+  });
+
+  final bool isAuthenticating;
+  final Future<void> Function() onUnlock;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ColoredBox(
+      color: colorScheme.surface,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Icon(
+                Icons.lock_outline,
+                size: 56,
+                color: colorScheme.primary,
               ),
-            ),
+              const SizedBox(height: AppSpacing.lg),
+              AppText(
+                l10n.authBiometricLockTitle,
+                variant: AppTextVariant.title,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              AppText(
+                l10n.authBiometricLockSubtitle,
+                variant: AppTextVariant.body,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              AppButton(
+                label: l10n.authBiometricUnlock,
+                isLoading: isAuthenticating,
+                onPressed: isAuthenticating ? null : onUnlock,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

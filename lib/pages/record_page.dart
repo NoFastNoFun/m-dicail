@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
@@ -118,7 +119,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!mounted) {
+    if (!mounted || isDesktopPlatform) {
       return;
     }
     final bloc = context.read<VoiceCaptureBloc>();

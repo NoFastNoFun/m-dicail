@@ -41,8 +41,12 @@ class _MedicailAppState extends State<MedicailApp> {
     super.initState();
     ShowcaseView.register();
     _deeplinkListener = AuthDeeplinkListener(router: getIt<GoRouter>());
-    unawaited(_deeplinkListener!.start());
-    _screenProtection = getIt<ScreenProtectionController>()..start();
+    _screenProtection = getIt<ScreenProtectionController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_deeplinkListener?.start());
+      _screenProtection?.start();
+    });
   }
 
   @override
@@ -55,72 +59,75 @@ class _MedicailAppState extends State<MedicailApp> {
   @override
   Widget build(BuildContext context) {
     final settingsNotifier = getIt<SettingsNotifier>();
+    final router = getIt<GoRouter>();
+    final initialTheme = AppTheme.forVariant(
+      settingsNotifier.themeVariant,
+      customColors: settingsNotifier.customThemeColors,
+    );
 
-    return ListenableBuilder(
-      listenable: settingsNotifier,
-      builder: (context, _) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: AppSystemUi.overlayStyle(
-            AppTheme.forVariant(
-              settingsNotifier.themeVariant,
-              customColors: settingsNotifier.customThemeColors,
-            ).brightness,
-          ),
-          child: MaterialApp.router(
-            title: 'Medicail',
-            theme: AppTheme.forVariant(
-              settingsNotifier.themeVariant,
-              customColors: settingsNotifier.customThemeColors,
+    return MaterialApp.router(
+      title: 'Medicail',
+      theme: initialTheme,
+      locale: const Locale('fr'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      routerConfig: router,
+      builder: (context, child) {
+        final navigator = child ?? const SizedBox.shrink();
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>(
+              create: (_) =>
+                  getIt<AuthBloc>()..add(const AuthCheckRequested()),
             ),
-            locale: const Locale('fr'),
-            supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            routerConfig: getIt<GoRouter>(),
-            builder: (context, child) {
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.linear(
-                    settingsNotifier.fontScaleMultiplier,
-                  ),
-                ),
-                child: MultiBlocProvider(
-                  providers: [
-                    BlocProvider<AuthBloc>(
-                      create: (_) =>
-                          getIt<AuthBloc>()..add(const AuthCheckRequested()),
-                    ),
-                    BlocProvider<SettingsBloc>(
-                      lazy: false,
-                      create: (_) => getIt<SettingsBloc>()
-                        ..add(const SettingsLoadRequested()),
-                    ),
-                    BlocProvider<TutorialBloc>(
-                      create: (_) => getIt<TutorialBloc>()
-                        ..add(const TutorialCheckRequested()),
-                    ),
-                  ],
-                  child: BlocListener<AuthBloc, AuthState>(
-                    listenWhen: (previous, current) =>
-                        current is AuthSessionExpiredState,
-                    listener: (context, state) {
-                      if (state is AuthSessionExpiredState) {
-                        final l10n = AppLocalizations.of(context);
-                        AppToast.showError(context, l10n.sessionExpiredMessage);
-                      }
-                    },
-                    child: AppToastHost(
-                      child: ScreenshotBugPromptHost(
-                        child: SensitiveRoutePrivacyOverlay(
-                          child: AppLockGate(
-                            child: child ?? const SizedBox.shrink(),
+            BlocProvider<SettingsBloc>(
+              lazy: false,
+              create: (_) =>
+                  getIt<SettingsBloc>()..add(const SettingsLoadRequested()),
+            ),
+            BlocProvider<TutorialBloc>(
+              create: (_) =>
+                  getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
+            ),
+          ],
+          child: BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+                current is AuthSessionExpiredState,
+            listener: (context, state) {
+              if (state is AuthSessionExpiredState) {
+                final l10n = AppLocalizations.of(context);
+                AppToast.showError(context, l10n.sessionExpiredMessage);
+              }
+            },
+            child: ListenableBuilder(
+              listenable: settingsNotifier,
+              builder: (context, _) {
+                final theme = AppTheme.forVariant(
+                  settingsNotifier.themeVariant,
+                  customColors: settingsNotifier.customThemeColors,
+                );
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: AppSystemUi.overlayStyle(theme.brightness),
+                  child: Theme(
+                    data: theme,
+                    child: MediaQuery(
+                      data: MediaQuery.of(context).copyWith(
+                        textScaler: TextScaler.linear(
+                          settingsNotifier.fontScaleMultiplier,
+                        ),
+                      ),
+                      child: AppToastHost(
+                        child: ScreenshotBugPromptHost(
+                          child: SensitiveRoutePrivacyOverlay(
+                            child: AppLockGate(child: navigator),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         );
       },

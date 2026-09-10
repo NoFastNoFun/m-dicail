@@ -8,12 +8,13 @@ sealed class PatientEvent extends Equatable {
 }
 
 final class PatientsRequested extends PatientEvent {
-  const PatientsRequested({this.query});
+  const PatientsRequested({this.query, this.archived = false});
 
   final String? query;
+  final bool archived;
 
   @override
-  List<Object?> get props => [query];
+  List<Object?> get props => [query, archived];
 }
 
 final class PatientCreated extends PatientEvent {
@@ -55,6 +56,24 @@ final class PatientCreated extends PatientEvent {
 
 final class PatientDeleted extends PatientEvent {
   const PatientDeleted(this.id);
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
+final class PatientArchived extends PatientEvent {
+  const PatientArchived(this.id);
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
+final class PatientUnarchived extends PatientEvent {
+  const PatientUnarchived(this.id);
 
   final String id;
 

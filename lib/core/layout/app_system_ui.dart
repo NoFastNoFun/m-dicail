@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medicail/core/config/app_platform.dart';
 
 abstract final class AppSystemUi {
   static Future<void> configure() async {
+    if (isDesktopPlatform) return;
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 

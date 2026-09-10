@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/features/patient/data/models/patient_model.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
@@ -15,13 +16,14 @@ class SecureStoragePatientRepository implements PatientRepository {
   final FlutterSecureStorage _storage;
 
   @override
-  Future<List<Patient>> getAll({String? query}) async {
+  Future<List<Patient>> getAll({String? query, bool archived = false}) async {
     final patients = await _readPatients();
+    final filtered = patients.where((p) => archived ? p.isArchived : !p.isArchived);
     if (query == null || query.isEmpty) {
-      return patients;
+      return filtered.toList();
     }
     final q = query.toLowerCase();
-    return patients.where((p) {
+    return filtered.where((p) {
       return p.firstName.toLowerCase().contains(q) ||
           p.lastName.toLowerCase().contains(q) ||
           (p.mrn.toLowerCase().contains(q));
@@ -59,6 +61,24 @@ class SecureStoragePatientRepository implements PatientRepository {
 
     await _writePatients(nextPatients);
     return savedPatient;
+  }
+
+  @override
+  Future<Patient> archive(String id) async {
+    final patient = await getById(id);
+    if (patient == null) {
+      throw const ServerException('Patient introuvable');
+    }
+    return save(patient.copyWith(archivedAt: DateTime.now()));
+  }
+
+  @override
+  Future<Patient> unarchive(String id) async {
+    final patient = await getById(id);
+    if (patient == null) {
+      throw const ServerException('Patient introuvable');
+    }
+    return save(patient.copyWith(clearArchivedAt: true));
   }
 
   @override

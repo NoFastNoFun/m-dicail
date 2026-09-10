@@ -31,7 +31,8 @@ class AppRadialActionButton extends StatefulWidget {
   final AppRadialActionAnchor anchor;
 
   /// When set, a tap runs this action and opening the radial menu requires a
-  /// long-press. When null, a tap toggles the menu (default).
+  /// long-press or secondary click (right-click). When null, a tap toggles
+  /// the menu (default).
   final VoidCallback? onPrimaryPressed;
 
   @override
@@ -197,6 +198,7 @@ class _AppRadialActionButtonState extends State<AppRadialActionButton>
                 ),
             GestureDetector(
               onLongPress: hasPrimary ? _toggle : null,
+              onSecondaryTap: hasPrimary ? _toggle : null,
               child: FloatingActionButton(
                 onPressed: _onFabPressed,
                 backgroundColor: theme.colorScheme.primary,

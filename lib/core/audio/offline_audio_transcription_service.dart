@@ -19,11 +19,18 @@ class WhisperOfflineAudioTranscriptionService
 
   final Whisper _whisper;
 
+  static bool get _isSupportedPlatform =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+
   @override
   Future<String> transcribeFile(
     String path, {
     String language = 'fr',
   }) async {
+    if (!_isSupportedPlatform) {
+      return '';
+    }
+
     final file = File(path);
     if (!await file.exists()) {
       throw const AudioException('Fichier audio introuvable');

@@ -9,6 +9,7 @@ import 'package:medicail/pages/appointments_day_page.dart';
 import 'package:medicail/pages/main_shell.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/patients_page.dart';
+import 'package:medicail/pages/archived_patients_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/pages/settings_page.dart';
 import 'package:medicail/pages/medical_watch_page.dart';
@@ -141,6 +142,11 @@ class AppRouter {
             builder: (context, state) => const PatientsPage(),
           ),
           GoRoute(
+            path: AppRoutes.patientsArchived,
+            name: 'patients-archived',
+            builder: (context, state) => const ArchivedPatientsPage(),
+          ),
+          GoRoute(
             path: AppRoutes.settings,
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
@@ -199,6 +205,12 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.patientDetail,
         name: 'patient-detail',
+        redirect: (context, state) {
+          if (state.pathParameters['patientId'] == 'archived') {
+            return AppRoutes.patientsArchived;
+          }
+          return null;
+        },
         builder: (context, state) => PatientDetailPage(
           patientId: state.pathParameters['patientId'] ?? '',
           sessionId: state.uri.queryParameters['sessionId'],
@@ -249,6 +261,11 @@ extension AppRouterNavigation on BuildContext {
 
   void goPatients() => go(AppRoutes.patients);
 
+  Future<T?> pushArchivedPatients<T extends Object?>() =>
+      push<T>(AppRoutes.patientsArchived);
+
+  void goArchivedPatients() => push(AppRoutes.patientsArchived);
+
   void goAppointments({DateTime? date}) {
     if (date == null) {
       push(AppRoutes.appointments);
@@ -270,6 +287,9 @@ extension AppRouterNavigation on BuildContext {
   void goTemplates() => pushNamed('settings-templates');
 
   void goPatientDetail(String patientId) => push('/patients/$patientId');
+
+  Future<T?> pushPatientDetail<T extends Object?>(String patientId) =>
+      push<T>('/patients/$patientId');
 
   void openCompletedConsultation(String patientId, String sessionId) =>
       pushReplacementNamed(

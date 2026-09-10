@@ -117,8 +117,7 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<void> delete(String id) async {
-    // Le backend n'a pas de route DELETE pour /recording-sessions
-    // On ignore silencieusement
+    await _apiClient.delete<void>('/recording-sessions/$id');
   }
 
   @override

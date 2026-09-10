@@ -21,7 +21,12 @@ class ScreenProtectionController extends ChangeNotifier {
 
   bool get isEnabled => _enabled;
 
-  bool get isSensitiveRoute => isSensitiveLocation(_router.state.uri.path);
+  /// Uses the match-list URI so this is safe before GoRouter has attached.
+  /// [GoRouter.state] throws `Bad state: No element` on an empty match list.
+  bool get isSensitiveRoute => isSensitiveLocation(_currentPath);
+
+  String get _currentPath =>
+      _router.routerDelegate.currentConfiguration.uri.path;
 
   static bool isSensitiveLocation(String location) {
     if (location == AppRoutes.patients) return true;

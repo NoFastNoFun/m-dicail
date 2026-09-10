@@ -83,7 +83,10 @@ void main() {
     registerFallbackValue(savedSession);
     when(() => patients.getById(patient.id)).thenAnswer((_) async => patient);
     when(
-      () => patients.getAll(query: any(named: 'query')),
+      () => patients.getAll(
+        query: any(named: 'query'),
+        archived: any(named: 'archived'),
+      ),
     ).thenAnswer((_) async => [patient]);
     when(
       () => sessions.getById(savedSession.id),

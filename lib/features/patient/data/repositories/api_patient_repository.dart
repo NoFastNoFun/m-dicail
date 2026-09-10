@@ -13,10 +13,17 @@ class ApiPatientRepository implements PatientRepository {
   final ApiClient _apiClient;
 
   @override
-  Future<List<Patient>> getAll({String? query}) async {
+  Future<List<Patient>> getAll({String? query, bool archived = false}) async {
+    final queryParameters = <String, dynamic>{};
+    if (query != null && query.isNotEmpty) {
+      queryParameters['query'] = query;
+    }
+    if (archived) {
+      queryParameters['archived'] = 'true';
+    }
     final response = await _apiClient.get<List<dynamic>>(
       '/patients',
-      queryParameters: query != null && query.isNotEmpty ? {'query': query} : null,
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
     final data = response.data;
     if (data == null) {
@@ -50,7 +57,8 @@ class ApiPatientRepository implements PatientRepository {
     final payload = model.toJson()
       ..remove('id')
       ..remove('created_at')
-      ..remove('updated_at');
+      ..remove('updated_at')
+      ..remove('archived_at');
 
     if (patient.id.isEmpty) {
       final response = await _apiClient.post<Map<String, dynamic>>(
@@ -76,6 +84,30 @@ class ApiPatientRepository implements PatientRepository {
   }
 
   @override
+  Future<Patient> archive(String id) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/patients/$id/archive',
+    );
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Aucune donnee patient retournee.');
+    }
+    return PatientModel.fromJson(data);
+  }
+
+  @override
+  Future<Patient> unarchive(String id) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/patients/$id/unarchive',
+    );
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Aucune donnee patient retournee.');
+    }
+    return PatientModel.fromJson(data);
+  }
+
+  @override
   Future<void> delete(String id) async {
     await _apiClient.delete<void>('/patients/$id');
   }
@@ -83,6 +115,5 @@ class ApiPatientRepository implements PatientRepository {
   @override
   Future<void> clear() async {
     // API n'a pas d'endpoint global pour effacer tous les patients.
-    // Ignoré ou lève une exception selon le besoin.
   }
 }

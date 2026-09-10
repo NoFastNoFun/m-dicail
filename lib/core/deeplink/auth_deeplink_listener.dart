@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/deeplink/auth_deeplink_mapper.dart';
 
@@ -41,6 +42,11 @@ class AuthDeeplinkListener {
     if (uri == null) return;
     final location = mapIncomingAuthUri(uri);
     if (location == null) return;
-    _router.go(location);
+    // Never call GoRouter.go during a build: Windows app_links can emit the
+    // initial URI synchronously when the stream is subscribed.
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _router.go(location);
+    });
+    SchedulerBinding.instance.ensureVisualUpdate();
   }
 }

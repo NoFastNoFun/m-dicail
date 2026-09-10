@@ -53,7 +53,12 @@ class _ScreenshotBugPromptHostState extends State<ScreenshotBugPromptHost> {
     final navContext = AppRouter.navigatorKey.currentContext;
     if (navContext == null || !navContext.mounted) return;
 
-    final location = GoRouter.maybeOf(navContext)?.state.uri.path ?? '';
+    final location = GoRouter.maybeOf(navContext)
+            ?.routerDelegate
+            .currentConfiguration
+            .uri
+            .path ??
+        '';
     if (ScreenProtectionController.isSensitiveLocation(location)) {
       return;
     }

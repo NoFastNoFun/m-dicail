@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/error/failure.dart';
@@ -12,25 +11,26 @@ import 'package:medicail/features/patient/presentation/patient_state.dart';
 @injectable
 class PatientBloc extends Bloc<PatientEvent, PatientState> {
   PatientBloc(this._patientRepository) : super(const PatientInitial()) {
-    on<PatientsRequested>(
-      _onPatientsRequested,
-      transformer: (events, mapper) => events
-          .debounceTime(const Duration(milliseconds: 500))
-          .switchMap(mapper),
-    );
+    on<PatientsRequested>(_onPatientsRequested);
     on<PatientCreated>(_onPatientCreated);
     on<PatientUpdated>(_onPatientUpdated);
     on<PatientDeleted>(_onPatientDeleted);
+    on<PatientArchived>(_onPatientArchived);
+    on<PatientUnarchived>(_onPatientUnarchived);
   }
 
   final PatientRepository _patientRepository;
+  bool _archived = false;
+  String? _query;
 
   Future<void> _onPatientsRequested(
     PatientsRequested event,
     Emitter<PatientState> emit,
   ) async {
+    _archived = event.archived;
+    _query = event.query;
     emit(const PatientLoading());
-    await _loadPatients(emit, query: event.query);
+    await _loadPatients(emit);
   }
 
   Future<void> _onPatientCreated(
@@ -81,7 +81,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         emit(const PatientFailure('Patient introuvable'));
         return;
       }
-      
+
       final updatedPatient = existingPatient.copyWith(
         mrn: event.mrn.trim(),
         firstName: event.firstName.trim(),
@@ -96,7 +96,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         notes: event.notes,
         updatedAt: DateTime.now(),
       );
-      
+
       final savedPatient = await _patientRepository.save(updatedPatient);
       emit(PatientUpdateSuccess(savedPatient.id));
       await _loadPatients(emit);
@@ -123,9 +123,36 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     }
   }
 
-  Future<void> _loadPatients(Emitter<PatientState> emit, {String? query}) async {
+  Future<void> _onPatientArchived(
+    PatientArchived event,
+    Emitter<PatientState> emit,
+  ) async {
     try {
-      final patients = await _patientRepository.getAll(query: query);
+      await _patientRepository.archive(event.id);
+      await _loadPatients(emit);
+    } catch (error) {
+      emit(PatientFailure(Failure.fromException(error).message));
+    }
+  }
+
+  Future<void> _onPatientUnarchived(
+    PatientUnarchived event,
+    Emitter<PatientState> emit,
+  ) async {
+    try {
+      await _patientRepository.unarchive(event.id);
+      await _loadPatients(emit);
+    } catch (error) {
+      emit(PatientFailure(Failure.fromException(error).message));
+    }
+  }
+
+  Future<void> _loadPatients(Emitter<PatientState> emit) async {
+    try {
+      final patients = await _patientRepository.getAll(
+        query: _query,
+        archived: _archived,
+      );
       emit(PatientLoaded(patients));
     } catch (error) {
       emit(PatientFailure(Failure.fromException(error).message));

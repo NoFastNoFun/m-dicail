@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -174,5 +175,40 @@ void main() {
       await tester.pumpAndSettle();
       expect(haptics, hasLength(3));
     },
+  );
+
+  testWidgets(
+    'radial menu opens on secondary click when a primary action is set',
+    (tester) async {
+      var primaryTaps = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: AppRadialActionButton(
+                onPrimaryPressed: () => primaryTaps++,
+                actions: [
+                  AppRadialAction(
+                    icon: Icons.mic,
+                    label: 'Enregistrer',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(
+        find.byType(FloatingActionButton),
+        buttons: kSecondaryButton,
+      );
+      await tester.pumpAndSettle();
+
+      expect(primaryTaps, 0);
+      expect(find.byIcon(Icons.mic), findsOneWidget);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.windows),
   );
 }

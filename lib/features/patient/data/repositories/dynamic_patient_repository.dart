@@ -29,9 +29,9 @@ class DynamicPatientRepository implements PatientRepository {
   }
 
   @override
-  Future<List<Patient>> getAll({String? query}) async {
+  Future<List<Patient>> getAll({String? query, bool archived = false}) async {
     final repo = await _getRepository();
-    return repo.getAll(query: query);
+    return repo.getAll(query: query, archived: archived);
   }
 
   @override
@@ -50,6 +50,24 @@ class DynamicPatientRepository implements PatientRepository {
     }
     final repo = await _getRepository();
     return repo.save(patient);
+  }
+
+  @override
+  Future<Patient> archive(String id) async {
+    if (id == TutorialFlow.demoPatientId) {
+      return TutorialDemoPatient.patient;
+    }
+    final repo = await _getRepository();
+    return repo.archive(id);
+  }
+
+  @override
+  Future<Patient> unarchive(String id) async {
+    if (id == TutorialFlow.demoPatientId) {
+      return TutorialDemoPatient.patient;
+    }
+    final repo = await _getRepository();
+    return repo.unarchive(id);
   }
 
   @override

@@ -38,3 +38,7 @@ class PatientDetailFailure extends PatientDetailState {
   @override
   List<Object?> get props => [message];
 }
+
+class PatientDetailDeletedSuccess extends PatientDetailState {
+  const PatientDetailDeletedSuccess();
+}

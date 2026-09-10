@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
+import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:medicail/core/router/app_router.dart';
@@ -10,7 +13,6 @@ import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_bloc.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_event.dart';
 import 'package:medicail/features/patient/presentation/detail/patient_detail_state.dart';
@@ -23,6 +25,8 @@ import 'package:medicail/widget/transcript_view_sheet.dart';
 import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 import 'package:medicail/widget/app_pathology_tag.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
+import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -132,12 +136,105 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
     });
   }
 
+  Future<void> _archivePatient(Patient patient) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.patientArchiveTitle,
+      body: AppText(l10n.patientArchiveBody, variant: AppTextVariant.body),
+      actionsBuilder: (dialogContext) => [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: AppText(
+            l10n.patientArchiveConfirm,
+            variant: AppTextVariant.label,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    context.read<PatientDetailBloc>().add(PatientDetailArchived(patient.id));
+    AppToast.showSuccess(context, l10n.patientArchiveSuccess);
+  }
+
+  Future<void> _unarchivePatient(Patient patient) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.patientUnarchiveTitle,
+      body: AppText(l10n.patientUnarchiveBody, variant: AppTextVariant.body),
+      actionsBuilder: (dialogContext) => [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: AppText(
+            l10n.patientUnarchiveConfirm,
+            variant: AppTextVariant.label,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    context.read<PatientDetailBloc>().add(PatientDetailUnarchived(patient.id));
+    AppToast.showSuccess(context, l10n.patientUnarchiveSuccess);
+  }
+
+  Future<void> _deletePatient(Patient patient) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.patientDeleteTitle,
+      body: AppText(l10n.patientDeleteBody, variant: AppTextVariant.body),
+      actionsBuilder: (dialogContext) => [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: AppText(
+            l10n.patientDeleteConfirm,
+            variant: AppTextVariant.label,
+            color: Theme.of(context).colorScheme.error,
+          ),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    context.read<PatientDetailBloc>().add(PatientDetailDeleted(patient.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
     return BlocConsumer<PatientDetailBloc, PatientDetailState>(
-      listener: (context, state) => _openRequestedNote(state),
+      listener: (context, state) {
+        _openRequestedNote(state);
+        if (state is PatientDetailDeletedSuccess) {
+          AppToast.showSuccess(context, l10n.patientDeleteSuccess);
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.goPatients();
+          }
+        }
+        if (state is PatientDetailFailure) {
+          AppToast.showError(context, state.message);
+        }
+      },
       builder: (context, state) {
         final patient = state is PatientDetailLoaded ? state.patient : null;
         final sessions = state is PatientDetailLoaded
@@ -165,6 +262,39 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
                         },
                       );
                     },
+                  ),
+                  PopupMenuButton<_PatientDetailAction>(
+                    onSelected: (action) {
+                      switch (action) {
+                        case _PatientDetailAction.archive:
+                          _archivePatient(patient);
+                        case _PatientDetailAction.unarchive:
+                          _unarchivePatient(patient);
+                        case _PatientDetailAction.delete:
+                          _deletePatient(patient);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      if (patient.isArchived)
+                        PopupMenuItem(
+                          value: _PatientDetailAction.unarchive,
+                          child: Text(l10n.patientUnarchiveConfirm),
+                        )
+                      else
+                        PopupMenuItem(
+                          value: _PatientDetailAction.archive,
+                          child: Text(l10n.patientArchiveConfirm),
+                        ),
+                      PopupMenuItem(
+                        value: _PatientDetailAction.delete,
+                        child: Text(
+                          l10n.patientDeleteConfirm,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
           body: BlocListener<TutorialBloc, TutorialState>(
@@ -196,6 +326,8 @@ class _PatientDetailContentState extends State<_PatientDetailContent> {
     );
   }
 }
+
+enum _PatientDetailAction { archive, unarchive, delete }
 
 enum _DossierTab { oral, written }
 
@@ -395,27 +527,28 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
-        AppShowcase(
-          key: widget.consultKey,
-          title: l10n.tutorialDetailConsultTitle,
-          description: l10n.tutorialDetailConsultDesc,
-          disposeOnTap: false,
-          disableBarrierInteraction: true,
-          onTargetClick: () => _openConsultationRecord(
-            context,
-            patientId: patient.id,
-            onRefresh: widget.onRefresh,
-          ),
-          child: AppButton(
-            label: l10n.patientNewConsultationButton,
-            onPressed: () => _openConsultationRecord(
+        if (!patient.isArchived)
+          AppShowcase(
+            key: widget.consultKey,
+            title: l10n.tutorialDetailConsultTitle,
+            description: l10n.tutorialDetailConsultDesc,
+            disposeOnTap: false,
+            disableBarrierInteraction: true,
+            onTargetClick: () => _openConsultationRecord(
               context,
               patientId: patient.id,
               onRefresh: widget.onRefresh,
             ),
+            child: AppButton(
+              label: l10n.patientNewConsultationButton,
+              onPressed: () => _openConsultationRecord(
+                context,
+                patientId: patient.id,
+                onRefresh: widget.onRefresh,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.xl),
+        if (!patient.isArchived) const SizedBox(height: AppSpacing.xl),
         AppText(l10n.patientSessionsTitle, variant: AppTextVariant.title),
         const SizedBox(height: AppSpacing.sm),
         _DossierTabSelector(
@@ -440,15 +573,95 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           ...displayedSessions.map(
             (session) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: _selectedTab == _DossierTab.oral
-                  ? _OralSessionListItem(session: session)
-                  : _WrittenSessionListItem(
-                      session: session,
-                      onRefresh: widget.onRefresh,
-                    ),
+              child: _DismissibleSessionItem(
+                session: session,
+                patientId: patient.id,
+                child: _selectedTab == _DossierTab.oral
+                    ? _OralSessionListItem(session: session)
+                    : _WrittenSessionListItem(
+                        session: session,
+                        onRefresh: widget.onRefresh,
+                      ),
+              ),
             ),
           ),
       ],
+    );
+  }
+}
+
+class _DismissibleSessionItem extends StatelessWidget {
+  const _DismissibleSessionItem({
+    required this.session,
+    required this.patientId,
+    required this.child,
+  });
+
+  final RecordingSession session;
+  final String patientId;
+  final Widget child;
+
+  Future<bool> _confirmAndDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      variant: AppDialogVariant.standard,
+      title: l10n.sessionDeleteTitle,
+      body: AppText(l10n.sessionDeleteBody, variant: AppTextVariant.body),
+      actionsBuilder: (dialogContext) => [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: AppText(l10n.buttonCancel, variant: AppTextVariant.label),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: AppText(
+            l10n.sessionDeleteConfirm,
+            variant: AppTextVariant.label,
+            color: Theme.of(context).colorScheme.error,
+          ),
+        ),
+      ],
+    );
+    if (confirmed != true || !context.mounted) return false;
+    try {
+      await getIt<RecordingSessionRepository>().delete(session.id);
+      if (!context.mounted) return false;
+      context.read<PatientDetailBloc>().add(PatientDetailRequested(patientId));
+      AppToast.showSuccess(context, l10n.sessionDeleteSuccess);
+      return true;
+    } catch (error) {
+      if (context.mounted) {
+        AppToast.showError(
+          context,
+          Failure.fromException(error).message,
+        );
+      }
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Dismissible(
+      key: ValueKey('session-delete-${session.id}'),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => _confirmAndDelete(context),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.errorContainer,
+          borderRadius: AppRadius.mdBorder,
+        ),
+        child: Icon(
+          Icons.delete_outline,
+          color: theme.colorScheme.onErrorContainer,
+        ),
+      ),
+      child: child,
     );
   }
 }
