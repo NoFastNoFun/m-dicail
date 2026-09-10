@@ -15,16 +15,18 @@ class TelemetryService {
     try {
       // Envoi de la métrique en arrière-plan ("fire and forget")
       // L'URL exacte dépendra de la configuration de votre instance Dio
+      // On renomme l'événement pour inclure l'information de l'IA vu que le DTO n'a pas de champ is_ai_generated
+      final eventName = isAiGenerated ? 'soap_generation_ux_time_ai' : 'soap_generation_ux_time_standard';
+
       _dio.post(
-        '/api/telemetry/metrics',
+        '/telemetry/metrics',
         data: {
-          'event': 'soap_generation_ux_time',
+          'event': eventName,
           'duration_ms': durationMs,
-          'is_ai_generated': isAiGenerated,
-          'device_os': Platform.operatingSystem,
-          'timestamp': DateTime.now().toIso8601String(),
+          'device': Platform.operatingSystem, // 'ios' ou 'android'
+          'network_type': 'unknown', // Renseigné par défaut si non disponible côté Flutter
         },
-      ).ignore(); // Ne pas attendre la réponse
+      ).ignore();
     } catch (e) {
       // Les erreurs de télémétrie sont silencieuses pour ne pas impacter l'utilisateur
     }
