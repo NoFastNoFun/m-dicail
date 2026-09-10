@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/widget/app_button.dart';
@@ -35,7 +35,7 @@ class SoapNoteBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),
@@ -126,13 +126,13 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                      icon: Icon(Icons.close, color: context.secondaryTextColor),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
               ),
-              const Divider(height: 1, color: AppColors.border),
+              Divider(height: 1, color: Theme.of(context).dividerColor),
               Expanded(
                 child: ListView(
                   controller: scrollController,
@@ -145,14 +145,14 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
                       const SizedBox(height: AppSpacing.xs),
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: const BoxDecoration(
-                          color: AppColors.background,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: AppRadius.mdBorder,
                         ),
                         child: AppText(
                           widget.transcript!,
                           variant: AppTextVariant.body,
-                          color: AppColors.textSecondary,
+                          color: context.secondaryTextColor,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),

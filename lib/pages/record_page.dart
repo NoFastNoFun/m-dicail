@@ -25,6 +25,7 @@ import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_view_model.dart';
+import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
@@ -723,6 +724,9 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                   isInitializing: viewModel.isInitializing,
                                   canStart: viewModel.canStart,
                                   canStop: viewModel.canStop,
+                                  isAiActive: viewModel.isAiCapture ||
+                                      getIt<SettingsNotifier>()
+                                          .aiEnhanceEnabled,
                                   onBack: () => _handleLeaveRequest(context),
                                   onToggleRecording: () {
                                     if (viewModel.canStop) {

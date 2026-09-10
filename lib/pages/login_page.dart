@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
@@ -22,7 +21,6 @@ import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/inputs/app_input.dart';
 import 'package:medicail/widget/inputs/input_validation_l10n.dart';
-import 'package:medicail/widget/inputs/input_validators.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,26 +34,13 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _sessionStorage = getIt<AppSessionStorage>();
-  final _passkeyService = getIt<PasskeyService>();
 
   bool _rememberEmail = false;
-  bool _passkeysSupported = false;
 
   @override
   void initState() {
     super.initState();
     _restoreRememberedEmail();
-    unawaited(_checkPasskeySupport());
-  }
-
-  Future<void> _checkPasskeySupport() async {
-    try {
-      final supported = await _passkeyService.isSupported();
-      if (!mounted) return;
-      setState(() => _passkeysSupported = supported);
-    } catch (_) {
-      // Hide passkey login when support check fails.
-    }
   }
 
   Future<void> _restoreRememberedEmail() async {
@@ -114,21 +99,6 @@ class _LoginPageState extends State<LoginPage> {
       );
       unawaited(_persistRememberedEmail());
     }
-  }
-
-  void _submitPasskey() {
-    final email = _emailController.text.trim();
-    final l10n = AppLocalizations.of(context);
-    final emailErrorKey = InputValidators.validateEmail(email);
-    if (emailErrorKey != null) {
-      AppToast.showError(
-        context,
-        resolveInputValidationMessage(l10n, emailErrorKey),
-      );
-      return;
-    }
-    context.read<AuthBloc>().add(AuthPasskeyLoginRequested(email: email));
-    unawaited(_persistRememberedEmail());
   }
 
   @override
@@ -238,26 +208,10 @@ class _LoginPageState extends State<LoginPage> {
                             BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, state) {
                                 final loading = state is AuthLoading;
-                                return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    AppButton(
-                                      label: l10n.homeSignIn,
-                                      onPressed: loading ? null : _submit,
-                                      isLoading: loading,
-                                    ),
-                                    if (_passkeysSupported) ...[
-                                      const SizedBox(height: AppSpacing.md),
-                                      AppButton(
-                                        label: l10n.authPasskeyLogin,
-                                        style: AppButtonStyle.secondary,
-                                        onPressed: loading
-                                            ? null
-                                            : _submitPasskey,
-                                      ),
-                                    ],
-                                  ],
+                                return AppButton(
+                                  label: l10n.homeSignIn,
+                                  onPressed: loading ? null : _submit,
+                                  isLoading: loading,
                                 );
                               },
                             ),

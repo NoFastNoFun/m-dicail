@@ -22,6 +22,7 @@ class AppRecordHeaderCard extends StatelessWidget {
     required this.canStop,
     required this.onBack,
     required this.onToggleRecording,
+    this.isAiActive = false,
     this.cardBorderRadius = AppRadius.mdBorder,
     this.controlBorderRadius = AppRadius.pillBorder,
   });
@@ -38,6 +39,7 @@ class AppRecordHeaderCard extends StatelessWidget {
   final bool canStop;
   final VoidCallback onBack;
   final VoidCallback onToggleRecording;
+  final bool isAiActive;
   final BorderRadius cardBorderRadius;
   final BorderRadius controlBorderRadius;
 
@@ -116,6 +118,7 @@ class AppRecordHeaderCard extends StatelessWidget {
                   isRecording: isRecording,
                   isLoading: isInitializing,
                   enabled: canStart || canStop,
+                  isAiActive: isAiActive,
                   onPressed: onToggleRecording,
                 ),
               ),

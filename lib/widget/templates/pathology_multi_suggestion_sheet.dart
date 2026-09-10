@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/pathology/domain/entities/pathology.dart';
 import 'package:medicail/features/pathology/domain/utils/pathology_suggestion_matcher.dart';
@@ -29,7 +29,7 @@ class PathologyMultiSuggestionSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),
@@ -89,7 +89,7 @@ class _PathologyMultiSuggestionSheetState
           AppText(
             l10n.pathologyMultiSuggestionDesc,
             variant: AppTextVariant.body,
-            color: AppColors.textSecondary,
+            color: context.secondaryTextColor,
           ),
           const SizedBox(height: AppSpacing.lg),
           Flexible(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/feedback/app_bottom_sheet.dart';
@@ -30,7 +30,7 @@ class TranscriptViewSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),
@@ -87,22 +87,22 @@ class TranscriptViewSheet extends StatelessWidget {
                             DateFormat('dd/MM/yyyy HH:mm', locale)
                                 .format(recordedAt.toLocal()),
                             variant: AppTextVariant.caption,
-                            color: AppColors.textSecondary,
+                            color: context.secondaryTextColor,
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.close,
-                        color: AppColors.textSecondary,
+                        color: context.secondaryTextColor,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
               ),
-              const Divider(height: 1, color: AppColors.border),
+              Divider(height: 1, color: Theme.of(context).dividerColor),
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,

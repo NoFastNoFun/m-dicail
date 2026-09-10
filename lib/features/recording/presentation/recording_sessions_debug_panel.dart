@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/widget/app_text.dart';
@@ -77,10 +77,10 @@ class _RecordingSessionsDebugPanelState
             ),
             const SizedBox(height: AppSpacing.md),
             if (sessions.isEmpty)
-              const AppText(
+              AppText(
                 'Aucune session persistee',
                 variant: AppTextVariant.body,
-                color: AppColors.textSecondary,
+                color: context.secondaryTextColor,
               )
             else
               for (final session in sessions) ...[
@@ -101,10 +101,11 @@ class _RecordingSessionDebugItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.dividerColor),
         borderRadius: AppRadius.mdBorder,
       ),
       child: Padding(

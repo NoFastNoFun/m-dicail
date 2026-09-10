@@ -62,8 +62,15 @@ class AppDialog extends StatelessWidget {
       variant == AppDialogVariant.lockScreen ||
       variant == AppDialogVariant.fullscreen;
 
-  Color get _backgroundColor =>
-      _usesHighContrast ? AppColors.highContrastWhite : AppColors.background;
+  Color _backgroundColor(BuildContext context) {
+    if (_usesHighContrast) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return isDark
+          ? AppColors.highContrastBlack
+          : AppColors.highContrastWhite;
+    }
+    return Theme.of(context).colorScheme.surface;
+  }
 
   Widget _wrapContent(BuildContext context, Widget content) {
     if (!_usesHighContrast) {
@@ -78,6 +85,7 @@ class AppDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = _backgroundColor(context);
     final content = _wrapContent(
       context,
       Column(
@@ -104,7 +112,7 @@ class AppDialog extends StatelessWidget {
 
     if (variant == AppDialogVariant.fullscreen) {
       return Dialog.fullscreen(
-        backgroundColor: _backgroundColor,
+        backgroundColor: backgroundColor,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -115,7 +123,7 @@ class AppDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      backgroundColor: _backgroundColor,
+      backgroundColor: backgroundColor,
       shape: variant == AppDialogVariant.lockScreen
           ? AppRadius.onboardingMdShape
           : null,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -312,7 +311,7 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
         listener: (context, state) => _handleTutorialState(state),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: sheetBorderRadius,
           ),
           padding: const EdgeInsets.only(

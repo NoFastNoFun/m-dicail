@@ -32,3 +32,16 @@ abstract final class AppColors {
   static const Color textSecondary = Color(0xFF616161);
   static const Color textDisabled = Color(0xFF9E9E9E);
 }
+
+/// Shared gradients used for recognizable AI surfaces.
+abstract final class AppGradients {
+  static const LinearGradient ai = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0xFF5B5FEF),
+      Color(0xFF9B5DE5),
+      Color(0xFFF15BB5),
+    ],
+  );
+}

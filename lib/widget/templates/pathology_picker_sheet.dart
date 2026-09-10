@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/config/app_config.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
@@ -39,7 +38,7 @@ class PathologyPickerSheet extends StatefulWidget {
     return showModalBottomSheet<Pathology>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.lgBorder,
       ),

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/error/bug_report_launcher.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -96,7 +95,7 @@ class ScreenshotBugPromptSheet extends StatefulWidget {
       isDismissible: true,
       enableDrag: true,
       showDragHandle: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (_) => ScreenshotBugPromptSheet(
         autoDismiss: autoDismiss,

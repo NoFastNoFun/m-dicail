@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/layout/app_breakpoints.dart';
@@ -41,7 +40,7 @@ class AppBottomSheet extends StatelessWidget {
       isDismissible: isDismissible,
       enableDrag: isDismissible,
       showDragHandle: showDragHandle,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgBorder),
       isScrollControlled: heightFraction != null,
       constraints: sheetConstraints(context),
