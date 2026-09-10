@@ -21,8 +21,9 @@ class AppConfig {
   void applyDebugBackendUrlOverride(String? url) {
     if (!supportsDebugBackendUrl) return;
     final trimmed = url?.trim();
-    _debugBackendUrlOverride =
-        (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+    _debugBackendUrlOverride = (trimmed == null || trimmed.isEmpty)
+        ? null
+        : trimmed;
   }
 
   String get resolvedDefaultBaseUrl {
@@ -51,6 +52,8 @@ class AppConfig {
   Duration get enhanceUploadTimeout => const Duration(minutes: 2);
 
   Duration get enhanceReceiveTimeout => const Duration(minutes: 10);
+
+  Duration get soapReceiveTimeout => const Duration(minutes: 3);
 
   /// AI service base URL (`…/ai/v1`), derived from [baseUrl] (`…/api/v1`).
   String get aiBaseUrl {

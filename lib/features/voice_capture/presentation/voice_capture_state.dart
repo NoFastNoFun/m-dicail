@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
+import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 
 sealed class VoiceCaptureState extends Equatable {
   const VoiceCaptureState();
@@ -26,13 +28,15 @@ final class VoiceCaptureConsultationFinished extends VoiceCaptureState {
   const VoiceCaptureConsultationFinished({
     required this.sessionId,
     this.transcript = '',
+    this.soapGeneratedByAi = false,
   });
 
   final String sessionId;
   final String transcript;
+  final bool soapGeneratedByAi;
 
   @override
-  List<Object?> get props => [sessionId, transcript];
+  List<Object?> get props => [sessionId, transcript, soapGeneratedByAi];
 }
 
 final class VoiceCaptureProcessing extends VoiceCaptureState {
@@ -118,17 +122,35 @@ final class ListeningPaused extends VoiceCaptureState {
   List<Object?> get props => [transcript, selectedTemplate, isAiCapture];
 }
 
+enum VoiceCaptureErrorCode { invalidSoapNote }
+
 final class VoiceCaptureFailure extends VoiceCaptureState {
   const VoiceCaptureFailure(
     this.message, {
     this.transcript = '',
     this.selectedTemplate,
+    this.errorCode,
   });
+
+  factory VoiceCaptureFailure.fromException(
+    Object error, {
+    String transcript = '',
+    NoteTemplate? selectedTemplate,
+  }) {
+    final invalidSoap = error is InvalidSoapNoteException;
+    return VoiceCaptureFailure(
+      invalidSoap ? '' : Failure.fromException(error).message,
+      transcript: transcript,
+      selectedTemplate: selectedTemplate,
+      errorCode: invalidSoap ? VoiceCaptureErrorCode.invalidSoapNote : null,
+    );
+  }
 
   final String message;
   final String transcript;
   final NoteTemplate? selectedTemplate;
+  final VoiceCaptureErrorCode? errorCode;
 
   @override
-  List<Object?> get props => [message, transcript, selectedTemplate];
+  List<Object?> get props => [message, transcript, selectedTemplate, errorCode];
 }

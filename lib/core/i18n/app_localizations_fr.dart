@@ -42,6 +42,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorServer => 'Erreur serveur';
 
   @override
+  String get recordErrorInvalidSoapNote =>
+      'La note SOAP reçue est incomplète ou invalide. Veuillez réessayer.';
+
+  @override
   String get errorAudio => 'Microphone indisponible';
 
   @override

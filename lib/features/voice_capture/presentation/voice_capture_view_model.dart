@@ -1,3 +1,4 @@
+import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 
@@ -23,6 +24,7 @@ final class VoiceCaptureViewModel {
     this.aiTranscript = '',
     this.isAiCapture = false,
     this.errorMessage,
+    this.errorCode,
     this.selectedTemplate,
   });
 
@@ -97,6 +99,7 @@ final class VoiceCaptureViewModel {
         ),
       VoiceCaptureFailure(
         :final message,
+        :final errorCode,
         :final transcript,
         :final selectedTemplate,
       ) =>
@@ -104,6 +107,7 @@ final class VoiceCaptureViewModel {
           status: VoiceCaptureSessionStatus.failure,
           transcript: transcript,
           errorMessage: message,
+          errorCode: errorCode,
           selectedTemplate: selectedTemplate,
         ),
     };
@@ -115,7 +119,13 @@ final class VoiceCaptureViewModel {
   final String aiTranscript;
   final bool isAiCapture;
   final String? errorMessage;
+  final VoiceCaptureErrorCode? errorCode;
   final NoteTemplate? selectedTemplate;
+
+  String? localizedErrorMessage(AppLocalizations l10n) => switch (errorCode) {
+    VoiceCaptureErrorCode.invalidSoapNote => l10n.recordErrorInvalidSoapNote,
+    null => errorMessage,
+  };
 
   bool get isInitializing => status == VoiceCaptureSessionStatus.initializing;
 

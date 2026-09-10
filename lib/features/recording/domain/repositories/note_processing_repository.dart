@@ -4,10 +4,14 @@ class SoapNoteResult {
   const SoapNoteResult({
     required this.processedText,
     required this.soapNote,
+    this.isAiGenerated = false,
   });
 
   final String processedText;
   final SoapNote soapNote;
+
+  /// Describes the SOAP generator, independently of the transcription source.
+  final bool isAiGenerated;
 }
 
 abstract class NoteProcessingRepository {

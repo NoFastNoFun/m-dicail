@@ -19,12 +19,14 @@ class ApiClient {
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) {
     return _request(
       () => _dio.post<T>(
         path,
         data: data,
         queryParameters: queryParameters,
+        options: options,
       ),
     );
   }
@@ -35,11 +37,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.put<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.put<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
@@ -49,11 +47,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.patch<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.patch<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
@@ -63,11 +57,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _request(
-      () => _dio.delete<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      ),
+      () => _dio.delete<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 

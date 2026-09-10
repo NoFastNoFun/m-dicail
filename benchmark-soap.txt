@@ -1,0 +1,4 @@
+//test effectué avec un galaxy note 10 de 2019 sous réseau WI-FI stable , un seul test effectué vu la limite quotidienne de l'ia
+2026-09-09T12:12:23.066288473Z [Nest] 1  - 09/09/2026, 12:12:23 PM     LOG [GroqSoapService] [TIMER] Groq fetch model=openai/gpt-oss-120b duration=1901ms status=200
+2026-09-09T12:12:23.074880353Z [Nest] 1  - 09/09/2026, 12:12:23 PM     LOG [NotesService] [TIMER] process() session=recording_03c18447c4b34bfeaea25a3dac4867ce total=1912ms
+2026-09-09T12:14:23.243169742Z [Nest] 1  - 09/09/2026, 12:14:23 PM     LOG [NotesService] [TIMER] process() session=recording_b7172b93427f40c0957e5b6bf430f872 total=14ms

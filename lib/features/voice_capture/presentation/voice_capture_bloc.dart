@@ -284,8 +284,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
     } catch (error) {
       emit(
-        VoiceCaptureFailure(
-          Failure.fromException(error).message,
+        VoiceCaptureFailure.fromException(
+          error,
           transcript: roughTranscript,
           selectedTemplate: _selectedTemplate,
         ),
@@ -336,8 +336,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       );
     } catch (error) {
       emit(
-        VoiceCaptureFailure(
-          Failure.fromException(error).message,
+        VoiceCaptureFailure.fromException(
+          error,
           transcript: chosen,
           selectedTemplate: _selectedTemplate,
         ),
@@ -358,15 +358,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     emit(VoiceCaptureProcessing(transcript: transcriptForProcess));
 
-    final result = await _noteProcessingRepository
-        .process(
-          sessionId: sessionId,
-          rawText: transcriptForProcess,
-          language: language,
-        )
-        .timeout(const Duration(minutes: 1));
+    // The HTTP repository owns the timeout (SOAP generation can exceed a minute).
+    final result = await _noteProcessingRepository.process(
+      sessionId: sessionId,
+      rawText: transcriptForProcess,
+      language: language,
+    );
 
-    final soapNote = _selectedTemplate != null
+    final soapNote = !result.isAiGenerated && _selectedTemplate != null
         ? NoteTemplateApplicator.apply(
             template: _selectedTemplate,
             transcript: result.processedText,
@@ -386,6 +385,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       VoiceCaptureConsultationFinished(
         sessionId: sessionId,
         transcript: result.processedText,
+        soapGeneratedByAi: result.isAiGenerated,
       ),
     );
   }
@@ -719,11 +719,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         selectedTemplate: _selectedTemplate,
         isAiCapture: _captureForAi,
       ),
-      VoiceCaptureFailure(:final message) => VoiceCaptureFailure(
-        message,
-        transcript: transcript,
-        selectedTemplate: _selectedTemplate,
-      ),
+      VoiceCaptureFailure(:final message, :final errorCode) =>
+        VoiceCaptureFailure(
+          message,
+          errorCode: errorCode,
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
       VoiceCaptureEnhancing() => VoiceCaptureEnhancing(transcript: transcript),
       VoiceCaptureTranscriptCompare(:final aiTranscript) =>
         VoiceCaptureTranscriptCompare(
