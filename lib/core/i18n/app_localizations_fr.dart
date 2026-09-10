@@ -111,7 +111,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordTranscriptCompareHint =>
-      'Comparez la version locale et la version IA, puis choisissez celle à conserver. Relisez toujours avant de valider.';
+      'Comparez la version locale et la version IA. Les mots différents sont surlignés (majuscules et ponctuation ignorées, sauf les traits d\'union). Choisissez celle à conserver et relisez toujours avant de valider.';
 
   @override
   String get recordTranscriptCompareLocal => 'Locale';

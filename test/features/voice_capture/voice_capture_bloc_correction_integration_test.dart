@@ -14,6 +14,7 @@ import 'package:medicail/features/settings/domain/repositories/user_preferences_
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
+import 'package:medicail/core/telemetry/telemetry_service.dart';
 import 'package:mocktail/mocktail.dart';
 
 // This suite wires the REAL MedicalTermCorrectionService + MedicalRootDictionary
@@ -45,6 +46,7 @@ class _MockOfflineAudioTranscriptionService extends Mock
 class _MockUserPreferencesRepository extends Mock
     implements UserPreferencesRepository {}
 
+class _MockTelemetryService extends Mock implements TelemetryService {}
 void _fallbackOnResult(String text, {bool isFinal = false}) {}
 
 void _fallbackOnListeningEnded() {}
@@ -150,6 +152,7 @@ void main() {
       offlineTranscription,
       MedicalTermCorrectionService(MedicalRootDictionary()),
       userPreferences,
+      _MockTelemetryService(),
     );
   }
 

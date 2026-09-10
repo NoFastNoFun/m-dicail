@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/router/app_router.dart';
@@ -18,6 +19,7 @@ import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
@@ -28,6 +30,7 @@ import 'package:medicail/pages/patient_detail_page.dart';
 import 'package:medicail/pages/record_page.dart';
 import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/soap_note_bottom_sheet.dart';
+import 'package:medicail/widget/record/app_record_header_card.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -105,6 +108,7 @@ void main() {
       return savedSession;
     });
     getIt.registerFactory<VoiceCaptureBloc>(() => voice);
+    getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerSingleton<PatientRepository>(patients);
     getIt.registerSingleton<RecordingSessionRepository>(sessions);
     getIt.registerFactory<PatientDetailBloc>(
@@ -163,6 +167,106 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+  }
+
+  for (final useAi in [false, true]) {
+    for (final withHistory in [false, true]) {
+      for (final associatedPatientId in [null, patient.id]) {
+        testWidgets(
+          'discard goes to the patient dossier or home (AI: $useAi, history: $withHistory, patient: $associatedPatientId)',
+          (tester) async {
+            await tester.binding.setSurfaceSize(const Size(1000, 1600));
+            addTearDown(() => tester.binding.setSurfaceSize(null));
+            final recordLocation = Uri(
+              path: AppRoutes.record,
+              queryParameters: associatedPatientId == null
+                  ? null
+                  : {'patientId': associatedPatientId},
+            ).toString();
+            final router = GoRouter(
+              initialLocation: withHistory
+                  ? AppRoutes.settings
+                  : recordLocation,
+              routes: [
+                GoRoute(
+                  path: AppRoutes.settings,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Previous screen')),
+                ),
+                GoRoute(
+                  path: AppRoutes.home,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Home destination')),
+                ),
+                GoRoute(
+                  path: AppRoutes.record,
+                  builder: (_, state) => RecordPage(
+                    patientId: state.uri.queryParameters['patientId'],
+                  ),
+                ),
+                GoRoute(
+                  path: '${AppRoutes.patients}/:patientId',
+                  name: 'patient-detail',
+                  builder: (_, state) => Scaffold(
+                    body: Text('Patient ${state.pathParameters['patientId']}'),
+                  ),
+                ),
+              ],
+            );
+            addTearDown(router.dispose);
+            await tester.pumpWidget(
+              BlocProvider<TutorialBloc>.value(
+                value: tutorial,
+                child: MaterialApp.router(
+                  routerConfig: router,
+                  locale: const Locale('fr'),
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                ),
+              ),
+            );
+            if (withHistory) {
+              router.push(recordLocation);
+            }
+            await tester.pumpAndSettle();
+            voiceStates.add(
+              RecordingInProgress(
+                transcript: 'Texte non sauvegardé.',
+                isAiCapture: useAi,
+              ),
+            );
+            await tester.pump();
+            final l10n = AppLocalizations.of(
+              tester.element(find.byType(RecordPage)),
+            );
+            tester
+                .widget<AppRecordHeaderCard>(find.byType(AppRecordHeaderCard))
+                .onBack();
+            await tester.pumpAndSettle();
+            await tester.tap(find.text(l10n.recordLeaveDiscard));
+            await tester.pumpAndSettle();
+            verify(
+              () => voice.add(const VoiceCaptureDiscardConsultation()),
+            ).called(1);
+            voiceStates.add(const VoiceCaptureReady());
+            await tester.pumpAndSettle();
+            expect(find.byType(RecordPage), findsNothing);
+            expect(
+              find.text(
+                associatedPatientId == null
+                    ? 'Home destination'
+                    : 'Patient $associatedPatientId',
+              ),
+              findsOneWidget,
+            );
+            expect(find.text('Previous screen'), findsNothing);
+            expect(router.canPop(), isFalse);
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
   }
 
   testWidgets('finishing opens the exact SOAP note in the patient dossier', (

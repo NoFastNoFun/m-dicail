@@ -60,6 +60,11 @@ class AppText extends StatelessWidget {
 
     final style = metrics.copyWith(
       color: color ?? themeStyle?.color ?? defaultColor,
+      // Explicitly clear decoration so parent styles cannot leave a
+      // yellow/double underline (common Flutter merge leak).
+      decoration: TextDecoration.none,
+      decorationColor: Colors.transparent,
+      decorationThickness: 0,
     );
 
     return Text(

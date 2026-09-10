@@ -52,6 +52,7 @@ import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
+import 'package:medicail/core/telemetry/telemetry_service.dart' as _i999;
 import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
     as _i587;
 import 'package:medicail/features/appointment/data/repositories/dynamic_appointment_repository.dart'
@@ -421,6 +422,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i999.TelemetryService>(
+      () => _i999.TelemetryService(gh<_i361.Dio>()),
+    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
@@ -432,6 +436,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
         gh<_i460.UserPreferencesRepository>(),
+        gh<_i999.TelemetryService>(),
       ),
     );
     gh.factory<_i306.TutorialBloc>(
