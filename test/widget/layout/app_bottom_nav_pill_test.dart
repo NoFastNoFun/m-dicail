@@ -28,7 +28,7 @@ const _frenchDestinations = [
     route: '/watch',
     icon: Icons.newspaper_outlined,
     selectedIcon: Icons.newspaper,
-    label: 'Veille',
+    label: 'News',
   ),
   AppBottomNavDestination(
     route: '/settings',

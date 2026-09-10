@@ -172,6 +172,13 @@ void main() {
         soapNote: SoapNote(),
       ),
     );
+
+    when(
+      () => telemetry.sendSoapGenerationTime(
+        durationMs: any(named: 'durationMs'),
+        isAiGenerated: any(named: 'isAiGenerated'),
+      ),
+    ).thenAnswer((_) async {});
   });
 
   VoiceCaptureBloc buildBloc() {

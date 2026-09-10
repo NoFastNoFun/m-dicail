@@ -237,14 +237,14 @@ class SettingsPage extends StatelessWidget {
                             '${l10n.settingsAppVersion}: ${appInfo.version}',
                       ),
                       AppSettingsTile(
-                        icon: Icons.build_outlined,
-                        title: l10n.settingsAppBuild,
-                        subtitle: appInfo.buildNumber,
+                        icon: Icons.medical_services_outlined,
+                        title: l10n.settingsAboutProductTitle,
+                        subtitle: l10n.settingsAboutProductSubtitle,
                       ),
                       AppSettingsTile(
-                        icon: Icons.apps_outlined,
-                        title: l10n.settingsAppPackage,
-                        subtitle: appInfo.packageName,
+                        icon: Icons.lock_outline,
+                        title: l10n.settingsAboutDataTitle,
+                        subtitle: l10n.settingsAboutDataSubtitle,
                       ),
                     ],
                   );

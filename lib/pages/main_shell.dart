@@ -43,6 +43,16 @@ class _MainShellState extends State<MainShell> {
   final _quickRecordKey = GlobalKey();
   final _addPatientFabKey = GlobalKey();
 
+  static const _shellRootRoutes = {
+    AppRoutes.home,
+    AppRoutes.appointments,
+    AppRoutes.patients,
+    AppRoutes.settings,
+    AppRoutes.medicalWatch,
+  };
+
+  final List<String> _tabHistory = [];
+
   bool _didAskTutorialStart = false;
   bool _didStartPatientsShowcase = false;
   bool _didStartQuickRecordShowcase = false;
@@ -277,7 +287,38 @@ class _MainShellState extends State<MainShell> {
         );
       }
     }
+    final current = GoRouterState.of(context).matchedLocation;
+    if (_shellRootRoutes.contains(current) &&
+        current != route &&
+        (_tabHistory.isEmpty || _tabHistory.last != current)) {
+      _tabHistory.add(current);
+    }
     context.go(route);
+  }
+
+  bool _shouldAllowSystemPop(BuildContext context) {
+    final router = GoRouter.of(context);
+    if (router.canPop()) return true;
+    final location = GoRouterState.of(context).matchedLocation;
+    return location == AppRoutes.home && _tabHistory.isEmpty;
+  }
+
+  void _handleSystemBack(bool didPop) {
+    if (didPop) return;
+    final router = GoRouter.of(context);
+    if (router.canPop()) {
+      router.pop();
+      return;
+    }
+    if (_tabHistory.isNotEmpty) {
+      final previous = _tabHistory.removeLast();
+      context.go(previous);
+      return;
+    }
+    final location = GoRouterState.of(context).matchedLocation;
+    if (location != AppRoutes.home) {
+      context.go(AppRoutes.home);
+    }
   }
 
   List<AppBottomNavDestination> _destinations(AppLocalizations l10n) {
@@ -516,13 +557,19 @@ class _MainShellState extends State<MainShell> {
             ],
           );
 
-    return MainShellScope(
-      bottomPadding: _bottomPadding,
-      registerFabPrimaryAction: _registerFabPrimaryAction,
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        resizeToAvoidBottomInset: false,
-        body: shellBody,
+    return PopScope(
+      canPop: _shouldAllowSystemPop(context),
+      onPopInvokedWithResult: (didPop, result) {
+        _handleSystemBack(didPop);
+      },
+      child: MainShellScope(
+        bottomPadding: _bottomPadding,
+        registerFabPrimaryAction: _registerFabPrimaryAction,
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          resizeToAvoidBottomInset: false,
+          body: shellBody,
+        ),
       ),
     );
   }

@@ -2086,17 +2086,29 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get settingsAppVersion;
 
-  /// No description provided for @settingsAppBuild.
+  /// No description provided for @settingsAboutProductTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Build'**
-  String get settingsAppBuild;
+  /// **'Assistant clinique'**
+  String get settingsAboutProductTitle;
 
-  /// No description provided for @settingsAppPackage.
+  /// No description provided for @settingsAboutProductSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Identifiant'**
-  String get settingsAppPackage;
+  /// **'Aide mains libres pour les kinésithérapeutes, pendant la séance.'**
+  String get settingsAboutProductSubtitle;
+
+  /// No description provided for @settingsAboutDataTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos données'**
+  String get settingsAboutDataTitle;
+
+  /// No description provided for @settingsAboutDataSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffrées sur cet appareil. Fonctionne hors ligne autant que possible.'**
+  String get settingsAboutDataSubtitle;
 
   /// No description provided for @euAiLabelGenerated.
   ///
@@ -2695,13 +2707,13 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Veille médicale'**
+  /// **'News'**
   String get medicalWatchTitle;
 
   /// No description provided for @medicalWatchNavTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Veille'**
+  /// **'News'**
   String get medicalWatchNavTitle;
 
   /// No description provided for @medicalWatchSearchPlaceholder.
@@ -2803,7 +2815,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalWatchSyncSuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Veille synchronisée'**
+  /// **'News mises à jour'**
   String get medicalWatchSyncSuccess;
 
   /// No description provided for @medicalWatchOfflineHint.

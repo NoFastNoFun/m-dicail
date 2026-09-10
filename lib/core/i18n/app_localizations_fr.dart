@@ -1049,10 +1049,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsAppVersion => 'Version';
 
   @override
-  String get settingsAppBuild => 'Build';
+  String get settingsAboutProductTitle => 'Assistant clinique';
 
   @override
-  String get settingsAppPackage => 'Identifiant';
+  String get settingsAboutProductSubtitle =>
+      'Aide mains libres pour les kinésithérapeutes, pendant la séance.';
+
+  @override
+  String get settingsAboutDataTitle => 'Vos données';
+
+  @override
+  String get settingsAboutDataSubtitle =>
+      'Chiffrées sur cet appareil. Fonctionne hors ligne autant que possible.';
 
   @override
   String get euAiLabelGenerated => 'Contenu généré par l\'IA';
@@ -1382,10 +1390,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'le patient,la patiente,à l\'examen,a l\'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin';
 
   @override
-  String get medicalWatchTitle => 'Veille médicale';
+  String get medicalWatchTitle => 'News';
 
   @override
-  String get medicalWatchNavTitle => 'Veille';
+  String get medicalWatchNavTitle => 'News';
 
   @override
   String get medicalWatchSearchPlaceholder => 'Rechercher sur PubMed…';
@@ -1445,7 +1453,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get medicalWatchSyncSuccess => 'Veille synchronisée';
+  String get medicalWatchSyncSuccess => 'News mises à jour';
 
   @override
   String get medicalWatchOfflineHint =>
