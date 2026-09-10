@@ -24,6 +24,8 @@ import 'package:medicail/features/settings/domain/repositories/user_preferences_
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
 
+import 'package:medicail/core/telemetry/telemetry_service.dart';
+
 @injectable
 class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   VoiceCaptureBloc(
@@ -36,6 +38,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     this._offlineAudioTranscriptionService,
     this._medicalTermCorrectionService,
     this._userPreferencesRepository,
+    this._telemetryService,
   ) : super(const VoiceCaptureInitial()) {
     on<VoiceCaptureInitializeRequested>(_onInitialize);
     on<VoiceCaptureStartRecording>(_onStartRecording);
@@ -60,6 +63,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   final OfflineAudioTranscriptionService _offlineAudioTranscriptionService;
   final MedicalTermCorrectionService _medicalTermCorrectionService;
   final UserPreferencesRepository _userPreferencesRepository;
+  final TelemetryService _telemetryService;
 
   RecordingSession? _activeSession;
   bool _isHandlingLifecycle = false;
@@ -199,6 +203,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureFinishConsultation event,
     Emitter<VoiceCaptureState> emit,
   ) async {
+    final uxStopwatch = Stopwatch()..start();
+    
     var roughTranscript = _currentTranscript;
     if (event.isTutorial && roughTranscript.trim().isEmpty) {
       roughTranscript = 'Voici une consultation fictive pour le tutoriel.';
@@ -283,6 +289,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         transcriptForProcess: transcriptForProcess,
         language: event.language,
         transcriptIsAi: false,
+        uxStopwatch: uxStopwatch,
       );
     } catch (error) {
       emit(
@@ -303,6 +310,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureTranscriptChoiceSelected event,
     Emitter<VoiceCaptureState> emit,
   ) async {
+    final uxStopwatch = Stopwatch()..start();
+    
     final current = state;
     if (current is! VoiceCaptureTranscriptCompare) {
       return;
@@ -335,6 +344,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         transcriptForProcess: anonymized,
         language: _pendingFinishLanguage,
         transcriptIsAi: transcriptIsAi,
+        uxStopwatch: uxStopwatch,
       );
     } catch (error) {
       emit(
@@ -353,6 +363,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     required String transcriptForProcess,
     required String language,
     required bool transcriptIsAi,
+    required Stopwatch uxStopwatch,
   }) async {
     transcriptForProcess = await _medicalTermCorrectionService.correct(
       transcriptForProcess,
@@ -380,6 +391,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       transcriptIsAi: transcriptIsAi,
     );
 
+    uxStopwatch.stop();
+
     _segmentBase = '';
     _lastRawText = '';
     _activeSession = null;
@@ -389,6 +402,12 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         transcript: result.processedText,
         soapGeneratedByAi: result.isAiGenerated,
       ),
+    );
+
+    // Envoi de la télémétrie en arrière-plan
+    _telemetryService.sendSoapGenerationTime(
+      durationMs: uxStopwatch.elapsedMilliseconds,
+      isAiGenerated: result.isAiGenerated,
     );
   }
 

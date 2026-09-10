@@ -22,6 +22,7 @@ import 'package:medicail/features/settings/domain/repositories/user_preferences_
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
+import 'package:medicail/core/telemetry/telemetry_service.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockAudioCaptureService extends Mock implements AudioCaptureService {}
@@ -50,6 +51,7 @@ class _MockMedicalTermCorrectionService extends Mock
 class _MockUserPreferencesRepository extends Mock
     implements UserPreferencesRepository {}
 
+class _MockTelemetryService extends Mock implements TelemetryService {}
 void _fallbackOnResult(String text, {bool isFinal = false}) {}
 
 void _fallbackOnListeningEnded() {}
@@ -64,7 +66,7 @@ void main() {
   late _MockOfflineAudioTranscriptionService offlineTranscription;
   late _MockMedicalTermCorrectionService medicalTermCorrection;
   late _MockUserPreferencesRepository userPreferences;
-
+  late _MockTelemetryService telemetry;
   setUpAll(() {
     registerFallbackValue(_fallbackOnResult);
     registerFallbackValue(_fallbackOnListeningEnded);
@@ -87,7 +89,7 @@ void main() {
     offlineTranscription = _MockOfflineAudioTranscriptionService();
     medicalTermCorrection = _MockMedicalTermCorrectionService();
     userPreferences = _MockUserPreferencesRepository();
-
+    telemetry = _MockTelemetryService();
     when(
       () => userPreferences.readAiEnhanceEnabled(),
     ).thenAnswer((_) async => false);
@@ -183,6 +185,7 @@ void main() {
       offlineTranscription,
       medicalTermCorrection,
       userPreferences,
+      telemetry,
     );
   }
 
