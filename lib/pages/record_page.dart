@@ -496,17 +496,24 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   }
 
   Future<void> _handleLeaveRequest(BuildContext context) async {
+    if (_pendingDiscardLeave) return;
     final viewModel = VoiceCaptureViewModel.fromState(
       context.read<VoiceCaptureBloc>().state,
     );
     if (!viewModel.hasUnsavedWork) {
-      if (context.canPop()) {
-        context.pop();
-      }
+      _leaveRecordPage();
       return;
     }
 
     await _confirmLeave(context);
+  }
+
+  void _leaveRecordPage() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.goHome();
+    }
   }
 
   Future<void> _confirmLeave(BuildContext context) async {
@@ -627,10 +634,15 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       listener: (context, state) {
         if (_pendingDiscardLeave && state is VoiceCaptureReady) {
           _pendingDiscardLeave = false;
-          if (context.canPop()) {
-            context.pop();
-          }
+          _syncRecordingTimer(false);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _leaveRecordPage();
+          });
           return;
+        }
+
+        if (_pendingDiscardLeave && state is VoiceCaptureFailure) {
+          _pendingDiscardLeave = false;
         }
 
         if (state is VoiceCaptureConsultationFinished) {
@@ -725,7 +737,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                   isInitializing: viewModel.isInitializing,
                                   canStart: viewModel.canStart,
                                   canStop: viewModel.canStop,
-                                  isAiActive: viewModel.isAiCapture ||
+                                  isAiActive:
+                                      viewModel.isAiCapture ||
                                       getIt<SettingsNotifier>()
                                           .aiEnhanceEnabled,
                                   onBack: () => _handleLeaveRequest(context),

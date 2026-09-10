@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
 import 'package:medicail/core/audio/background_audio_recorder.dart';
 import 'package:medicail/core/audio/offline_audio_transcription_service.dart';
 import 'package:medicail/core/audio/recording_notification_service.dart';
+import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/medical_terms/medical_term_correction_service.dart';
 import 'package:medicail/features/note_template/domain/entities/note_section.dart';
 import 'package:medicail/features/note_template/domain/entities/note_section_kind.dart';
@@ -191,6 +194,110 @@ void main() {
   }
 
   group('VoiceCaptureBloc dual capture', () {
+    test(
+      'an in-flight local session end does not restart after discard',
+      () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        final saving = Completer<RecordingSession>();
+        final savingStarted = Completer<RecordingSession>();
+        when(() => sessionRepository.save(any())).thenAnswer((invocation) {
+          savingStarted.complete(
+            invocation.positionalArguments.single as RecordingSession,
+          );
+          return saving.future;
+        });
+        bloc.add(const VoiceCaptureListeningSessionEnded());
+        final session = await savingStarted.future;
+        clearInteractions(audioCapture);
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        await bloc.stream.firstWhere((state) => state is VoiceCaptureReady);
+        saving.complete(session);
+        await Future<void>.delayed(Duration.zero);
+        verifyNever(
+          () => audioCapture.startListening(
+            onResult: any(named: 'onResult'),
+            onListeningEnded: any(named: 'onListeningEnded'),
+          ),
+        );
+        expect(bloc.state, isA<VoiceCaptureReady>());
+      },
+    );
+
+    test(
+      'failed deletion exposes an error and allows retrying discard',
+      () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        when(
+          () => sessionRepository.delete(any()),
+        ).thenThrow(const NetworkException('Test network error'));
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        final failure = await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureFailure,
+        );
+        expect((failure as VoiceCaptureFailure).message, 'Test network error');
+        when(() => sessionRepository.delete(any())).thenAnswer((_) async {});
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        await bloc.stream.firstWhere((state) => state is VoiceCaptureReady);
+        verify(() => sessionRepository.delete(any())).called(2);
+      },
+    );
+
+    test(
+      'discard ignores a local transcript correction completed afterwards',
+      () async {
+        final correction = Completer<String>();
+        final correctionStarted = Completer<void>();
+        when(() => medicalTermCorrection.correct('Texte tardif')).thenAnswer((
+          _,
+        ) {
+          correctionStarted.complete();
+          return correction.future;
+        });
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        bloc.add(const VoiceCaptureTranscriptUpdated('Texte tardif'));
+        await correctionStarted.future;
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        await bloc.stream.firstWhere((state) => state is VoiceCaptureReady);
+        correction.complete('Texte tardif corrigé');
+        await Future<void>.delayed(Duration.zero);
+        expect(bloc.state, isA<VoiceCaptureReady>());
+        verify(() => sessionRepository.delete(any())).called(1);
+      },
+    );
+
+    test(
+      'discard ignores local callbacks emitted while stopping the microphone',
+      () async {
+        final bloc = buildBloc();
+        addTearDown(bloc.close);
+        await seedListening(bloc);
+        when(() => audioCapture.stopListening()).thenAnswer((_) async {
+          bloc.add(const VoiceCaptureListeningSessionEnded());
+          bloc.add(const VoiceCaptureTranscriptUpdated('Dernier résultat'));
+          await Future<void>.delayed(Duration.zero);
+        });
+        clearInteractions(audioCapture);
+        bloc.add(const VoiceCaptureDiscardConsultation());
+        await bloc.stream.firstWhere((state) => state is VoiceCaptureReady);
+        await Future<void>.delayed(Duration.zero);
+        verifyNever(
+          () => audioCapture.startListening(
+            onResult: any(named: 'onResult'),
+            onListeningEnded: any(named: 'onListeningEnded'),
+          ),
+        );
+        expect(bloc.state, isA<VoiceCaptureReady>());
+        // close() stops the microphone too; the OS has no more callbacks then.
+        when(() => audioCapture.stopListening()).thenAnswer((_) async {});
+      },
+    );
+
     for (final chooseTranscript in [false, true]) {
       test(
         'invalid SOAP keeps the draft and exposes a localizable error (choice: $chooseTranscript)',

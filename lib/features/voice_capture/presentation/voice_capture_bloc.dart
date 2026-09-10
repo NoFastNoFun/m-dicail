@@ -65,6 +65,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   bool _isHandlingLifecycle = false;
   bool _isBackgroundCapture = false;
   bool _captureForAi = false;
+  bool _isDiscarding = false;
+  int _discardGeneration = 0;
   String _segmentBase = '';
   String _lastRawText = '';
   NoteTemplate? _selectedTemplate;
@@ -410,33 +412,48 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureDiscardConsultation event,
     Emitter<VoiceCaptureState> emit,
   ) async {
+    if (_isDiscarding) return;
+    _isDiscarding = true;
+    // Invalidate callbacks and asynchronous corrections from this consultation
+    // before stopping the microphone, which can deliver a final result.
+    _discardGeneration++;
+    final transcript = _currentTranscript;
     try {
       await _stopRecordingInfrastructure();
-    } catch (_) {
-      // Best effort when abandoning an in-progress session.
-    }
+      final session = _activeSession;
+      if (session != null) {
+        await _recordingSessionRepository.delete(session.id);
+      }
 
-    final session = _activeSession;
-    if (session != null) {
-      await _recordingSessionRepository.delete(session.id);
+      _segmentBase = '';
+      _lastRawText = '';
+      _activeSession = null;
+      emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
+    } catch (error) {
+      emit(
+        VoiceCaptureFailure.fromException(
+          error,
+          transcript: transcript,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
+    } finally {
+      _isDiscarding = false;
     }
-
-    _segmentBase = '';
-    _lastRawText = '';
-    _activeSession = null;
-    emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
 
   Future<void> _onListeningSessionEnded(
     VoiceCaptureListeningSessionEnded event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    if (state is! RecordingInProgress ||
+    if (_isDiscarding ||
+        state is! RecordingInProgress ||
         _isBackgroundCapture ||
         _captureForAi) {
       return;
     }
 
+    final generation = _discardGeneration;
     var transcript = _currentTranscript.trim();
     if (transcript.isNotEmpty && !transcript.endsWith('.')) {
       transcript += '. ';
@@ -447,7 +464,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _lastRawText = '';
     try {
       await _saveActiveSessionTranscript(transcript);
+      if (_isDiscarding || generation != _discardGeneration) return;
       await _startListeningSession();
+      if (_isDiscarding || generation != _discardGeneration) return;
       emit(
         RecordingInProgress(
           transcript: transcript,
@@ -455,6 +474,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         ),
       );
     } catch (error) {
+      if (_isDiscarding || generation != _discardGeneration) return;
       await _failActiveSession(transcript);
       await _stopRecordingInfrastructure();
       emit(
@@ -471,12 +491,14 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     VoiceCaptureTranscriptUpdated event,
     Emitter<VoiceCaptureState> emit,
   ) async {
-    if (state is! RecordingInProgress ||
+    if (_isDiscarding ||
+        state is! RecordingInProgress ||
         _isBackgroundCapture ||
         _captureForAi) {
       return;
     }
 
+    final generation = _discardGeneration;
     final anonymized = AnonymizationHelper.anonymize(event.rawText);
     if (anonymized.isEmpty) {
       return;
@@ -521,6 +543,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     final merged = TranscriptMergeHelper.merge(_segmentBase, punctuated);
     final corrected = await _medicalTermCorrectionService.correct(merged);
+    if (_isDiscarding || generation != _discardGeneration) return;
     _updateActiveSessionTranscriptInMemory(corrected);
 
     if (event.isFinal) {
@@ -744,24 +767,36 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   }
 
   Future<void> _startListeningSession() async {
+    if (_isDiscarding) return;
+    final generation = _discardGeneration;
     if (_backgroundAudioRecorder.isRecording) {
       await _discardSessionAudio();
       await _awaitMicRelease();
     }
+    if (_isDiscarding || generation != _discardGeneration) return;
     await _audioCaptureService.startListening(
       onResult: (text, {isFinal = false}) {
-        if (isClosed || _isBackgroundCapture) {
+        if (isClosed ||
+            _isBackgroundCapture ||
+            _isDiscarding ||
+            generation != _discardGeneration) {
           return;
         }
         add(VoiceCaptureTranscriptUpdated(text, isFinal: isFinal));
       },
       onListeningEnded: () {
-        if (isClosed || _isBackgroundCapture) {
+        if (isClosed ||
+            _isBackgroundCapture ||
+            _isDiscarding ||
+            generation != _discardGeneration) {
           return;
         }
         add(const VoiceCaptureListeningSessionEnded());
       },
     );
+    if (_isDiscarding || generation != _discardGeneration) {
+      await _audioCaptureService.stopListening();
+    }
   }
 
   Future<void> _ensureSessionAudioStarted() async {

@@ -2,3 +2,40 @@
 2026-09-09T12:12:23.066288473Z [Nest] 1  - 09/09/2026, 12:12:23 PM     LOG [GroqSoapService] [TIMER] Groq fetch model=openai/gpt-oss-120b duration=1901ms status=200
 2026-09-09T12:12:23.074880353Z [Nest] 1  - 09/09/2026, 12:12:23 PM     LOG [NotesService] [TIMER] process() session=recording_03c18447c4b34bfeaea25a3dac4867ce total=1912ms
 2026-09-09T12:14:23.243169742Z [Nest] 1  - 09/09/2026, 12:14:23 PM     LOG [NotesService] [TIMER] process() session=recording_b7172b93427f40c0957e5b6bf430f872 total=14ms
+
+// Cas 2 - derniers essais sans IA et avec IA du 10/09/2026.
+// Association au cas 2 d'après la demande et les derniers essais : les logs ne contiennent pas le scénario dicté.
+
+// SANS IA - source : m-dicail-api-1 - traitement SOAP serveur : 6 ms.
+2026-09-10T11:16:49.836425125Z [Nest] 1  - 09/10/2026, 11:16:49 AM     LOG [NotesService] [TIMER] process() session=recording_fce8965f43e54dac973779553982c582 total=6ms
+
+// AVEC IA - source : m-dicail-ai-1 - traitement SOAP serveur : 1132 ms.
+// Le temps Groq de 1125 ms est inclus dans le total de 1132 ms ; ne pas les additionner.
+2026-09-10T11:18:42.203525072Z [Nest] 1  - 09/10/2026, 11:18:42 AM     LOG [GroqSoapService] [TIMER] Groq fetch model=openai/gpt-oss-120b duration=1125ms status=200
+2026-09-10T11:18:42.207435890Z [Nest] 1  - 09/10/2026, 11:18:42 AM     LOG [NotesService] [TIMER] process() session=recording_43e233d034d0499c8b080564edf04fda total=1132ms
+
+// Cas 3 - Samsung Galaxy S24 Ultra (2024), appareil indiqué par l'utilisateur.
+// Derniers essais sans IA et avec IA du 10/09/2026 ; association au cas 3 d'après la demande et leur chronologie.
+// Les logs ne contiennent ni le scénario dicté ni le modèle du téléphone.
+// Ces timers mesurent le traitement SOAP serveur, pas les performances du téléphone.
+
+// SANS IA - source : m-dicail-api-1 - traitement SOAP serveur : 1 ms.
+2026-09-10T11:23:10.051738280Z [Nest] 1  - 09/10/2026, 11:23:10 AM     LOG [NotesService] [TIMER] process() session=recording_539b74ea13474c7daa735ca42719aadb total=1ms
+
+// AVEC IA - source : m-dicail-ai-1 - traitement SOAP serveur : 1458 ms.
+// Le temps Groq de 1451 ms est inclus dans le total de 1458 ms ; ne pas les additionner.
+2026-09-10T11:25:22.988835803Z [Nest] 1  - 09/10/2026, 11:25:22 AM     LOG [GroqSoapService] [TIMER] Groq fetch model=openai/gpt-oss-120b duration=1451ms status=200
+2026-09-10T11:25:22.995135014Z [Nest] 1  - 09/10/2026, 11:25:22 AM     LOG [NotesService] [TIMER] process() session=recording_ffadf130373b4161bb48c166ee7ecc10 total=1458ms
+
+// Cas 1 - Samsung Galaxy S24 Ultra (2024), appareil indiqué par l'utilisateur.
+// Derniers essais sans IA et avec IA du 10/09/2026 ; association au cas 1 d'après la demande et leur chronologie.
+// Les logs ne contiennent ni le scénario dicté ni le modèle du téléphone.
+// Ces timers mesurent le traitement SOAP serveur, pas les performances du téléphone.
+
+// SANS IA - source : m-dicail-api-1 - traitement SOAP serveur : 1 ms.
+2026-09-10T11:35:18.830794291Z [Nest] 1  - 09/10/2026, 11:35:18 AM     LOG [NotesService] [TIMER] process() session=recording_895a1f97bf0c41a7adb46637fa0ab7a8 total=1ms
+
+// AVEC IA - source : m-dicail-ai-1 - traitement SOAP serveur : 1136 ms.
+// Le temps Groq de 1096 ms est inclus dans le total de 1136 ms ; ne pas les additionner.
+2026-09-10T11:37:50.504842352Z [Nest] 1  - 09/10/2026, 11:37:50 AM     LOG [GroqSoapService] [TIMER] Groq fetch model=openai/gpt-oss-120b duration=1096ms status=200
+2026-09-10T11:37:50.543559920Z [Nest] 1  - 09/10/2026, 11:37:50 AM     LOG [NotesService] [TIMER] process() session=recording_4ec72ed36c7b4015af87b393278a2f82 total=1136ms
