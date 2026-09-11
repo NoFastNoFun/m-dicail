@@ -346,8 +346,10 @@
   "settingsLogout": "Se déconnecter",
   "settingsSectionAbout": "À propos",
   "settingsAppVersion": "Version",
-  "settingsAppBuild": "Build",
-  "settingsAppPackage": "Identifiant",
+  "settingsAboutProductTitle": "Assistant clinique",
+  "settingsAboutProductSubtitle": "Aide mains libres pour les kinésithérapeutes, pendant la séance.",
+  "settingsAboutDataTitle": "Vos données",
+  "settingsAboutDataSubtitle": "Chiffrées sur cet appareil. Fonctionne hors ligne autant que possible.",
   "euAiLabelGenerated": "Contenu généré par l'IA",
   "euAiLabelModified": "Contenu modifié par l'IA",
   "tutorialIntroTitle": "Découvrir Medicail",
@@ -476,8 +478,8 @@
   "punctuationWordComma": "virgule",
   "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
 
-  "medicalWatchTitle": "Veille médicale",
-  "medicalWatchNavTitle": "Veille",
+  "medicalWatchTitle": "News",
+  "medicalWatchNavTitle": "News",
   "medicalWatchSearchPlaceholder": "Rechercher sur PubMed…",
   "medicalWatchFilterAll": "Tous",
   "medicalWatchSpecialtyRehabilitation": "Rééducation",
@@ -501,7 +503,7 @@
       }
     }
   },
-  "medicalWatchSyncSuccess": "Veille synchronisée",
+  "medicalWatchSyncSuccess": "News mises à jour",
   "medicalWatchOfflineHint": "Résultats hors-ligne (dernière synchronisation)",
   "homeGreeting": "Bonjour, {name}",
   "@homeGreeting": {

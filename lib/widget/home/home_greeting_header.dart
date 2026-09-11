@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/core/utils/name_title_case.dart';
 import 'package:medicail/features/appointment/presentation/appointment_bloc.dart';
 import 'package:medicail/features/appointment/presentation/appointment_state.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_bloc.dart';
@@ -21,7 +22,7 @@ class HomeGreetingHeader extends StatelessWidget {
     if (authState is AuthAuthenticated &&
         authState.user.fullName != null &&
         authState.user.fullName!.trim().isNotEmpty) {
-      greeting = l10n.homeGreeting(authState.user.fullName!);
+      greeting = l10n.homeGreeting(nameTitleCase(authState.user.fullName!));
     } else {
       greeting = l10n.homeGreetingGuest;
     }
