@@ -164,11 +164,12 @@ void main() {
 
     // Still on identity page (toast may not render without AppToastHost).
     expect(find.text(l10n.anamneseIdentityTitle), findsWidgets);
+    expect(find.text(l10n.anamneseHubSubtitle), findsNothing);
     expect(find.text(l10n.anamneseNaissanceEnfanceTitle), findsNothing);
     verifyNever(() => patients.save(any()));
   });
 
-  testWidgets('skip after identity creates a patient', (tester) async {
+  testWidgets('finish after identity creates a patient', (tester) async {
     String? createdId;
     await tester.pumpWidget(
       wrap(
@@ -212,8 +213,8 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(2), '01/01/1990');
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.anamneseSkip), findsOneWidget);
-    await tester.tap(find.text(l10n.anamneseSkip));
+    expect(find.text(l10n.anamneseFinish), findsOneWidget);
+    await tester.tap(find.text(l10n.anamneseFinish));
     await tester.pumpAndSettle();
 
     expect(createdId, 'created-1');

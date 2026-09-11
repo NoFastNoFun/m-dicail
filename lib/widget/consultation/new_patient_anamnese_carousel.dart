@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
+import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
+import 'package:medicail/features/patient/domain/entities/anamnese.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/presentation/patient_bloc.dart';
 import 'package:medicail/features/patient/presentation/patient_event.dart';
@@ -13,7 +16,64 @@ import 'package:medicail/widget/consultation/anamnese/anamnese_form_data.dart';
 import 'package:medicail/widget/consultation/anamnese/anamnese_pages.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 
-/// Multi-step PageView for identity + optional anamnèse.
+enum _AnamnesePhase { identity, hub, chapter }
+
+enum AnamneseChapter {
+  antecedents,
+  traumatismes,
+  activitePro,
+  stylesDeVie,
+  activitesPhysio,
+  vieFamiliale,
+  personnalite,
+  naissanceEnfance,
+}
+
+extension on AnamneseChapter {
+  bool isFilled(Anamnese a) {
+    switch (this) {
+      case AnamneseChapter.antecedents:
+        return !a.antecedentsChroniques.isEmpty;
+      case AnamneseChapter.traumatismes:
+        return !a.traumatismesChirurgieInfections.isEmpty;
+      case AnamneseChapter.activitePro:
+        return !a.activiteProfessionnelle.isEmpty;
+      case AnamneseChapter.stylesDeVie:
+        return !a.stylesDeVie.isEmpty;
+      case AnamneseChapter.activitesPhysio:
+        return !a.activitesPhysiologiques.isEmpty;
+      case AnamneseChapter.vieFamiliale:
+        return !a.vieFamilialeSexuelle.isEmpty;
+      case AnamneseChapter.personnalite:
+        return !a.personnalite.isEmpty;
+      case AnamneseChapter.naissanceEnfance:
+        return !a.naissanceEnfance.isEmpty;
+    }
+  }
+
+  String title(AppLocalizations l10n) {
+    switch (this) {
+      case AnamneseChapter.antecedents:
+        return l10n.anamneseAntecedentsTitle;
+      case AnamneseChapter.traumatismes:
+        return l10n.anamneseTraumatismesTitle;
+      case AnamneseChapter.activitePro:
+        return l10n.anamneseActiviteProTitle;
+      case AnamneseChapter.stylesDeVie:
+        return l10n.anamneseStylesDeVieTitle;
+      case AnamneseChapter.activitesPhysio:
+        return l10n.anamneseActivitesPhysioTitle;
+      case AnamneseChapter.vieFamiliale:
+        return l10n.anamneseVieFamilialeTitle;
+      case AnamneseChapter.personnalite:
+        return l10n.anamnesePersonnaliteTitle;
+      case AnamneseChapter.naissanceEnfance:
+        return l10n.anamneseNaissanceEnfanceTitle;
+    }
+  }
+}
+
+/// Identity first, then a hub of optional anamnèse chapters.
 ///
 /// Returns the patient id on success (create or update).
 class NewPatientAnamneseCarousel extends StatefulWidget {
@@ -33,9 +93,9 @@ class NewPatientAnamneseCarousel extends StatefulWidget {
 
 class _NewPatientAnamneseCarouselState
     extends State<NewPatientAnamneseCarousel> {
-  late final PageController _pageController;
   late final AnamneseFormData _data;
-  int _pageIndex = 0;
+  _AnamnesePhase _phase = _AnamnesePhase.identity;
+  AnamneseChapter? _chapter;
   bool _submitting = false;
 
   bool get _isEdit => widget.initialPatient != null;
@@ -43,26 +103,20 @@ class _NewPatientAnamneseCarouselState
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     _data = widget.initialPatient != null
         ? AnamneseFormData.fromPatient(widget.initialPatient!)
         : AnamneseFormData();
+    if (_isEdit) {
+      _phase = _AnamnesePhase.hub;
+    }
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _goTo(int index) async {
-    if (index < 0 || index >= kAnamnesePageCount) return;
-    await _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
-    );
-    setState(() => _pageIndex = index);
+  void _cancel() {
+    if (widget.onCancel != null) {
+      widget.onCancel!();
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   bool _validateIdentity() {
@@ -74,30 +128,33 @@ class _NewPatientAnamneseCarouselState
     return false;
   }
 
-  Future<void> _onNext() async {
-    if (_pageIndex == 0 && !_validateIdentity()) return;
-    if (_pageIndex >= kAnamnesePageCount - 1) {
-      await _submit();
-      return;
-    }
-    await _goTo(_pageIndex + 1);
+  void _goHub() {
+    if (!_validateIdentity()) return;
+    setState(() {
+      _phase = _AnamnesePhase.hub;
+      _chapter = null;
+    });
   }
 
-  Future<void> _onSkip() async {
-    if (_pageIndex == 0 && !_validateIdentity()) return;
-    await _submit();
+  void _openChapter(AnamneseChapter chapter) {
+    setState(() {
+      _phase = _AnamnesePhase.chapter;
+      _chapter = chapter;
+    });
   }
 
-  Future<void> _onBack() async {
-    if (_pageIndex == 0) {
-      if (widget.onCancel != null) {
-        widget.onCancel!();
-      } else {
-        Navigator.of(context).pop();
-      }
-      return;
+  void _back() {
+    switch (_phase) {
+      case _AnamnesePhase.identity:
+        _cancel();
+      case _AnamnesePhase.hub:
+        setState(() => _phase = _AnamnesePhase.identity);
+      case _AnamnesePhase.chapter:
+        setState(() {
+          _phase = _AnamnesePhase.hub;
+          _chapter = null;
+        });
     }
-    await _goTo(_pageIndex - 1);
   }
 
   Future<void> _submit() async {
@@ -159,11 +216,47 @@ class _NewPatientAnamneseCarouselState
     }
   }
 
+  Widget _chapterPage(AnamneseChapter chapter) {
+    final onChanged = () => setState(() {});
+    switch (chapter) {
+      case AnamneseChapter.antecedents:
+        return AnamneseAntecedentsPage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.traumatismes:
+        return AnamneseTraumatismesPage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.activitePro:
+        return AnamneseActiviteProPage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.stylesDeVie:
+        return AnamneseStylesDeViePage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.activitesPhysio:
+        return AnamneseActivitesPhysioPage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.vieFamiliale:
+        return AnamneseVieFamilialePage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.personnalite:
+        return AnamnesePersonnalitePage(data: _data, onChanged: onChanged);
+      case AnamneseChapter.naissanceEnfance:
+        return AnamneseNaissanceEnfancePage(data: _data, onChanged: onChanged);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isLast = _pageIndex >= kAnamnesePageCount - 1;
-    final canSkipAnamnese = _pageIndex > 0 || _data.identityValid;
+    final colors = context.colorScheme;
+
+    final title = switch (_phase) {
+      _AnamnesePhase.identity =>
+        _isEdit ? l10n.anamneseCarouselEditTitle : l10n.anamneseCarouselTitle,
+      _AnamnesePhase.hub => l10n.anamneseHubTitle,
+      _AnamnesePhase.chapter => _chapter!.title(l10n),
+    };
+
+    final backLabel = switch (_phase) {
+      _AnamnesePhase.identity => widget.onCancel != null
+          ? l10n.buttonCancel
+          : l10n.anamneseBack,
+      _AnamnesePhase.hub => l10n.anamneseBack,
+      _AnamnesePhase.chapter => l10n.anamneseBackToHub,
+    };
 
     return BlocListener<PatientBloc, PatientState>(
       listener: (context, state) => _onPatientState(state),
@@ -180,89 +273,16 @@ class _NewPatientAnamneseCarouselState
             child: Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        _isEdit
-                            ? l10n.anamneseCarouselEditTitle
-                            : l10n.anamneseCarouselTitle,
-                        variant: AppTextVariant.title,
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      AppText(
-                        l10n.anamnesePageIndicator(
-                          _pageIndex + 1,
-                          kAnamnesePageCount,
-                        ),
-                        variant: AppTextVariant.caption,
-                      ),
-                    ],
-                  ),
+                  child: AppText(title, variant: AppTextVariant.title),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
-                  onPressed: _submitting
-                      ? null
-                      : () {
-                          if (widget.onCancel != null) {
-                            widget.onCancel!();
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
+                  onPressed: _submitting ? null : _cancel,
                 ),
               ],
             ),
           ),
-          LinearProgressIndicator(
-            value: (_pageIndex + 1) / kAnamnesePageCount,
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) => setState(() => _pageIndex = index),
-              children: [
-                AnamneseIdentityPage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseNaissanceEnfancePage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseVieFamilialePage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseStylesDeViePage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseActivitesPhysioPage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseActiviteProPage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamnesePersonnalitePage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseAntecedentsPage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-                AnamneseTraumatismesPage(
-                  data: _data,
-                  onChanged: () => setState(() {}),
-                ),
-              ],
-            ),
-          ),
+          Expanded(child: _body(l10n, colors)),
           SafeArea(
             top: false,
             child: Padding(
@@ -271,37 +291,45 @@ class _NewPatientAnamneseCarouselState
                 children: [
                   Expanded(
                     child: AppButton(
-                      onPressed: _submitting ? null : _onBack,
+                      onPressed: _submitting ? null : _back,
                       style: AppButtonStyle.secondary,
-                      label: _pageIndex == 0 && widget.onCancel != null
-                          ? l10n.buttonCancel
-                          : l10n.anamneseBack,
+                      label: backLabel,
                       enabled: !_submitting,
                       expanded: true,
                     ),
                   ),
-                  if (canSkipAnamnese && !isLast) ...[
+                  if (_phase == _AnamnesePhase.identity) ...[
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: AppButton(
-                        onPressed: _submitting ? null : _onSkip,
+                        onPressed: _submitting ? null : _submit,
                         style: AppButtonStyle.tertiary,
-                        label: l10n.anamneseSkip,
+                        label: l10n.anamneseFinish,
+                        enabled: !_submitting && _data.identityValid,
+                        expanded: true,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: AppButton(
+                        onPressed: _submitting ? null : _goHub,
+                        label: l10n.anamneseNext,
+                        enabled: !_submitting,
+                        expanded: true,
+                      ),
+                    ),
+                  ] else ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: AppButton(
+                        onPressed: _submitting ? null : _submit,
+                        label: l10n.anamneseFinish,
+                        isLoading: _submitting,
                         enabled: !_submitting,
                         expanded: true,
                       ),
                     ),
                   ],
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: AppButton(
-                      onPressed: _submitting ? null : _onNext,
-                      label: isLast ? l10n.anamneseFinish : l10n.anamneseNext,
-                      isLoading: _submitting,
-                      enabled: !_submitting,
-                      expanded: true,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -310,9 +338,109 @@ class _NewPatientAnamneseCarouselState
       ),
     );
   }
+
+  Widget _body(AppLocalizations l10n, ColorScheme colors) {
+    switch (_phase) {
+      case _AnamnesePhase.identity:
+        return AnamneseIdentityPage(
+          data: _data,
+          onChanged: () => setState(() {}),
+        );
+      case _AnamnesePhase.hub:
+        return _Hub(
+          l10n: l10n,
+          colors: colors,
+          data: _data,
+          onOpen: _openChapter,
+        );
+      case _AnamnesePhase.chapter:
+        return _chapterPage(_chapter!);
+    }
+  }
 }
 
-/// Opens the anamnèse carousel fullscreen for create or edit.
+class _Hub extends StatelessWidget {
+  const _Hub({
+    required this.l10n,
+    required this.colors,
+    required this.data,
+    required this.onOpen,
+  });
+
+  final AppLocalizations l10n;
+  final ColorScheme colors;
+  final AnamneseFormData data;
+  final ValueChanged<AnamneseChapter> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.lg,
+      ),
+      children: [
+        AppText(l10n.anamneseHubSubtitle, variant: AppTextVariant.body),
+        const SizedBox(height: AppSpacing.lg),
+        for (final chapter in AnamneseChapter.values) ...[
+          _ChapterTile(
+            title: chapter.title(l10n),
+            filled: chapter.isFilled(data.anamnese),
+            filledLabel: l10n.anamneseChapterFilled,
+            emptyLabel: l10n.anamneseChapterEmpty,
+            onTap: () => onOpen(chapter),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+      ],
+    );
+  }
+}
+
+class _ChapterTile extends StatelessWidget {
+  const _ChapterTile({
+    required this.title,
+    required this.filled,
+    required this.filledLabel,
+    required this.emptyLabel,
+    required this.onTap,
+  });
+
+  final String title;
+  final bool filled;
+  final String filledLabel;
+  final String emptyLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colorScheme;
+    return Material(
+      color: colors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppRadius.mdBorder,
+        side: BorderSide(color: colors.outlineVariant),
+      ),
+      child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+        title: AppText(title, variant: AppTextVariant.body),
+        subtitle: AppText(
+          filled ? filledLabel : emptyLabel,
+          variant: AppTextVariant.caption,
+        ),
+        trailing: Icon(
+          filled ? Icons.check_circle : Icons.chevron_right,
+          color: filled ? colors.primary : colors.onSurfaceVariant,
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+/// Opens the anamnèse flow fullscreen for create or edit.
 Future<String?> showAnamneseCarousel(
   BuildContext context, {
   Patient? initialPatient,

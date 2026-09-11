@@ -1551,6 +1551,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get anamneseFinish => 'Terminer';
 
   @override
+  String get anamneseHubTitle => 'Anamnèse';
+
+  @override
+  String get anamneseHubSubtitle =>
+      'Ouvrez seulement ce qui est utile. Le reste peut attendre.';
+
+  @override
+  String get anamneseChapterFilled => 'Renseigné';
+
+  @override
+  String get anamneseChapterEmpty => 'À faire';
+
+  @override
+  String get anamneseBackToHub => 'Chapitres';
+
+  @override
   String get anamneseIdentityRequired =>
       'Prénom, nom et date de naissance sont requis.';
 

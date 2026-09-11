@@ -2974,6 +2974,21 @@ abstract class AppLocalizations {
   /// **'Terminer'**
   String get anamneseFinish;
 
+  /// No description provided for @anamneseHubTitle.
+  String get anamneseHubTitle;
+
+  /// No description provided for @anamneseHubSubtitle.
+  String get anamneseHubSubtitle;
+
+  /// No description provided for @anamneseChapterFilled.
+  String get anamneseChapterFilled;
+
+  /// No description provided for @anamneseChapterEmpty.
+  String get anamneseChapterEmpty;
+
+  /// No description provided for @anamneseBackToHub.
+  String get anamneseBackToHub;
+
   /// No description provided for @anamneseIdentityRequired.
   ///
   /// In fr, this message translates to:
