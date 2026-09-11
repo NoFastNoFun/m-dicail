@@ -262,6 +262,8 @@ class _MainShellState extends State<MainShell> {
     }
     ShowcaseView.get().dismiss();
     await tutorialBloc.completeHomeQuickRecordTutorial();
+    if (!mounted) return;
+    await context.openQuickConsultation();
   }
 
   void _openQuickRecordIfAllowed() {
@@ -269,7 +271,7 @@ class _MainShellState extends State<MainShell> {
     if (!tutorialBloc.canOpenQuickRecordDuringTutorial) {
       return;
     }
-    context.goRecord();
+    context.openQuickConsultation();
   }
 
   void _onDestinationSelected(String route) {

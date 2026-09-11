@@ -48,14 +48,14 @@ class TutorialFlow {
       id: TutorialStepId.recordFinishFromPatient,
     ),
     TutorialStepDefinition(index: 12, id: TutorialStepId.homeQuickRecord),
-    TutorialStepDefinition(index: 13, id: TutorialStepId.quickRecordStart),
-    TutorialStepDefinition(index: 14, id: TutorialStepId.quickRecordTranscript),
-    TutorialStepDefinition(index: 15, id: TutorialStepId.quickRecordStop),
-    TutorialStepDefinition(index: 16, id: TutorialStepId.quickRecordFinish),
     TutorialStepDefinition(
-      index: 17,
+      index: 13,
       id: TutorialStepId.quickRecordAssignPatient,
     ),
+    TutorialStepDefinition(index: 14, id: TutorialStepId.quickRecordStart),
+    TutorialStepDefinition(index: 15, id: TutorialStepId.quickRecordTranscript),
+    TutorialStepDefinition(index: 16, id: TutorialStepId.quickRecordStop),
+    TutorialStepDefinition(index: 17, id: TutorialStepId.quickRecordFinish),
   ];
 
   static int get firstStep => steps.first.index;

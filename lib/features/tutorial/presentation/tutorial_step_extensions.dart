@@ -50,17 +50,17 @@ extension TutorialBlocStepX on TutorialBloc {
     completeStep(TutorialStepId.homeQuickRecord);
     await stream.firstWhere(
       (nextState) =>
-          nextState.tutorialStepId == TutorialStepId.quickRecordStart,
+          nextState.tutorialStepId == TutorialStepId.quickRecordAssignPatient,
     );
-    await skipQuickRecordPageTutorialSteps();
   }
 
   /// Quick record is only allowed once the home FAB step is done.
+  /// During the assign-patient step the dialog is shown by openQuickConsultation.
   bool get canOpenQuickRecordDuringTutorial {
     if (state is! TutorialInProgress) return true;
     final stepId = state.tutorialStepId;
     if (stepId == null) return true;
-    return TutorialFlow.indexOf(stepId) >
-        TutorialFlow.indexOf(TutorialStepId.homeQuickRecord);
+    return TutorialFlow.indexOf(stepId) >=
+        TutorialFlow.indexOf(TutorialStepId.quickRecordAssignPatient);
   }
 }

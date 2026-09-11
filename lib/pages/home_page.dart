@@ -183,7 +183,7 @@ class _HomeViewState extends State<_HomeView> {
                   icon: Icons.mic_none_outlined,
                   message: l10n.homeRecentConsultationsEmpty,
                   actionLabel: l10n.homeQuickRecord,
-                  onAction: () => context.goRecord(),
+                  onAction: () => context.openQuickConsultation(),
                 )
               else
                 ..._recentSessions.map(

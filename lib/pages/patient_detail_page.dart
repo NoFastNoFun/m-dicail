@@ -10,6 +10,8 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
+import 'package:medicail/features/patient/domain/entities/anamnese.dart';
+import 'package:medicail/widget/consultation/new_patient_anamnese_carousel.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -450,6 +452,26 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
+        if (patient.metadata.birthPlace != null) ...[
+          Row(
+            children: [
+              Icon(
+                Icons.place_outlined,
+                size: 16,
+                color: context.secondaryTextColor,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: AppText(
+                  patient.metadata.birthPlace!,
+                  variant: AppTextVariant.caption,
+                  color: context.secondaryTextColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
         if (patient.contact?.phone != null ||
             patient.contact?.email != null) ...[
           Row(
@@ -526,6 +548,11 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
             ],
           ),
         ],
+        const SizedBox(height: AppSpacing.lg),
+        _AnamneseCard(
+          patient: patient,
+          onRefresh: widget.onRefresh,
+        ),
         const SizedBox(height: AppSpacing.lg),
         if (!patient.isArchived)
           AppShowcase(
@@ -993,6 +1020,79 @@ class _DossierTabButton extends StatelessWidget {
                 ? theme.colorScheme.primary
                 : context.secondaryTextColor,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnamneseCard extends StatelessWidget {
+  const _AnamneseCard({
+    required this.patient,
+    required this.onRefresh,
+  });
+
+  final Patient patient;
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final hasAnamnese = patient.metadata.anamnese.isNotEmpty;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.dividerColor),
+        borderRadius: AppRadius.mdBorder,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.medical_information_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: AppText(
+                    l10n.anamneseCardTitle,
+                    variant: AppTextVariant.title,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            AppText(
+              hasAnamnese
+                  ? l10n.anamneseCardFilled
+                  : l10n.anamneseCardEmpty,
+              variant: AppTextVariant.body,
+              color: context.secondaryTextColor,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppButton(
+              onPressed: () async {
+                final result = await showAnamneseCarousel(
+                  context,
+                  initialPatient: patient,
+                );
+                if (result != null) {
+                  onRefresh();
+                }
+              },
+              style: AppButtonStyle.secondary,
+              label: hasAnamnese
+                  ? l10n.anamneseCardEdit
+                  : l10n.anamneseCardComplete,
+              expanded: true,
+            ),
+          ],
         ),
       ),
     );
