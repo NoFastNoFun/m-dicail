@@ -2048,4 +2048,61 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get anamneseSaveError => 'Impossible d\'enregistrer l\'anamnèse';
+
+  @override
+  String get anamneseSummaryTitle => 'Résumé de l\'anamnèse';
+
+  @override
+  String get anamneseCardViewSummary => 'Voir le résumé';
+
+  @override
+  String get anamneseSummaryNotFilled => 'Non renseigné';
+
+  @override
+  String get anamneseSummaryClose => 'Fermer';
+
+  @override
+  String get anamneseSummaryPresent => 'Présent';
+
+  @override
+  String get anamneseSummaryAbsent => 'Absent';
+
+  @override
+  String get anamneseSummaryShowDetails => 'Voir tous les détails';
+
+  @override
+  String get anamneseSummaryShowCompact => 'Revenir à la synthèse';
+
+  @override
+  String get anamneseSummaryCompactHint =>
+      'Synthèse des champs renseignés. Les textes longs sont abrégés : ouvrez les détails pour les lire en entier.';
+
+  @override
+  String get anamneseSummaryDetailedHint =>
+      'Vue détaillée : tous les champs et les textes complets.';
+
+  @override
+  String anamneseSummaryLabelValue(String label, String value) {
+    return '$label : $value';
+  }
+
+  @override
+  String anamneseSummaryMonths(String value) {
+    return '$value mois';
+  }
+
+  @override
+  String anamneseSummaryYears(String value) {
+    return '$value ans';
+  }
+
+  @override
+  String anamneseSummaryGlassesPerWeek(String value) {
+    return '$value verres/semaine';
+  }
+
+  @override
+  String anamneseSummaryCigarettesPerDay(String value) {
+    return '$value cigarettes/jour';
+  }
 }

@@ -3963,6 +3963,96 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible d\'enregistrer l\'anamnèse'**
   String get anamneseSaveError;
+
+  /// No description provided for @anamneseSummaryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résumé de l\'anamnèse'**
+  String get anamneseSummaryTitle;
+
+  /// No description provided for @anamneseCardViewSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le résumé'**
+  String get anamneseCardViewSummary;
+
+  /// No description provided for @anamneseSummaryNotFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseigné'**
+  String get anamneseSummaryNotFilled;
+
+  /// No description provided for @anamneseSummaryClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get anamneseSummaryClose;
+
+  /// No description provided for @anamneseSummaryPresent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Présent'**
+  String get anamneseSummaryPresent;
+
+  /// No description provided for @anamneseSummaryAbsent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absent'**
+  String get anamneseSummaryAbsent;
+
+  /// No description provided for @anamneseSummaryShowDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tous les détails'**
+  String get anamneseSummaryShowDetails;
+
+  /// No description provided for @anamneseSummaryShowCompact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir à la synthèse'**
+  String get anamneseSummaryShowCompact;
+
+  /// No description provided for @anamneseSummaryCompactHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synthèse des champs renseignés. Les textes longs sont abrégés : ouvrez les détails pour les lire en entier.'**
+  String get anamneseSummaryCompactHint;
+
+  /// No description provided for @anamneseSummaryDetailedHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue détaillée : tous les champs et les textes complets.'**
+  String get anamneseSummaryDetailedHint;
+
+  /// Read-only history field with its label and value.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} : {value}'**
+  String anamneseSummaryLabelValue(String label, String value);
+
+  /// Development milestone age, stored as free text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} mois'**
+  String anamneseSummaryMonths(String value);
+
+  /// Habit duration, stored as free text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} ans'**
+  String anamneseSummaryYears(String value);
+
+  /// Alcohol quantity with the same unit as the editor.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} verres/semaine'**
+  String anamneseSummaryGlassesPerWeek(String value);
+
+  /// Tobacco quantity with the same unit as the editor.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} cigarettes/jour'**
+  String anamneseSummaryCigarettesPerDay(String value);
 }
 
 class _AppLocalizationsDelegate

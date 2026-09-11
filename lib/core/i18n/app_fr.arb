@@ -709,6 +709,41 @@
   "anamneseCardEdit": "Modifier l'anamnèse",
   "anamneseCardFilled": "Anamnèse renseignée",
   "anamneseSaveSuccess": "Anamnèse enregistrée",
-  "anamneseSaveError": "Impossible d'enregistrer l'anamnèse"
+  "anamneseSaveError": "Impossible d'enregistrer l'anamnèse",
+  "anamneseSummaryTitle": "Résumé de l'anamnèse",
+  "anamneseCardViewSummary": "Voir le résumé",
+  "anamneseSummaryNotFilled": "Non renseigné",
+  "anamneseSummaryClose": "Fermer",
+  "anamneseSummaryPresent": "Présent",
+  "anamneseSummaryAbsent": "Absent",
+  "anamneseSummaryShowDetails": "Voir tous les détails",
+  "anamneseSummaryShowCompact": "Revenir à la synthèse",
+  "anamneseSummaryCompactHint": "Synthèse des champs renseignés. Les textes longs sont abrégés : ouvrez les détails pour les lire en entier.",
+  "anamneseSummaryDetailedHint": "Vue détaillée : tous les champs et les textes complets.",
+  "anamneseSummaryLabelValue": "{label} : {value}",
+  "@anamneseSummaryLabelValue": {
+    "description": "Read-only history field with its label and value.",
+    "placeholders": {"label": {"type": "String"}, "value": {"type": "String"}}
+  },
+  "anamneseSummaryMonths": "{value} mois",
+  "@anamneseSummaryMonths": {
+    "description": "Development milestone age, stored as free text.",
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "anamneseSummaryYears": "{value} ans",
+  "@anamneseSummaryYears": {
+    "description": "Habit duration, stored as free text.",
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "anamneseSummaryGlassesPerWeek": "{value} verres/semaine",
+  "@anamneseSummaryGlassesPerWeek": {
+    "description": "Alcohol quantity with the same unit as the editor.",
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "anamneseSummaryCigarettesPerDay": "{value} cigarettes/jour",
+  "@anamneseSummaryCigarettesPerDay": {
+    "description": "Tobacco quantity with the same unit as the editor.",
+    "placeholders": {"value": {"type": "String"}}
+  }
 }
 

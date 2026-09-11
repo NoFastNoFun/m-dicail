@@ -12,6 +12,7 @@ import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/patient/domain/entities/patient.dart';
 import 'package:medicail/features/patient/domain/entities/anamnese.dart';
 import 'package:medicail/widget/consultation/new_patient_anamnese_carousel.dart';
+import 'package:medicail/widget/consultation/anamnese/anamnese_summary_page.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/entities/soap_note.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
@@ -1076,6 +1077,18 @@ class _AnamneseCard extends StatelessWidget {
               color: context.secondaryTextColor,
             ),
             const SizedBox(height: AppSpacing.md),
+            if (hasAnamnese) ...[
+              AppButton(
+                onPressed: () => showAnamneseSummary(
+                  context,
+                  patient: patient,
+                ),
+                style: AppButtonStyle.secondary,
+                label: l10n.anamneseCardViewSummary,
+                expanded: true,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
             AppButton(
               onPressed: () async {
                 final result = await showAnamneseCarousel(
