@@ -2975,18 +2975,33 @@ abstract class AppLocalizations {
   String get anamneseFinish;
 
   /// No description provided for @anamneseHubTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse'**
   String get anamneseHubTitle;
 
   /// No description provided for @anamneseHubSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez seulement ce qui est utile. Le reste peut attendre.'**
   String get anamneseHubSubtitle;
 
   /// No description provided for @anamneseChapterFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigné'**
   String get anamneseChapterFilled;
 
   /// No description provided for @anamneseChapterEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'À faire'**
   String get anamneseChapterEmpty;
 
   /// No description provided for @anamneseBackToHub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chapitres'**
   String get anamneseBackToHub;
 
   /// No description provided for @anamneseIdentityRequired.
