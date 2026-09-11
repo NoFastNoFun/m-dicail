@@ -1504,4 +1504,605 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get attachPatientDialogTitle => 'Associer un patient';
+
+  @override
+  String get attachPatientSearchLabel => 'Rechercher un patient';
+
+  @override
+  String get attachPatientSearchHint => 'Nom, prénom ou MRN';
+
+  @override
+  String get attachPatientConfirm => 'Continuer la consultation';
+
+  @override
+  String get attachPatientNewButton => 'Nouveau patient';
+
+  @override
+  String get attachPatientSelectRequired =>
+      'Sélectionnez un patient pour continuer';
+
+  @override
+  String get attachPatientNoResults => 'Aucun patient trouvé';
+
+  @override
+  String get anamneseCarouselTitle => 'Nouveau patient';
+
+  @override
+  String get anamneseCarouselEditTitle => 'Anamnèse';
+
+  @override
+  String anamnesePageIndicator(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get anamneseBack => 'Retour';
+
+  @override
+  String get anamneseNext => 'Suivant';
+
+  @override
+  String get anamneseSkip => 'Passer';
+
+  @override
+  String get anamneseFinish => 'Terminer';
+
+  @override
+  String get anamneseHubTitle => 'Anamnèse';
+
+  @override
+  String get anamneseHubSubtitle =>
+      'Ouvrez seulement ce qui est utile. Le reste peut attendre.';
+
+  @override
+  String get anamneseChapterFilled => 'Renseigné';
+
+  @override
+  String get anamneseChapterEmpty => 'À faire';
+
+  @override
+  String get anamneseBackToHub => 'Chapitres';
+
+  @override
+  String get anamneseIdentityRequired =>
+      'Prénom, nom et date de naissance sont requis.';
+
+  @override
+  String get anamneseBirthDateRequiredLabel => 'Date de naissance *';
+
+  @override
+  String get anamneseBirthPlaceLabel => 'Lieu de naissance';
+
+  @override
+  String get anamneseIdentityTitle => 'Identité';
+
+  @override
+  String get anamneseNaissanceEnfanceTitle => 'Naissance et enfance';
+
+  @override
+  String get anamneseVieFamilialeTitle => 'Vie familiale et sexuelle';
+
+  @override
+  String get anamneseStylesDeVieTitle => 'Styles de vie';
+
+  @override
+  String get anamneseActivitesPhysioTitle => 'Activités physiologiques';
+
+  @override
+  String get anamneseActiviteProTitle => 'Activité professionnelle';
+
+  @override
+  String get anamnesePersonnaliteTitle => 'Personnalité';
+
+  @override
+  String get anamneseAntecedentsTitle => 'Antécédents chroniques';
+
+  @override
+  String get anamneseTraumatismesTitle =>
+      'Traumatismes, chirurgie et infections';
+
+  @override
+  String get anamnesePoidsNaissance => 'Poids à la naissance';
+
+  @override
+  String get anamnesePoidsUniteG => 'g';
+
+  @override
+  String get anamnesePoidsUniteKg => 'kg';
+
+  @override
+  String get anamneseAllaitement => 'Mode d\'allaitement';
+
+  @override
+  String get anamneseAllaitementMaternel => 'Maternel';
+
+  @override
+  String get anamneseAllaitementArtificiel => 'Artificiel';
+
+  @override
+  String get anamneseAllaitementMixte => 'Mixte';
+
+  @override
+  String get anamneseMarche => 'Marche';
+
+  @override
+  String get anamneseDentition => 'Dentition';
+
+  @override
+  String get anamnesePhonation => 'Phonation';
+
+  @override
+  String get anamneseMilestoneNormal => 'Normal';
+
+  @override
+  String get anamneseMilestoneRetard => 'Retard';
+
+  @override
+  String get anamneseMilestoneInconnu => 'Inconnu';
+
+  @override
+  String get anamneseAgeMois => 'Âge (mois)';
+
+  @override
+  String get anamneseEnCouple => 'En couple / marié(e)';
+
+  @override
+  String get anamneseCoupleMariage => 'Mariage';
+
+  @override
+  String get anamneseCouplePacs => 'PACS';
+
+  @override
+  String get anamneseCoupleConcubinage => 'Concubinage';
+
+  @override
+  String get anamneseCoupleAnnee => 'Année';
+
+  @override
+  String get anamneseNombreGrossesses => 'Nombre de grossesses';
+
+  @override
+  String get anamneseTroublesSexuels => 'Troubles sexuels';
+
+  @override
+  String get anamneseDysfonctionErectile => 'Dysfonction érectile';
+
+  @override
+  String get anamneseBaisseLibido => 'Baisse de libido';
+
+  @override
+  String get anamneseDyspareunie => 'Dyspareunie';
+
+  @override
+  String get anamneseRisqueMst => 'Comportements à risque MST';
+
+  @override
+  String get anamneseMenopause => 'Ménopause';
+
+  @override
+  String get anamneseTraitementHormonal => 'Traitement hormonal';
+
+  @override
+  String get anamneseOui => 'Oui';
+
+  @override
+  String get anamneseNon => 'Non';
+
+  @override
+  String get anamneseAlimentation => 'Habitudes alimentaires';
+
+  @override
+  String get anamneseAlimEquilibree => 'Équilibrée';
+
+  @override
+  String get anamneseAlimDesequilibree => 'Déséquilibrée';
+
+  @override
+  String get anamneseAlimRestrictive => 'Restrictive';
+
+  @override
+  String get anamneseAlimInsuffisante => 'Insuffisante';
+
+  @override
+  String get anamneseAlimNormale => 'Normale';
+
+  @override
+  String get anamneseAlimExcessive => 'Excessive';
+
+  @override
+  String get anamneseQualite => 'Qualité';
+
+  @override
+  String get anamneseQuantite => 'Quantité';
+
+  @override
+  String get anamneseAlcool => 'Alcool';
+
+  @override
+  String get anamneseTabac => 'Tabac';
+
+  @override
+  String get anamneseDrogues => 'Drogues';
+
+  @override
+  String get anamneseFrequence => 'Fréquence';
+
+  @override
+  String get anamneseFreqQuotidien => 'Quotidien';
+
+  @override
+  String get anamneseFreqHebdo => 'Hebdomadaire';
+
+  @override
+  String get anamneseFreqOccasionnel => 'Occasionnel';
+
+  @override
+  String get anamneseFreqSevre => 'Sevré';
+
+  @override
+  String get anamneseVerresSemaine => 'Verres / semaine';
+
+  @override
+  String get anamneseTypeBoisson => 'Type';
+
+  @override
+  String get anamneseBiere => 'Bière';
+
+  @override
+  String get anamneseVin => 'Vin';
+
+  @override
+  String get anamneseSpiritueux => 'Spiritueux';
+
+  @override
+  String get anamneseCigarettesJour => 'Cigarettes / jour';
+
+  @override
+  String get anamneseAncienFumeur => 'Ancien fumeur';
+
+  @override
+  String get anamneseAnnees => 'Années';
+
+  @override
+  String get anamneseCannabis => 'Cannabis';
+
+  @override
+  String get anamneseCocaine => 'Cocaïne';
+
+  @override
+  String get anamneseOpioides => 'Opioïdes';
+
+  @override
+  String get anamneseAutre => 'Autre';
+
+  @override
+  String get anamneseSedentarite => 'Niveau d\'activité';
+
+  @override
+  String get anamneseActif => 'Actif';
+
+  @override
+  String get anamneseModere => 'Modéré';
+
+  @override
+  String get anamneseSedentaire => 'Sédentaire';
+
+  @override
+  String get anamneseActiviteSemaine => 'Activité / semaine';
+
+  @override
+  String get anamneseRelationsSociales => 'Relations sociales';
+
+  @override
+  String get anamneseIsole => 'Isolé';
+
+  @override
+  String get anamneseLimite => 'Limité';
+
+  @override
+  String get anamneseSoutenu => 'Soutenu';
+
+  @override
+  String get anamneseAllergies => 'Allergies';
+
+  @override
+  String get anamneseAllergieMedicamenteuses => 'Médicamenteuses';
+
+  @override
+  String get anamneseAllergieAlimentaires => 'Alimentaires';
+
+  @override
+  String get anamneseAllergieEnvironnementales => 'Environnementales';
+
+  @override
+  String get anamneseDetailAllergies => 'Précisions';
+
+  @override
+  String get anamneseSelles => 'Selles';
+
+  @override
+  String get anamneseSellesRegulieres => 'Régulières';
+
+  @override
+  String get anamneseSellesIrregulieres => 'Irrégulières';
+
+  @override
+  String get anamneseSellesConstipation => 'Constipation';
+
+  @override
+  String get anamneseSellesDiarrhee => 'Diarrhée';
+
+  @override
+  String get anamneseFrequenceJour => 'Fréquence / jour';
+
+  @override
+  String get anamneseMictions => 'Mictions';
+
+  @override
+  String get anamneseMictionNormale => 'Normale';
+
+  @override
+  String get anamnesePollakiurie => 'Pollakiurie';
+
+  @override
+  String get anamneseNycturie => 'Nycturie';
+
+  @override
+  String get anamneseBrulures => 'Brûlures';
+
+  @override
+  String get anamneseHematurie => 'Hématurie';
+
+  @override
+  String get anamneseCouleur => 'Couleur';
+
+  @override
+  String get anamneseCouleurClaire => 'Claire';
+
+  @override
+  String get anamneseCouleurFoncee => 'Foncée';
+
+  @override
+  String get anamneseCouleurSanglante => 'Sanglante';
+
+  @override
+  String get anamneseTypeActivite => 'Catégorie d\'activité';
+
+  @override
+  String get anamneseProBureau => 'Bureau / sédentaire';
+
+  @override
+  String get anamneseProPhysique => 'Physique';
+
+  @override
+  String get anamneseProMixte => 'Mixte';
+
+  @override
+  String get anamneseProRetraite => 'Retraité';
+
+  @override
+  String get anamneseProSansEmploi => 'Sans emploi';
+
+  @override
+  String get anamneseMetier => 'Métier';
+
+  @override
+  String get anamneseExpositions => 'Expositions professionnelles';
+
+  @override
+  String get anamneseExpoPhysique => 'Physique';
+
+  @override
+  String get anamneseExpoChimique => 'Chimique';
+
+  @override
+  String get anamneseExpoBiologique => 'Biologique';
+
+  @override
+  String get anamneseEtudesTravail => 'Bénéfices des études ou du travail';
+
+  @override
+  String get anamnesePerceptionSante => 'Perception de l\'état de santé';
+
+  @override
+  String get anamneseSousEstime => 'Sous-estime';
+
+  @override
+  String get anamneseRealiste => 'Réaliste';
+
+  @override
+  String get anamneseSurEstime => 'Surestime';
+
+  @override
+  String get anamneseAttitudeMaladie => 'Attitude face à la maladie';
+
+  @override
+  String get anamneseAcceptation => 'Acceptation';
+
+  @override
+  String get anamneseVolonteGuerir => 'Volonté de guérir';
+
+  @override
+  String get anamneseAnxiete => 'Anxiété';
+
+  @override
+  String get anamneseDeni => 'Déni';
+
+  @override
+  String get anamneseConfianceMedecins => 'Confiance dans les médecins';
+
+  @override
+  String get anamneseHypertension => 'Hypertension artérielle';
+
+  @override
+  String get anamneseDiabete => 'Diabète sucré';
+
+  @override
+  String get anamneseDyslipidemie => 'Dyslipidémie';
+
+  @override
+  String get anamneseSuivi => 'Suivi';
+
+  @override
+  String get anamneseSuiviMt => 'Médecin traitant';
+
+  @override
+  String get anamneseSuiviSpe => 'Spécialiste';
+
+  @override
+  String get anamneseSuiviHopital => 'Hôpital';
+
+  @override
+  String get anamneseMaladieName => 'Maladie';
+
+  @override
+  String get anamneseMaladieAnnee => 'Année d\'apparition';
+
+  @override
+  String get anamneseMaladieSymptomes => 'Symptômes de début';
+
+  @override
+  String get anamneseMaladieLieuSuivi => 'Lieu de suivi';
+
+  @override
+  String get anamneseMaladieModaliteSuivi => 'Modalité de suivi';
+
+  @override
+  String get anamneseAddMaladie => 'Ajouter une maladie';
+
+  @override
+  String get anamneseCommonAsthme => 'Asthme';
+
+  @override
+  String get anamneseCommonArthrose => 'Arthrose';
+
+  @override
+  String get anamneseCommonThyroide => 'Thyroïde';
+
+  @override
+  String get anamneseTraumatismesSequelles => 'Traumatismes et séquelles';
+
+  @override
+  String get anamneseChirurgieAnterieure => 'Chirurgie antérieure';
+
+  @override
+  String get anamneseInterventionDesc => 'Intervention chirurgicale';
+
+  @override
+  String get anamneseInterventionDate => 'Date';
+
+  @override
+  String get anamneseInterventionComplications => 'Complications';
+
+  @override
+  String get anamneseAddIntervention => 'Ajouter une intervention';
+
+  @override
+  String get anamneseInfectionsEnfance => 'Maladies infectieuses (enfance)';
+
+  @override
+  String get anamneseTuberculose => 'Tuberculose';
+
+  @override
+  String get anamneseTumeurs => 'Tumeurs';
+
+  @override
+  String get anamneseHepatite => 'Hépatite virale';
+
+  @override
+  String get anamneseSyphilis => 'Syphilis';
+
+  @override
+  String get anamneseFracturesSansTraumatisme =>
+      'Fractures sans traumatisme apparent';
+
+  @override
+  String get anamneseAnnee => 'Année';
+
+  @override
+  String get anamneseDetails => 'Précisions';
+
+  @override
+  String get anamneseNotesComplementaires => 'Notes complémentaires';
+
+  @override
+  String get anamneseCardTitle => 'Anamnèse';
+
+  @override
+  String get anamneseCardEmpty => 'Aucune anamnèse renseignée';
+
+  @override
+  String get anamneseCardComplete => 'Compléter l\'anamnèse';
+
+  @override
+  String get anamneseCardEdit => 'Modifier l\'anamnèse';
+
+  @override
+  String get anamneseCardFilled => 'Anamnèse renseignée';
+
+  @override
+  String get anamneseSaveSuccess => 'Anamnèse enregistrée';
+
+  @override
+  String get anamneseSaveError => 'Impossible d\'enregistrer l\'anamnèse';
+
+  @override
+  String get anamneseSummaryTitle => 'Résumé de l\'anamnèse';
+
+  @override
+  String get anamneseCardViewSummary => 'Voir le résumé';
+
+  @override
+  String get anamneseSummaryNotFilled => 'Non renseigné';
+
+  @override
+  String get anamneseSummaryClose => 'Fermer';
+
+  @override
+  String get anamneseSummaryPresent => 'Présent';
+
+  @override
+  String get anamneseSummaryAbsent => 'Absent';
+
+  @override
+  String get anamneseSummaryShowDetails => 'Voir tous les détails';
+
+  @override
+  String get anamneseSummaryShowCompact => 'Revenir à la synthèse';
+
+  @override
+  String get anamneseSummaryCompactHint =>
+      'Synthèse des champs renseignés. Les textes longs sont abrégés : ouvrez les détails pour les lire en entier.';
+
+  @override
+  String get anamneseSummaryDetailedHint =>
+      'Vue détaillée : tous les champs et les textes complets.';
+
+  @override
+  String anamneseSummaryLabelValue(String label, String value) {
+    return '$label : $value';
+  }
+
+  @override
+  String anamneseSummaryMonths(String value) {
+    return '$value mois';
+  }
+
+  @override
+  String anamneseSummaryYears(String value) {
+    return '$value ans';
+  }
+
+  @override
+  String anamneseSummaryGlassesPerWeek(String value) {
+    return '$value verres/semaine';
+  }
+
+  @override
+  String anamneseSummaryCigarettesPerDay(String value) {
+    return '$value cigarettes/jour';
+  }
 }

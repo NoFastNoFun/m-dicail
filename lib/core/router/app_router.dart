@@ -28,6 +28,7 @@ import 'package:medicail/pages/forgot_password_page.dart';
 import 'package:medicail/pages/reset_password_page.dart';
 import 'package:medicail/pages/recovery_page.dart';
 import 'package:medicail/pages/mfa_login_page.dart';
+import 'package:medicail/widget/consultation/attach_patient_dialog.dart';
 import 'package:medicail/pages/security_settings_page.dart';
 import 'package:medicail/pages/profile_settings_page.dart';
 
@@ -257,6 +258,14 @@ extension AppRouterNavigation on BuildContext {
         queryParameters: {'patientId': patientId},
       ).toString(),
     );
+  }
+
+  /// Shows the attach-patient dialog, then opens recording with the patient.
+  Future<void> openQuickConsultation() async {
+    final patientId = await AttachPatientDialog.show(this);
+    if (patientId == null || patientId.isEmpty) return;
+    if (!mounted) return;
+    await goRecord(patientId: patientId);
   }
 
   void goPatients() => go(AppRoutes.patients);

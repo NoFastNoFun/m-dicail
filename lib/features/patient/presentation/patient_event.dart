@@ -28,6 +28,7 @@ final class PatientCreated extends PatientEvent {
     this.phone,
     this.address,
     this.notes,
+    this.metadata,
   });
 
   final String mrn;
@@ -39,6 +40,7 @@ final class PatientCreated extends PatientEvent {
   final String? phone;
   final String? address;
   final String? notes;
+  final Map<String, dynamic>? metadata;
 
   @override
   List<Object?> get props => [
@@ -51,6 +53,7 @@ final class PatientCreated extends PatientEvent {
         phone,
         address,
         notes,
+        metadata,
       ];
 }
 
@@ -93,6 +96,7 @@ final class PatientUpdated extends PatientEvent {
     this.phone,
     this.address,
     this.notes,
+    this.metadata,
   });
 
   final String id;
@@ -105,6 +109,7 @@ final class PatientUpdated extends PatientEvent {
   final String? phone;
   final String? address;
   final String? notes;
+  final Map<String, dynamic>? metadata;
 
   @override
   List<Object?> get props => [
@@ -118,5 +123,6 @@ final class PatientUpdated extends PatientEvent {
         phone,
         address,
         notes,
+        metadata,
       ];
 }

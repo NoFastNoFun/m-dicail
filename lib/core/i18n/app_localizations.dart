@@ -2889,6 +2889,1170 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =0{Aucune consultation aujourd\'hui} =1{1 consultation prévue} other{{count} consultations prévues}}'**
   String homeConsultationsToday(num count);
+
+  /// No description provided for @attachPatientDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer un patient'**
+  String get attachPatientDialogTitle;
+
+  /// No description provided for @attachPatientSearchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un patient'**
+  String get attachPatientSearchLabel;
+
+  /// No description provided for @attachPatientSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom, prénom ou MRN'**
+  String get attachPatientSearchHint;
+
+  /// No description provided for @attachPatientConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer la consultation'**
+  String get attachPatientConfirm;
+
+  /// No description provided for @attachPatientNewButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get attachPatientNewButton;
+
+  /// No description provided for @attachPatientSelectRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez un patient pour continuer'**
+  String get attachPatientSelectRequired;
+
+  /// No description provided for @attachPatientNoResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun patient trouvé'**
+  String get attachPatientNoResults;
+
+  /// No description provided for @anamneseCarouselTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau patient'**
+  String get anamneseCarouselTitle;
+
+  /// No description provided for @anamneseCarouselEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse'**
+  String get anamneseCarouselEditTitle;
+
+  /// No description provided for @anamnesePageIndicator.
+  ///
+  /// In fr, this message translates to:
+  /// **'{current} / {total}'**
+  String anamnesePageIndicator(int current, int total);
+
+  /// No description provided for @anamneseBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get anamneseBack;
+
+  /// No description provided for @anamneseNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get anamneseNext;
+
+  /// No description provided for @anamneseSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get anamneseSkip;
+
+  /// No description provided for @anamneseFinish.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get anamneseFinish;
+
+  /// No description provided for @anamneseHubTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse'**
+  String get anamneseHubTitle;
+
+  /// No description provided for @anamneseHubSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez seulement ce qui est utile. Le reste peut attendre.'**
+  String get anamneseHubSubtitle;
+
+  /// No description provided for @anamneseChapterFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigné'**
+  String get anamneseChapterFilled;
+
+  /// No description provided for @anamneseChapterEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'À faire'**
+  String get anamneseChapterEmpty;
+
+  /// No description provided for @anamneseBackToHub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chapitres'**
+  String get anamneseBackToHub;
+
+  /// No description provided for @anamneseIdentityRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom, nom et date de naissance sont requis.'**
+  String get anamneseIdentityRequired;
+
+  /// No description provided for @anamneseBirthDateRequiredLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de naissance *'**
+  String get anamneseBirthDateRequiredLabel;
+
+  /// No description provided for @anamneseBirthPlaceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieu de naissance'**
+  String get anamneseBirthPlaceLabel;
+
+  /// No description provided for @anamneseIdentityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identité'**
+  String get anamneseIdentityTitle;
+
+  /// No description provided for @anamneseNaissanceEnfanceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Naissance et enfance'**
+  String get anamneseNaissanceEnfanceTitle;
+
+  /// No description provided for @anamneseVieFamilialeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vie familiale et sexuelle'**
+  String get anamneseVieFamilialeTitle;
+
+  /// No description provided for @anamneseStylesDeVieTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Styles de vie'**
+  String get anamneseStylesDeVieTitle;
+
+  /// No description provided for @anamneseActivitesPhysioTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activités physiologiques'**
+  String get anamneseActivitesPhysioTitle;
+
+  /// No description provided for @anamneseActiviteProTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activité professionnelle'**
+  String get anamneseActiviteProTitle;
+
+  /// No description provided for @anamnesePersonnaliteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalité'**
+  String get anamnesePersonnaliteTitle;
+
+  /// No description provided for @anamneseAntecedentsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Antécédents chroniques'**
+  String get anamneseAntecedentsTitle;
+
+  /// No description provided for @anamneseTraumatismesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traumatismes, chirurgie et infections'**
+  String get anamneseTraumatismesTitle;
+
+  /// No description provided for @anamnesePoidsNaissance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids à la naissance'**
+  String get anamnesePoidsNaissance;
+
+  /// No description provided for @anamnesePoidsUniteG.
+  ///
+  /// In fr, this message translates to:
+  /// **'g'**
+  String get anamnesePoidsUniteG;
+
+  /// No description provided for @anamnesePoidsUniteKg.
+  ///
+  /// In fr, this message translates to:
+  /// **'kg'**
+  String get anamnesePoidsUniteKg;
+
+  /// No description provided for @anamneseAllaitement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode d\'allaitement'**
+  String get anamneseAllaitement;
+
+  /// No description provided for @anamneseAllaitementMaternel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maternel'**
+  String get anamneseAllaitementMaternel;
+
+  /// No description provided for @anamneseAllaitementArtificiel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Artificiel'**
+  String get anamneseAllaitementArtificiel;
+
+  /// No description provided for @anamneseAllaitementMixte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mixte'**
+  String get anamneseAllaitementMixte;
+
+  /// No description provided for @anamneseMarche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marche'**
+  String get anamneseMarche;
+
+  /// No description provided for @anamneseDentition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dentition'**
+  String get anamneseDentition;
+
+  /// No description provided for @anamnesePhonation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Phonation'**
+  String get anamnesePhonation;
+
+  /// No description provided for @anamneseMilestoneNormal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normal'**
+  String get anamneseMilestoneNormal;
+
+  /// No description provided for @anamneseMilestoneRetard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retard'**
+  String get anamneseMilestoneRetard;
+
+  /// No description provided for @anamneseMilestoneInconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inconnu'**
+  String get anamneseMilestoneInconnu;
+
+  /// No description provided for @anamneseAgeMois.
+  ///
+  /// In fr, this message translates to:
+  /// **'Âge (mois)'**
+  String get anamneseAgeMois;
+
+  /// No description provided for @anamneseEnCouple.
+  ///
+  /// In fr, this message translates to:
+  /// **'En couple / marié(e)'**
+  String get anamneseEnCouple;
+
+  /// No description provided for @anamneseCoupleMariage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mariage'**
+  String get anamneseCoupleMariage;
+
+  /// No description provided for @anamneseCouplePacs.
+  ///
+  /// In fr, this message translates to:
+  /// **'PACS'**
+  String get anamneseCouplePacs;
+
+  /// No description provided for @anamneseCoupleConcubinage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Concubinage'**
+  String get anamneseCoupleConcubinage;
+
+  /// No description provided for @anamneseCoupleAnnee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année'**
+  String get anamneseCoupleAnnee;
+
+  /// No description provided for @anamneseNombreGrossesses.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de grossesses'**
+  String get anamneseNombreGrossesses;
+
+  /// No description provided for @anamneseTroublesSexuels.
+  ///
+  /// In fr, this message translates to:
+  /// **'Troubles sexuels'**
+  String get anamneseTroublesSexuels;
+
+  /// No description provided for @anamneseDysfonctionErectile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dysfonction érectile'**
+  String get anamneseDysfonctionErectile;
+
+  /// No description provided for @anamneseBaisseLibido.
+  ///
+  /// In fr, this message translates to:
+  /// **'Baisse de libido'**
+  String get anamneseBaisseLibido;
+
+  /// No description provided for @anamneseDyspareunie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dyspareunie'**
+  String get anamneseDyspareunie;
+
+  /// No description provided for @anamneseRisqueMst.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comportements à risque MST'**
+  String get anamneseRisqueMst;
+
+  /// No description provided for @anamneseMenopause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ménopause'**
+  String get anamneseMenopause;
+
+  /// No description provided for @anamneseTraitementHormonal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traitement hormonal'**
+  String get anamneseTraitementHormonal;
+
+  /// No description provided for @anamneseOui.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get anamneseOui;
+
+  /// No description provided for @anamneseNon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get anamneseNon;
+
+  /// No description provided for @anamneseAlimentation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Habitudes alimentaires'**
+  String get anamneseAlimentation;
+
+  /// No description provided for @anamneseAlimEquilibree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Équilibrée'**
+  String get anamneseAlimEquilibree;
+
+  /// No description provided for @anamneseAlimDesequilibree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déséquilibrée'**
+  String get anamneseAlimDesequilibree;
+
+  /// No description provided for @anamneseAlimRestrictive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restrictive'**
+  String get anamneseAlimRestrictive;
+
+  /// No description provided for @anamneseAlimInsuffisante.
+  ///
+  /// In fr, this message translates to:
+  /// **'Insuffisante'**
+  String get anamneseAlimInsuffisante;
+
+  /// No description provided for @anamneseAlimNormale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normale'**
+  String get anamneseAlimNormale;
+
+  /// No description provided for @anamneseAlimExcessive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Excessive'**
+  String get anamneseAlimExcessive;
+
+  /// No description provided for @anamneseQualite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qualité'**
+  String get anamneseQualite;
+
+  /// No description provided for @anamneseQuantite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité'**
+  String get anamneseQuantite;
+
+  /// No description provided for @anamneseAlcool.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alcool'**
+  String get anamneseAlcool;
+
+  /// No description provided for @anamneseTabac.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tabac'**
+  String get anamneseTabac;
+
+  /// No description provided for @anamneseDrogues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Drogues'**
+  String get anamneseDrogues;
+
+  /// No description provided for @anamneseFrequence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fréquence'**
+  String get anamneseFrequence;
+
+  /// No description provided for @anamneseFreqQuotidien.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quotidien'**
+  String get anamneseFreqQuotidien;
+
+  /// No description provided for @anamneseFreqHebdo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hebdomadaire'**
+  String get anamneseFreqHebdo;
+
+  /// No description provided for @anamneseFreqOccasionnel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Occasionnel'**
+  String get anamneseFreqOccasionnel;
+
+  /// No description provided for @anamneseFreqSevre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sevré'**
+  String get anamneseFreqSevre;
+
+  /// No description provided for @anamneseVerresSemaine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verres / semaine'**
+  String get anamneseVerresSemaine;
+
+  /// No description provided for @anamneseTypeBoisson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type'**
+  String get anamneseTypeBoisson;
+
+  /// No description provided for @anamneseBiere.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bière'**
+  String get anamneseBiere;
+
+  /// No description provided for @anamneseVin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vin'**
+  String get anamneseVin;
+
+  /// No description provided for @anamneseSpiritueux.
+  ///
+  /// In fr, this message translates to:
+  /// **'Spiritueux'**
+  String get anamneseSpiritueux;
+
+  /// No description provided for @anamneseCigarettesJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cigarettes / jour'**
+  String get anamneseCigarettesJour;
+
+  /// No description provided for @anamneseAncienFumeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ancien fumeur'**
+  String get anamneseAncienFumeur;
+
+  /// No description provided for @anamneseAnnees.
+  ///
+  /// In fr, this message translates to:
+  /// **'Années'**
+  String get anamneseAnnees;
+
+  /// No description provided for @anamneseCannabis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cannabis'**
+  String get anamneseCannabis;
+
+  /// No description provided for @anamneseCocaine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocaïne'**
+  String get anamneseCocaine;
+
+  /// No description provided for @anamneseOpioides.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opioïdes'**
+  String get anamneseOpioides;
+
+  /// No description provided for @anamneseAutre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get anamneseAutre;
+
+  /// No description provided for @anamneseSedentarite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Niveau d\'activité'**
+  String get anamneseSedentarite;
+
+  /// No description provided for @anamneseActif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actif'**
+  String get anamneseActif;
+
+  /// No description provided for @anamneseModere.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modéré'**
+  String get anamneseModere;
+
+  /// No description provided for @anamneseSedentaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sédentaire'**
+  String get anamneseSedentaire;
+
+  /// No description provided for @anamneseActiviteSemaine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activité / semaine'**
+  String get anamneseActiviteSemaine;
+
+  /// No description provided for @anamneseRelationsSociales.
+  ///
+  /// In fr, this message translates to:
+  /// **'Relations sociales'**
+  String get anamneseRelationsSociales;
+
+  /// No description provided for @anamneseIsole.
+  ///
+  /// In fr, this message translates to:
+  /// **'Isolé'**
+  String get anamneseIsole;
+
+  /// No description provided for @anamneseLimite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limité'**
+  String get anamneseLimite;
+
+  /// No description provided for @anamneseSoutenu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soutenu'**
+  String get anamneseSoutenu;
+
+  /// No description provided for @anamneseAllergies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Allergies'**
+  String get anamneseAllergies;
+
+  /// No description provided for @anamneseAllergieMedicamenteuses.
+  ///
+  /// In fr, this message translates to:
+  /// **'Médicamenteuses'**
+  String get anamneseAllergieMedicamenteuses;
+
+  /// No description provided for @anamneseAllergieAlimentaires.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alimentaires'**
+  String get anamneseAllergieAlimentaires;
+
+  /// No description provided for @anamneseAllergieEnvironnementales.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environnementales'**
+  String get anamneseAllergieEnvironnementales;
+
+  /// No description provided for @anamneseDetailAllergies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précisions'**
+  String get anamneseDetailAllergies;
+
+  /// No description provided for @anamneseSelles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Selles'**
+  String get anamneseSelles;
+
+  /// No description provided for @anamneseSellesRegulieres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Régulières'**
+  String get anamneseSellesRegulieres;
+
+  /// No description provided for @anamneseSellesIrregulieres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Irrégulières'**
+  String get anamneseSellesIrregulieres;
+
+  /// No description provided for @anamneseSellesConstipation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Constipation'**
+  String get anamneseSellesConstipation;
+
+  /// No description provided for @anamneseSellesDiarrhee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diarrhée'**
+  String get anamneseSellesDiarrhee;
+
+  /// No description provided for @anamneseFrequenceJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fréquence / jour'**
+  String get anamneseFrequenceJour;
+
+  /// No description provided for @anamneseMictions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mictions'**
+  String get anamneseMictions;
+
+  /// No description provided for @anamneseMictionNormale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normale'**
+  String get anamneseMictionNormale;
+
+  /// No description provided for @anamnesePollakiurie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pollakiurie'**
+  String get anamnesePollakiurie;
+
+  /// No description provided for @anamneseNycturie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nycturie'**
+  String get anamneseNycturie;
+
+  /// No description provided for @anamneseBrulures.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brûlures'**
+  String get anamneseBrulures;
+
+  /// No description provided for @anamneseHematurie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hématurie'**
+  String get anamneseHematurie;
+
+  /// No description provided for @anamneseCouleur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Couleur'**
+  String get anamneseCouleur;
+
+  /// No description provided for @anamneseCouleurClaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Claire'**
+  String get anamneseCouleurClaire;
+
+  /// No description provided for @anamneseCouleurFoncee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Foncée'**
+  String get anamneseCouleurFoncee;
+
+  /// No description provided for @anamneseCouleurSanglante.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sanglante'**
+  String get anamneseCouleurSanglante;
+
+  /// No description provided for @anamneseTypeActivite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie d\'activité'**
+  String get anamneseTypeActivite;
+
+  /// No description provided for @anamneseProBureau.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bureau / sédentaire'**
+  String get anamneseProBureau;
+
+  /// No description provided for @anamneseProPhysique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Physique'**
+  String get anamneseProPhysique;
+
+  /// No description provided for @anamneseProMixte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mixte'**
+  String get anamneseProMixte;
+
+  /// No description provided for @anamneseProRetraite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retraité'**
+  String get anamneseProRetraite;
+
+  /// No description provided for @anamneseProSansEmploi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans emploi'**
+  String get anamneseProSansEmploi;
+
+  /// No description provided for @anamneseMetier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Métier'**
+  String get anamneseMetier;
+
+  /// No description provided for @anamneseExpositions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Expositions professionnelles'**
+  String get anamneseExpositions;
+
+  /// No description provided for @anamneseExpoPhysique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Physique'**
+  String get anamneseExpoPhysique;
+
+  /// No description provided for @anamneseExpoChimique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chimique'**
+  String get anamneseExpoChimique;
+
+  /// No description provided for @anamneseExpoBiologique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biologique'**
+  String get anamneseExpoBiologique;
+
+  /// No description provided for @anamneseEtudesTravail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bénéfices des études ou du travail'**
+  String get anamneseEtudesTravail;
+
+  /// No description provided for @anamnesePerceptionSante.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perception de l\'état de santé'**
+  String get anamnesePerceptionSante;
+
+  /// No description provided for @anamneseSousEstime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-estime'**
+  String get anamneseSousEstime;
+
+  /// No description provided for @anamneseRealiste.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réaliste'**
+  String get anamneseRealiste;
+
+  /// No description provided for @anamneseSurEstime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surestime'**
+  String get anamneseSurEstime;
+
+  /// No description provided for @anamneseAttitudeMaladie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attitude face à la maladie'**
+  String get anamneseAttitudeMaladie;
+
+  /// No description provided for @anamneseAcceptation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acceptation'**
+  String get anamneseAcceptation;
+
+  /// No description provided for @anamneseVolonteGuerir.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volonté de guérir'**
+  String get anamneseVolonteGuerir;
+
+  /// No description provided for @anamneseAnxiete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anxiété'**
+  String get anamneseAnxiete;
+
+  /// No description provided for @anamneseDeni.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déni'**
+  String get anamneseDeni;
+
+  /// No description provided for @anamneseConfianceMedecins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confiance dans les médecins'**
+  String get anamneseConfianceMedecins;
+
+  /// No description provided for @anamneseHypertension.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hypertension artérielle'**
+  String get anamneseHypertension;
+
+  /// No description provided for @anamneseDiabete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diabète sucré'**
+  String get anamneseDiabete;
+
+  /// No description provided for @anamneseDyslipidemie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dyslipidémie'**
+  String get anamneseDyslipidemie;
+
+  /// No description provided for @anamneseSuivi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivi'**
+  String get anamneseSuivi;
+
+  /// No description provided for @anamneseSuiviMt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Médecin traitant'**
+  String get anamneseSuiviMt;
+
+  /// No description provided for @anamneseSuiviSpe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Spécialiste'**
+  String get anamneseSuiviSpe;
+
+  /// No description provided for @anamneseSuiviHopital.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hôpital'**
+  String get anamneseSuiviHopital;
+
+  /// No description provided for @anamneseMaladieName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maladie'**
+  String get anamneseMaladieName;
+
+  /// No description provided for @anamneseMaladieAnnee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année d\'apparition'**
+  String get anamneseMaladieAnnee;
+
+  /// No description provided for @anamneseMaladieSymptomes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Symptômes de début'**
+  String get anamneseMaladieSymptomes;
+
+  /// No description provided for @anamneseMaladieLieuSuivi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieu de suivi'**
+  String get anamneseMaladieLieuSuivi;
+
+  /// No description provided for @anamneseMaladieModaliteSuivi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modalité de suivi'**
+  String get anamneseMaladieModaliteSuivi;
+
+  /// No description provided for @anamneseAddMaladie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une maladie'**
+  String get anamneseAddMaladie;
+
+  /// No description provided for @anamneseCommonAsthme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Asthme'**
+  String get anamneseCommonAsthme;
+
+  /// No description provided for @anamneseCommonArthrose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arthrose'**
+  String get anamneseCommonArthrose;
+
+  /// No description provided for @anamneseCommonThyroide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Thyroïde'**
+  String get anamneseCommonThyroide;
+
+  /// No description provided for @anamneseTraumatismesSequelles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traumatismes et séquelles'**
+  String get anamneseTraumatismesSequelles;
+
+  /// No description provided for @anamneseChirurgieAnterieure.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chirurgie antérieure'**
+  String get anamneseChirurgieAnterieure;
+
+  /// No description provided for @anamneseInterventionDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Intervention chirurgicale'**
+  String get anamneseInterventionDesc;
+
+  /// No description provided for @anamneseInterventionDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get anamneseInterventionDate;
+
+  /// No description provided for @anamneseInterventionComplications.
+  ///
+  /// In fr, this message translates to:
+  /// **'Complications'**
+  String get anamneseInterventionComplications;
+
+  /// No description provided for @anamneseAddIntervention.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une intervention'**
+  String get anamneseAddIntervention;
+
+  /// No description provided for @anamneseInfectionsEnfance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maladies infectieuses (enfance)'**
+  String get anamneseInfectionsEnfance;
+
+  /// No description provided for @anamneseTuberculose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tuberculose'**
+  String get anamneseTuberculose;
+
+  /// No description provided for @anamneseTumeurs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tumeurs'**
+  String get anamneseTumeurs;
+
+  /// No description provided for @anamneseHepatite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hépatite virale'**
+  String get anamneseHepatite;
+
+  /// No description provided for @anamneseSyphilis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Syphilis'**
+  String get anamneseSyphilis;
+
+  /// No description provided for @anamneseFracturesSansTraumatisme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fractures sans traumatisme apparent'**
+  String get anamneseFracturesSansTraumatisme;
+
+  /// No description provided for @anamneseAnnee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année'**
+  String get anamneseAnnee;
+
+  /// No description provided for @anamneseDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précisions'**
+  String get anamneseDetails;
+
+  /// No description provided for @anamneseNotesComplementaires.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes complémentaires'**
+  String get anamneseNotesComplementaires;
+
+  /// No description provided for @anamneseCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse'**
+  String get anamneseCardTitle;
+
+  /// No description provided for @anamneseCardEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune anamnèse renseignée'**
+  String get anamneseCardEmpty;
+
+  /// No description provided for @anamneseCardComplete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compléter l\'anamnèse'**
+  String get anamneseCardComplete;
+
+  /// No description provided for @anamneseCardEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'anamnèse'**
+  String get anamneseCardEdit;
+
+  /// No description provided for @anamneseCardFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse renseignée'**
+  String get anamneseCardFilled;
+
+  /// No description provided for @anamneseSaveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anamnèse enregistrée'**
+  String get anamneseSaveSuccess;
+
+  /// No description provided for @anamneseSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer l\'anamnèse'**
+  String get anamneseSaveError;
+
+  /// No description provided for @anamneseSummaryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résumé de l\'anamnèse'**
+  String get anamneseSummaryTitle;
+
+  /// No description provided for @anamneseCardViewSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le résumé'**
+  String get anamneseCardViewSummary;
+
+  /// No description provided for @anamneseSummaryNotFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseigné'**
+  String get anamneseSummaryNotFilled;
+
+  /// No description provided for @anamneseSummaryClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get anamneseSummaryClose;
+
+  /// No description provided for @anamneseSummaryPresent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Présent'**
+  String get anamneseSummaryPresent;
+
+  /// No description provided for @anamneseSummaryAbsent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absent'**
+  String get anamneseSummaryAbsent;
+
+  /// No description provided for @anamneseSummaryShowDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tous les détails'**
+  String get anamneseSummaryShowDetails;
+
+  /// No description provided for @anamneseSummaryShowCompact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir à la synthèse'**
+  String get anamneseSummaryShowCompact;
+
+  /// No description provided for @anamneseSummaryCompactHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synthèse des champs renseignés. Les textes longs sont abrégés : ouvrez les détails pour les lire en entier.'**
+  String get anamneseSummaryCompactHint;
+
+  /// No description provided for @anamneseSummaryDetailedHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue détaillée : tous les champs et les textes complets.'**
+  String get anamneseSummaryDetailedHint;
+
+  /// Read-only history field with its label and value.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} : {value}'**
+  String anamneseSummaryLabelValue(String label, String value);
+
+  /// Development milestone age, stored as free text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} mois'**
+  String anamneseSummaryMonths(String value);
+
+  /// Habit duration, stored as free text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} ans'**
+  String anamneseSummaryYears(String value);
+
+  /// Alcohol quantity with the same unit as the editor.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} verres/semaine'**
+  String anamneseSummaryGlassesPerWeek(String value);
+
+  /// Tobacco quantity with the same unit as the editor.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value} cigarettes/jour'**
+  String anamneseSummaryCigarettesPerDay(String value);
 }
 
 class _AppLocalizationsDelegate

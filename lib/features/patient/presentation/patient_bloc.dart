@@ -53,6 +53,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           address: event.address,
         ),
         notes: event.notes,
+        metadata: event.metadata,
         createdAt: now,
         updatedAt: now,
       );
@@ -94,6 +95,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           address: event.address,
         ),
         notes: event.notes,
+        metadata: event.metadata ?? existingPatient.metadata,
         updatedAt: DateTime.now(),
       );
 
