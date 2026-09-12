@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -422,6 +423,13 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                         child: InputDecorator(
                           decoration: InputDecoration(
                             labelText: l10n.patientSexLabel,
+                            isDense: isDesktopPlatform,
+                            contentPadding: isDesktopPlatform
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.md,
+                                    vertical: AppSpacing.sm + 2,
+                                  )
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: fieldBorderRadius,
                             ),

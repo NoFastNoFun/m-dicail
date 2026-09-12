@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/config/app_info.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
@@ -570,25 +571,87 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
         ),
         if (_customEnabled) ...[
           const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              _compactDurationField(
-                label: l10n.settingsSessionLengthHours,
-                controller: _hoursController,
-                suffixText: l10n.settingsSessionLengthHoursUnit,
-                maxDigits: 2,
-              ),
-              _compactDurationField(
-                label: l10n.settingsSessionLengthMinutes,
-                controller: _minutesController,
-                suffixText: l10n.settingsSessionLengthMinutesUnit,
-                maxDigits: 2,
-              ),
-            ],
-          ),
+          // Desktop: compact fixed-width fields + suffixText (no top:xl misalignment).
+          // Mobile: preserve the original Expanded Row + padded unit labels.
+          if (isDesktopPlatform)
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _compactDurationField(
+                  label: l10n.settingsSessionLengthHours,
+                  controller: _hoursController,
+                  suffixText: l10n.settingsSessionLengthHoursUnit,
+                  maxDigits: 2,
+                ),
+                _compactDurationField(
+                  label: l10n.settingsSessionLengthMinutes,
+                  controller: _minutesController,
+                  suffixText: l10n.settingsSessionLengthMinutesUnit,
+                  maxDigits: 2,
+                ),
+              ],
+            )
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppInput(
+                    variant: AppInputVariant.number,
+                    label: l10n.settingsSessionLengthHours,
+                    controller: _hoursController,
+                    hint: '0',
+                    validator: (_) => null,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    onChanged: (_) => _emitCustomFromFields(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.sm,
+                    right: AppSpacing.md,
+                    top: AppSpacing.xl,
+                  ),
+                  child: AppText(
+                    l10n.settingsSessionLengthHoursUnit,
+                    variant: AppTextVariant.label,
+                    color: context.secondaryTextColor,
+                  ),
+                ),
+                Expanded(
+                  child: AppInput(
+                    variant: AppInputVariant.number,
+                    label: l10n.settingsSessionLengthMinutes,
+                    controller: _minutesController,
+                    hint: '0',
+                    validator: (_) => null,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(3),
+                    ],
+                    onChanged: (_) => _emitCustomFromFields(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.sm,
+                    top: AppSpacing.xl,
+                  ),
+                  child: AppText(
+                    l10n.settingsSessionLengthMinutesUnit,
+                    variant: AppTextVariant.label,
+                    color: context.secondaryTextColor,
+                  ),
+                ),
+              ],
+            ),
         ],
       ],
     );
