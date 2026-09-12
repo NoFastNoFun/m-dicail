@@ -41,8 +41,8 @@ class AppointmentFormSheet extends StatefulWidget {
     final day = initialDay ?? existing?.startsAt ?? DateTime.now();
     final toastContext = context;
 
-    return showModalBottomSheet<void>(
-      context: context,
+    return AppBottomSheet.present<void>(
+      context,
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

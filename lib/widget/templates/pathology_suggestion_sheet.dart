@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -26,14 +25,11 @@ class PathologySuggestionSheet extends StatelessWidget {
     required PathologySuggestion suggestion,
     required List<Pathology> pathologies,
   }) {
-    return showModalBottomSheet<Pathology>(
-      context: context,
+    return AppBottomSheet.present<Pathology>(
+      context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: AppRadius.lgBorder,
-      ),
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) => PathologySuggestionSheet(
         suggestion: suggestion,

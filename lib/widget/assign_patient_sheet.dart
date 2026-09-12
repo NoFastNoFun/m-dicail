@@ -32,8 +32,8 @@ class AssignPatientSheet extends StatefulWidget {
   final String sessionId;
 
   static Future<String?> show(BuildContext context, String sessionId) {
-    return showModalBottomSheet<String>(
-      context: context,
+    return AppBottomSheet.present<String>(
+      context,
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -169,7 +169,8 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
         top: AppSpacing.lg,
       ),
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: MediaQuery.of(context).size.height *
+          (AppBottomSheet.usesDialog(context) ? 0.75 : 0.85),
       child: DefaultTabController(
         length: 2,
         child: Column(

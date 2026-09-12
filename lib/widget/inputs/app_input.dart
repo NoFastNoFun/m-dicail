@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/design_system/app_colors.dart';
 import 'package:medicail/core/design_system/app_radius.dart';
+import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/design_system/app_typography.dart';
 import 'package:medicail/core/design_system/theme_colors.dart';
 import 'package:medicail/widget/inputs/input_validators.dart';
@@ -26,6 +28,8 @@ class AppInput extends StatefulWidget {
     this.maxLines,
     this.prefixIcon,
     this.suffixIcon,
+    this.suffixText,
+    this.textAlign,
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
@@ -49,6 +53,10 @@ class AppInput extends StatefulWidget {
   final int? maxLines;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
+  /// Inline unit / hint rendered by [InputDecoration.suffixText].
+  final String? suffixText;
+  /// Optional alignment for compact numeric fields.
+  final TextAlign? textAlign;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
@@ -105,18 +113,54 @@ class _AppInputState extends State<AppInput> {
     };
   }
 
+  /// Desktop number / short fields: denser padding, stable cursor, text mouse.
+  /// Skip density when a custom [suffixIcon] is present — IconButtons need height.
+  bool get _useDesktopCompactField {
+    if (!isDesktopPlatform) return false;
+    if (widget.suffixIcon != null) return false;
+    return widget.variant == AppInputVariant.number ||
+        widget.variant == AppInputVariant.text;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final secondaryColor = context.secondaryTextColor;
-    final errorColor = Theme.of(context).colorScheme.error;
+    final errorColor = theme.colorScheme.error;
     final borderRadius = _inputBorderRadius(context);
 
     final effectiveValidator = widget.validator ?? _defaultValidator;
     final isPassword = widget.variant == AppInputVariant.password;
     final isEmail = widget.variant == AppInputVariant.email;
     final isTextarea = widget.variant == AppInputVariant.textarea;
+    final isNumber = widget.variant == AppInputVariant.number;
     final lines = widget.maxLines ?? (isTextarea ? 4 : 1);
     final disableSuggestions = isEmail || isPassword;
+    final desktopCompact = _useDesktopCompactField;
+    final desktopNumber = isDesktopPlatform && isNumber;
+    final desktopField =
+        isDesktopPlatform && !isTextarea && !isPassword;
+
+    final baseStyle = theme.textTheme.bodyLarge;
+    final fieldStyle = desktopCompact
+        ? baseStyle?.copyWith(
+            height: 1.25,
+            fontSize: (baseStyle.fontSize ?? 16) - (desktopNumber ? 1 : 0),
+          )
+        : null;
+
+    // Match body line height so the caret does not look oversized on desktop.
+    final cursorHeight = desktopField
+        ? ((fieldStyle?.fontSize ?? baseStyle?.fontSize ?? 16) *
+            (fieldStyle?.height ?? baseStyle?.height ?? 1.25))
+        : null;
+
+    final EdgeInsetsGeometry? densePadding = desktopCompact
+        ? const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm + 2,
+          )
+        : null;
 
     return TextFormField(
       controller: widget.controller,
@@ -132,6 +176,13 @@ class _AppInputState extends State<AppInput> {
       autofillHints: _effectiveAutofillHints(),
       autocorrect: !disableSuggestions,
       enableSuggestions: !disableSuggestions,
+      style: fieldStyle,
+      cursorHeight: cursorHeight,
+      mouseCursor: desktopField || desktopCompact
+          ? WidgetStateMouseCursor.textable
+          : null,
+      textAlign: widget.textAlign ?? TextAlign.start,
+      textAlignVertical: TextAlignVertical.center,
       validator: (value) {
         if (widget.errorText != null) return widget.errorText;
         return effectiveValidator(value);
@@ -143,28 +194,41 @@ class _AppInputState extends State<AppInput> {
         labelText: widget.label,
         hintText: widget.hint,
         errorText: widget.errorText,
-        errorStyle: AppTypography.caption.copyWith(color: errorColor),
+        errorStyle: AppTypography.caption.copyWith(
+          color: errorColor,
+          // Avoid tall error lines blowing up dense desktop Rows.
+          height: desktopCompact ? 1.1 : null,
+        ),
         errorBorder: _errorBorder(borderRadius),
         focusedErrorBorder: _focusedErrorBorder(borderRadius),
+        isDense: desktopCompact,
+        contentPadding: densePadding,
+        suffixText: widget.suffixText,
+        suffixStyle: theme.textTheme.labelLarge?.copyWith(
+          color: secondaryColor,
+        ),
         prefixIcon: widget.prefixIcon != null
             ? Icon(widget.prefixIcon, color: secondaryColor)
             : null,
-        suffixIcon: widget.suffixIcon ?? (isPassword
-            ? IconButton(
-                tooltip: _obscurePassword
-                    ? 'Afficher le mot de passe'
-                    : 'Masquer le mot de passe',
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: secondaryColor,
-                ),
-                onPressed: widget.enabled && !widget.readOnly
-                    ? () => setState(() => _obscurePassword = !_obscurePassword)
-                    : null,
-              )
-            : null),
+        suffixIcon: widget.suffixIcon ??
+            (isPassword
+                ? IconButton(
+                    tooltip: _obscurePassword
+                        ? 'Afficher le mot de passe'
+                        : 'Masquer le mot de passe',
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: secondaryColor,
+                    ),
+                    onPressed: widget.enabled && !widget.readOnly
+                        ? () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            )
+                        : null,
+                  )
+                : null),
       ),
     );
   }

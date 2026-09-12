@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicail/core/config/app_info.dart';
+import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/main_shell_chrome.dart';
 import 'package:medicail/core/router/app_router.dart';
@@ -386,6 +387,8 @@ class _SessionLengthSelector extends StatefulWidget {
 }
 
 class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
+  static const double _fieldWidth = 96;
+
   late bool _customEnabled;
   late final TextEditingController _hoursController;
   late final TextEditingController _minutesController;
@@ -394,14 +397,19 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
   void initState() {
     super.initState();
     _customEnabled = !widget.selected.isPreset;
-    final hours = widget.selected.totalMinutes ~/ 60;
-    final minutes = widget.selected.totalMinutes % 60;
-    _hoursController = TextEditingController(
-      text: _customEnabled && hours > 0 ? '$hours' : (_customEnabled ? '0' : ''),
-    );
-    _minutesController = TextEditingController(
-      text: _customEnabled ? '$minutes' : '',
-    );
+    _hoursController = TextEditingController();
+    _minutesController = TextEditingController();
+    if (_customEnabled) {
+      _syncControllersFrom(widget.selected);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _SessionLengthSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_customEnabled && oldWidget.selected != widget.selected) {
+      _syncControllersFrom(widget.selected);
+    }
   }
 
   @override
@@ -409,6 +417,25 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
     _hoursController.dispose();
     _minutesController.dispose();
     super.dispose();
+  }
+
+  void _syncControllersFrom(AppSessionLength length) {
+    final hours = length.totalMinutes ~/ 60;
+    final minutes = length.totalMinutes % 60;
+    final hoursText = '$hours';
+    final minutesText = '$minutes';
+    if (_hoursController.text != hoursText) {
+      _hoursController.value = TextEditingValue(
+        text: hoursText,
+        selection: TextSelection.collapsed(offset: hoursText.length),
+      );
+    }
+    if (_minutesController.text != minutesText) {
+      _minutesController.value = TextEditingValue(
+        text: minutesText,
+        selection: TextSelection.collapsed(offset: minutesText.length),
+      );
+    }
   }
 
   String _formatDuration(int totalMinutes) {
@@ -431,14 +458,8 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
   void _onCustomToggled(bool enabled) {
     AppHaptics.tap();
     if (enabled) {
-      final length = widget.selected;
-      final hours = length.totalMinutes ~/ 60;
-      final minutes = length.totalMinutes % 60;
-      setState(() {
-        _customEnabled = true;
-        _hoursController.text = '$hours';
-        _minutesController.text = '$minutes';
-      });
+      setState(() => _customEnabled = true);
+      _syncControllersFrom(widget.selected);
       return;
     }
 
@@ -455,10 +476,52 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
   void _emitCustomFromFields() {
     final hours = int.tryParse(_hoursController.text.trim()) ?? 0;
     final minutes = int.tryParse(_minutesController.text.trim()) ?? 0;
-    if (hours == 0 && minutes == 0) return;
 
-    widget.onChanged(
-      AppSessionLength.fromHoursAndMinutes(hours: hours, minutes: minutes),
+    if (hours == 0 && minutes == 0) {
+      // Keep previous selection; reset fields so UI matches valueLabel.
+      _syncControllersFrom(widget.selected);
+      return;
+    }
+
+    // Normalize minutes > 59 into hours + remainder for consistent fields.
+    var normalizedHours = hours;
+    var normalizedMinutes = minutes;
+    if (normalizedMinutes > 59) {
+      normalizedHours += normalizedMinutes ~/ 60;
+      normalizedMinutes = normalizedMinutes % 60;
+    }
+
+    final length = AppSessionLength.fromHoursAndMinutes(
+      hours: normalizedHours,
+      minutes: normalizedMinutes,
+    );
+    widget.onChanged(length);
+    _syncControllersFrom(length);
+  }
+
+  Widget _compactDurationField({
+    required String label,
+    required TextEditingController controller,
+    required String suffixText,
+    required int maxDigits,
+  }) {
+    return SizedBox(
+      width: _fieldWidth,
+      child: AppInput(
+        variant: AppInputVariant.number,
+        label: label,
+        controller: controller,
+        hint: '0',
+        suffixText: suffixText,
+        textAlign: TextAlign.center,
+        validator: (_) => null,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(maxDigits),
+        ],
+        onChanged: (_) => _emitCustomFromFields(),
+      ),
     );
   }
 
@@ -508,64 +571,87 @@ class _SessionLengthSelectorState extends State<_SessionLengthSelector> {
         ),
         if (_customEnabled) ...[
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: AppInput(
-                  variant: AppInputVariant.number,
+          // Desktop: compact fixed-width fields + suffixText (no top:xl misalignment).
+          // Mobile: preserve the original Expanded Row + padded unit labels.
+          if (isDesktopPlatform)
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _compactDurationField(
                   label: l10n.settingsSessionLengthHours,
                   controller: _hoursController,
-                  hint: '0',
-                  validator: (_) => null,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(2),
-                  ],
-                  onChanged: (_) => _emitCustomFromFields(),
+                  suffixText: l10n.settingsSessionLengthHoursUnit,
+                  maxDigits: 2,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: AppSpacing.sm,
-                  right: AppSpacing.md,
-                  top: AppSpacing.xl,
-                ),
-                child: AppText(
-                  l10n.settingsSessionLengthHoursUnit,
-                  variant: AppTextVariant.label,
-                  color: context.secondaryTextColor,
-                ),
-              ),
-              Expanded(
-                child: AppInput(
-                  variant: AppInputVariant.number,
+                _compactDurationField(
                   label: l10n.settingsSessionLengthMinutes,
                   controller: _minutesController,
-                  hint: '0',
-                  validator: (_) => null,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(3),
-                  ],
-                  onChanged: (_) => _emitCustomFromFields(),
+                  suffixText: l10n.settingsSessionLengthMinutesUnit,
+                  maxDigits: 2,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: AppSpacing.sm,
-                  top: AppSpacing.xl,
+              ],
+            )
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppInput(
+                    variant: AppInputVariant.number,
+                    label: l10n.settingsSessionLengthHours,
+                    controller: _hoursController,
+                    hint: '0',
+                    validator: (_) => null,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    onChanged: (_) => _emitCustomFromFields(),
+                  ),
                 ),
-                child: AppText(
-                  l10n.settingsSessionLengthMinutesUnit,
-                  variant: AppTextVariant.label,
-                  color: context.secondaryTextColor,
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.sm,
+                    right: AppSpacing.md,
+                    top: AppSpacing.xl,
+                  ),
+                  child: AppText(
+                    l10n.settingsSessionLengthHoursUnit,
+                    variant: AppTextVariant.label,
+                    color: context.secondaryTextColor,
+                  ),
                 ),
-              ),
-            ],
-          ),
+                Expanded(
+                  child: AppInput(
+                    variant: AppInputVariant.number,
+                    label: l10n.settingsSessionLengthMinutes,
+                    controller: _minutesController,
+                    hint: '0',
+                    validator: (_) => null,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(3),
+                    ],
+                    onChanged: (_) => _emitCustomFromFields(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.sm,
+                    top: AppSpacing.xl,
+                  ),
+                  child: AppText(
+                    l10n.settingsSessionLengthMinutesUnit,
+                    variant: AppTextVariant.label,
+                    color: context.secondaryTextColor,
+                  ),
+                ),
+              ],
+            ),
         ],
       ],
     );

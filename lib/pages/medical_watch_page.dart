@@ -79,6 +79,7 @@ class _MedicalWatchViewState extends State<_MedicalWatchView> {
 
         return AppScaffold(
           title: l10n.medicalWatchTitle,
+          contentMaxWidth: AppBreakpoints.wideContentMaxWidth,
           actions: [
             IconButton(
               icon: const Icon(Icons.sync),
@@ -191,17 +192,32 @@ class _ArticleList extends StatelessWidget {
       );
     }
 
-    return GridView.builder(
+    // Desktop/tablet: row of content-sized cards (no fixed aspect ratio)
+    // so tall titles / expanded abstracts never clip or overlap.
+    final rowCount = (articles.length / columns).ceil();
+    return ListView.separated(
       padding: padding,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: columns,
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        childAspectRatio: 1.5,
-      ),
-      itemCount: articles.length,
-      itemBuilder: (context, index) {
-        return MedicalWatchArticleCard(article: articles[index]);
+      itemCount: rowCount,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: AppSpacing.md),
+      itemBuilder: (context, rowIndex) {
+        final start = rowIndex * columns;
+        final end = (start + columns).clamp(0, articles.length);
+        final rowArticles = articles.sublist(start, end);
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < columns; i++) ...[
+              if (i > 0) const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: i < rowArticles.length
+                    ? MedicalWatchArticleCard(article: rowArticles[i])
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ],
+        );
       },
     );
   }

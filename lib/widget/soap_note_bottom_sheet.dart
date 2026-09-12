@@ -31,14 +31,11 @@ class SoapNoteBottomSheet extends StatefulWidget {
     String? transcript,
     bool showTranscript = true,
   }) {
-    return showModalBottomSheet(
-      context: context,
+    return AppBottomSheet.present(
+      context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: AppRadius.lgBorder,
-      ),
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) => Padding(
         padding: EdgeInsets.only(
@@ -96,108 +93,118 @@ class _SoapNoteBottomSheetState extends State<SoapNoteBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final asDialog = AppBottomSheet.usesDialog(context);
+
+    Widget body(ScrollController? scrollController) {
+      return SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: AppText(
+                            l10n.soapNoteTitle,
+                            variant: AppTextVariant.headline,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        const AppEuAiLabel(kind: EuAiLabelKind.generated),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: context.secondaryTextColor),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: Theme.of(context).dividerColor),
+            Expanded(
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                children: [
+                  if (widget.showTranscript &&
+                      widget.transcript != null &&
+                      widget.transcript!.isNotEmpty) ...[
+                    AppText('Transcription brute', variant: AppTextVariant.label),
+                    const SizedBox(height: AppSpacing.xs),
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: AppRadius.mdBorder,
+                      ),
+                      child: AppText(
+                        widget.transcript!,
+                        variant: AppTextVariant.body,
+                        color: context.secondaryTextColor,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                  AppInput(
+                    variant: AppInputVariant.textarea,
+                    label: l10n.soapNoteSubjective,
+                    controller: _subjectiveController,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  AppInput(
+                    variant: AppInputVariant.textarea,
+                    label: l10n.soapNoteObjective,
+                    controller: _objectiveController,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  AppInput(
+                    variant: AppInputVariant.textarea,
+                    label: l10n.soapNoteAssessment,
+                    controller: _assessmentController,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  AppInput(
+                    variant: AppInputVariant.textarea,
+                    label: l10n.soapNotePlan,
+                    controller: _planController,
+                    maxLines: 4,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: AppButton(
+                label: l10n.soapNoteSave,
+                onPressed: _handleSave,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (asDialog) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.85,
+        child: body(null),
+      );
+    }
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       minChildSize: 0.5,
       maxChildSize: 0.95,
       expand: false,
-      builder: (context, scrollController) {
-        return SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: AppText(
-                              l10n.soapNoteTitle,
-                              variant: AppTextVariant.headline,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          const AppEuAiLabel(kind: EuAiLabelKind.generated),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: context.secondaryTextColor),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(height: 1, color: Theme.of(context).dividerColor),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  children: [
-                    if (widget.showTranscript &&
-                        widget.transcript != null &&
-                        widget.transcript!.isNotEmpty) ...[
-                      AppText('Transcription brute', variant: AppTextVariant.label),
-                      const SizedBox(height: AppSpacing.xs),
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: AppRadius.mdBorder,
-                        ),
-                        child: AppText(
-                          widget.transcript!,
-                          variant: AppTextVariant.body,
-                          color: context.secondaryTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                    AppInput(
-                      variant: AppInputVariant.textarea,
-                      label: l10n.soapNoteSubjective,
-                      controller: _subjectiveController,
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AppInput(
-                      variant: AppInputVariant.textarea,
-                      label: l10n.soapNoteObjective,
-                      controller: _objectiveController,
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AppInput(
-                      variant: AppInputVariant.textarea,
-                      label: l10n.soapNoteAssessment,
-                      controller: _assessmentController,
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AppInput(
-                      variant: AppInputVariant.textarea,
-                      label: l10n.soapNotePlan,
-                      controller: _planController,
-                      maxLines: 4,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: AppButton(
-                  label: l10n.soapNoteSave,
-                  onPressed: _handleSave,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (context, scrollController) => body(scrollController),
     );
   }
 }

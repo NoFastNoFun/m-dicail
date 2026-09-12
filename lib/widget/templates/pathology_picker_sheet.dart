@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:medicail/core/config/app_config.dart';
-import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
@@ -35,13 +34,10 @@ class PathologyPickerSheet extends StatefulWidget {
     String? selectedPathologyId,
     bool enablePubmedSearch = true,
   }) {
-    return showModalBottomSheet<Pathology>(
-      context: context,
+    return AppBottomSheet.present<Pathology>(
+      context,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: AppRadius.lgBorder,
-      ),
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) {
         final height = MediaQuery.sizeOf(context).height * 0.75;

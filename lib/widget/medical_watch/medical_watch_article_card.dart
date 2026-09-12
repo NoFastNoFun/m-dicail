@@ -64,6 +64,7 @@ class _MedicalWatchArticleCardState extends State<MedicalWatchArticleCard> {
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
