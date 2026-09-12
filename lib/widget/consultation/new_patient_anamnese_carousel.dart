@@ -217,7 +217,7 @@ class _NewPatientAnamneseCarouselState
   }
 
   Widget _chapterPage(AnamneseChapter chapter) {
-    final onChanged = () => setState(() {});
+    void onChanged() => setState(() {});
     switch (chapter) {
       case AnamneseChapter.antecedents:
         return AnamneseAntecedentsPage(data: _data, onChanged: onChanged);
