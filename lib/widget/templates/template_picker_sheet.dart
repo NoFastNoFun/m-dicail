@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medicail/core/design_system/app_radius.dart';
 import 'package:medicail/core/design_system/app_spacing.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
@@ -25,13 +24,10 @@ class TemplatePickerSheet extends StatefulWidget {
     required List<NoteTemplate> templates,
     String? selectedTemplateId,
   }) {
-    return showModalBottomSheet<NoteTemplate>(
-      context: context,
+    return AppBottomSheet.present<NoteTemplate>(
+      context,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: AppRadius.lgBorder,
-      ),
       constraints: AppBottomSheet.sheetConstraints(context),
       builder: (context) {
         final height = MediaQuery.sizeOf(context).height * 0.75;

@@ -35,8 +35,8 @@ class PatientCreationSheet extends StatefulWidget {
     void Function(String patientId)? onSuccess,
     Patient? initialPatient,
   }) {
-    return showModalBottomSheet<void>(
-      context: context,
+    return AppBottomSheet.present<void>(
+      context,
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

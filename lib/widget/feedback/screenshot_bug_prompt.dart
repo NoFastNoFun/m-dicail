@@ -94,8 +94,8 @@ class ScreenshotBugPromptSheet extends StatefulWidget {
     Duration autoDismiss = const Duration(seconds: 3),
     Future<void> Function()? onReport,
   }) {
-    return showModalBottomSheet<void>(
-      context: context,
+    return AppBottomSheet.present<void>(
+      context,
       useRootNavigator: true,
       isDismissible: true,
       enableDrag: true,
