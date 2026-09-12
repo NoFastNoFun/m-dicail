@@ -1,8 +1,8 @@
 name: medicail
-description: "A new Flutter project."
+description: "Medicail is a medical assistant app that helps during your consultation as a doctor."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: ^3.11.4
