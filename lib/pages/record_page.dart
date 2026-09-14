@@ -511,7 +511,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   void _leaveRecordPage() {
     final patientId = widget.patientId;
     if (patientId != null && patientId.isNotEmpty) {
-      context.goNamed(
+      context.pushReplacementNamed(
         'patient-detail',
         pathParameters: {'patientId': patientId},
       );

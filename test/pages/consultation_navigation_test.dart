@@ -260,8 +260,15 @@ void main() {
               ),
               findsOneWidget,
             );
-            expect(find.text('Previous screen'), findsNothing);
-            expect(router.canPop(), isFalse);
+            if (associatedPatientId != null && withHistory) {
+              expect(router.canPop(), isTrue);
+              router.pop();
+              await tester.pumpAndSettle();
+              expect(find.text('Previous screen'), findsOneWidget);
+            } else {
+              expect(find.text('Previous screen'), findsNothing);
+              expect(router.canPop(), isFalse);
+            }
             expect(tester.takeException(), isNull);
           },
         );
