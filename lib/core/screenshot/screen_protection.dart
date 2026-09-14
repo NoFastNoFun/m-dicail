@@ -13,6 +13,9 @@ class ScreenProtectionController extends ChangeNotifier {
     'dev.nf2.medicail/screen_protection',
   );
 
+  /// Demo builds only (`1.0.0-demo`). Production keeps route-based protection.
+  static const bool kDemoAllowsScreenCapture = true;
+
   final GoRouter _router;
 
   bool _enabled = false;
@@ -52,13 +55,14 @@ class ScreenProtectionController extends ChangeNotifier {
   }
 
   Future<void> syncFromRoute() async {
-    final shouldProtect = isSensitiveRoute;
+    final shouldProtect =
+        !kDemoAllowsScreenCapture && isSensitiveRoute;
     if (shouldProtect == _enabled) return;
     await setEnabled(shouldProtect);
   }
 
   Future<void> setEnabled(bool enabled) async {
-    if (kIsWeb) {
+    if (kDemoAllowsScreenCapture || kIsWeb) {
       _enabled = false;
       notifyListeners();
       return;

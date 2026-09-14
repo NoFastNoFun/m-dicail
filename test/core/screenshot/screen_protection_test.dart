@@ -68,24 +68,27 @@ void main() {
     controller.disposeController();
   });
 
-  testWidgets('enables protection on patients after the router attaches', (
-    tester,
-  ) async {
-    final router = createRouter(initialLocation: AppRoutes.patients);
-    addTearDown(router.dispose);
-    final controller = ScreenProtectionController(router);
-    addTearDown(controller.disposeController);
+  testWidgets(
+    'does not enable protection on patients when demo allows capture',
+    (tester) async {
+      expect(ScreenProtectionController.kDemoAllowsScreenCapture, isTrue);
 
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-    await tester.pump();
+      final router = createRouter(initialLocation: AppRoutes.patients);
+      addTearDown(router.dispose);
+      final controller = ScreenProtectionController(router);
+      addTearDown(controller.disposeController);
 
-    controller.start();
-    await tester.pump();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pump();
 
-    expect(controller.isSensitiveRoute, isTrue);
-    expect(controller.isEnabled, isTrue);
-    expect(enabledCalls, [true]);
-  });
+      controller.start();
+      await tester.pump();
+
+      expect(controller.isSensitiveRoute, isTrue);
+      expect(controller.isEnabled, isFalse);
+      expect(enabledCalls, isEmpty);
+    },
+  );
 
   test('isSensitiveLocation covers PHI routes', () {
     expect(ScreenProtectionController.isSensitiveLocation('/patients'), isTrue);

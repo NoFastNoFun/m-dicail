@@ -2,7 +2,7 @@ name: medicail
 description: "Medicail is a medical assistant app that helps during your consultation as a doctor."
 publish_to: 'none'
 
-version: 1.0.7+1
+version: 1.0.0-demo
 
 environment:
   sdk: ^3.11.4
