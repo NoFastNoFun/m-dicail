@@ -117,8 +117,6 @@ class _LoginPageState extends State<LoginPage> {
   /// Starts Conditional WebAuthn once a plausible email is known.
   /// Prefer focus-driven starts; also runs after remembered-email restore so
   /// autofill can prime before the user taps the field.
-  /// No large "Login with passkey" button in this path — the OS / password
-  /// manager offers passkeys via autofill.
   void _maybeStartConditionalPasskey() {
     if (!_capabilitiesReady || !_conditionalPasskeyAvailable) return;
     if (!mounted) return;
