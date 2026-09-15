@@ -135,6 +135,8 @@ import 'package:medicail/features/recording/domain/repositories/note_processing_
     as _i341;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
+import 'package:medicail/features/search/data/global_search_service.dart'
+    as _i928;
 import 'package:medicail/features/settings/data/repositories/secure_user_preferences_repository.dart'
     as _i104;
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart'
@@ -410,6 +412,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i962.ApiRecordingSessionRepository>(),
         gh<_i913.SecureStorageRecordingSessionRepository>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i928.GlobalSearchService>(
+      () => _i928.GlobalSearchService(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i348.MedicalWatchRepository>(

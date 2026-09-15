@@ -2147,4 +2147,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String anamneseSummaryCigarettesPerDay(String value) {
     return '$value cigarettes/jour';
   }
+
+  @override
+  String get radialActionGlobalSearch => 'Recherche globale';
+
+  @override
+  String get globalSearchTitle => 'Recherche globale';
+
+  @override
+  String get globalSearchPlaceholder => 'Patients, séances, notes…';
+
+  @override
+  String get globalSearchPatientsSection => 'Patients';
+
+  @override
+  String get globalSearchSessionsSection => 'Séances';
+
+  @override
+  String get globalSearchEmpty => 'Aucun résultat';
+
+  @override
+  String get globalSearchHint =>
+      'Recherchez un patient, une séance ou un extrait de note';
+
+  @override
+  String get globalSearchSessionUntitled => 'Séance';
 }

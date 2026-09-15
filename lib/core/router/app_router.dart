@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
+import 'package:medicail/pages/global_search_page.dart';
 import 'package:medicail/pages/appointments_day_page.dart';
 import 'package:medicail/pages/main_shell.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
@@ -207,6 +208,11 @@ class AppRouter {
             RecordPage(patientId: state.uri.queryParameters['patientId']),
       ),
       GoRoute(
+        path: AppRoutes.globalSearch,
+        name: 'global-search',
+        builder: (context, state) => const GlobalSearchPage(),
+      ),
+      GoRoute(
         path: AppRoutes.patientDetail,
         name: 'patient-detail',
         redirect: (context, state) {
@@ -351,4 +357,8 @@ extension AppRouterNavigation on BuildContext {
       );
 
   void goDebug() => push(AppRoutes.debug);
+
+  Future<T?> pushGlobalSearch<T extends Object?>() =>
+      push<T>(AppRoutes.globalSearch);
 }
+
