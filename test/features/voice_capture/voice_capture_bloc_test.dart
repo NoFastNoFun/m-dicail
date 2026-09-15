@@ -134,6 +134,9 @@ void main() {
       when(() => backgroundRecorder.isRecording).thenReturn(false);
     });
     when(() => backgroundRecorder.pause()).thenAnswer((_) async {});
+    when(
+      () => backgroundRecorder.rotateChunk(sessionId: any(named: 'sessionId')),
+    ).thenAnswer((_) async => null);
 
     when(
       () => offlineTranscription.transcribeFile(
@@ -157,6 +160,8 @@ void main() {
         filePath: any(named: 'filePath'),
         sessionId: any(named: 'sessionId'),
         language: any(named: 'language'),
+        chunkIndex: any(named: 'chunkIndex'),
+        isFinal: any(named: 'isFinal'),
       ),
     ).thenAnswer((_) async => 'texte ameliore');
 
@@ -345,12 +350,7 @@ void main() {
             );
           }
           bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
-          if (chooseTranscript) {
-            await bloc.stream.firstWhere(
-              (state) => state is VoiceCaptureTranscriptCompare,
-            );
-            bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: false));
-          }
+          // AI capture auto-selects the cloud transcript (no compare panel).
           final failure =
               await bloc.stream.firstWhere(
                     (state) => state is VoiceCaptureFailure,
@@ -482,13 +482,15 @@ void main() {
           }
           bloc.add(const VoiceCaptureFinishConsultation());
           await bloc.stream.firstWhere(
-            (s) => s is VoiceCaptureTranscriptCompare,
+            (s) => s is VoiceCaptureConsultationFinished,
           );
           verify(
             () => enhancedTranscription.transcribeFile(
               filePath: '/tmp/session.wav',
               sessionId: any(named: 'sessionId'),
               language: 'fr',
+              chunkIndex: any(named: 'chunkIndex'),
+              isFinal: any(named: 'isFinal'),
             ),
           ).called(1);
         });
@@ -512,12 +514,14 @@ void main() {
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
         ).called(1);
         bloc.add(const VoiceCaptureFinishConsultation());
-        await bloc.stream.firstWhere((s) => s is VoiceCaptureTranscriptCompare);
+        await bloc.stream.firstWhere((s) => s is VoiceCaptureConsultationFinished);
         verify(
           () => enhancedTranscription.transcribeFile(
             filePath: '/tmp/session.wav',
             sessionId: any(named: 'sessionId'),
             language: 'fr',
+            chunkIndex: any(named: 'chunkIndex'),
+            isFinal: any(named: 'isFinal'),
           ),
         ).called(1);
       });
@@ -558,6 +562,8 @@ void main() {
               filePath: any(named: 'filePath'),
               sessionId: any(named: 'sessionId'),
               language: any(named: 'language'),
+              chunkIndex: any(named: 'chunkIndex'),
+              isFinal: any(named: 'isFinal'),
             ),
           ).thenThrow(Exception('unreachable'));
           await seedListening(bloc);
@@ -733,7 +739,7 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'enhances from session audio then waits for transcript choice',
+      'AI capture stitches cloud transcript and skips compare panel',
       build: buildBloc,
       setUp: () {
         when(
@@ -748,10 +754,6 @@ void main() {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
-          (state) => state is VoiceCaptureTranscriptCompare,
-        );
-        bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
-        await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureConsultationFinished,
         );
       },
@@ -759,11 +761,8 @@ void main() {
         const VoiceCaptureReady(),
         isA<RecordingInProgress>(),
         isA<VoiceCaptureEnhancing>(),
-        isA<VoiceCaptureTranscriptCompare>().having(
-          (s) => s.aiTranscript,
-          'aiTranscript',
-          'texte ameliore',
-        ),
+        isA<VoiceCaptureEnhancing>(),
+        isA<VoiceCaptureEnhancing>(),
         isA<VoiceCaptureProcessing>(),
         isA<VoiceCaptureConsultationFinished>().having(
           (s) => s.transcript,
@@ -777,6 +776,8 @@ void main() {
             filePath: '/tmp/session.wav',
             sessionId: any(named: 'sessionId'),
             language: 'fr',
+            chunkIndex: any(named: 'chunkIndex'),
+            isFinal: any(named: 'isFinal'),
           ),
         ).called(1);
         verify(
@@ -786,6 +787,12 @@ void main() {
             language: 'fr',
           ),
         ).called(1);
+        verifyNever(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        );
       },
     );
 
@@ -793,9 +800,6 @@ void main() {
       'choosing local transcript skips AI text',
       build: buildBloc,
       setUp: () {
-        when(
-          () => userPreferences.readAiEnhanceEnabled(),
-        ).thenAnswer((_) async => true);
         when(
           () => offlineTranscription.transcribeFile(
             any(),
@@ -820,7 +824,13 @@ void main() {
         );
       },
       act: (bloc) async {
+        // Local STT session (AI off at start).
         await seedListening(bloc);
+        // Simulate retained WAV (e.g. background capture) then enable enhance.
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
@@ -857,6 +867,8 @@ void main() {
             filePath: any(named: 'filePath'),
             sessionId: any(named: 'sessionId'),
             language: any(named: 'language'),
+            chunkIndex: any(named: 'chunkIndex'),
+            isFinal: any(named: 'isFinal'),
           ),
         ).thenThrow(Exception('whisper down'));
         when(

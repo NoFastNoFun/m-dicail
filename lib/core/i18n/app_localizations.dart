@@ -2038,6 +2038,48 @@ abstract class AppLocalizations {
   /// **'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.'**
   String get settingsAiEnhanceSubtitle;
 
+  /// No description provided for @recordPhaseUpload.
+  ///
+  /// In fr, this message translates to:
+  /// **'Upload'**
+  String get recordPhaseUpload;
+
+  /// No description provided for @recordPhaseTranscription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription'**
+  String get recordPhaseTranscription;
+
+  /// No description provided for @recordPhasePolish.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise en forme'**
+  String get recordPhasePolish;
+
+  /// No description provided for @recordPhaseEtaSeconds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environ {seconds} s restantes'**
+  String recordPhaseEtaSeconds(int seconds);
+
+  /// No description provided for @recordPhaseEtaSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Presque terminé…'**
+  String get recordPhaseEtaSoon;
+
+  /// No description provided for @recordSkeletonHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pouvez déjà saisir des notes ; la transcription IA arrivera ici sans écraser ce brouillon.'**
+  String get recordSkeletonHint;
+
+  /// No description provided for @recordSkeletonPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes libres (S/O/A/P)…'**
+  String get recordSkeletonPlaceholder;
+
   /// No description provided for @transcriptAiPendingHint.
   ///
   /// In fr, this message translates to:

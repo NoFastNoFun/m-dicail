@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +53,8 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     on<VoiceCaptureTemplateSelected>(_onTemplateSelected);
     on<VoiceCaptureAppBackgrounded>(_onAppBackgrounded);
     on<VoiceCaptureAppForegrounded>(_onAppForegrounded);
+    on<VoiceCaptureAiChunkTick>(_onAiChunkTick);
+    on<VoiceCaptureScratchNotesUpdated>(_onScratchNotesUpdated);
   }
 
   final AudioCaptureService _audioCaptureService;
@@ -75,6 +78,13 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   String _lastRawText = '';
   NoteTemplate? _selectedTemplate;
   String _pendingFinishLanguage = 'fr';
+  String _userScratchNotes = '';
+  Duration _recordingDuration = Duration.zero;
+  Timer? _aiChunkTimer;
+  int _nextChunkIndex = 0;
+  final Map<int, Future<String?>> _inflightChunkFutures = {};
+  final Map<int, String> _completedChunkTexts = {};
+  static const _aiChunkInterval = Duration(seconds: 25);
 
   List<String> _transitions = const [];
   String _wordPeriod = '';
@@ -140,6 +150,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         await _startListeningSession();
       }
       _isBackgroundCapture = false;
+      if (_captureForAi) {
+        _startAiChunkTimer();
+      }
       emit(
         RecordingInProgress(
           transcript: currentTranscript,
@@ -165,6 +178,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     try {
+      _stopAiChunkTimer();
       await _stopListeningAndNotification();
       if (_captureForAi) {
         await _backgroundAudioRecorder.pause();
@@ -204,7 +218,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     Emitter<VoiceCaptureState> emit,
   ) async {
     final uxStopwatch = Stopwatch()..start();
-    
+
     var roughTranscript = _currentTranscript;
     if (event.isTutorial && roughTranscript.trim().isEmpty) {
       roughTranscript = 'Voici une consultation fictive pour le tutoriel.';
@@ -225,24 +239,43 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     }
 
     _pendingFinishLanguage = event.language;
+    _recordingDuration = event.recordingDuration;
+    _stopAiChunkTimer();
 
-    String? audioPath;
+    final pendingAudioPaths = <String>[];
     try {
       await _stopListeningAndNotification();
-      audioPath = await _stopSessionAudio();
+
+      final aiEnhanceEnabled = await _userPreferencesRepository
+          .readAiEnhanceEnabled();
+
+      if (_captureForAi && aiEnhanceEnabled) {
+        await _finishAiProgressiveConsultation(
+          emit: emit,
+          sessionId: sessionId,
+          language: event.language,
+          roughTranscript: roughTranscript,
+          uxStopwatch: uxStopwatch,
+          pendingAudioPaths: pendingAudioPaths,
+        );
+        return;
+      }
+
+      final audioPath = await _stopSessionAudio();
+      if (audioPath != null) {
+        pendingAudioPaths.add(audioPath);
+      }
 
       var transcriptForProcess = roughTranscript;
-      if (_captureForAi && audioPath == null) {
-        throw const AudioException(
-          'Aucun fichier audio disponible pour la transcription.',
-        );
-      }
       if (audioPath != null) {
-        final aiEnhanceEnabled = await _userPreferencesRepository
-            .readAiEnhanceEnabled();
         String? enhanced;
         if (aiEnhanceEnabled) {
-          emit(VoiceCaptureEnhancing(transcript: roughTranscript));
+          emit(
+            VoiceCaptureEnhancing(
+              transcript: roughTranscript,
+              recordingDuration: _recordingDuration,
+            ),
+          );
           try {
             // The repository owns HTTP timeouts. Await audio preparation too,
             // so the source is not deleted while native compression uses it.
@@ -255,18 +288,19 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
             // A local transcription remains available when the network fails.
           }
         }
-        if (_captureForAi || enhanced == null || enhanced.isEmpty) {
-          try {
-            final offlineText = await _offlineAudioTranscriptionService
-                .transcribeFile(audioPath, language: event.language);
-            if (offlineText.isNotEmpty) {
-              transcriptForProcess = AnonymizationHelper.anonymize(offlineText);
-            }
-          } catch (_) {
-            // Keep the existing transcript or the successful cloud result.
+        // Always try offline Whisper here so the compare panel still has a
+        // local side when cloud enhance succeeds (local-STT / offline path).
+        try {
+          final offlineText = await _offlineAudioTranscriptionService
+              .transcribeFile(audioPath, language: event.language);
+          if (offlineText.isNotEmpty) {
+            transcriptForProcess = AnonymizationHelper.anonymize(offlineText);
           }
+        } catch (_) {
+          // Keep the existing transcript or the successful cloud result.
         }
         if (enhanced != null && enhanced.trim().isNotEmpty) {
+          // Offline / local+AI path: keep compare panel.
           emit(
             VoiceCaptureTranscriptCompare(
               localTranscript: transcriptForProcess,
@@ -292,16 +326,19 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         uxStopwatch: uxStopwatch,
       );
     } catch (error) {
+      final draft = _currentTranscript.trim().isNotEmpty
+          ? _currentTranscript
+          : roughTranscript;
       emit(
         VoiceCaptureFailure.fromException(
           error,
-          transcript: roughTranscript,
+          transcript: draft,
           selectedTemplate: _selectedTemplate,
         ),
       );
     } finally {
-      if (audioPath != null) {
-        await _deleteAudioFile(audioPath);
+      for (final path in pendingAudioPaths) {
+        await _deleteAudioFile(path);
       }
     }
   }
@@ -424,6 +461,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _segmentBase = '';
     _lastRawText = '';
     _activeSession = null;
+    _resetAiChunkState();
     emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
   }
 
@@ -447,6 +485,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
       _segmentBase = '';
       _lastRawText = '';
       _activeSession = null;
+      _resetAiChunkState();
       emit(VoiceCaptureReady(selectedTemplate: _selectedTemplate));
     } catch (error) {
       emit(
@@ -768,7 +807,19 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
           transcript: transcript,
           selectedTemplate: _selectedTemplate,
         ),
-      VoiceCaptureEnhancing() => VoiceCaptureEnhancing(transcript: transcript),
+      VoiceCaptureEnhancing(
+        :final phase,
+        :final recordingDuration,
+        :final userScratchNotes,
+        :final isAiCapture,
+      ) =>
+        VoiceCaptureEnhancing(
+          transcript: transcript,
+          phase: phase,
+          recordingDuration: recordingDuration,
+          userScratchNotes: userScratchNotes,
+          isAiCapture: isAiCapture,
+        ),
       VoiceCaptureTranscriptCompare(:final aiTranscript) =>
         VoiceCaptureTranscriptCompare(
           localTranscript: transcript,
@@ -783,6 +834,219 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         selectedTemplate: _selectedTemplate,
       ),
     };
+  }
+
+
+  void _onScratchNotesUpdated(
+    VoiceCaptureScratchNotesUpdated event,
+    Emitter<VoiceCaptureState> emit,
+  ) {
+    _userScratchNotes = event.notes;
+    final current = state;
+    if (current is VoiceCaptureEnhancing) {
+      emit(
+        VoiceCaptureEnhancing(
+          transcript: current.transcript,
+          phase: current.phase,
+          recordingDuration: current.recordingDuration,
+          userScratchNotes: _userScratchNotes,
+          isAiCapture: current.isAiCapture,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onAiChunkTick(
+    VoiceCaptureAiChunkTick event,
+    Emitter<VoiceCaptureState> emit,
+  ) async {
+    if (!_captureForAi || _isDiscarding || state is! RecordingInProgress) {
+      return;
+    }
+    final sessionId = _activeSession?.id;
+    if (sessionId == null || !_backgroundAudioRecorder.isRecording) {
+      return;
+    }
+    try {
+      final chunkPath = await _backgroundAudioRecorder.rotateChunk(
+        sessionId: sessionId,
+      );
+      if (chunkPath == null) {
+        return;
+      }
+      final index = _nextChunkIndex++;
+      _enqueueChunkTranscription(
+        filePath: chunkPath,
+        sessionId: sessionId,
+        chunkIndex: index,
+        isFinal: false,
+        language: _pendingFinishLanguage,
+      );
+    } catch (_) {
+      // Keep recording; finish path will flush remaining audio.
+    }
+  }
+
+  void _startAiChunkTimer() {
+    _stopAiChunkTimer();
+    _aiChunkTimer = Timer.periodic(_aiChunkInterval, (_) {
+      if (!isClosed) {
+        add(const VoiceCaptureAiChunkTick());
+      }
+    });
+  }
+
+  void _stopAiChunkTimer() {
+    _aiChunkTimer?.cancel();
+    _aiChunkTimer = null;
+  }
+
+  void _resetAiChunkState() {
+    _stopAiChunkTimer();
+    _nextChunkIndex = 0;
+    _inflightChunkFutures.clear();
+    _completedChunkTexts.clear();
+    _userScratchNotes = '';
+    _recordingDuration = Duration.zero;
+  }
+
+  void _enqueueChunkTranscription({
+    required String filePath,
+    required String sessionId,
+    required int chunkIndex,
+    required bool isFinal,
+    required String language,
+  }) {
+    final future = () async {
+      try {
+        final text = await _enhancedTranscriptionRepository.transcribeFile(
+          filePath: filePath,
+          sessionId: sessionId,
+          language: language,
+          chunkIndex: chunkIndex,
+          isFinal: isFinal,
+        );
+        final anonymized = AnonymizationHelper.anonymize(text);
+        if (anonymized.trim().isNotEmpty) {
+          _completedChunkTexts[chunkIndex] = anonymized.trim();
+        }
+        return anonymized;
+      } catch (_) {
+        return null;
+      } finally {
+        await _deleteAudioFile(filePath);
+      }
+    }();
+    _inflightChunkFutures[chunkIndex] = future;
+  }
+
+  Future<String> _awaitStitchedAiTranscript() async {
+    if (_inflightChunkFutures.isNotEmpty) {
+      await Future.wait(_inflightChunkFutures.values);
+    }
+    final indices = _completedChunkTexts.keys.toList()..sort();
+    final parts = <String>[];
+    for (final index in indices) {
+      final text = _completedChunkTexts[index]?.trim() ?? '';
+      if (text.isNotEmpty) {
+        parts.add(text);
+      }
+    }
+    return parts.join(' ').trim();
+  }
+
+  String _mergeAiWithScratchNotes(String aiTranscript) {
+    final notes = _userScratchNotes.trim();
+    if (notes.isEmpty) {
+      return aiTranscript;
+    }
+    if (aiTranscript.trim().isEmpty) {
+      return notes;
+    }
+    return '$aiTranscript\n\n--- Notes ---\n$notes';
+  }
+
+  Future<void> _finishAiProgressiveConsultation({
+    required Emitter<VoiceCaptureState> emit,
+    required String sessionId,
+    required String language,
+    required String roughTranscript,
+    required Stopwatch uxStopwatch,
+    required List<String> pendingAudioPaths,
+  }) async {
+    void emitPhase(TranscriptionWaitPhase phase) {
+      emit(
+        VoiceCaptureEnhancing(
+          transcript: '',
+          phase: phase,
+          recordingDuration: _recordingDuration,
+          userScratchNotes: _userScratchNotes,
+          isAiCapture: true,
+        ),
+      );
+    }
+
+    emitPhase(TranscriptionWaitPhase.upload);
+
+    // Flush the last in-progress WAV as a final chunk.
+    final lastPath = await _stopSessionAudio();
+    if (lastPath != null) {
+      pendingAudioPaths.add(lastPath);
+      final index = _nextChunkIndex++;
+      try {
+        final text = await _enhancedTranscriptionRepository.transcribeFile(
+          filePath: lastPath,
+          sessionId: sessionId,
+          language: language,
+          chunkIndex: index,
+          isFinal: true,
+        );
+        final anonymized = AnonymizationHelper.anonymize(text).trim();
+        if (anonymized.isNotEmpty) {
+          _completedChunkTexts[index] = anonymized;
+        }
+      } catch (_) {
+        // Offline Whisper fallback below if cloud produced nothing overall.
+      }
+    } else if (_completedChunkTexts.isEmpty && _inflightChunkFutures.isEmpty) {
+      throw const AudioException(
+        'Aucun fichier audio disponible pour la transcription.',
+      );
+    }
+
+    emitPhase(TranscriptionWaitPhase.transcription);
+    var stitched = await _awaitStitchedAiTranscript();
+
+    // Fallback: offline Whisper on last file only if cloud produced nothing.
+    // Keep it hidden from the UI (no compare panel in AI capture mode).
+    if (stitched.isEmpty && lastPath != null) {
+      try {
+        final offlineText = await _offlineAudioTranscriptionService
+            .transcribeFile(lastPath, language: language);
+        if (offlineText.isNotEmpty) {
+          stitched = AnonymizationHelper.anonymize(offlineText);
+        }
+      } catch (_) {}
+    }
+
+    if (stitched.trim().isEmpty) {
+      throw const AudioException(
+        'La transcription a échoué ou ne contient aucune parole. Veuillez réessayer.',
+      );
+    }
+
+    emitPhase(TranscriptionWaitPhase.polish);
+    final merged = _mergeAiWithScratchNotes(stitched);
+    _resetAiChunkState();
+
+    await _finalizeConsultation(
+      emit: emit,
+      sessionId: sessionId,
+      transcriptForProcess: merged,
+      language: language,
+      transcriptIsAi: true,
+      uxStopwatch: uxStopwatch,
+    );
   }
 
   Future<void> _startListeningSession() async {
@@ -882,6 +1146,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   }
 
   Future<void> _stopRecordingInfrastructure() async {
+    _stopAiChunkTimer();
     try {
       await _audioCaptureService.stopListening();
     } catch (_) {}
@@ -1040,6 +1305,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
   @override
   Future<void> close() async {
+    _resetAiChunkState();
     await _stopRecordingInfrastructure();
     return super.close();
   }

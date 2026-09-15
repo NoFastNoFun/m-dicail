@@ -3,6 +3,8 @@ import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 
+enum TranscriptionWaitPhase { upload, transcription, polish }
+
 sealed class VoiceCaptureState extends Equatable {
   const VoiceCaptureState();
 
@@ -49,12 +51,28 @@ final class VoiceCaptureProcessing extends VoiceCaptureState {
 }
 
 final class VoiceCaptureEnhancing extends VoiceCaptureState {
-  const VoiceCaptureEnhancing({required this.transcript});
+  const VoiceCaptureEnhancing({
+    required this.transcript,
+    this.phase = TranscriptionWaitPhase.upload,
+    this.recordingDuration = Duration.zero,
+    this.userScratchNotes = '',
+    this.isAiCapture = false,
+  });
 
   final String transcript;
+  final TranscriptionWaitPhase phase;
+  final Duration recordingDuration;
+  final String userScratchNotes;
+  final bool isAiCapture;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [
+    transcript,
+    phase,
+    recordingDuration,
+    userScratchNotes,
+    isAiCapture,
+  ];
 }
 
 final class VoiceCaptureTranscriptCompare extends VoiceCaptureState {
