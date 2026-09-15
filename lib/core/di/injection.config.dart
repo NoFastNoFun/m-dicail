@@ -52,7 +52,7 @@ import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
-import 'package:medicail/core/telemetry/telemetry_service.dart' as _i999;
+import 'package:medicail/core/telemetry/telemetry_service.dart' as _i619;
 import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
     as _i587;
 import 'package:medicail/features/appointment/data/repositories/dynamic_appointment_repository.dart'
@@ -135,6 +135,8 @@ import 'package:medicail/features/recording/domain/repositories/note_processing_
     as _i341;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
+import 'package:medicail/features/search/data/global_search_service.dart'
+    as _i928;
 import 'package:medicail/features/settings/data/repositories/secure_user_preferences_repository.dart'
     as _i104;
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart'
@@ -317,6 +319,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i987.TokenRefreshInterceptor>(),
       ),
     );
+    gh.factory<_i619.TelemetryService>(
+      () => _i619.TelemetryService(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i218.ApiEnhancedTranscriptionRepository>(
       () => _i218.ApiEnhancedTranscriptionRepository(
@@ -400,6 +405,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i928.GlobalSearchService>(
+      () => _i928.GlobalSearchService(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
     gh.lazySingleton<_i348.MedicalWatchRepository>(
       () => _i436.DynamicMedicalWatchRepository(
         gh<_i8.ApiMedicalWatchRepository>(),
@@ -422,9 +433,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i999.TelemetryService>(
-      () => _i999.TelemetryService(gh<_i361.Dio>()),
-    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
@@ -436,7 +444,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
         gh<_i460.UserPreferencesRepository>(),
-        gh<_i999.TelemetryService>(),
+        gh<_i619.TelemetryService>(),
       ),
     );
     gh.factory<_i306.TutorialBloc>(

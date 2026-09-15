@@ -19,6 +19,7 @@ abstract final class AppRoutes {
   static const String templateCreate = '/settings/templates/new';
   static const String pathologyCreate = '/settings/templates/pathology/new';
   static const String templateEditor = '/settings/templates/:templateId/edit';
+  static const String globalSearch = '/search';
   static const String debug = '/debug';
 
   static String templateEditorPath(String templateId) =>
