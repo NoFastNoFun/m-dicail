@@ -2105,4 +2105,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String anamneseSummaryCigarettesPerDay(String value) {
     return '$value cigarettes/jour';
   }
+
+  @override
+  String get sessionTagLabel => 'Tag de séance';
+
+  @override
+  String get sessionTagPickerTitle => 'Taguer la séance';
+
+  @override
+  String get sessionTagPresetBilan => 'Bilan';
+
+  @override
+  String get sessionTagPresetSuivi => 'Suivi';
+
+  @override
+  String get sessionTagPresetUrgence => 'Urgence';
+
+  @override
+  String get sessionTagCustomHint => 'Tag libre';
+
+  @override
+  String get sessionTagClear => 'Retirer le tag';
+
+  @override
+  String get sessionTagFilterAll => 'Tous';
+
+  @override
+  String get sessionTagFilterLabel => 'Filtrer par tag';
+
+  @override
+  String get sessionTagSaveSuccess => 'Tag enregistré';
+
+  @override
+  String get sessionTagNone => 'Sans tag';
+
+  @override
+  String get sessionTagEditTooltip => 'Modifier le tag';
 }

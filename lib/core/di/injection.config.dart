@@ -52,7 +52,7 @@ import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
-import 'package:medicail/core/telemetry/telemetry_service.dart' as _i999;
+import 'package:medicail/core/telemetry/telemetry_service.dart' as _i619;
 import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
     as _i587;
 import 'package:medicail/features/appointment/data/repositories/dynamic_appointment_repository.dart'
@@ -129,6 +129,8 @@ import 'package:medicail/features/recording/data/repositories/dynamic_recording_
     as _i932;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
+import 'package:medicail/features/recording/data/repositories/session_tag_local_store.dart'
+    as _i327;
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart'
     as _i734;
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
@@ -230,6 +232,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
+    gh.lazySingleton<_i327.SessionTagLocalStore>(
+      () => _i327.SessionTagLocalStore(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i356.OfflineAudioTranscriptionService>(
       () => _i356.WhisperOfflineAudioTranscriptionService(),
     );
@@ -317,6 +322,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i987.TokenRefreshInterceptor>(),
       ),
     );
+    gh.factory<_i619.TelemetryService>(
+      () => _i619.TelemetryService(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i218.ApiEnhancedTranscriptionRepository>(
       () => _i218.ApiEnhancedTranscriptionRepository(
@@ -362,11 +370,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i332.PasskeyService>(),
       ),
     );
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i932.DynamicRecordingSessionRepository(
+        gh<_i962.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i327.SessionTagLocalStore>(),
+      ),
+    );
     gh.lazySingleton<_i885.AppointmentRepository>(
       () => _i800.DynamicAppointmentRepository(
         gh<_i587.ApiAppointmentRepository>(),
         gh<_i326.SecureStorageAppointmentRepository>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(
+        gh<_i79.TutorialRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i341.NoteProcessingRepository>(
@@ -393,11 +415,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i932.DynamicRecordingSessionRepository(
-        gh<_i962.ApiRecordingSessionRepository>(),
-        gh<_i913.SecureStorageRecordingSessionRepository>(),
-        gh<_i760.AuthTokenStorage>(),
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i348.MedicalWatchRepository>(
@@ -422,9 +443,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i999.TelemetryService>(
-      () => _i999.TelemetryService(gh<_i361.Dio>()),
-    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
@@ -436,25 +454,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
         gh<_i460.UserPreferencesRepository>(),
-        gh<_i999.TelemetryService>(),
-      ),
-    );
-    gh.factory<_i306.TutorialBloc>(
-      () => _i306.TutorialBloc(
-        gh<_i79.TutorialRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+        gh<_i619.TelemetryService>(),
       ),
     );
     gh.factory<_i54.AppointmentBloc>(
       () => _i54.AppointmentBloc(
         gh<_i885.AppointmentRepository>(),
         gh<_i390.PatientRepository>(),
-      ),
-    );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.factory<_i79.PathologyBloc>(

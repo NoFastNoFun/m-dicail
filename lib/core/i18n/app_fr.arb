@@ -744,6 +744,17 @@
   "@anamneseSummaryCigarettesPerDay": {
     "description": "Tobacco quantity with the same unit as the editor.",
     "placeholders": {"value": {"type": "String"}}
-  }
+  },
+  "sessionTagLabel": "Tag de séance",
+  "sessionTagPickerTitle": "Taguer la séance",
+  "sessionTagPresetBilan": "Bilan",
+  "sessionTagPresetSuivi": "Suivi",
+  "sessionTagPresetUrgence": "Urgence",
+  "sessionTagCustomHint": "Tag libre",
+  "sessionTagClear": "Retirer le tag",
+  "sessionTagFilterAll": "Tous",
+  "sessionTagFilterLabel": "Filtrer par tag",
+  "sessionTagSaveSuccess": "Tag enregistré",
+  "sessionTagNone": "Sans tag",
+  "sessionTagEditTooltip": "Modifier le tag"
 }
-

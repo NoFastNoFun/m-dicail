@@ -27,6 +27,8 @@ import 'package:medicail/widget/soap_note_bottom_sheet.dart';
 import 'package:medicail/widget/transcript_view_sheet.dart';
 import 'package:medicail/widget/legal/app_eu_ai_label.dart';
 import 'package:medicail/widget/app_pathology_tag.dart';
+import 'package:medicail/features/recording/domain/session_tags/session_tag_catalog.dart';
+import 'package:medicail/widget/session_tags/session_tag_picker_sheet.dart';
 import 'package:medicail/widget/feedback/app_showcase.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
@@ -357,6 +359,7 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
   late _DossierTab _selectedTab = widget.showWrittenNotes
       ? _DossierTab.written
       : _DossierTab.oral;
+  String? _tagFilter;
 
   int _calculateAge(DateTime birthDate) {
     final now = DateTime.now();
@@ -384,9 +387,20 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final patient = widget.patient;
-    final displayedSessions = _selectedTab == _DossierTab.oral
+    final baseSessions = _selectedTab == _DossierTab.oral
         ? _oralSessions
         : _writtenSessions;
+    final availableTags = {
+      for (final session in widget.sessions)
+        if (session.tag != null && session.tag!.trim().isNotEmpty) session.tag!,
+    }.toList()
+      ..sort();
+    final displayedSessions = _tagFilter == null
+        ? baseSessions
+        : [
+            for (final session in baseSessions)
+              if (session.tag == _tagFilter) session,
+          ];
     final emptyLabel = _selectedTab == _DossierTab.oral
         ? l10n.patientDossierOralEmpty
         : l10n.patientDossierWrittenEmpty;
@@ -585,6 +599,14 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
           writtenLabel: l10n.patientDossierWrittenTab,
           onChanged: (tab) => setState(() => _selectedTab = tab),
         ),
+        if (availableTags.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _SessionTagFilterBar(
+            tags: availableTags,
+            selected: _tagFilter,
+            onSelected: (tag) => setState(() => _tagFilter = tag),
+          ),
+        ],
         const SizedBox(height: AppSpacing.md),
         if (displayedSessions.isEmpty)
           Center(
@@ -605,7 +627,10 @@ class _PatientDetailViewState extends State<_PatientDetailView> {
                 session: session,
                 patientId: patient.id,
                 child: _selectedTab == _DossierTab.oral
-                    ? _OralSessionListItem(session: session)
+                    ? _OralSessionListItem(
+                        session: session,
+                        onRefresh: widget.onRefresh,
+                      )
                     : _WrittenSessionListItem(
                         session: session,
                         onRefresh: widget.onRefresh,
@@ -695,9 +720,13 @@ class _DismissibleSessionItem extends StatelessWidget {
 }
 
 class _OralSessionListItem extends StatelessWidget {
-  const _OralSessionListItem({required this.session});
+  const _OralSessionListItem({
+    required this.session,
+    required this.onRefresh,
+  });
 
   final RecordingSession session;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -757,6 +786,11 @@ class _OralSessionListItem extends StatelessWidget {
                             ],
                           ),
                         ],
+                        const SizedBox(height: AppSpacing.sm),
+                        _SessionTagRow(
+                          session: session,
+                          onRefresh: onRefresh,
+                        ),
                       ],
                     ),
                   ),
@@ -875,6 +909,11 @@ class _WrittenSessionListItem extends StatelessWidget {
                             ],
                           ),
                         ],
+                        const SizedBox(height: AppSpacing.sm),
+                        _SessionTagRow(
+                          session: session,
+                          onRefresh: onRefresh,
+                        ),
                       ],
                     ),
                   ),
@@ -927,6 +966,143 @@ String _soapPreview(SoapNote? note) {
     }
   }
   return '';
+}
+
+
+Future<void> _editSessionTag(
+  BuildContext context, {
+  required RecordingSession session,
+  required VoidCallback onRefresh,
+}) async {
+  final l10n = AppLocalizations.of(context);
+  final result = await SessionTagPickerSheet.show(
+    context,
+    initialTag: session.tag,
+  );
+  if (result == null || !context.mounted) return;
+  final tag = result.trim().isEmpty ? null : result.trim();
+  try {
+    await getIt<RecordingSessionRepository>().save(
+      session.copyWith(tag: tag, clearTag: tag == null),
+    );
+    if (!context.mounted) return;
+    AppToast.showSuccess(context, l10n.sessionTagSaveSuccess);
+    onRefresh();
+  } catch (error) {
+    if (context.mounted) {
+      AppToast.showError(context, Failure.fromException(error).message);
+    }
+  }
+}
+
+class _SessionTagRow extends StatelessWidget {
+  const _SessionTagRow({
+    required this.session,
+    required this.onRefresh,
+  });
+
+  final RecordingSession session;
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final tag = session.tag?.trim();
+    return Wrap(
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        if (tag != null && tag.isNotEmpty)
+          AppPathologyTag(
+            label: SessionTagCatalog.label(l10n, tag),
+            compact: true,
+            icon: Icons.label_outline,
+            onTap: () => _editSessionTag(
+              context,
+              session: session,
+              onRefresh: onRefresh,
+            ),
+          )
+        else
+          TextButton.icon(
+            onPressed: () => _editSessionTag(
+              context,
+              session: session,
+              onRefresh: onRefresh,
+            ),
+            icon: const Icon(Icons.label_outline, size: 16),
+            label: AppText(
+              l10n.sessionTagLabel,
+              variant: AppTextVariant.caption,
+            ),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _SessionTagFilterBar extends StatelessWidget {
+  const _SessionTagFilterBar({
+    required this.tags,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final List<String> tags;
+  final String? selected;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          l10n.sessionTagFilterLabel,
+          variant: AppTextVariant.caption,
+          color: context.secondaryTextColor,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        SizedBox(
+          height: 36,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: FilterChip(
+                  label: Text(l10n.sessionTagFilterAll),
+                  selected: selected == null,
+                  onSelected: (_) => onSelected(null),
+                  visualDensity: VisualDensity.compact,
+                  selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                ),
+              ),
+              for (final tag in tags)
+                Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  child: FilterChip(
+                    label: Text(SessionTagCatalog.label(l10n, tag)),
+                    selected: selected == tag,
+                    onSelected: (_) => onSelected(tag),
+                    visualDensity: VisualDensity.compact,
+                    selectedColor:
+                        theme.colorScheme.primary.withValues(alpha: 0.2),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 List<String> _latestSessionPathologyTags(List<RecordingSession> sessions) {
