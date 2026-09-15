@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:medicail/core/auth/auth_session_coordinator.dart';
+import 'package:medicail/core/auth/passkey_service.dart';
+import 'package:passkeys/exceptions.dart';
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/core/storage/app_session_storage.dart';
@@ -21,6 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._sessionStorage,
     this._tokenStorage,
     this._sessionCoordinator,
+    this._passkeyService,
   ) : super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
@@ -44,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppSessionStorage _sessionStorage;
   final AuthTokenStorage _tokenStorage;
   final AuthSessionCoordinator _sessionCoordinator;
+  final PasskeyService _passkeyService;
   late final StreamSubscription<void> _sessionExpiredSubscription;
 
   Future<void> _onAuthCheckRequested(
@@ -110,6 +114,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
+    // Cancel any in-flight conditional passkey assertion so password login
+    // is not blocked behind a hanging WebAuthn ceremony.
+    await _passkeyService.cancelCurrentOperation();
     emit(const AuthLoading());
     try {
       final result = await _authRepository.login(
@@ -133,11 +140,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthPasskeyLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthLoading());
+    // Conditional mediation waits silently for autofill selection — avoid a
+    // full-screen loading state that would fight the email/password form.
+    if (!event.conditional) {
+      emit(const AuthLoading());
+    }
     try {
-      final user = await _authRepository.loginWithPasskey(email: event.email);
+      final user = await _authRepository.loginWithPasskey(
+        email: event.email,
+        conditional: event.conditional,
+      );
       await _completeAuthenticated(emit, user);
+    } on PasskeyAuthCancelledException {
+      // User dismissed autofill / modal — not an error.
+      if (!event.conditional) {
+        emit(const AuthUnauthenticated());
+      }
+    } on NoCredentialsAvailableException catch (e) {
+      if (event.conditional) {
+        // No discoverable credential in autofill — keep password login usable.
+        return;
+      }
+      emit(AuthError(Failure.fromException(e).message));
+      emit(const AuthUnauthenticated());
     } catch (e) {
+      if (event.conditional) {
+        // Soft-fail silently: conditional probes should never block password /
+        // guest flows with toasts (user may simply have no passkey).
+        return;
+      }
       emit(AuthError(Failure.fromException(e).message));
       emit(const AuthUnauthenticated());
     }

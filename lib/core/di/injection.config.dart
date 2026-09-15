@@ -384,6 +384,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
         gh<_i712.AuthSessionCoordinator>(),
+        gh<_i332.PasskeyService>(),
       ),
     );
     gh.lazySingleton<_i390.PatientRepository>(

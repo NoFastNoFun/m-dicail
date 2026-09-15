@@ -23,12 +23,19 @@ class AuthLoginRequested extends AuthEvent {
 }
 
 class AuthPasskeyLoginRequested extends AuthEvent {
-  const AuthPasskeyLoginRequested({required this.email});
+  const AuthPasskeyLoginRequested({
+    required this.email,
+    this.conditional = false,
+  });
 
   final String email;
 
+  /// When true, use Conditional WebAuthn mediation (autofill) and avoid a
+  /// blocking loading state until the user actually asserts a passkey.
+  final bool conditional;
+
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [email, conditional];
 }
 
 class AuthMfaVerifyRequested extends AuthEvent {

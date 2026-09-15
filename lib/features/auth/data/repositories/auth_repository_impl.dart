@@ -125,7 +125,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> loginWithPasskey({required String email}) async {
+  Future<User> loginWithPasskey({
+    required String email,
+    bool conditional = false,
+  }) async {
     final optionsResponse = await _apiClient.post<Map<String, dynamic>>(
       '/auth/passkeys/authenticate/options',
       data: {'email': email},
@@ -133,7 +136,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final options = optionsResponse.data;
     if (options == null) throw const ServerException('Options passkey invalides.');
 
-    final credential = await _passkeyService.authenticate(options);
+    final credential = await _passkeyService.authenticate(
+      options,
+      conditional: conditional,
+    );
     final verifyResponse = await _apiClient.post<Map<String, dynamic>>(
       '/auth/passkeys/authenticate/verify',
       data: {'email': email, 'response': credential},
