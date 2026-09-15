@@ -49,6 +49,38 @@
   "recordNotificationBackgroundTitle": "Enregistrement en arrière-plan",
   "recordNotificationBackgroundBody": "L'écoute continue pendant que l'écran est éteint",
   "recordStatusTranscribingBackground": "Transcription du passage en veille…",
+  "recordAiTranscribingTitle": "Transcription IA en cours",
+  "recordAiTranscribingEtaSeconds": "Environ {seconds} s",
+  "@recordAiTranscribingEtaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "recordAiTranscribingEtaMinutes": "Environ {minutes} min",
+  "@recordAiTranscribingEtaMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "recordAiTranscribingEtaSoon": "Quelques secondes…",
+  "recordAiTranscribingContinueBackground": "Continuer en arrière-plan",
+  "recordAiTranscribingBannerRunning": "Transcription en cours ({eta})",
+  "@recordAiTranscribingBannerRunning": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "recordAiTranscribingBannerReady": "Transcription prête — touchez pour comparer",
+  "recordAiTranscribingBusyTitle": "Transcription en cours",
+  "recordAiTranscribingBusyMessage": "Une transcription IA est déjà en cours. Attendez qu'elle se termine avant de démarrer un nouvel enregistrement.",
+  "recordAiTranscribingBusyOpen": "Ouvrir la consultation",
+  "recordAiTranscribingBusyDismiss": "OK",
   "historyEmpty": "Aucune note pour le moment",
   "appointmentsTodayTitle": "Rendez-vous du jour",
   "appointmentsUpcomingTitle": "Prochains rendez-vous",

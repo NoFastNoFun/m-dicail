@@ -52,7 +52,7 @@ import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
-import 'package:medicail/core/telemetry/telemetry_service.dart' as _i999;
+import 'package:medicail/core/telemetry/telemetry_service.dart' as _i619;
 import 'package:medicail/features/appointment/data/repositories/api_appointment_repository.dart'
     as _i587;
 import 'package:medicail/features/appointment/data/repositories/dynamic_appointment_repository.dart'
@@ -149,6 +149,8 @@ import 'package:medicail/features/tutorial/domain/repositories/tutorial_reposito
     as _i79;
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart'
     as _i306;
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart'
+    as _i622;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 import 'package:package_info_plus/package_info_plus.dart' as _i655;
@@ -317,6 +319,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i987.TokenRefreshInterceptor>(),
       ),
     );
+    gh.factory<_i619.TelemetryService>(
+      () => _i619.TelemetryService(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i1005.ApiClient>(() => _i1005.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i218.ApiEnhancedTranscriptionRepository>(
       () => _i218.ApiEnhancedTranscriptionRepository(
@@ -367,6 +372,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i587.ApiAppointmentRepository>(),
         gh<_i326.SecureStorageAppointmentRepository>(),
         gh<_i760.AuthTokenStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i622.AiTranscriptionJobCubit>(
+      () => _i622.AiTranscriptionJobCubit(
+        gh<_i734.EnhancedTranscriptionRepository>(),
+        gh<_i356.OfflineAudioTranscriptionService>(),
+        gh<_i117.RecordingNotificationService>(),
       ),
     );
     gh.lazySingleton<_i341.NoteProcessingRepository>(
@@ -422,9 +434,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i999.TelemetryService>(
-      () => _i999.TelemetryService(gh<_i361.Dio>()),
-    );
     gh.factory<_i794.VoiceCaptureBloc>(
       () => _i794.VoiceCaptureBloc(
         gh<_i21.AudioCaptureService>(),
@@ -436,7 +445,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i879.MedicalTermCorrectionService>(),
         gh<_i460.UserPreferencesRepository>(),
-        gh<_i999.TelemetryService>(),
+        gh<_i619.TelemetryService>(),
+        gh<_i622.AiTranscriptionJobCubit>(),
       ),
     );
     gh.factory<_i306.TutorialBloc>(

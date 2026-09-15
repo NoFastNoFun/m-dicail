@@ -41,6 +41,24 @@ void main() {
     expect(model.isProcessing, isFalse);
   });
 
+  test('AI background transcription does not lock processing overlay', () {
+    final model = VoiceCaptureViewModel.fromState(
+      VoiceCaptureAiTranscribing(
+        transcript: 'En cours',
+        sessionId: 's1',
+        startedAt: DateTime(2026),
+        estimatedDuration: const Duration(seconds: 30),
+      ),
+    );
+
+    expect(model.isAiTranscribing, isTrue);
+    expect(model.isProcessing, isFalse);
+    expect(model.canLeaveWhileAiTranscribing, isTrue);
+    expect(model.hasUnsavedWork, isTrue);
+    expect(model.canFinishConsultation, isFalse);
+    expect(model.canStart, isFalse);
+  });
+
   test('stopped or failed transcription still protects unsaved work', () {
     for (final state in const <VoiceCaptureState>[
       ListeningPaused(transcript: 'Transcription à sauvegarder.'),

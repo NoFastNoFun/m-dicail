@@ -34,13 +34,49 @@ final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
-  const VoiceCaptureFinishConsultation({this.language = 'fr', this.isTutorial = false});
+  const VoiceCaptureFinishConsultation({
+    this.language = 'fr',
+    this.isTutorial = false,
+    this.audioDuration = Duration.zero,
+  });
 
   final String language;
   final bool isTutorial;
+  final Duration audioDuration;
 
   @override
-  List<Object?> get props => [language, isTutorial];
+  List<Object?> get props => [language, isTutorial, audioDuration];
+}
+
+final class VoiceCaptureAiTranscriptionCompleted extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionCompleted({
+    required this.localTranscript,
+    required this.aiTranscript,
+  });
+
+  final String localTranscript;
+  final String aiTranscript;
+
+  @override
+  List<Object?> get props => [localTranscript, aiTranscript];
+}
+
+final class VoiceCaptureAiTranscriptionLocalOnly extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionLocalOnly({required this.transcript});
+
+  final String transcript;
+
+  @override
+  List<Object?> get props => [transcript];
+}
+
+final class VoiceCaptureAiTranscriptionFailed extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionFailed({required this.message});
+
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
 }
 
 final class VoiceCaptureTranscriptChoiceSelected extends VoiceCaptureEvent {

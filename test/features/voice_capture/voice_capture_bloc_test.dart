@@ -19,6 +19,8 @@ import 'package:medicail/features/recording/domain/repositories/enhanced_transcr
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -48,6 +50,9 @@ class _MockOfflineAudioTranscriptionService extends Mock
 class _MockMedicalTermCorrectionService extends Mock
     implements MedicalTermCorrectionService {}
 
+class _MockAiTranscriptionJobCubit extends Mock
+    implements AiTranscriptionJobCubit {}
+
 class _MockUserPreferencesRepository extends Mock
     implements UserPreferencesRepository {}
 
@@ -67,9 +72,13 @@ void main() {
   late _MockMedicalTermCorrectionService medicalTermCorrection;
   late _MockUserPreferencesRepository userPreferences;
   late _MockTelemetryService telemetry;
+  late _MockAiTranscriptionJobCubit aiTranscriptionJob;
+  late StreamController<AiTranscriptionJobState> aiJobController;
+
   setUpAll(() {
     registerFallbackValue(_fallbackOnResult);
     registerFallbackValue(_fallbackOnListeningEnded);
+    registerFallbackValue(Duration.zero);
     registerFallbackValue(
       RecordingSession(
         id: 'fallback',
@@ -90,6 +99,31 @@ void main() {
     medicalTermCorrection = _MockMedicalTermCorrectionService();
     userPreferences = _MockUserPreferencesRepository();
     telemetry = _MockTelemetryService();
+    aiTranscriptionJob = _MockAiTranscriptionJobCubit();
+    aiJobController = StreamController<AiTranscriptionJobState>.broadcast();
+    addTearDown(aiJobController.close);
+
+    when(() => aiTranscriptionJob.state)
+        .thenReturn(const AiTranscriptionJobIdle());
+    when(() => aiTranscriptionJob.stream)
+        .thenAnswer((_) => aiJobController.stream);
+    when(() => aiTranscriptionJob.isBusy).thenReturn(false);
+    when(
+      () => aiTranscriptionJob.start(
+        sessionId: any(named: 'sessionId'),
+        audioPath: any(named: 'audioPath'),
+        language: any(named: 'language'),
+        roughTranscript: any(named: 'roughTranscript'),
+        audioDuration: any(named: 'audioDuration'),
+        patientId: any(named: 'patientId'),
+        selectedTemplate: any(named: 'selectedTemplate'),
+      ),
+    ).thenAnswer((_) async {});
+    when(() => aiTranscriptionJob.acknowledge()).thenReturn(null);
+    when(() => aiTranscriptionJob.markCompareOpened())
+        .thenAnswer((_) async {});
+    when(() => aiTranscriptionJob.reset()).thenAnswer((_) async {});
+
     when(
       () => userPreferences.readAiEnhanceEnabled(),
     ).thenAnswer((_) async => false);
@@ -110,6 +144,7 @@ void main() {
       () => notificationService.start(
         title: any(named: 'title'),
         body: any(named: 'body'),
+        serviceTypes: any(named: 'serviceTypes'),
       ),
     ).thenAnswer((_) async {});
     when(
@@ -193,6 +228,7 @@ void main() {
       medicalTermCorrection,
       userPreferences,
       telemetry,
+      aiTranscriptionJob,
     );
   }
 
@@ -347,6 +383,17 @@ void main() {
           bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
           if (chooseTranscript) {
             await bloc.stream.firstWhere(
+              (state) => state is VoiceCaptureAiTranscribing,
+            );
+            aiJobController.add(
+              const AiTranscriptionJobReady(
+                sessionId: 'ignored',
+                language: 'fr',
+                localTranscript: 'Texte à conserver.',
+                aiTranscript: 'texte ameliore',
+              ),
+            );
+            await bloc.stream.firstWhere(
               (state) => state is VoiceCaptureTranscriptCompare,
             );
             bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: false));
@@ -482,13 +529,17 @@ void main() {
           }
           bloc.add(const VoiceCaptureFinishConsultation());
           await bloc.stream.firstWhere(
-            (s) => s is VoiceCaptureTranscriptCompare,
+            (s) => s is VoiceCaptureAiTranscribing,
           );
           verify(
-            () => enhancedTranscription.transcribeFile(
-              filePath: '/tmp/session.wav',
+            () => aiTranscriptionJob.start(
               sessionId: any(named: 'sessionId'),
-              language: 'fr',
+              audioPath: '/tmp/session.wav',
+              language: any(named: 'language'),
+              roughTranscript: any(named: 'roughTranscript'),
+              audioDuration: any(named: 'audioDuration'),
+              patientId: any(named: 'patientId'),
+              selectedTemplate: any(named: 'selectedTemplate'),
             ),
           ).called(1);
         });
@@ -512,12 +563,16 @@ void main() {
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
         ).called(1);
         bloc.add(const VoiceCaptureFinishConsultation());
-        await bloc.stream.firstWhere((s) => s is VoiceCaptureTranscriptCompare);
+        await bloc.stream.firstWhere((s) => s is VoiceCaptureAiTranscribing);
         verify(
-          () => enhancedTranscription.transcribeFile(
-            filePath: '/tmp/session.wav',
+          () => aiTranscriptionJob.start(
             sessionId: any(named: 'sessionId'),
-            language: 'fr',
+            audioPath: '/tmp/session.wav',
+            language: any(named: 'language'),
+            roughTranscript: any(named: 'roughTranscript'),
+            audioDuration: any(named: 'audioDuration'),
+            patientId: any(named: 'patientId'),
+            selectedTemplate: any(named: 'selectedTemplate'),
           ),
         ).called(1);
       });
@@ -540,6 +595,17 @@ void main() {
           (s) => s is VoiceCaptureConsultationFinished,
         );
         verifyNever(
+          () => aiTranscriptionJob.start(
+            sessionId: any(named: 'sessionId'),
+            audioPath: any(named: 'audioPath'),
+            language: any(named: 'language'),
+            roughTranscript: any(named: 'roughTranscript'),
+            audioDuration: any(named: 'audioDuration'),
+            patientId: any(named: 'patientId'),
+            selectedTemplate: any(named: 'selectedTemplate'),
+          ),
+        );
+        verifyNever(
           () => enhancedTranscription.transcribeFile(
             filePath: any(named: 'filePath'),
             sessionId: any(named: 'sessionId'),
@@ -553,15 +619,16 @@ void main() {
         () async {
           final bloc = buildBloc();
           addTearDown(bloc.close);
-          when(
-            () => enhancedTranscription.transcribeFile(
-              filePath: any(named: 'filePath'),
-              sessionId: any(named: 'sessionId'),
-              language: any(named: 'language'),
-            ),
-          ).thenThrow(Exception('unreachable'));
           await seedListening(bloc);
           bloc.add(const VoiceCaptureFinishConsultation());
+          await bloc.stream.firstWhere((s) => s is VoiceCaptureAiTranscribing);
+          aiJobController.add(
+            const AiTranscriptionJobFailed(
+              sessionId: 'ignored',
+              message: 'La transcription a echoue.',
+              roughTranscript: '',
+            ),
+          );
           await bloc.stream.firstWhere((s) => s is VoiceCaptureFailure);
           verifyNever(
             () => noteProcessing.process(
@@ -733,7 +800,58 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'enhances from session audio then waits for transcript choice',
+      'hands off AI transcription to the job cubit without locking compare yet',
+      build: buildBloc,
+      setUp: () {
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/session.wav';
+        });
+      },
+      act: (bloc) async {
+        await seedListening(bloc);
+        bloc.add(
+          const VoiceCaptureFinishConsultation(
+            language: 'fr',
+            audioDuration: Duration(seconds: 60),
+          ),
+        );
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+      },
+      expect: () => [
+        const VoiceCaptureReady(),
+        isA<RecordingInProgress>(),
+        isA<VoiceCaptureAiTranscribing>(),
+      ],
+      verify: (_) {
+        verify(
+          () => aiTranscriptionJob.start(
+            sessionId: any(named: 'sessionId'),
+            audioPath: '/tmp/session.wav',
+            language: 'fr',
+            roughTranscript: any(named: 'roughTranscript'),
+            audioDuration: const Duration(seconds: 60),
+            patientId: any(named: 'patientId'),
+            selectedTemplate: any(named: 'selectedTemplate'),
+          ),
+        ).called(1);
+        verifyNever(
+          () => enhancedTranscription.transcribeFile(
+            filePath: any(named: 'filePath'),
+            sessionId: any(named: 'sessionId'),
+            language: any(named: 'language'),
+          ),
+        );
+      },
+    );
+
+    blocTest<VoiceCaptureBloc, VoiceCaptureState>(
+      'opens compare when the AI job cubit reports ready',
       build: buildBloc,
       setUp: () {
         when(
@@ -748,6 +866,17 @@ void main() {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
         await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+        aiJobController.add(
+          const AiTranscriptionJobReady(
+            sessionId: 'ignored',
+            language: 'fr',
+            localTranscript: 'bonjour patient',
+            aiTranscript: 'texte ameliore',
+          ),
+        );
+        await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
         );
         bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
@@ -755,30 +884,7 @@ void main() {
           (state) => state is VoiceCaptureConsultationFinished,
         );
       },
-      expect: () => [
-        const VoiceCaptureReady(),
-        isA<RecordingInProgress>(),
-        isA<VoiceCaptureEnhancing>(),
-        isA<VoiceCaptureTranscriptCompare>().having(
-          (s) => s.aiTranscript,
-          'aiTranscript',
-          'texte ameliore',
-        ),
-        isA<VoiceCaptureProcessing>(),
-        isA<VoiceCaptureConsultationFinished>().having(
-          (s) => s.transcript,
-          'transcript',
-          'texte ameliore',
-        ),
-      ],
       verify: (_) {
-        verify(
-          () => enhancedTranscription.transcribeFile(
-            filePath: '/tmp/session.wav',
-            sessionId: any(named: 'sessionId'),
-            language: 'fr',
-          ),
-        ).called(1);
         verify(
           () => noteProcessing.process(
             sessionId: any(named: 'sessionId'),
@@ -796,12 +902,6 @@ void main() {
         when(
           () => userPreferences.readAiEnhanceEnabled(),
         ).thenAnswer((_) async => true);
-        when(
-          () => offlineTranscription.transcribeFile(
-            any(),
-            language: any(named: 'language'),
-          ),
-        ).thenAnswer((_) async => 'bonjour patient');
         when(() => backgroundRecorder.stop()).thenAnswer((_) async {
           when(() => backgroundRecorder.isRecording).thenReturn(false);
           return '/tmp/session.wav';
@@ -822,6 +922,17 @@ void main() {
       act: (bloc) async {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+        aiJobController.add(
+          const AiTranscriptionJobReady(
+            sessionId: 'ignored',
+            language: 'fr',
+            localTranscript: 'bonjour patient',
+            aiTranscript: 'texte ameliore',
+          ),
+        );
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
         );
@@ -853,19 +964,6 @@ void main() {
           return '/tmp/session.wav';
         });
         when(
-          () => enhancedTranscription.transcribeFile(
-            filePath: any(named: 'filePath'),
-            sessionId: any(named: 'sessionId'),
-            language: any(named: 'language'),
-          ),
-        ).thenThrow(Exception('whisper down'));
-        when(
-          () => offlineTranscription.transcribeFile(
-            any(),
-            language: any(named: 'language'),
-          ),
-        ).thenAnswer((_) async => 'bonjour patient');
-        when(
           () => noteProcessing.process(
             sessionId: any(named: 'sessionId'),
             rawText: any(named: 'rawText'),
@@ -881,6 +979,16 @@ void main() {
       act: (bloc) async {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+        aiJobController.add(
+          const AiTranscriptionJobCompletedWithoutCompare(
+            sessionId: 'ignored',
+            language: 'fr',
+            transcript: 'bonjour patient',
+          ),
+        );
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureConsultationFinished,
         );

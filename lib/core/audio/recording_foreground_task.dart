@@ -14,4 +14,11 @@ class _RecordingForegroundTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
+
+  @override
+  void onNotificationPressed() {
+    FlutterForegroundTask.sendDataToMain(const {
+      'event': 'notificationTap',
+    });
+  }
 }
