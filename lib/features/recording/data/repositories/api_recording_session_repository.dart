@@ -66,6 +66,9 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
       if (model.patientId != null && model.patientId!.isNotEmpty) {
         payload['patient_id'] = model.patientId;
       }
+      if (model.tag != null && model.tag!.trim().isNotEmpty) {
+        payload['tag'] = model.tag;
+      }
 
       final response = await _apiClient.post<Map<String, dynamic>>(
         '/recording-sessions',
@@ -102,6 +105,9 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
     if (model.pathologies.isNotEmpty) {
       payload['pathologies'] =
           model.pathologies.map((p) => p.toJson()).toList();
+    }
+    if (model.tag != null && model.tag!.trim().isNotEmpty) {
+      payload['tag'] = model.tag;
     }
 
     final response = await _apiClient.put<Map<String, dynamic>>(

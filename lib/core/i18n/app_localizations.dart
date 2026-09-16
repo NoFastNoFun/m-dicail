@@ -4162,6 +4162,78 @@ abstract class AppLocalizations {
   /// **'{value} cigarettes/jour'**
   String anamneseSummaryCigarettesPerDay(String value);
 
+  /// No description provided for @sessionTagLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tag de séance'**
+  String get sessionTagLabel;
+
+  /// No description provided for @sessionTagPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taguer la séance'**
+  String get sessionTagPickerTitle;
+
+  /// No description provided for @sessionTagPresetBilan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bilan'**
+  String get sessionTagPresetBilan;
+
+  /// No description provided for @sessionTagPresetSuivi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivi'**
+  String get sessionTagPresetSuivi;
+
+  /// No description provided for @sessionTagPresetUrgence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Urgence'**
+  String get sessionTagPresetUrgence;
+
+  /// No description provided for @sessionTagCustomHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tag libre'**
+  String get sessionTagCustomHint;
+
+  /// No description provided for @sessionTagClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le tag'**
+  String get sessionTagClear;
+
+  /// No description provided for @sessionTagFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get sessionTagFilterAll;
+
+  /// No description provided for @sessionTagFilterLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par tag'**
+  String get sessionTagFilterLabel;
+
+  /// No description provided for @sessionTagSaveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tag enregistré'**
+  String get sessionTagSaveSuccess;
+
+  /// No description provided for @sessionTagNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans tag'**
+  String get sessionTagNone;
+
+  /// No description provided for @sessionTagEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le tag'**
+  String get sessionTagEditTooltip;
+
   /// No description provided for @radialActionGlobalSearch.
   ///
   /// In fr, this message translates to:
