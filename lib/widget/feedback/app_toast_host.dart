@@ -34,6 +34,8 @@ class AppToastHostState extends State<AppToastHost> {
     required AppToastType type,
     required Duration duration,
     String? details,
+    VoidCallback? onTap,
+    bool sticky = false,
   }) {
     _dismiss();
 
@@ -51,7 +53,8 @@ class AppToastHostState extends State<AppToastHost> {
           type: type,
           details: reportDetails,
           onDismiss: _dismiss,
-          onCopyDetails: type == AppToastType.error
+          onTap: onTap,
+          onCopyDetails: type == AppToastType.error && onTap == null
               ? () => _copyErrorDetails(context, message, reportDetails)
               : null,
           onReport: type == AppToastType.error
@@ -63,8 +66,12 @@ class AppToastHostState extends State<AppToastHost> {
 
     overlay.insert(_entry!);
 
-    _timer = Timer(duration, _dismiss);
+    if (!sticky) {
+      _timer = Timer(duration, _dismiss);
+    }
   }
+
+  void dismiss() => _dismiss();
 
   Future<void> _copyErrorDetails(
     BuildContext context,

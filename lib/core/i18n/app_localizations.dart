@@ -388,6 +388,72 @@ abstract class AppLocalizations {
   /// **'Transcription du passage en veille…'**
   String get recordStatusTranscribingBackground;
 
+  /// No description provided for @recordAiTranscribingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription IA en cours'**
+  String get recordAiTranscribingTitle;
+
+  /// No description provided for @recordAiTranscribingEtaSeconds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environ {seconds} s'**
+  String recordAiTranscribingEtaSeconds(int seconds);
+
+  /// No description provided for @recordAiTranscribingEtaMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environ {minutes} min'**
+  String recordAiTranscribingEtaMinutes(int minutes);
+
+  /// No description provided for @recordAiTranscribingEtaSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelques secondes…'**
+  String get recordAiTranscribingEtaSoon;
+
+  /// No description provided for @recordAiTranscribingContinueBackground.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer en arrière-plan'**
+  String get recordAiTranscribingContinueBackground;
+
+  /// No description provided for @recordAiTranscribingBannerRunning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription en cours ({eta})'**
+  String recordAiTranscribingBannerRunning(String eta);
+
+  /// No description provided for @recordAiTranscribingBannerReady.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription prête — touchez pour comparer'**
+  String get recordAiTranscribingBannerReady;
+
+  /// No description provided for @recordAiTranscribingBusyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transcription en cours'**
+  String get recordAiTranscribingBusyTitle;
+
+  /// No description provided for @recordAiTranscribingBusyMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une transcription IA est déjà en cours. Attendez qu\'elle se termine avant de démarrer un nouvel enregistrement.'**
+  String get recordAiTranscribingBusyMessage;
+
+  /// No description provided for @recordAiTranscribingBusyOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la consultation'**
+  String get recordAiTranscribingBusyOpen;
+
+  /// No description provided for @recordAiTranscribingBusyDismiss.
+  ///
+  /// In fr, this message translates to:
+  /// **'OK'**
+  String get recordAiTranscribingBusyDismiss;
+
   /// No description provided for @historyEmpty.
   ///
   /// In fr, this message translates to:
@@ -4095,6 +4161,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{value} cigarettes/jour'**
   String anamneseSummaryCigarettesPerDay(String value);
+
+  /// No description provided for @radialActionGlobalSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche globale'**
+  String get radialActionGlobalSearch;
+
+  /// No description provided for @globalSearchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche globale'**
+  String get globalSearchTitle;
+
+  /// No description provided for @globalSearchPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients, séances, notes…'**
+  String get globalSearchPlaceholder;
+
+  /// No description provided for @globalSearchPatientsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get globalSearchPatientsSection;
+
+  /// No description provided for @globalSearchSessionsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séances'**
+  String get globalSearchSessionsSection;
+
+  /// No description provided for @globalSearchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat'**
+  String get globalSearchEmpty;
+
+  /// No description provided for @globalSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherchez un patient, une séance ou un extrait de note'**
+  String get globalSearchHint;
+
+  /// No description provided for @globalSearchSessionUntitled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séance'**
+  String get globalSearchSessionUntitled;
 }
 
 class _AppLocalizationsDelegate

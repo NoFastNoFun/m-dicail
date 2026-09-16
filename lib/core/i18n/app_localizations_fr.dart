@@ -162,6 +162,48 @@ class AppLocalizationsFr extends AppLocalizations {
       'Transcription du passage en veille…';
 
   @override
+  String get recordAiTranscribingTitle => 'Transcription IA en cours';
+
+  @override
+  String recordAiTranscribingEtaSeconds(int seconds) {
+    return 'Environ $seconds s';
+  }
+
+  @override
+  String recordAiTranscribingEtaMinutes(int minutes) {
+    return 'Environ $minutes min';
+  }
+
+  @override
+  String get recordAiTranscribingEtaSoon => 'Quelques secondes…';
+
+  @override
+  String get recordAiTranscribingContinueBackground =>
+      'Continuer en arrière-plan';
+
+  @override
+  String recordAiTranscribingBannerRunning(String eta) {
+    return 'Transcription en cours ($eta)';
+  }
+
+  @override
+  String get recordAiTranscribingBannerReady =>
+      'Transcription prête — touchez pour comparer';
+
+  @override
+  String get recordAiTranscribingBusyTitle => 'Transcription en cours';
+
+  @override
+  String get recordAiTranscribingBusyMessage =>
+      'Une transcription IA est déjà en cours. Attendez qu\'elle se termine avant de démarrer un nouvel enregistrement.';
+
+  @override
+  String get recordAiTranscribingBusyOpen => 'Ouvrir la consultation';
+
+  @override
+  String get recordAiTranscribingBusyDismiss => 'OK';
+
+  @override
   String get historyEmpty => 'Aucune note pour le moment';
 
   @override
@@ -2129,4 +2171,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String anamneseSummaryCigarettesPerDay(String value) {
     return '$value cigarettes/jour';
   }
+
+  @override
+  String get radialActionGlobalSearch => 'Recherche globale';
+
+  @override
+  String get globalSearchTitle => 'Recherche globale';
+
+  @override
+  String get globalSearchPlaceholder => 'Patients, séances, notes…';
+
+  @override
+  String get globalSearchPatientsSection => 'Patients';
+
+  @override
+  String get globalSearchSessionsSection => 'Séances';
+
+  @override
+  String get globalSearchEmpty => 'Aucun résultat';
+
+  @override
+  String get globalSearchHint =>
+      'Recherchez un patient, une séance ou un extrait de note';
+
+  @override
+  String get globalSearchSessionUntitled => 'Séance';
 }

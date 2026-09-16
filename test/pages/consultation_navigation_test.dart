@@ -23,6 +23,8 @@ import 'package:medicail/features/settings/presentation/notifier/settings_notifi
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_state.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -44,11 +46,15 @@ class _Patients extends Mock implements PatientRepository {}
 
 class _Sessions extends Mock implements RecordingSessionRepository {}
 
+class _AiTranscriptionJobCubit extends Mock
+    implements AiTranscriptionJobCubit {}
+
 void main() {
   late _VoiceBloc voice;
   late _TutorialBloc tutorial;
   late _Patients patients;
   late _Sessions sessions;
+  late _AiTranscriptionJobCubit aiTranscriptionJob;
   late StreamController<VoiceCaptureState> voiceStates;
   late RecordingSession savedSession;
   final patient = Patient(
@@ -66,6 +72,7 @@ void main() {
     tutorial = _TutorialBloc();
     patients = _Patients();
     sessions = _Sessions();
+    aiTranscriptionJob = _AiTranscriptionJobCubit();
     voiceStates = StreamController<VoiceCaptureState>.broadcast();
     whenListen(
       voice,
@@ -73,6 +80,10 @@ void main() {
       initialState: const ListeningPaused(transcript: 'Transcription test.'),
     );
     when(() => tutorial.state).thenReturn(const TutorialCompleted());
+    when(() => aiTranscriptionJob.state)
+        .thenReturn(const AiTranscriptionJobIdle());
+    when(() => aiTranscriptionJob.isBusy).thenReturn(false);
+    when(() => aiTranscriptionJob.activePatientId).thenReturn(null);
     savedSession = RecordingSession(
       id: 'session-1',
       patientId: patient.id,
@@ -111,6 +122,7 @@ void main() {
     getIt.registerSingleton<SettingsNotifier>(SettingsNotifier());
     getIt.registerSingleton<PatientRepository>(patients);
     getIt.registerSingleton<RecordingSessionRepository>(sessions);
+    getIt.registerSingleton<AiTranscriptionJobCubit>(aiTranscriptionJob);
     getIt.registerFactory<PatientDetailBloc>(
       () => PatientDetailBloc(patients, sessions),
     );

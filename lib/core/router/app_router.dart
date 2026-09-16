@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/pages/debug_page.dart';
 import 'package:medicail/pages/home_page.dart';
+import 'package:medicail/pages/global_search_page.dart';
 import 'package:medicail/pages/appointments_day_page.dart';
 import 'package:medicail/pages/main_shell.dart';
 import 'package:medicail/pages/patient_detail_page.dart';
@@ -19,9 +20,10 @@ import 'package:medicail/pages/pathology_create_page.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/core/i18n/app_localizations.dart';
-
+import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:medicail/features/auth/presentation/bloc/auth_state.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
 import 'package:medicail/pages/login_page.dart';
 import 'package:medicail/pages/register_page.dart';
 import 'package:medicail/pages/forgot_password_page.dart';
@@ -31,6 +33,8 @@ import 'package:medicail/pages/mfa_login_page.dart';
 import 'package:medicail/widget/consultation/attach_patient_dialog.dart';
 import 'package:medicail/pages/security_settings_page.dart';
 import 'package:medicail/pages/profile_settings_page.dart';
+import 'package:medicail/widget/buttons/app_button.dart';
+import 'package:medicail/widget/feedback/app_dialog.dart';
 
 @lazySingleton
 class AppRouter {
@@ -204,6 +208,11 @@ class AppRouter {
             RecordPage(patientId: state.uri.queryParameters['patientId']),
       ),
       GoRoute(
+        path: AppRoutes.globalSearch,
+        name: 'global-search',
+        builder: (context, state) => const GlobalSearchPage(),
+      ),
+      GoRoute(
         path: AppRoutes.patientDetail,
         name: 'patient-detail',
         redirect: (context, state) {
@@ -248,6 +257,46 @@ extension AppRouterNavigation on BuildContext {
   void goHome() => go(AppRoutes.home);
 
   Future<void> goRecord({String? patientId}) async {
+    final jobCubit = getIt<AiTranscriptionJobCubit>();
+    if (jobCubit.isBusy) {
+      final l10n = AppLocalizations.of(this);
+      final openExisting = await AppDialog.show<bool>(
+        this,
+        variant: AppDialogVariant.standard,
+        title: l10n.recordAiTranscribingBusyTitle,
+        body: AppText(
+          l10n.recordAiTranscribingBusyMessage,
+          variant: AppTextVariant.body,
+        ),
+        actionsBuilder: (dialogContext) => [
+          AppButton(
+            label: l10n.recordAiTranscribingBusyDismiss,
+            style: AppButtonStyle.secondary,
+            expanded: false,
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+          ),
+          AppButton(
+            label: l10n.recordAiTranscribingBusyOpen,
+            expanded: false,
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+          ),
+        ],
+      );
+      if (!mounted || openExisting != true) return;
+      final existingPatientId = jobCubit.activePatientId;
+      if (existingPatientId != null && existingPatientId.isNotEmpty) {
+        await push(
+          Uri(
+            path: AppRoutes.record,
+            queryParameters: {'patientId': existingPatientId},
+          ).toString(),
+        );
+      } else {
+        await push(AppRoutes.record);
+      }
+      return;
+    }
+
     if (patientId == null || patientId.isEmpty) {
       await push(AppRoutes.record);
       return;
@@ -308,4 +357,7 @@ extension AppRouterNavigation on BuildContext {
       );
 
   void goDebug() => push(AppRoutes.debug);
+
+  Future<T?> pushGlobalSearch<T extends Object?>() =>
+      push<T>(AppRoutes.globalSearch);
 }

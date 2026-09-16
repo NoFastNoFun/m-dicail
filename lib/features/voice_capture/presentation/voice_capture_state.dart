@@ -75,6 +75,43 @@ final class VoiceCaptureEnhancing extends VoiceCaptureState {
   ];
 }
 
+/// AI transcription running without locking the record UI.
+final class VoiceCaptureAiTranscribing extends VoiceCaptureState {
+  const VoiceCaptureAiTranscribing({
+    required this.transcript,
+    required this.sessionId,
+    required this.startedAt,
+    required this.estimatedDuration,
+    this.selectedTemplate,
+  });
+
+  final String transcript;
+  final String sessionId;
+  final DateTime startedAt;
+  final Duration estimatedDuration;
+  final NoteTemplate? selectedTemplate;
+
+  Duration get remainingEstimate {
+    final elapsed = DateTime.now().difference(startedAt);
+    final remaining = estimatedDuration - elapsed;
+    if (remaining <= Duration.zero) {
+      return Duration.zero;
+    }
+    return remaining;
+  }
+
+  bool get estimateElapsed => remainingEstimate <= Duration.zero;
+
+  @override
+  List<Object?> get props => [
+        transcript,
+        sessionId,
+        startedAt,
+        estimatedDuration,
+        selectedTemplate,
+      ];
+}
+
 final class VoiceCaptureTranscriptCompare extends VoiceCaptureState {
   const VoiceCaptureTranscriptCompare({
     required this.localTranscript,

@@ -396,6 +396,11 @@ class _MainShellState extends State<MainShell> {
       onPrimaryPressed: _fabPrimaryAction,
       actions: [
         AppRadialAction(
+          icon: Icons.search,
+          label: l10n.radialActionGlobalSearch,
+          onTap: () => context.pushGlobalSearch(),
+        ),
+        AppRadialAction(
           icon: Icons.event_outlined,
           label: l10n.appointmentCreateTitle,
           onTap: () =>

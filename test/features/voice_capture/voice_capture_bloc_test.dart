@@ -19,6 +19,8 @@ import 'package:medicail/features/recording/domain/repositories/enhanced_transcr
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -48,10 +50,14 @@ class _MockOfflineAudioTranscriptionService extends Mock
 class _MockMedicalTermCorrectionService extends Mock
     implements MedicalTermCorrectionService {}
 
+class _MockAiTranscriptionJobCubit extends Mock
+    implements AiTranscriptionJobCubit {}
+
 class _MockUserPreferencesRepository extends Mock
     implements UserPreferencesRepository {}
 
 class _MockTelemetryService extends Mock implements TelemetryService {}
+
 void _fallbackOnResult(String text, {bool isFinal = false}) {}
 
 void _fallbackOnListeningEnded() {}
@@ -67,9 +73,13 @@ void main() {
   late _MockMedicalTermCorrectionService medicalTermCorrection;
   late _MockUserPreferencesRepository userPreferences;
   late _MockTelemetryService telemetry;
+  late _MockAiTranscriptionJobCubit aiTranscriptionJob;
+  late StreamController<AiTranscriptionJobState> aiJobController;
+
   setUpAll(() {
     registerFallbackValue(_fallbackOnResult);
     registerFallbackValue(_fallbackOnListeningEnded);
+    registerFallbackValue(Duration.zero);
     registerFallbackValue(
       RecordingSession(
         id: 'fallback',
@@ -90,6 +100,32 @@ void main() {
     medicalTermCorrection = _MockMedicalTermCorrectionService();
     userPreferences = _MockUserPreferencesRepository();
     telemetry = _MockTelemetryService();
+    aiTranscriptionJob = _MockAiTranscriptionJobCubit();
+    aiJobController = StreamController<AiTranscriptionJobState>.broadcast();
+    addTearDown(aiJobController.close);
+
+    when(
+      () => aiTranscriptionJob.state,
+    ).thenReturn(const AiTranscriptionJobIdle());
+    when(
+      () => aiTranscriptionJob.stream,
+    ).thenAnswer((_) => aiJobController.stream);
+    when(() => aiTranscriptionJob.isBusy).thenReturn(false);
+    when(
+      () => aiTranscriptionJob.start(
+        sessionId: any(named: 'sessionId'),
+        audioPath: any(named: 'audioPath'),
+        language: any(named: 'language'),
+        roughTranscript: any(named: 'roughTranscript'),
+        audioDuration: any(named: 'audioDuration'),
+        patientId: any(named: 'patientId'),
+        selectedTemplate: any(named: 'selectedTemplate'),
+      ),
+    ).thenAnswer((_) async {});
+    when(() => aiTranscriptionJob.acknowledge()).thenReturn(null);
+    when(() => aiTranscriptionJob.markCompareOpened()).thenAnswer((_) async {});
+    when(() => aiTranscriptionJob.reset()).thenAnswer((_) async {});
+
     when(
       () => userPreferences.readAiEnhanceEnabled(),
     ).thenAnswer((_) async => false);
@@ -110,6 +146,7 @@ void main() {
       () => notificationService.start(
         title: any(named: 'title'),
         body: any(named: 'body'),
+        serviceTypes: any(named: 'serviceTypes'),
       ),
     ).thenAnswer((_) async {});
     when(
@@ -198,6 +235,7 @@ void main() {
       medicalTermCorrection,
       userPreferences,
       telemetry,
+      aiTranscriptionJob,
     );
   }
 
@@ -514,7 +552,9 @@ void main() {
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
         ).called(1);
         bloc.add(const VoiceCaptureFinishConsultation());
-        await bloc.stream.firstWhere((s) => s is VoiceCaptureConsultationFinished);
+        await bloc.stream.firstWhere(
+          (s) => s is VoiceCaptureConsultationFinished,
+        );
         verify(
           () => enhancedTranscription.transcribeFile(
             filePath: '/tmp/session.wav',
@@ -797,6 +837,58 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
+      'hands off AI transcription to the job cubit without locking compare yet',
+      build: buildBloc,
+      setUp: () {
+        when(() => backgroundRecorder.stop()).thenAnswer((_) async {
+          when(() => backgroundRecorder.isRecording).thenReturn(false);
+          return '/tmp/session.wav';
+        });
+      },
+      act: (bloc) async {
+        await seedListening(bloc);
+        when(() => backgroundRecorder.isRecording).thenReturn(true);
+        when(
+          () => userPreferences.readAiEnhanceEnabled(),
+        ).thenAnswer((_) async => true);
+        bloc.add(
+          const VoiceCaptureFinishConsultation(
+            language: 'fr',
+            recordingDuration: Duration(seconds: 60),
+          ),
+        );
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+      },
+      expect: () => [
+        const VoiceCaptureReady(),
+        isA<RecordingInProgress>(),
+        isA<VoiceCaptureAiTranscribing>(),
+      ],
+      verify: (_) {
+        verify(
+          () => aiTranscriptionJob.start(
+            sessionId: any(named: 'sessionId'),
+            audioPath: '/tmp/session.wav',
+            language: 'fr',
+            roughTranscript: any(named: 'roughTranscript'),
+            audioDuration: const Duration(seconds: 60),
+            patientId: any(named: 'patientId'),
+            selectedTemplate: any(named: 'selectedTemplate'),
+          ),
+        ).called(1);
+        verifyNever(
+          () => enhancedTranscription.transcribeFile(
+            filePath: any(named: 'filePath'),
+            sessionId: any(named: 'sessionId'),
+            language: any(named: 'language'),
+          ),
+        );
+      },
+    );
+
+    blocTest<VoiceCaptureBloc, VoiceCaptureState>(
       'choosing local transcript skips AI text',
       build: buildBloc,
       setUp: () {
@@ -832,6 +924,17 @@ void main() {
           () => userPreferences.readAiEnhanceEnabled(),
         ).thenAnswer((_) async => true);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureAiTranscribing,
+        );
+        aiJobController.add(
+          const AiTranscriptionJobReady(
+            sessionId: 'ignored',
+            language: 'fr',
+            localTranscript: 'bonjour patient',
+            aiTranscript: 'texte ameliore',
+          ),
+        );
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureTranscriptCompare,
         );

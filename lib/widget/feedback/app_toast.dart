@@ -22,6 +22,8 @@ class AppToast {
     AppToastType type = AppToastType.info,
     Duration duration = const Duration(seconds: 3),
     String? details,
+    VoidCallback? onTap,
+    bool sticky = false,
   }) {
     AppToastHost.of(context)?.show(
       overlayContext: context,
@@ -29,6 +31,8 @@ class AppToast {
       type: type,
       duration: duration,
       details: details,
+      onTap: onTap,
+      sticky: sticky,
     );
   }
 
@@ -51,8 +55,21 @@ class AppToast {
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
+    VoidCallback? onTap,
+    bool sticky = false,
   }) {
-    show(context, message: message, type: AppToastType.success, duration: duration);
+    show(
+      context,
+      message: message,
+      type: AppToastType.success,
+      duration: duration,
+      onTap: onTap,
+      sticky: sticky,
+    );
+  }
+
+  static void dismiss(BuildContext context) {
+    AppToastHost.of(context)?.dismiss();
   }
 }
 
@@ -65,6 +82,7 @@ class AppToastWidget extends StatefulWidget {
     this.details,
     this.onCopyDetails,
     this.onReport,
+    this.onTap,
   });
 
   final String message;
@@ -73,6 +91,7 @@ class AppToastWidget extends StatefulWidget {
   final String? details;
   final VoidCallback? onCopyDetails;
   final VoidCallback? onReport;
+  final VoidCallback? onTap;
 
   @override
   State<AppToastWidget> createState() => _AppToastWidgetState();
@@ -114,7 +133,7 @@ class _AppToastWidgetState extends State<AppToastWidget>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    
+
     final (accent, icon) = switch (widget.type) {
       AppToastType.success => (AppColors.success, Icons.check_circle_outline),
       AppToastType.warning => (AppColors.warning, Icons.warning_amber_outlined),
@@ -140,6 +159,25 @@ class _AppToastWidgetState extends State<AppToastWidget>
         ),
       ],
     );
+
+    Widget content = messageArea;
+    if (widget.onTap != null) {
+      content = InkWell(
+        onTap: () {
+          widget.onTap!();
+          widget.onDismiss();
+        },
+        borderRadius: AppRadius.mdBorder,
+        child: messageArea,
+      );
+    } else if (widget.onCopyDetails != null) {
+      content = InkWell(
+        onTap: widget.onCopyDetails,
+        borderRadius: AppRadius.mdBorder,
+        child: messageArea,
+      );
+    }
+
     return SlideTransition(
       position: _offsetAnimation,
       child: FadeTransition(
@@ -166,15 +204,7 @@ class _AppToastWidgetState extends State<AppToastWidget>
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: widget.onCopyDetails == null
-                      ? messageArea
-                      : InkWell(
-                          onTap: widget.onCopyDetails,
-                          borderRadius: AppRadius.mdBorder,
-                          child: messageArea,
-                        ),
-                ),
+                Expanded(child: content),
                 if (widget.onReport != null)
                   IconButton(
                     icon: const Icon(Icons.bug_report_outlined, size: 20),

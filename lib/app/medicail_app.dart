@@ -17,6 +17,8 @@ import 'package:medicail/features/settings/presentation/bloc/settings_event.dart
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart';
 import 'package:medicail/features/tutorial/presentation/tutorial_event.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_host.dart';
 import 'package:medicail/widget/auth/app_lock_gate.dart';
 import 'package:medicail/widget/auth/sensitive_route_privacy_overlay.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
@@ -89,6 +91,9 @@ class _MedicailAppState extends State<MedicailApp> {
               create: (_) =>
                   getIt<TutorialBloc>()..add(const TutorialCheckRequested()),
             ),
+            BlocProvider<AiTranscriptionJobCubit>.value(
+              value: getIt<AiTranscriptionJobCubit>(),
+            ),
           ],
           child: BlocListener<AuthBloc, AuthState>(
             listenWhen: (previous, current) =>
@@ -119,7 +124,11 @@ class _MedicailAppState extends State<MedicailApp> {
                       child: AppToastHost(
                         child: ScreenshotBugPromptHost(
                           child: SensitiveRoutePrivacyOverlay(
-                            child: AppLockGate(child: navigator),
+                            child: AppLockGate(
+                              child: AiTranscriptionJobHost(
+                                child: navigator,
+                              ),
+                            ),
                           ),
                         ),
                       ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medicail/core/audio/audio_capture_service.dart';
@@ -11,6 +13,8 @@ import 'package:medicail/features/recording/domain/repositories/enhanced_transcr
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart';
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_state.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_event.dart';
 import 'package:medicail/features/voice_capture/presentation/voice_capture_state.dart';
@@ -47,6 +51,10 @@ class _MockUserPreferencesRepository extends Mock
     implements UserPreferencesRepository {}
 
 class _MockTelemetryService extends Mock implements TelemetryService {}
+
+class _MockAiTranscriptionJobCubit extends Mock
+    implements AiTranscriptionJobCubit {}
+
 void _fallbackOnResult(String text, {bool isFinal = false}) {}
 
 void _fallbackOnListeningEnded() {}
@@ -62,10 +70,13 @@ void main() {
   late _MockBackgroundAudioRecorder backgroundRecorder;
   late _MockOfflineAudioTranscriptionService offlineTranscription;
   late _MockUserPreferencesRepository userPreferences;
+  late _MockAiTranscriptionJobCubit aiTranscriptionJob;
+  late StreamController<AiTranscriptionJobState> aiJobController;
 
   setUpAll(() {
     registerFallbackValue(_fallbackOnResult);
     registerFallbackValue(_fallbackOnListeningEnded);
+    registerFallbackValue(Duration.zero);
     registerFallbackValue(
       RecordingSession(
         id: 'fallback',
@@ -84,6 +95,29 @@ void main() {
     backgroundRecorder = _MockBackgroundAudioRecorder();
     offlineTranscription = _MockOfflineAudioTranscriptionService();
     userPreferences = _MockUserPreferencesRepository();
+    aiTranscriptionJob = _MockAiTranscriptionJobCubit();
+    aiJobController = StreamController<AiTranscriptionJobState>.broadcast();
+    addTearDown(aiJobController.close);
+
+    when(() => aiTranscriptionJob.state)
+        .thenReturn(const AiTranscriptionJobIdle());
+    when(() => aiTranscriptionJob.stream)
+        .thenAnswer((_) => aiJobController.stream);
+    when(() => aiTranscriptionJob.isBusy).thenReturn(false);
+    when(
+      () => aiTranscriptionJob.start(
+        sessionId: any(named: 'sessionId'),
+        audioPath: any(named: 'audioPath'),
+        language: any(named: 'language'),
+        roughTranscript: any(named: 'roughTranscript'),
+        audioDuration: any(named: 'audioDuration'),
+        patientId: any(named: 'patientId'),
+        selectedTemplate: any(named: 'selectedTemplate'),
+      ),
+    ).thenAnswer((_) async {});
+    when(() => aiTranscriptionJob.acknowledge()).thenReturn(null);
+    when(() => aiTranscriptionJob.markCompareOpened())
+        .thenAnswer((_) async {});
 
     when(() => userPreferences.readAiEnhanceEnabled())
         .thenAnswer((_) async => false);
@@ -105,6 +139,7 @@ void main() {
       () => notificationService.start(
         title: any(named: 'title'),
         body: any(named: 'body'),
+        serviceTypes: any(named: 'serviceTypes'),
       ),
     ).thenAnswer((_) async {});
     when(
@@ -153,6 +188,7 @@ void main() {
       MedicalTermCorrectionService(MedicalRootDictionary()),
       userPreferences,
       _MockTelemetryService(),
+      aiTranscriptionJob,
     );
   }
 
