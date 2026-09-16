@@ -3,5 +3,7 @@ abstract class EnhancedTranscriptionRepository {
     required String filePath,
     required String sessionId,
     String language = 'fr',
+    int? chunkIndex,
+    bool? isFinal,
   });
 }

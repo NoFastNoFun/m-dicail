@@ -27,6 +27,9 @@ final class VoiceCaptureViewModel {
     this.errorMessage,
     this.errorCode,
     this.selectedTemplate,
+    this.waitPhase = TranscriptionWaitPhase.upload,
+    this.recordingDuration = Duration.zero,
+    this.userScratchNotes = '',
     this.aiTranscribingSessionId,
     this.aiTranscribingStartedAt,
     this.aiTranscribingEstimatedDuration,
@@ -58,7 +61,8 @@ final class VoiceCaptureViewModel {
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           isAiCapture: isAiCapture,
-          transcript: transcript,
+          // Hide local / progressive drafts while AI capture is on.
+          transcript: isAiCapture ? '' : transcript,
           selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureTranscribingBackground(
@@ -93,17 +97,29 @@ final class VoiceCaptureViewModel {
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.paused,
           isAiCapture: isAiCapture,
-          transcript: transcript,
+          transcript: isAiCapture ? '' : transcript,
           selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
         status: VoiceCaptureSessionStatus.processing,
         transcript: transcript,
       ),
-      VoiceCaptureEnhancing(:final transcript) => VoiceCaptureViewModel(
-        status: VoiceCaptureSessionStatus.enhancing,
-        transcript: transcript,
-      ),
+      VoiceCaptureEnhancing(
+        :final transcript,
+        :final phase,
+        :final recordingDuration,
+        :final userScratchNotes,
+        :final isAiCapture,
+      ) =>
+        VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.enhancing,
+          // Hide local Whisper drafts during AI wait; skeleton holds user notes.
+          transcript: isAiCapture ? '' : transcript,
+          isAiCapture: isAiCapture,
+          waitPhase: phase,
+          recordingDuration: recordingDuration,
+          userScratchNotes: userScratchNotes,
+        ),
       VoiceCaptureTranscriptCompare(
         :final localTranscript,
         :final aiTranscript,
@@ -140,6 +156,9 @@ final class VoiceCaptureViewModel {
   final String? errorMessage;
   final VoiceCaptureErrorCode? errorCode;
   final NoteTemplate? selectedTemplate;
+  final TranscriptionWaitPhase waitPhase;
+  final Duration recordingDuration;
+  final String userScratchNotes;
   final String? aiTranscribingSessionId;
   final DateTime? aiTranscribingStartedAt;
   final Duration? aiTranscribingEstimatedDuration;
@@ -193,6 +212,8 @@ final class VoiceCaptureViewModel {
 
   bool get isEnhancing => status == VoiceCaptureSessionStatus.enhancing;
 
+  bool get isAiProgressiveWait => isEnhancing && isAiCapture;
+
   bool get isComparingTranscripts =>
       status == VoiceCaptureSessionStatus.comparingTranscripts;
 
@@ -205,6 +226,7 @@ final class VoiceCaptureViewModel {
   bool get hasUnsavedWork =>
       isConsultationOpen ||
       isComparingTranscripts ||
+      isAiProgressiveWait ||
       isAiTranscribing ||
       (hasTranscript &&
           status != VoiceCaptureSessionStatus.initializing &&

@@ -1065,6 +1065,30 @@ class AppLocalizationsFr extends AppLocalizations {
       'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.';
 
   @override
+  String get recordPhaseUpload => 'Upload';
+
+  @override
+  String get recordPhaseTranscription => 'Transcription';
+
+  @override
+  String get recordPhasePolish => 'Mise en forme';
+
+  @override
+  String recordPhaseEtaSeconds(int seconds) {
+    return 'Environ $seconds s restantes';
+  }
+
+  @override
+  String get recordPhaseEtaSoon => 'Presque terminé…';
+
+  @override
+  String get recordSkeletonHint =>
+      'Vous pouvez déjà saisir des notes ; la transcription IA arrivera ici sans écraser ce brouillon.';
+
+  @override
+  String get recordSkeletonPlaceholder => 'Notes libres (S/O/A/P)…';
+
+  @override
   String get transcriptAiPendingHint =>
       'Mode IA : la transcription sera disponible après avoir terminé la consultation.';
 

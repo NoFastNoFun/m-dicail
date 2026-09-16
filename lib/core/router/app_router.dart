@@ -361,4 +361,3 @@ extension AppRouterNavigation on BuildContext {
   Future<T?> pushGlobalSearch<T extends Object?>() =>
       push<T>(AppRoutes.globalSearch);
 }
-

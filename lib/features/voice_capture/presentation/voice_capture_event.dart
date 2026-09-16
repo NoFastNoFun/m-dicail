@@ -37,15 +37,15 @@ final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
   const VoiceCaptureFinishConsultation({
     this.language = 'fr',
     this.isTutorial = false,
-    this.audioDuration = Duration.zero,
+    this.recordingDuration = Duration.zero,
   });
 
   final String language;
   final bool isTutorial;
-  final Duration audioDuration;
+  final Duration recordingDuration;
 
   @override
-  List<Object?> get props => [language, isTutorial, audioDuration];
+  List<Object?> get props => [language, isTutorial, recordingDuration];
 }
 
 final class VoiceCaptureAiTranscriptionCompleted extends VoiceCaptureEvent {
@@ -125,4 +125,19 @@ final class VoiceCaptureAppBackgrounded extends VoiceCaptureEvent {
 
 final class VoiceCaptureAppForegrounded extends VoiceCaptureEvent {
   const VoiceCaptureAppForegrounded();
+}
+
+/// Periodic tick while AI capture is recording: rotate + upload a chunk.
+final class VoiceCaptureAiChunkTick extends VoiceCaptureEvent {
+  const VoiceCaptureAiChunkTick();
+}
+
+/// User typed notes into the wait-time skeleton editor.
+final class VoiceCaptureScratchNotesUpdated extends VoiceCaptureEvent {
+  const VoiceCaptureScratchNotesUpdated(this.notes);
+
+  final String notes;
+
+  @override
+  List<Object?> get props => [notes];
 }

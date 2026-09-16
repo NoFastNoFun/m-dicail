@@ -35,7 +35,9 @@ import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
 import 'package:medicail/widget/record/app_ai_transcribing_card.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
+import 'package:medicail/widget/record/app_record_phased_wait.dart';
 import 'package:medicail/widget/record/app_record_processing_overlay.dart';
+import 'package:medicail/widget/record/app_record_skeleton_editor.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
 import 'package:medicail/widget/record/app_transcript_compare_panel.dart';
 import 'package:medicail/widget/templates/pathology_attach_prompt_sheet.dart';
@@ -465,7 +467,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       VoiceCaptureFinishConsultation(
         language: language,
         isTutorial: isTutorial,
-        audioDuration: _elapsed,
+        recordingDuration: _elapsed,
       ),
     );
   }
@@ -625,7 +627,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         VoiceCaptureFinishConsultation(
           language: language,
           isTutorial: isTutorial,
-          audioDuration: _elapsed,
+          recordingDuration: _elapsed,
         ),
       );
       return;
@@ -841,12 +843,38 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                   tutorialBloc.completeStep(stepId);
                                 }
                               },
-                              child: AppRecordTranscriptView(
-                                transcript: viewModel.transcript,
-                                emptyHint: viewModel.isAiCapture
-                                    ? l10n.transcriptAiPendingHint
-                                    : l10n.transcriptEmptyHint,
-                              ),
+                              child: viewModel.isAiProgressiveWait
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        AppRecordPhasedWait(
+                                          phase: viewModel.waitPhase,
+                                          recordingDuration:
+                                              viewModel.recordingDuration,
+                                        ),
+                                        const SizedBox(height: AppSpacing.md),
+                                        Expanded(
+                                          child: AppRecordSkeletonEditor(
+                                            initialNotes:
+                                                viewModel.userScratchNotes,
+                                            onNotesChanged: (notes) {
+                                              context.read<VoiceCaptureBloc>().add(
+                                                VoiceCaptureScratchNotesUpdated(
+                                                  notes,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : AppRecordTranscriptView(
+                                      transcript: viewModel.transcript,
+                                      emptyHint: viewModel.isAiCapture
+                                          ? l10n.transcriptAiPendingHint
+                                          : l10n.transcriptEmptyHint,
+                                    ),
                             ),
                           ),
                           if (viewModel.isAiTranscribing) ...[
@@ -857,8 +885,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                 viewModel.aiTranscribingStartedAt,
                                 viewModel.aiTranscribingEstimatedDuration,
                               ),
-                              onContinueInBackground: () =>
-                                  _leaveRecordPage(),
+                              onContinueInBackground: () => _leaveRecordPage(),
                             ),
                           ],
                           if (viewModel.canClear) ...[
@@ -916,7 +943,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                   },
                 ),
               )
-            else if (viewModel.isProcessing)
+            else if (viewModel.isProcessing && !viewModel.isAiProgressiveWait)
               Positioned.fill(
                 child: AppRecordProcessingOverlay(
                   isTranscribingBackground: viewModel.isTranscribingBackground,

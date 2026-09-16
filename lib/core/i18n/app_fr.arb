@@ -370,6 +370,18 @@
   "settingsTemplates": "Pathologies",
   "settingsAiEnhance": "Amélioration IA de la transcription",
   "settingsAiEnhanceSubtitle": "Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.",
+  "recordPhaseUpload": "Upload",
+  "recordPhaseTranscription": "Transcription",
+  "recordPhasePolish": "Mise en forme",
+  "recordPhaseEtaSeconds": "Environ {seconds} s restantes",
+  "@recordPhaseEtaSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "recordPhaseEtaSoon": "Presque terminé…",
+  "recordSkeletonHint": "Vous pouvez déjà saisir des notes ; la transcription IA arrivera ici sans écraser ce brouillon.",
+  "recordSkeletonPlaceholder": "Notes libres (S/O/A/P)…",
   "transcriptAiPendingHint": "Mode IA : la transcription sera disponible après avoir terminé la consultation.",
   "settingsAiEnhanceWarning": "L'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.",
   "settingsRestartOnboarding": "Recommencer l'introduction",

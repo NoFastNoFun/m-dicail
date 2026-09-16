@@ -15,6 +15,10 @@ abstract class BackgroundAudioRecorder {
 
   Future<String?> stop();
 
+  /// Finalizes the current WAV and immediately starts a new segment.
+  /// Returns the path of the completed chunk, or null if empty.
+  Future<String?> rotateChunk({required String sessionId});
+
   Future<void> cancel();
 }
 
@@ -44,23 +48,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
       throw const AudioException('Permission microphone refusee');
     }
 
-    final directory = await getTemporaryDirectory();
-    final path =
-        '${directory.path}/medicail_session_${sessionId}_${DateTime.now().microsecondsSinceEpoch}.wav';
-
-    await _recorder.start(
-      const RecordConfig(
-        encoder: AudioEncoder.wav,
-        sampleRate: 16000,
-        numChannels: 1,
-        bitRate: 256000,
-        androidConfig: AndroidRecordConfig(
-          audioSource: AndroidAudioSource.voiceRecognition,
-        ),
-      ),
-      path: path,
-    );
-    _activePath = path;
+    await _beginNewFile(sessionId);
   }
 
   @override
@@ -91,6 +79,16 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   }
 
   @override
+  Future<String?> rotateChunk({required String sessionId}) async {
+    if (_activePath == null || _isPaused) {
+      return null;
+    }
+    final chunkPath = await stop();
+    await start(sessionId: sessionId);
+    return chunkPath;
+  }
+
+  @override
   Future<void> cancel() async {
     final path = _activePath;
     _activePath = null;
@@ -101,6 +99,27 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
     if (path != null) {
       await _deleteIfExists(path);
     }
+  }
+
+  Future<void> _beginNewFile(String sessionId) async {
+    final directory = await getTemporaryDirectory();
+    final path =
+        '${directory.path}/medicail_session_${sessionId}_${DateTime.now().microsecondsSinceEpoch}.wav';
+
+    await _recorder.start(
+      const RecordConfig(
+        encoder: AudioEncoder.wav,
+        sampleRate: 16000,
+        numChannels: 1,
+        bitRate: 256000,
+        androidConfig: AndroidRecordConfig(
+          audioSource: AndroidAudioSource.voiceRecognition,
+        ),
+      ),
+      path: path,
+    );
+    _activePath = path;
+    _isPaused = false;
   }
 
   Future<void> _deleteIfExists(String path) async {
