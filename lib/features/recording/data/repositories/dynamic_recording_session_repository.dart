@@ -80,7 +80,7 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
           );
     final repo = await _getRepository();
     final saved = await repo.save(toSave);
-    // Always persist tag locally (API may not support the field yet).
+    // Keep local tag store as cache/fallback even when API persists tag.
     await _tagStore.setTag(saved.id, normalizedTag);
     // Also keep local guest/offline copy tagged when saving via API id change.
     if (saved.id != toSave.id && normalizedTag != null) {
