@@ -103,10 +103,8 @@ class ApiRecordingSessionRepository implements RecordingSessionRepository {
       payload['pathologies'] =
           model.pathologies.map((p) => p.toJson()).toList();
     }
-    // TODO(api-sync): send optional tag once BE session DTO supports it.
-    if (model.tag != null && model.tag!.trim().isNotEmpty) {
-      payload['tag'] = model.tag;
-    }
+    // Tags are local-only until BE DTO whitelists `tag` (forbidNonWhitelisted).
+    // Never send `tag` here — DynamicRecordingSessionRepository persists it locally.
 
     final response = await _apiClient.put<Map<String, dynamic>>(
       '/recording-sessions/${session.id}',
