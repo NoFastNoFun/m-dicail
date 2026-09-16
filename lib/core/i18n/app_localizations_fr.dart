@@ -162,6 +162,48 @@ class AppLocalizationsFr extends AppLocalizations {
       'Transcription du passage en veille…';
 
   @override
+  String get recordAiTranscribingTitle => 'Transcription IA en cours';
+
+  @override
+  String recordAiTranscribingEtaSeconds(int seconds) {
+    return 'Environ $seconds s';
+  }
+
+  @override
+  String recordAiTranscribingEtaMinutes(int minutes) {
+    return 'Environ $minutes min';
+  }
+
+  @override
+  String get recordAiTranscribingEtaSoon => 'Quelques secondes…';
+
+  @override
+  String get recordAiTranscribingContinueBackground =>
+      'Continuer en arrière-plan';
+
+  @override
+  String recordAiTranscribingBannerRunning(String eta) {
+    return 'Transcription en cours ($eta)';
+  }
+
+  @override
+  String get recordAiTranscribingBannerReady =>
+      'Transcription prête — touchez pour comparer';
+
+  @override
+  String get recordAiTranscribingBusyTitle => 'Transcription en cours';
+
+  @override
+  String get recordAiTranscribingBusyMessage =>
+      'Une transcription IA est déjà en cours. Attendez qu\'elle se termine avant de démarrer un nouvel enregistrement.';
+
+  @override
+  String get recordAiTranscribingBusyOpen => 'Ouvrir la consultation';
+
+  @override
+  String get recordAiTranscribingBusyDismiss => 'OK';
+
+  @override
   String get historyEmpty => 'Aucune note pour le moment';
 
   @override
@@ -1021,6 +1063,30 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsAiEnhanceSubtitle =>
       'Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.';
+
+  @override
+  String get recordPhaseUpload => 'Upload';
+
+  @override
+  String get recordPhaseTranscription => 'Transcription';
+
+  @override
+  String get recordPhasePolish => 'Mise en forme';
+
+  @override
+  String recordPhaseEtaSeconds(int seconds) {
+    return 'Environ $seconds s restantes';
+  }
+
+  @override
+  String get recordPhaseEtaSoon => 'Presque terminé…';
+
+  @override
+  String get recordSkeletonHint =>
+      'Vous pouvez déjà saisir des notes ; la transcription IA arrivera ici sans écraser ce brouillon.';
+
+  @override
+  String get recordSkeletonPlaceholder => 'Notes libres (S/O/A/P)…';
 
   @override
   String get transcriptAiPendingHint =>
@@ -2141,4 +2207,29 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sessionTagEditTooltip => 'Modifier le tag';
+
+  @override
+  String get radialActionGlobalSearch => 'Recherche globale';
+
+  @override
+  String get globalSearchTitle => 'Recherche globale';
+
+  @override
+  String get globalSearchPlaceholder => 'Patients, séances, notes…';
+
+  @override
+  String get globalSearchPatientsSection => 'Patients';
+
+  @override
+  String get globalSearchSessionsSection => 'Séances';
+
+  @override
+  String get globalSearchEmpty => 'Aucun résultat';
+
+  @override
+  String get globalSearchHint =>
+      'Recherchez un patient, une séance ou un extrait de note';
+
+  @override
+  String get globalSearchSessionUntitled => 'Séance';
 }

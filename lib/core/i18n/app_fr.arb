@@ -49,6 +49,38 @@
   "recordNotificationBackgroundTitle": "Enregistrement en arrière-plan",
   "recordNotificationBackgroundBody": "L'écoute continue pendant que l'écran est éteint",
   "recordStatusTranscribingBackground": "Transcription du passage en veille…",
+  "recordAiTranscribingTitle": "Transcription IA en cours",
+  "recordAiTranscribingEtaSeconds": "Environ {seconds} s",
+  "@recordAiTranscribingEtaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "recordAiTranscribingEtaMinutes": "Environ {minutes} min",
+  "@recordAiTranscribingEtaMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "recordAiTranscribingEtaSoon": "Quelques secondes…",
+  "recordAiTranscribingContinueBackground": "Continuer en arrière-plan",
+  "recordAiTranscribingBannerRunning": "Transcription en cours ({eta})",
+  "@recordAiTranscribingBannerRunning": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "recordAiTranscribingBannerReady": "Transcription prête — touchez pour comparer",
+  "recordAiTranscribingBusyTitle": "Transcription en cours",
+  "recordAiTranscribingBusyMessage": "Une transcription IA est déjà en cours. Attendez qu'elle se termine avant de démarrer un nouvel enregistrement.",
+  "recordAiTranscribingBusyOpen": "Ouvrir la consultation",
+  "recordAiTranscribingBusyDismiss": "OK",
   "historyEmpty": "Aucune note pour le moment",
   "appointmentsTodayTitle": "Rendez-vous du jour",
   "appointmentsUpcomingTitle": "Prochains rendez-vous",
@@ -338,6 +370,18 @@
   "settingsTemplates": "Pathologies",
   "settingsAiEnhance": "Amélioration IA de la transcription",
   "settingsAiEnhanceSubtitle": "Enregistre l’audio et l’envoie au cloud à la fin de la consultation. La transcription s’affiche ensuite.",
+  "recordPhaseUpload": "Upload",
+  "recordPhaseTranscription": "Transcription",
+  "recordPhasePolish": "Mise en forme",
+  "recordPhaseEtaSeconds": "Environ {seconds} s restantes",
+  "@recordPhaseEtaSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "recordPhaseEtaSoon": "Presque terminé…",
+  "recordSkeletonHint": "Vous pouvez déjà saisir des notes ; la transcription IA arrivera ici sans écraser ce brouillon.",
+  "recordSkeletonPlaceholder": "Notes libres (S/O/A/P)…",
   "transcriptAiPendingHint": "Mode IA : la transcription sera disponible après avoir terminé la consultation.",
   "settingsAiEnhanceWarning": "L'IA peut halluciner et reste peu fiable. Relisez toujours la transcription avant de valider.",
   "settingsRestartOnboarding": "Recommencer l'introduction",
@@ -477,7 +521,6 @@
   "punctuationWordPeriod": "point",
   "punctuationWordComma": "virgule",
   "punctuationTransitions": "le patient,la patiente,à l'examen,a l'examen,au niveau,pour le traitement,pour la suite,mon diagnostic,ensuite,enfin",
-
   "medicalWatchTitle": "News",
   "medicalWatchNavTitle": "News",
   "medicalWatchSearchPlaceholder": "Rechercher sur PubMed…",
@@ -523,7 +566,6 @@
   "homeEmptyTitle": "Bienvenue sur Medicail",
   "homeEmptySubtitle": "Planifiez votre première consultation ou démarrez un enregistrement rapide",
   "homeConsultationsToday": "{count, plural, =0{Aucune consultation aujourd'hui} =1{1 consultation prévue} other{{count} consultations prévues}}",
-
   "attachPatientDialogTitle": "Associer un patient",
   "attachPatientSearchLabel": "Rechercher un patient",
   "attachPatientSearchHint": "Nom, prénom ou MRN",
@@ -531,14 +573,17 @@
   "attachPatientNewButton": "Nouveau patient",
   "attachPatientSelectRequired": "Sélectionnez un patient pour continuer",
   "attachPatientNoResults": "Aucun patient trouvé",
-
   "anamneseCarouselTitle": "Nouveau patient",
   "anamneseCarouselEditTitle": "Anamnèse",
   "anamnesePageIndicator": "{current} / {total}",
   "@anamnesePageIndicator": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "anamneseBack": "Retour",
@@ -723,27 +768,50 @@
   "anamneseSummaryLabelValue": "{label} : {value}",
   "@anamneseSummaryLabelValue": {
     "description": "Read-only history field with its label and value.",
-    "placeholders": {"label": {"type": "String"}, "value": {"type": "String"}}
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "anamneseSummaryMonths": "{value} mois",
   "@anamneseSummaryMonths": {
     "description": "Development milestone age, stored as free text.",
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "anamneseSummaryYears": "{value} ans",
   "@anamneseSummaryYears": {
     "description": "Habit duration, stored as free text.",
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "anamneseSummaryGlassesPerWeek": "{value} verres/semaine",
   "@anamneseSummaryGlassesPerWeek": {
     "description": "Alcohol quantity with the same unit as the editor.",
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "anamneseSummaryCigarettesPerDay": "{value} cigarettes/jour",
   "@anamneseSummaryCigarettesPerDay": {
     "description": "Tobacco quantity with the same unit as the editor.",
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "sessionTagLabel": "Tag de séance",
   "sessionTagPickerTitle": "Taguer la séance",
@@ -756,5 +824,13 @@
   "sessionTagFilterLabel": "Filtrer par tag",
   "sessionTagSaveSuccess": "Tag enregistré",
   "sessionTagNone": "Sans tag",
-  "sessionTagEditTooltip": "Modifier le tag"
+  "sessionTagEditTooltip": "Modifier le tag",
+  "radialActionGlobalSearch": "Recherche globale",
+  "globalSearchTitle": "Recherche globale",
+  "globalSearchPlaceholder": "Patients, séances, notes…",
+  "globalSearchPatientsSection": "Patients",
+  "globalSearchSessionsSection": "Séances",
+  "globalSearchEmpty": "Aucun résultat",
+  "globalSearchHint": "Recherchez un patient, une séance ou un extrait de note",
+  "globalSearchSessionUntitled": "Séance"
 }

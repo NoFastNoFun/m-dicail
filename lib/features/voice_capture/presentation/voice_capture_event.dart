@@ -34,13 +34,49 @@ final class VoiceCaptureStopRecording extends VoiceCaptureEvent {
 }
 
 final class VoiceCaptureFinishConsultation extends VoiceCaptureEvent {
-  const VoiceCaptureFinishConsultation({this.language = 'fr', this.isTutorial = false});
+  const VoiceCaptureFinishConsultation({
+    this.language = 'fr',
+    this.isTutorial = false,
+    this.recordingDuration = Duration.zero,
+  });
 
   final String language;
   final bool isTutorial;
+  final Duration recordingDuration;
 
   @override
-  List<Object?> get props => [language, isTutorial];
+  List<Object?> get props => [language, isTutorial, recordingDuration];
+}
+
+final class VoiceCaptureAiTranscriptionCompleted extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionCompleted({
+    required this.localTranscript,
+    required this.aiTranscript,
+  });
+
+  final String localTranscript;
+  final String aiTranscript;
+
+  @override
+  List<Object?> get props => [localTranscript, aiTranscript];
+}
+
+final class VoiceCaptureAiTranscriptionLocalOnly extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionLocalOnly({required this.transcript});
+
+  final String transcript;
+
+  @override
+  List<Object?> get props => [transcript];
+}
+
+final class VoiceCaptureAiTranscriptionFailed extends VoiceCaptureEvent {
+  const VoiceCaptureAiTranscriptionFailed({required this.message});
+
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
 }
 
 final class VoiceCaptureTranscriptChoiceSelected extends VoiceCaptureEvent {
@@ -89,4 +125,19 @@ final class VoiceCaptureAppBackgrounded extends VoiceCaptureEvent {
 
 final class VoiceCaptureAppForegrounded extends VoiceCaptureEvent {
   const VoiceCaptureAppForegrounded();
+}
+
+/// Periodic tick while AI capture is recording: rotate + upload a chunk.
+final class VoiceCaptureAiChunkTick extends VoiceCaptureEvent {
+  const VoiceCaptureAiChunkTick();
+}
+
+/// User typed notes into the wait-time skeleton editor.
+final class VoiceCaptureScratchNotesUpdated extends VoiceCaptureEvent {
+  const VoiceCaptureScratchNotesUpdated(this.notes);
+
+  final String notes;
+
+  @override
+  List<Object?> get props => [notes];
 }

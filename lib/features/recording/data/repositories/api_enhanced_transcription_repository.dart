@@ -24,10 +24,12 @@ class ApiEnhancedTranscriptionRepository
     required String filePath,
     required String sessionId,
     String language = 'fr',
+    int? chunkIndex,
+    bool? isFinal,
   }) async {
     final upload = await _compression.prepareUpload(filePath);
     try {
-      final formData = FormData.fromMap({
+      final fields = <String, dynamic>{
         'file': await MultipartFile.fromFile(
           upload.path,
           filename: upload.path.replaceAll('\\', '/').split('/').last,
@@ -35,12 +37,21 @@ class ApiEnhancedTranscriptionRepository
         ),
         'language': language,
         'session_id': sessionId,
-      });
+      };
+      if (chunkIndex != null) {
+        fields['chunk_index'] = '$chunkIndex';
+      }
+      if (isFinal != null) {
+        fields['is_final'] = isFinal ? 'true' : 'false';
+      }
+      final formData = FormData.fromMap(fields);
       final base = _config.aiBaseUrl.replaceAll(RegExp(r'/+$'), '');
       if (kDebugMode) {
         debugPrint(
           '[AiUpload] type=${upload.mimeType}; '
-          'bytes=${formData.files.single.value.length}',
+          'bytes=${formData.files.single.value.length}'
+          '${chunkIndex != null ? '; chunk=$chunkIndex' : ''}'
+          '${isFinal == true ? '; final' : ''}',
         );
       }
       final response = await _dio.post<Map<String, dynamic>>(
@@ -59,7 +70,9 @@ class ApiEnhancedTranscriptionRepository
         throw const ServerException('Reponse de transcription invalide');
       }
       if (kDebugMode) {
-        debugPrint('[AiUpload] HTTP ${response.statusCode}; transcription received');
+        debugPrint(
+          '[AiUpload] HTTP ${response.statusCode}; transcription received',
+        );
       }
       return text.trim();
     } on DioException catch (error) {

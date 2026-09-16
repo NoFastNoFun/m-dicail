@@ -13,6 +13,7 @@ import 'package:medicail/core/i18n/app_localizations.dart';
 import 'package:medicail/core/layout/app_breakpoints.dart';
 import 'package:medicail/core/layout/app_content_constraint.dart';
 import 'package:medicail/core/router/app_router.dart';
+import 'package:medicail/core/router/app_routes.dart';
 import 'package:medicail/features/patient/domain/repositories/patient_repository.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
 import 'package:medicail/features/pathology/domain/entities/pathology.dart';
@@ -32,8 +33,11 @@ import 'package:medicail/widget/assign_patient_sheet.dart';
 import 'package:medicail/widget/buttons/app_button.dart';
 import 'package:medicail/widget/feedback/app_dialog.dart';
 import 'package:medicail/widget/feedback/app_toast.dart';
+import 'package:medicail/widget/record/app_ai_transcribing_card.dart';
 import 'package:medicail/widget/record/app_record_header_card.dart';
+import 'package:medicail/widget/record/app_record_phased_wait.dart';
 import 'package:medicail/widget/record/app_record_processing_overlay.dart';
+import 'package:medicail/widget/record/app_record_skeleton_editor.dart';
 import 'package:medicail/widget/record/app_record_transcript_view.dart';
 import 'package:medicail/widget/record/app_transcript_compare_panel.dart';
 import 'package:medicail/widget/templates/pathology_attach_prompt_sheet.dart';
@@ -90,6 +94,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   bool _returnHomeAfterTutorialConsultation = false;
   Timer? _transcriptTutorialTimer;
   Timer? _debounceTimer;
+  Timer? _aiEtaTimer;
   String _lastTranscript = '';
 
   @override
@@ -102,6 +107,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
+      AppToast.dismiss(context);
       await _skipDuplicateQuickRecordTutorialIfNeeded();
       if (!mounted) return;
       _handleTutorialState(context.read<TutorialBloc>().state);
@@ -114,6 +120,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     _timer?.cancel();
     _transcriptTutorialTimer?.cancel();
     _debounceTimer?.cancel();
+    _aiEtaTimer?.cancel();
     super.dispose();
   }
 
@@ -166,6 +173,17 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       _recordingStartedAt = null;
     }
     _wasListening = isListening;
+  }
+
+  void _syncAiEtaTimer(bool isAiTranscribing) {
+    if (isAiTranscribing && _aiEtaTimer == null) {
+      _aiEtaTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() {});
+      });
+    } else if (!isAiTranscribing && _aiEtaTimer != null) {
+      _aiEtaTimer?.cancel();
+      _aiEtaTimer = null;
+    }
   }
 
   String _formatElapsed(Duration duration) {
@@ -449,6 +467,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       VoiceCaptureFinishConsultation(
         language: language,
         isTutorial: isTutorial,
+        recordingDuration: _elapsed,
       ),
     );
   }
@@ -500,6 +519,10 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
     final viewModel = VoiceCaptureViewModel.fromState(
       context.read<VoiceCaptureBloc>().state,
     );
+    if (viewModel.canLeaveWhileAiTranscribing) {
+      _leaveRecordPage();
+      return;
+    }
     if (!viewModel.hasUnsavedWork) {
       _leaveRecordPage();
       return;
@@ -509,6 +532,37 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
   }
 
   void _leaveRecordPage() {
+    final viewModel = VoiceCaptureViewModel.fromState(
+      context.read<VoiceCaptureBloc>().state,
+    );
+    if (viewModel.isAiTranscribing) {
+      final l10n = AppLocalizations.of(context);
+      final eta = _formatAiTranscriptionEta(
+        l10n,
+        viewModel.aiTranscribingStartedAt,
+        viewModel.aiTranscribingEstimatedDuration,
+      );
+      final leavePatientId = widget.patientId;
+      AppToast.show(
+        context,
+        message: l10n.recordAiTranscribingBannerRunning(eta),
+        type: AppToastType.info,
+        sticky: true,
+        onTap: () {
+          if (leavePatientId != null && leavePatientId.isNotEmpty) {
+            context.push(
+              Uri(
+                path: AppRoutes.record,
+                queryParameters: {'patientId': leavePatientId},
+              ).toString(),
+            );
+          } else {
+            context.push(AppRoutes.record);
+          }
+        },
+      );
+    }
+
     final patientId = widget.patientId;
     if (patientId != null && patientId.isNotEmpty) {
       context.pushReplacementNamed(
@@ -573,6 +627,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         VoiceCaptureFinishConsultation(
           language: language,
           isTutorial: isTutorial,
+          recordingDuration: _elapsed,
         ),
       );
       return;
@@ -596,6 +651,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       ListeningPaused(:final selectedTemplate) => selectedTemplate,
       VoiceCaptureTranscribingBackground(:final selectedTemplate) =>
         selectedTemplate,
+      VoiceCaptureAiTranscribing(:final selectedTemplate) => selectedTemplate,
       VoiceCaptureFailure(:final selectedTemplate) => selectedTemplate,
       _ => null,
     };
@@ -658,6 +714,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         _syncRecordingTimer(
           viewModel.isListening || viewModel.isTranscribingBackground,
         );
+        _syncAiEtaTimer(viewModel.isAiTranscribing);
 
         final transcript = viewModel.transcript.trim();
         if (transcript.isNotEmpty) {
@@ -683,7 +740,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
               canPop:
                   !viewModel.hasUnsavedWork &&
                   !viewModel.isProcessing &&
-                  !viewModel.isComparingTranscripts,
+                  !viewModel.isComparingTranscripts &&
+                  !viewModel.isAiTranscribing,
               onPopInvokedWithResult: (didPop, _) {
                 if (didPop) {
                   return;
@@ -733,7 +791,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                       : null,
                                   onPathologyTap:
                                       !viewModel.isProcessing &&
-                                          !viewModel.isComparingTranscripts
+                                          !viewModel.isComparingTranscripts &&
+                                          !viewModel.isAiTranscribing
                                       ? () => _pickTemplate(context)
                                       : null,
                                   elapsedLabel: _formatElapsed(_elapsed),
@@ -784,14 +843,51 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                                   tutorialBloc.completeStep(stepId);
                                 }
                               },
-                              child: AppRecordTranscriptView(
-                                transcript: viewModel.transcript,
-                                emptyHint: viewModel.isAiCapture
-                                    ? l10n.transcriptAiPendingHint
-                                    : l10n.transcriptEmptyHint,
-                              ),
+                              child: viewModel.isAiProgressiveWait
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        AppRecordPhasedWait(
+                                          phase: viewModel.waitPhase,
+                                          recordingDuration:
+                                              viewModel.recordingDuration,
+                                        ),
+                                        const SizedBox(height: AppSpacing.md),
+                                        Expanded(
+                                          child: AppRecordSkeletonEditor(
+                                            initialNotes:
+                                                viewModel.userScratchNotes,
+                                            onNotesChanged: (notes) {
+                                              context.read<VoiceCaptureBloc>().add(
+                                                VoiceCaptureScratchNotesUpdated(
+                                                  notes,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : AppRecordTranscriptView(
+                                      transcript: viewModel.transcript,
+                                      emptyHint: viewModel.isAiCapture
+                                          ? l10n.transcriptAiPendingHint
+                                          : l10n.transcriptEmptyHint,
+                                    ),
                             ),
                           ),
+                          if (viewModel.isAiTranscribing) ...[
+                            const SizedBox(height: AppSpacing.lg),
+                            AppAiTranscribingCard(
+                              etaLabel: _formatAiTranscriptionEta(
+                                l10n,
+                                viewModel.aiTranscribingStartedAt,
+                                viewModel.aiTranscribingEstimatedDuration,
+                              ),
+                              onContinueInBackground: () => _leaveRecordPage(),
+                            ),
+                          ],
                           if (viewModel.canClear) ...[
                             const SizedBox(height: AppSpacing.lg),
                             AppButton(
@@ -847,7 +943,7 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
                   },
                 ),
               )
-            else if (viewModel.isProcessing)
+            else if (viewModel.isProcessing && !viewModel.isAiProgressiveWait)
               Positioned.fill(
                 child: AppRecordProcessingOverlay(
                   isTranscribingBackground: viewModel.isTranscribingBackground,
@@ -858,5 +954,26 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
         );
       },
     );
+  }
+
+  String _formatAiTranscriptionEta(
+    AppLocalizations l10n,
+    DateTime? startedAt,
+    Duration? estimated,
+  ) {
+    if (startedAt == null || estimated == null) {
+      return l10n.recordAiTranscribingEtaSoon;
+    }
+    final remaining = estimated - DateTime.now().difference(startedAt);
+    if (remaining <= Duration.zero) {
+      return l10n.recordAiTranscribingEtaSoon;
+    }
+    if (remaining.inMinutes >= 1) {
+      return l10n.recordAiTranscribingEtaMinutes(
+        remaining.inMinutes + (remaining.inSeconds % 60 > 0 ? 1 : 0),
+      );
+    }
+    final seconds = remaining.inSeconds.clamp(1, 59);
+    return l10n.recordAiTranscribingEtaSeconds(seconds);
   }
 }

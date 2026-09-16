@@ -13,6 +13,7 @@ enum VoiceCaptureSessionStatus {
   enhancing,
   comparingTranscripts,
   transcribingBackground,
+  aiTranscribing,
   failure,
 }
 
@@ -26,6 +27,12 @@ final class VoiceCaptureViewModel {
     this.errorMessage,
     this.errorCode,
     this.selectedTemplate,
+    this.waitPhase = TranscriptionWaitPhase.upload,
+    this.recordingDuration = Duration.zero,
+    this.userScratchNotes = '',
+    this.aiTranscribingSessionId,
+    this.aiTranscribingStartedAt,
+    this.aiTranscribingEstimatedDuration,
   });
 
   factory VoiceCaptureViewModel.fromState(VoiceCaptureState state) {
@@ -54,7 +61,8 @@ final class VoiceCaptureViewModel {
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.listening,
           isAiCapture: isAiCapture,
-          transcript: transcript,
+          // Hide local / progressive drafts while AI capture is on.
+          transcript: isAiCapture ? '' : transcript,
           selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureTranscribingBackground(
@@ -66,6 +74,21 @@ final class VoiceCaptureViewModel {
           transcript: transcript,
           selectedTemplate: selectedTemplate,
         ),
+      VoiceCaptureAiTranscribing(
+        :final transcript,
+        :final sessionId,
+        :final startedAt,
+        :final estimatedDuration,
+        :final selectedTemplate,
+      ) =>
+        VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.aiTranscribing,
+          transcript: transcript,
+          selectedTemplate: selectedTemplate,
+          aiTranscribingSessionId: sessionId,
+          aiTranscribingStartedAt: startedAt,
+          aiTranscribingEstimatedDuration: estimatedDuration,
+        ),
       ListeningPaused(
         :final transcript,
         :final selectedTemplate,
@@ -74,17 +97,29 @@ final class VoiceCaptureViewModel {
         VoiceCaptureViewModel(
           status: VoiceCaptureSessionStatus.paused,
           isAiCapture: isAiCapture,
-          transcript: transcript,
+          transcript: isAiCapture ? '' : transcript,
           selectedTemplate: selectedTemplate,
         ),
       VoiceCaptureProcessing(:final transcript) => VoiceCaptureViewModel(
         status: VoiceCaptureSessionStatus.processing,
         transcript: transcript,
       ),
-      VoiceCaptureEnhancing(:final transcript) => VoiceCaptureViewModel(
-        status: VoiceCaptureSessionStatus.enhancing,
-        transcript: transcript,
-      ),
+      VoiceCaptureEnhancing(
+        :final transcript,
+        :final phase,
+        :final recordingDuration,
+        :final userScratchNotes,
+        :final isAiCapture,
+      ) =>
+        VoiceCaptureViewModel(
+          status: VoiceCaptureSessionStatus.enhancing,
+          // Hide local Whisper drafts during AI wait; skeleton holds user notes.
+          transcript: isAiCapture ? '' : transcript,
+          isAiCapture: isAiCapture,
+          waitPhase: phase,
+          recordingDuration: recordingDuration,
+          userScratchNotes: userScratchNotes,
+        ),
       VoiceCaptureTranscriptCompare(
         :final localTranscript,
         :final aiTranscript,
@@ -121,6 +156,12 @@ final class VoiceCaptureViewModel {
   final String? errorMessage;
   final VoiceCaptureErrorCode? errorCode;
   final NoteTemplate? selectedTemplate;
+  final TranscriptionWaitPhase waitPhase;
+  final Duration recordingDuration;
+  final String userScratchNotes;
+  final String? aiTranscribingSessionId;
+  final DateTime? aiTranscribingStartedAt;
+  final Duration? aiTranscribingEstimatedDuration;
 
   String? localizedErrorMessage(AppLocalizations l10n) => switch (errorCode) {
     VoiceCaptureErrorCode.invalidSoapNote => l10n.recordErrorInvalidSoapNote,
@@ -142,18 +183,27 @@ final class VoiceCaptureViewModel {
       (status == VoiceCaptureSessionStatus.ready ||
           status == VoiceCaptureSessionStatus.paused) &&
       !isProcessing &&
-      !isComparingTranscripts;
+      !isComparingTranscripts &&
+      !isAiTranscribing;
 
-  bool get canStop => isListening && !isProcessing && !isComparingTranscripts;
+  bool get canStop =>
+      isListening &&
+      !isProcessing &&
+      !isComparingTranscripts &&
+      !isAiTranscribing;
 
   bool get canFinishConsultation =>
-      isConsultationOpen && !isProcessing && !isComparingTranscripts;
+      isConsultationOpen &&
+      !isProcessing &&
+      !isComparingTranscripts &&
+      !isAiTranscribing;
 
   bool get canClear =>
       !isConsultationOpen &&
       hasTranscript &&
       !isProcessing &&
-      !isComparingTranscripts;
+      !isComparingTranscripts &&
+      !isAiTranscribing;
 
   bool get isProcessing =>
       status == VoiceCaptureSessionStatus.processing ||
@@ -162,16 +212,26 @@ final class VoiceCaptureViewModel {
 
   bool get isEnhancing => status == VoiceCaptureSessionStatus.enhancing;
 
+  bool get isAiProgressiveWait => isEnhancing && isAiCapture;
+
   bool get isComparingTranscripts =>
       status == VoiceCaptureSessionStatus.comparingTranscripts;
 
   bool get isTranscribingBackground =>
       status == VoiceCaptureSessionStatus.transcribingBackground;
 
+  bool get isAiTranscribing =>
+      status == VoiceCaptureSessionStatus.aiTranscribing;
+
   bool get hasUnsavedWork =>
       isConsultationOpen ||
       isComparingTranscripts ||
+      isAiProgressiveWait ||
+      isAiTranscribing ||
       (hasTranscript &&
           status != VoiceCaptureSessionStatus.initializing &&
           status != VoiceCaptureSessionStatus.completed);
+
+  /// Leave without discard dialog; background job continues.
+  bool get canLeaveWhileAiTranscribing => isAiTranscribing;
 }

@@ -14,6 +14,7 @@ abstract class RecordingNotificationService {
   Future<void> start({
     required String title,
     required String body,
+    List<ForegroundServiceTypes>? serviceTypes,
   });
 
   Future<void> update({
@@ -30,7 +31,7 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
   static const _channelId = 'medicail_recording';
   static const _channelName = 'Enregistrement consultation';
   static const _channelDescription =
-      'Notification affichee pendant une ecoute en cours.';
+      'Notification affichee pendant une ecoute ou une transcription en cours.';
 
   bool _initialized = false;
 
@@ -86,6 +87,7 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
   Future<void> start({
     required String title,
     required String body,
+    List<ForegroundServiceTypes>? serviceTypes,
   }) async {
     if (isDesktopPlatform) {
       return;
@@ -101,7 +103,7 @@ class RecordingNotificationServiceImpl implements RecordingNotificationService {
 
     await FlutterForegroundTask.startService(
       serviceId: _serviceId,
-      serviceTypes: const [ForegroundServiceTypes.microphone],
+      serviceTypes: serviceTypes ?? const [ForegroundServiceTypes.microphone],
       notificationTitle: title,
       notificationText: body,
       callback: recordingForegroundTaskCallback,

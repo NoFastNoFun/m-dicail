@@ -137,6 +137,8 @@ import 'package:medicail/features/recording/domain/repositories/note_processing_
     as _i341;
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart'
     as _i814;
+import 'package:medicail/features/search/data/global_search_service.dart'
+    as _i928;
 import 'package:medicail/features/settings/data/repositories/secure_user_preferences_repository.dart'
     as _i104;
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart'
@@ -151,6 +153,8 @@ import 'package:medicail/features/tutorial/domain/repositories/tutorial_reposito
     as _i79;
 import 'package:medicail/features/tutorial/presentation/tutorial_bloc.dart'
     as _i306;
+import 'package:medicail/features/voice_capture/presentation/ai_transcription_job_cubit.dart'
+    as _i622;
 import 'package:medicail/features/voice_capture/presentation/voice_capture_bloc.dart'
     as _i794;
 import 'package:package_info_plus/package_info_plus.dart' as _i655;
@@ -385,10 +389,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i306.TutorialBloc>(
-      () => _i306.TutorialBloc(
-        gh<_i79.TutorialRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+    gh.lazySingleton<_i622.AiTranscriptionJobCubit>(
+      () => _i622.AiTranscriptionJobCubit(
+        gh<_i734.EnhancedTranscriptionRepository>(),
+        gh<_i356.OfflineAudioTranscriptionService>(),
+        gh<_i117.RecordingNotificationService>(),
       ),
     );
     gh.lazySingleton<_i341.NoteProcessingRepository>(
@@ -406,6 +411,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i345.AppSessionStorage>(),
         gh<_i760.AuthTokenStorage>(),
         gh<_i712.AuthSessionCoordinator>(),
+        gh<_i332.PasskeyService>(),
       ),
     );
     gh.lazySingleton<_i390.PatientRepository>(
@@ -417,6 +423,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i802.PatientDetailBloc>(
       () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i928.GlobalSearchService>(
+      () => _i928.GlobalSearchService(
         gh<_i390.PatientRepository>(),
         gh<_i814.RecordingSessionRepository>(),
       ),
@@ -455,6 +467,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i879.MedicalTermCorrectionService>(),
         gh<_i460.UserPreferencesRepository>(),
         gh<_i619.TelemetryService>(),
+        gh<_i622.AiTranscriptionJobCubit>(),
+      ),
+    );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(
+        gh<_i79.TutorialRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.factory<_i54.AppointmentBloc>(

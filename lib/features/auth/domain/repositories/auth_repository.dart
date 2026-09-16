@@ -25,7 +25,10 @@ abstract class AuthRepository {
 
   Future<User> verifyMfa({required String mfaToken, required String code});
 
-  Future<User> loginWithPasskey({required String email});
+  Future<User> loginWithPasskey({
+    required String email,
+    bool conditional = false,
+  });
 
   Future<User> verifyMfaWithPasskey({
     required String mfaToken,

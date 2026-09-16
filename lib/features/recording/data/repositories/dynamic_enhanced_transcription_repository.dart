@@ -21,6 +21,8 @@ class DynamicEnhancedTranscriptionRepository
     required String filePath,
     required String sessionId,
     String language = 'fr',
+    int? chunkIndex,
+    bool? isFinal,
   }) async {
     final token = await _tokenStorage.readToken();
     if (AppConfig.isOfflineMode(token)) {
@@ -32,6 +34,8 @@ class DynamicEnhancedTranscriptionRepository
       filePath: filePath,
       sessionId: sessionId,
       language: language,
+      chunkIndex: chunkIndex,
+      isFinal: isFinal,
     );
   }
 }

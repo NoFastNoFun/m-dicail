@@ -3,6 +3,8 @@ import 'package:medicail/core/error/failure.dart';
 import 'package:medicail/features/note_template/domain/entities/note_template.dart';
 import 'package:medicail/features/recording/domain/exceptions/invalid_soap_note_exception.dart';
 
+enum TranscriptionWaitPhase { upload, transcription, polish }
+
 sealed class VoiceCaptureState extends Equatable {
   const VoiceCaptureState();
 
@@ -49,12 +51,65 @@ final class VoiceCaptureProcessing extends VoiceCaptureState {
 }
 
 final class VoiceCaptureEnhancing extends VoiceCaptureState {
-  const VoiceCaptureEnhancing({required this.transcript});
+  const VoiceCaptureEnhancing({
+    required this.transcript,
+    this.phase = TranscriptionWaitPhase.upload,
+    this.recordingDuration = Duration.zero,
+    this.userScratchNotes = '',
+    this.isAiCapture = false,
+  });
 
   final String transcript;
+  final TranscriptionWaitPhase phase;
+  final Duration recordingDuration;
+  final String userScratchNotes;
+  final bool isAiCapture;
 
   @override
-  List<Object?> get props => [transcript];
+  List<Object?> get props => [
+    transcript,
+    phase,
+    recordingDuration,
+    userScratchNotes,
+    isAiCapture,
+  ];
+}
+
+/// AI transcription running without locking the record UI.
+final class VoiceCaptureAiTranscribing extends VoiceCaptureState {
+  const VoiceCaptureAiTranscribing({
+    required this.transcript,
+    required this.sessionId,
+    required this.startedAt,
+    required this.estimatedDuration,
+    this.selectedTemplate,
+  });
+
+  final String transcript;
+  final String sessionId;
+  final DateTime startedAt;
+  final Duration estimatedDuration;
+  final NoteTemplate? selectedTemplate;
+
+  Duration get remainingEstimate {
+    final elapsed = DateTime.now().difference(startedAt);
+    final remaining = estimatedDuration - elapsed;
+    if (remaining <= Duration.zero) {
+      return Duration.zero;
+    }
+    return remaining;
+  }
+
+  bool get estimateElapsed => remainingEstimate <= Duration.zero;
+
+  @override
+  List<Object?> get props => [
+        transcript,
+        sessionId,
+        startedAt,
+        estimatedDuration,
+        selectedTemplate,
+      ];
 }
 
 final class VoiceCaptureTranscriptCompare extends VoiceCaptureState {
