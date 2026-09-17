@@ -7,6 +7,7 @@ import 'package:medicail/core/auth/passkey_service.dart';
 import 'package:passkeys/exceptions.dart';
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
+import 'package:medicail/core/push/push_notification_service.dart';
 import 'package:medicail/core/storage/app_session_storage.dart';
 import 'package:medicail/features/auth/domain/entities/login_result.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
@@ -24,6 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._tokenStorage,
     this._sessionCoordinator,
     this._passkeyService,
+    this._pushNotificationService,
   ) : super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
@@ -48,6 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthTokenStorage _tokenStorage;
   final AuthSessionCoordinator _sessionCoordinator;
   final PasskeyService _passkeyService;
+  final PushNotificationService _pushNotificationService;
   late final StreamSubscription<void> _sessionExpiredSubscription;
 
   Future<void> _onAuthCheckRequested(
@@ -78,6 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.getMe();
       _authNotifier.setAuthenticated(true);
       emit(AuthAuthenticated(user));
+      unawaited(_pushNotificationService.registerWithBackendIfAuthenticated());
     } catch (error) {
       if (error is ServerException && error.statusCode == 401) {
         await _tokenStorage.clearToken();
@@ -108,6 +112,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _authNotifier.setHasCompletedOnboarding(true);
     _authNotifier.setAuthenticated(true);
     emit(AuthAuthenticated(user));
+    unawaited(_pushNotificationService.registerWithBackendIfAuthenticated());
   }
 
   Future<void> _onAuthLoginRequested(
