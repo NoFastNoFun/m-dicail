@@ -3,8 +3,10 @@ import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/features/recording/data/repositories/api_recording_session_repository.dart';
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart';
+import 'package:medicail/features/recording/data/repositories/session_tag_local_store.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/features/recording/domain/repositories/recording_session_repository.dart';
+import 'package:medicail/features/recording/domain/session_tags/session_tag_catalog.dart';
 import 'package:medicail/features/tutorial/domain/tutorial_flow.dart';
 
 @LazySingleton(as: RecordingSessionRepository)
@@ -13,11 +15,13 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     this._apiRepository,
     this._localRepository,
     this._tokenStorage,
+    this._tagStore,
   );
 
   final ApiRecordingSessionRepository _apiRepository;
   final SecureStorageRecordingSessionRepository _localRepository;
   final AuthTokenStorage _tokenStorage;
+  final SessionTagLocalStore _tagStore;
 
   Future<RecordingSessionRepository> _getRepository() async {
     final token = await _tokenStorage.readToken();
@@ -35,10 +39,11 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
   Future<List<RecordingSession>> getAll() async {
     final repo = await _getRepository();
     final sessions = await repo.getAll();
-    return [
+    final filtered = [
       for (final session in sessions)
         if (!_isTutorialSession(session)) session,
     ];
+    return _tagStore.mergeAll(filtered);
   }
 
   @override
@@ -48,7 +53,7 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     if (session == null || _isTutorialSession(session)) {
       return null;
     }
-    return session;
+    return _tagStore.merge(session);
   }
 
   @override
@@ -57,7 +62,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
       return const [];
     }
     final repo = await _getRepository();
-    return repo.getByPatientId(patientId);
+    final sessions = await repo.getByPatientId(patientId);
+    return _tagStore.mergeAll(sessions);
   }
 
   @override
@@ -65,14 +71,32 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     if (_isTutorialSession(session)) {
       return session;
     }
+    final normalizedTag = SessionTagCatalog.normalize(session.tag);
+    final toSave = normalizedTag == session.tag
+        ? session
+        : session.copyWith(
+            tag: normalizedTag,
+            clearTag: normalizedTag == null,
+          );
     final repo = await _getRepository();
-    return repo.save(session);
+    final saved = await repo.save(toSave);
+    // Keep local tag store as cache/fallback even when API persists tag.
+    await _tagStore.setTag(saved.id, normalizedTag);
+    // Also keep local guest/offline copy tagged when saving via API id change.
+    if (saved.id != toSave.id && normalizedTag != null) {
+      await _tagStore.setTag(toSave.id, null);
+    }
+    return saved.copyWith(
+      tag: normalizedTag,
+      clearTag: normalizedTag == null,
+    );
   }
 
   @override
   Future<void> delete(String id) async {
     final repo = await _getRepository();
     await repo.delete(id);
+    await _tagStore.setTag(id, null);
   }
 
   @override
@@ -88,6 +112,7 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     );
     for (final session in sessions) {
       await _localRepository.delete(session.id);
+      await _tagStore.setTag(session.id, null);
     }
   }
 }

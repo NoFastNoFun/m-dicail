@@ -1,29 +1,35 @@
-import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:medicail/core/storage/secure_collection_store.dart';
 import 'package:medicail/features/appointment/data/models/appointment_model.dart';
 import 'package:medicail/features/appointment/domain/entities/appointment.dart';
 import 'package:medicail/features/appointment/domain/repositories/appointment_repository.dart';
 
 @injectable
 class SecureStorageAppointmentRepository implements AppointmentRepository {
-  const SecureStorageAppointmentRepository(this._storage);
+  SecureStorageAppointmentRepository(this._storage) {
+    _store = SecureCollectionStore<Appointment>(
+      storage: _storage,
+      key: appointmentsKey,
+      fromJson: AppointmentModel.fromJson,
+      toJson: (a) => AppointmentModel.fromEntity(a).toJson(),
+    );
+  }
 
   static const String appointmentsKey = 'appointments_v1';
 
   final FlutterSecureStorage _storage;
+  late final SecureCollectionStore<Appointment> _store;
 
   @override
   Future<List<Appointment>> getByRange({
     required DateTime from,
     required DateTime to,
   }) async {
-    final appointments = await _readAppointments();
+    final appointments = await _store.readAll();
     return appointments
         .where(
-          (a) =>
-              !a.startsAt.isBefore(from) && a.startsAt.isBefore(to),
+          (a) => !a.startsAt.isBefore(from) && a.startsAt.isBefore(to),
         )
         .toList()
       ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
@@ -31,7 +37,7 @@ class SecureStorageAppointmentRepository implements AppointmentRepository {
 
   @override
   Future<Appointment?> getById(String id) async {
-    final appointments = await _readAppointments();
+    final appointments = await _store.readAll();
     for (final appointment in appointments) {
       if (appointment.id == id) {
         return appointment;
@@ -51,61 +57,27 @@ class SecureStorageAppointmentRepository implements AppointmentRepository {
           )
         : appointment.copyWith(updatedAt: now);
 
-    final appointments = await _readAppointments();
-    final next = <Appointment>[
-      for (final current in appointments)
-        if (current.id != saved.id) current,
-      saved,
-    ]..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+    await _store.mutate(
+      (current) => <Appointment>[
+        for (final item in current)
+          if (item.id != saved.id) item,
+        saved,
+      ]..sort((a, b) => a.startsAt.compareTo(b.startsAt)),
+    );
 
-    await _writeAppointments(next);
     return saved;
   }
 
   @override
   Future<void> delete(String id) async {
-    final appointments = await _readAppointments();
-    final next = [
-      for (final appointment in appointments)
-        if (appointment.id != id) appointment,
-    ];
-    await _writeAppointments(next);
+    await _store.mutate(
+      (current) => [
+        for (final appointment in current)
+          if (appointment.id != id) appointment,
+      ],
+    );
   }
 
   @override
-  Future<void> clear() => _storage.delete(key: appointmentsKey);
-
-  Future<List<Appointment>> _readAppointments() async {
-    try {
-      final raw = await _storage.read(key: appointmentsKey);
-      if (raw == null || raw.isEmpty) {
-        return const [];
-      }
-
-      final decoded = jsonDecode(raw);
-      if (decoded is! List) {
-        return const [];
-      }
-
-      return decoded
-          .whereType<Map>()
-          .map((json) => Map<String, dynamic>.from(json))
-          .map(AppointmentModel.fromJson)
-          .toList()
-        ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
-    } catch (_) {
-      await _storage.delete(key: appointmentsKey);
-      return const [];
-    }
-  }
-
-  Future<void> _writeAppointments(List<Appointment> appointments) {
-    final encoded = jsonEncode(
-      appointments
-          .map(AppointmentModel.fromEntity)
-          .map((a) => a.toJson())
-          .toList(),
-    );
-    return _storage.write(key: appointmentsKey, value: encoded);
-  }
+  Future<void> clear() => _store.clear();
 }

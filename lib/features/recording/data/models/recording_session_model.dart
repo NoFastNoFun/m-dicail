@@ -15,6 +15,7 @@ final class RecordingSessionModel extends RecordingSession {
     super.templateId,
     super.templateName,
     super.pathologies,
+    super.tag,
   });
 
   factory RecordingSessionModel.fromEntity(RecordingSession session) {
@@ -30,6 +31,7 @@ final class RecordingSessionModel extends RecordingSession {
       templateId: session.templateId,
       templateName: session.templateName,
       pathologies: session.pathologies,
+      tag: session.tag,
     );
   }
 
@@ -60,6 +62,7 @@ final class RecordingSessionModel extends RecordingSession {
       templateId: templateId,
       templateName: templateName,
       pathologies: pathologies,
+      tag: json['tag'] as String?,
     );
   }
 
@@ -76,6 +79,7 @@ final class RecordingSessionModel extends RecordingSession {
       'template_id': templateId,
       'template_name': templateName,
       'pathologies': pathologies.map((p) => p.toJson()).toList(),
+      if (tag != null && tag!.isNotEmpty) 'tag': tag,
     };
   }
 

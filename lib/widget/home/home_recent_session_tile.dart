@@ -8,6 +8,8 @@ import 'package:medicail/core/router/app_router.dart';
 import 'package:medicail/features/recording/domain/entities/recording_session.dart';
 import 'package:medicail/widget/app_text.dart';
 import 'package:medicail/widget/legal/app_eu_ai_label.dart';
+import 'package:medicail/features/recording/domain/session_tags/session_tag_catalog.dart';
+import 'package:medicail/widget/app_pathology_tag.dart';
 
 class HomeRecentSessionTile extends StatelessWidget {
   const HomeRecentSessionTile({super.key, required this.session});
@@ -74,6 +76,18 @@ class HomeRecentSessionTile extends StatelessWidget {
                         variant: AppTextVariant.caption,
                         color: context.secondaryTextColor,
                       ),
+                      if (session.tag != null &&
+                          session.tag!.trim().isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppPathologyTag(
+                          label: SessionTagCatalog.label(
+                            AppLocalizations.of(context),
+                            session.tag!,
+                          ),
+                          compact: true,
+                          icon: Icons.label_outline,
+                        ),
+                      ],
                       if (session.transcriptIsAi) ...[
                         const SizedBox(height: AppSpacing.xs),
                         const AppEuAiLabel(kind: EuAiLabelKind.generated),

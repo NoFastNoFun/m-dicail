@@ -130,6 +130,8 @@ import 'package:medicail/features/recording/data/repositories/dynamic_recording_
     as _i932;
 import 'package:medicail/features/recording/data/repositories/secure_storage_recording_session_repository.dart'
     as _i913;
+import 'package:medicail/features/recording/data/repositories/session_tag_local_store.dart'
+    as _i327;
 import 'package:medicail/features/recording/domain/repositories/enhanced_transcription_repository.dart'
     as _i734;
 import 'package:medicail/features/recording/domain/repositories/note_processing_repository.dart'
@@ -201,6 +203,11 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i879.MedicalTermCorrectionService(gh<_i711.MedicalRootDictionary>()),
     );
+    gh.factory<_i830.SecureStoragePatientRepository>(
+      () => _i830.SecureStoragePatientRepository(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.lazySingleton<_i117.RecordingNotificationService>(
       () => _i117.RecordingNotificationServiceImpl(),
     );
@@ -225,15 +232,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.factory<_i830.SecureStoragePatientRepository>(
-      () => _i830.SecureStoragePatientRepository(
-        gh<_i558.FlutterSecureStorage>(),
-      ),
-    );
     gh.factory<_i913.SecureStorageRecordingSessionRepository>(
       () => _i913.SecureStorageRecordingSessionRepository(
         gh<_i558.FlutterSecureStorage>(),
       ),
+    );
+    gh.lazySingleton<_i327.SessionTagLocalStore>(
+      () => _i327.SessionTagLocalStore(gh<_i558.FlutterSecureStorage>()),
     );
     gh.lazySingleton<_i356.OfflineAudioTranscriptionService>(
       () => _i356.WhisperOfflineAudioTranscriptionService(),
@@ -369,6 +374,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i962.ApiRecordingSessionRepository>(
       () => _i962.ApiRecordingSessionRepository(gh<_i1005.ApiClient>()),
     );
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i932.DynamicRecordingSessionRepository(
+        gh<_i962.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i327.SessionTagLocalStore>(),
+      ),
+    );
     gh.lazySingleton<_i885.AppointmentRepository>(
       () => _i800.DynamicAppointmentRepository(
         gh<_i587.ApiAppointmentRepository>(),
@@ -381,6 +394,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i734.EnhancedTranscriptionRepository>(),
         gh<_i356.OfflineAudioTranscriptionService>(),
         gh<_i117.RecordingNotificationService>(),
+      ),
+    );
+    gh.factory<_i306.TutorialBloc>(
+      () => _i306.TutorialBloc(
+        gh<_i79.TutorialRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i341.NoteProcessingRepository>(
@@ -406,11 +425,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i817.PushNotificationService>(),
       ),
     );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i932.DynamicRecordingSessionRepository(
-        gh<_i962.ApiRecordingSessionRepository>(),
-        gh<_i913.SecureStorageRecordingSessionRepository>(),
-        gh<_i760.AuthTokenStorage>(),
+    gh.factory<_i802.PatientDetailBloc>(
+      () => _i802.PatientDetailBloc(
+        gh<_i390.PatientRepository>(),
+        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.lazySingleton<_i928.GlobalSearchService>(
@@ -467,22 +485,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i622.AiTranscriptionJobCubit>(),
       ),
     );
-    gh.factory<_i306.TutorialBloc>(
-      () => _i306.TutorialBloc(
-        gh<_i79.TutorialRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
-      ),
-    );
     gh.factory<_i54.AppointmentBloc>(
       () => _i54.AppointmentBloc(
         gh<_i885.AppointmentRepository>(),
         gh<_i390.PatientRepository>(),
-      ),
-    );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
       ),
     );
     gh.factory<_i79.PathologyBloc>(

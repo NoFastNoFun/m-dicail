@@ -22,6 +22,7 @@ class RecordingSession extends Equatable {
     this.templateId,
     this.templateName,
     this.pathologies = const [],
+    this.tag,
   });
 
   final String id;
@@ -35,6 +36,9 @@ class RecordingSession extends Equatable {
   final String? templateId;
   final String? templateName;
   final List<SessionPathology> pathologies;
+
+  /// Practitioner session tag (e.g. bilan / suivi / urgence). Local-first for v1.
+  final String? tag;
 
   /// Display names: list first, else legacy [templateName].
   List<String> get pathologyNames {
@@ -65,11 +69,13 @@ class RecordingSession extends Equatable {
     String? templateId,
     String? templateName,
     List<SessionPathology>? pathologies,
+    String? tag,
     bool clearPatientId = false,
     bool clearEndedAt = false,
     bool clearSoapNote = false,
     bool clearTemplateId = false,
     bool clearTemplateName = false,
+    bool clearTag = false,
   }) {
     return RecordingSession(
       id: id ?? this.id,
@@ -84,6 +90,7 @@ class RecordingSession extends Equatable {
       templateName:
           clearTemplateName ? null : templateName ?? this.templateName,
       pathologies: pathologies ?? this.pathologies,
+      tag: clearTag ? null : tag ?? this.tag,
     );
   }
 
@@ -100,5 +107,6 @@ class RecordingSession extends Equatable {
         templateId,
         templateName,
         pathologies,
+        tag,
       ];
 }

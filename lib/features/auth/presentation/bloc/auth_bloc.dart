@@ -10,6 +10,7 @@ import 'package:medicail/core/network/auth_token_storage.dart';
 import 'package:medicail/core/push/push_notification_service.dart';
 import 'package:medicail/core/storage/app_session_storage.dart';
 import 'package:medicail/features/auth/domain/entities/login_result.dart';
+import 'package:medicail/features/auth/domain/entities/user.dart';
 import 'package:medicail/features/auth/domain/repositories/auth_repository.dart';
 import 'package:medicail/features/auth/presentation/notifier/auth_notifier.dart';
 import 'package:medicail/core/error/failure.dart';
@@ -72,8 +73,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final token = await _tokenStorage.readToken();
     if (token == null) {
-      _authNotifier.setGuest(true);
-      emit(const AuthGuest());
+      _authNotifier.setAuthenticated(false);
+      _authNotifier.setGuest(false);
+      emit(const AuthUnauthenticated());
       return;
     }
 
@@ -91,8 +93,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      _authNotifier.setGuest(true);
-      emit(const AuthGuest());
+      _authNotifier.setAuthenticated(false);
+      _authNotifier.setGuest(false);
+      final failure = Failure.fromException(error);
+      emit(AuthError(failure.message));
+      emit(const AuthUnauthenticated());
     }
   }
 
