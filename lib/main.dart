@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:medicail/app/medicail_app.dart';
@@ -24,7 +25,7 @@ Future<void> main() async {
   if (isDesktopDebugBackendUrlEnabled) {
     await getIt<DesktopDebugBackendUrlStore>().hydrate();
   }
-  await getIt<PushNotificationService>().initialize();
+  unawaited(getIt<PushNotificationService>().initialize());
   WakelockPlus.enable();
   runApp(const MedicailApp());
 }
