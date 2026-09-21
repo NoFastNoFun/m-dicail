@@ -93,15 +93,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      // Offline fallback: keep the user authenticated to allow offline mode.
-      _authNotifier.setAuthenticated(true);
-      emit(AuthAuthenticated(const User(
-        id: 'offline',
-        email: 'offline@local',
-        fullName: 'Utilisateur hors-ligne',
-        hasPasskeys: false,
-        mfaEnabled: false,
-      )));
+      _authNotifier.setAuthenticated(false);
+      _authNotifier.setGuest(false);
+      final failure = Failure.fromException(error);
+      emit(AuthError(failure.message));
+      emit(const AuthUnauthenticated());
     }
   }
 
