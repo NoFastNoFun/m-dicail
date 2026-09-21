@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1082276039604",
+    "project_id": "dev-nf2-medicail",
+    "storage_bucket": "dev-nf2-medicail.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082276039604:android:9a35aa33f31e79730a40e1",
+        "android_client_info": {
+          "package_name": "dev.nf2.medicail"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATaVV5J5c3VnqAsNfjUMZPXRIBqdGB4yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -49,6 +49,7 @@ import 'package:medicail/core/network/interceptors/logging_interceptor.dart'
 import 'package:medicail/core/network/interceptors/token_refresh_interceptor.dart'
     as _i987;
 import 'package:medicail/core/network/secure_storage_auth_token.dart' as _i249;
+import 'package:medicail/core/push/push_notification_service.dart' as _i817;
 import 'package:medicail/core/router/app_router.dart' as _i1038;
 import 'package:medicail/core/screenshot/screen_protection.dart' as _i456;
 import 'package:medicail/core/storage/app_session_storage.dart' as _i345;
@@ -349,6 +350,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i817.PushNotificationService>(
+      () => _i817.PushNotificationService(
+        gh<_i1005.ApiClient>(),
+        gh<_i760.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i587.ApiAppointmentRepository>(
       () => _i587.ApiAppointmentRepository(gh<_i1005.ApiClient>()),
     );
@@ -366,21 +373,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i962.ApiRecordingSessionRepository>(
       () => _i962.ApiRecordingSessionRepository(gh<_i1005.ApiClient>()),
-    );
-    gh.lazySingleton<_i790.AuthRepository>(
-      () => _i985.AuthRepositoryImpl(
-        gh<_i1005.ApiClient>(),
-        gh<_i760.AuthTokenStorage>(),
-        gh<_i332.PasskeyService>(),
-      ),
-    );
-    gh.lazySingleton<_i814.RecordingSessionRepository>(
-      () => _i932.DynamicRecordingSessionRepository(
-        gh<_i962.ApiRecordingSessionRepository>(),
-        gh<_i913.SecureStorageRecordingSessionRepository>(),
-        gh<_i760.AuthTokenStorage>(),
-        gh<_i327.SessionTagLocalStore>(),
-      ),
     );
     gh.lazySingleton<_i885.AppointmentRepository>(
       () => _i800.DynamicAppointmentRepository(
@@ -404,16 +396,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i460.UserPreferencesRepository>(),
       ),
     );
-    gh.factory<_i250.AuthBloc>(
-      () => _i250.AuthBloc(
-        gh<_i790.AuthRepository>(),
-        gh<_i541.AuthNotifier>(),
-        gh<_i345.AppSessionStorage>(),
-        gh<_i760.AuthTokenStorage>(),
-        gh<_i712.AuthSessionCoordinator>(),
-        gh<_i332.PasskeyService>(),
-      ),
-    );
     gh.lazySingleton<_i390.PatientRepository>(
       () => _i238.DynamicPatientRepository(
         gh<_i545.ApiPatientRepository>(),
@@ -421,10 +403,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i760.AuthTokenStorage>(),
       ),
     );
-    gh.factory<_i802.PatientDetailBloc>(
-      () => _i802.PatientDetailBloc(
-        gh<_i390.PatientRepository>(),
-        gh<_i814.RecordingSessionRepository>(),
+    gh.lazySingleton<_i790.AuthRepository>(
+      () => _i985.AuthRepositoryImpl(
+        gh<_i1005.ApiClient>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i332.PasskeyService>(),
+        gh<_i817.PushNotificationService>(),
+      ),
+    );
+    gh.lazySingleton<_i814.RecordingSessionRepository>(
+      () => _i932.DynamicRecordingSessionRepository(
+        gh<_i962.ApiRecordingSessionRepository>(),
+        gh<_i913.SecureStorageRecordingSessionRepository>(),
+        gh<_i760.AuthTokenStorage>(),
       ),
     );
     gh.lazySingleton<_i928.GlobalSearchService>(
@@ -445,6 +436,17 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i435.MedicalWatchBloc>(
       () => _i435.MedicalWatchBloc(gh<_i348.MedicalWatchRepository>()),
+    );
+    gh.factory<_i250.AuthBloc>(
+      () => _i250.AuthBloc(
+        gh<_i790.AuthRepository>(),
+        gh<_i541.AuthNotifier>(),
+        gh<_i345.AppSessionStorage>(),
+        gh<_i760.AuthTokenStorage>(),
+        gh<_i712.AuthSessionCoordinator>(),
+        gh<_i332.PasskeyService>(),
+        gh<_i817.PushNotificationService>(),
+      ),
     );
     gh.lazySingleton<_i865.PathologyRepository>(
       () => _i157.PathologyRepositoryImpl(

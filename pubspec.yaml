@@ -42,6 +42,9 @@ dependencies:
   app_links: ^7.2.1
   package_info_plus: ^9.0.1
   audio_decoder: ^0.8.1
+  firebase_core: ^4.15.0
+  firebase_messaging: ^16.7.0
+  firebase_in_app_messaging: ^0.9.4
 
 dev_dependencies:
   flutter_test:
