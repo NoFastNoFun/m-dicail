@@ -4,6 +4,7 @@ import 'package:medicail/core/config/app_config.dart';
 import 'package:medicail/core/error/exceptions.dart';
 import 'package:medicail/core/network/api_client.dart';
 import 'package:medicail/core/network/auth_token_storage.dart';
+import 'package:medicail/core/push/push_notification_service.dart';
 import 'package:medicail/features/auth/domain/entities/login_result.dart';
 import 'package:medicail/features/auth/domain/entities/passkey_credential.dart';
 import 'package:medicail/features/auth/domain/entities/user.dart';
@@ -11,7 +12,12 @@ import 'package:medicail/features/auth/domain/repositories/auth_repository.dart'
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._apiClient, this._tokenStorage, this._passkeyService);
+  AuthRepositoryImpl(
+    this._apiClient,
+    this._tokenStorage,
+    this._passkeyService,
+    this._pushNotificationService,
+  );
 
   static const _mockAdmin = User(
     id: '999',
@@ -22,6 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final ApiClient _apiClient;
   final AuthTokenStorage _tokenStorage;
   final PasskeyService _passkeyService;
+  final PushNotificationService _pushNotificationService;
 
   @override
   Future<LoginResult> login({required String email, required String password}) async {
@@ -83,6 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> logout() async {
     final token = await _tokenStorage.readToken();
     if (token != null && token != AppConfig.mockAdminToken) {
+      await _pushNotificationService.unregisterFromBackend();
       try {
         await _apiClient.post<void>('/auth/logout');
       } catch (_) {}

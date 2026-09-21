@@ -1,5 +1,7 @@
 package dev.nf2.medicail
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -17,7 +19,21 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        ensurePushNotificationChannel()
         super.onCreate(savedInstanceState)
+    }
+
+    private fun ensurePushNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val channel = NotificationChannel(
+            "medicail_push",
+            "Notifications Medicail",
+            NotificationManager.IMPORTANCE_DEFAULT,
+        ).apply {
+            description = "Campagnes et alertes de veille scientifique"
+        }
+        val manager = getSystemService(NotificationManager::class.java)
+        manager?.createNotificationChannel(channel)
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

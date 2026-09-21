@@ -6,12 +6,14 @@ import 'package:medicail/core/config/app_platform.dart';
 import 'package:medicail/core/debug/desktop_debug_backend_url_store.dart';
 import 'package:medicail/core/di/injection.dart';
 import 'package:medicail/core/layout/app_system_ui.dart';
+import 'package:medicail/core/push/push_notification_service.dart';
 import 'package:medicail/features/settings/domain/repositories/user_preferences_repository.dart';
 import 'package:medicail/features/settings/presentation/notifier/settings_notifier.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeFirebaseIfAndroid();
   if (!isDesktopPlatform) {
     FlutterForegroundTask.initCommunicationPort();
   }
@@ -22,6 +24,7 @@ Future<void> main() async {
   if (isDesktopDebugBackendUrlEnabled) {
     await getIt<DesktopDebugBackendUrlStore>().hydrate();
   }
+  await getIt<PushNotificationService>().initialize();
   WakelockPlus.enable();
   runApp(const MedicailApp());
 }
