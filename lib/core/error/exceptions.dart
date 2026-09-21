@@ -40,3 +40,14 @@ class AudioException implements Exception {
   @override
   String toString() => 'AudioException: $message';
 }
+
+class StorageException implements Exception {
+  const StorageException(this.message, {this.cause});
+
+  final String message;
+  final Object? cause;
+
+  @override
+  String toString() =>
+      cause == null ? 'StorageException: $message' : 'StorageException: $message ($cause)';
+}

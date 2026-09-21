@@ -20,13 +20,13 @@ abstract final class SecureStorageSafe {
           '${error.code} ${error.message}',
         );
       }
-      await _deleteQuietly(storage, key);
+      // R1: ne plus supprimer la clé sur erreur de lecture.
+      // Les données peuvent être récupérables après un redémarrage.
       return null;
     } catch (error) {
       if (kDebugMode) {
         debugPrint('[SecureStorageSafe] read failed for "$key": $error');
       }
-      await _deleteQuietly(storage, key);
       return null;
     }
   }
