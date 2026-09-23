@@ -9,17 +9,17 @@ import 'package:medicail/core/router/app_routes.dart';
 class ScreenProtectionController extends ChangeNotifier {
   ScreenProtectionController(this._router);
 
-  static const MethodChannel _channel = MethodChannel(
+  static const MethodChannel _methodChannel = MethodChannel(
     'dev.nf2.medicail/screen_protection',
   );
 
   final GoRouter _router;
 
-  bool _enabled = false;
-  bool _started = false;
+  bool _isProtectionEnabled = false;
+  bool _hasStartedListening = false;
   VoidCallback? _routerListener;
 
-  bool get isEnabled => _enabled;
+  bool get isEnabled => _isProtectionEnabled;
 
   /// Uses the match-list URI so this is safe before GoRouter has attached.
   /// [GoRouter.state] throws `Bad state: No element` on an empty match list.
@@ -36,8 +36,8 @@ class ScreenProtectionController extends ChangeNotifier {
   }
 
   void start() {
-    if (_started) return;
-    _started = true;
+    if (_hasStartedListening) return;
+    _hasStartedListening = true;
     _routerListener = () => syncFromRoute();
     _router.routerDelegate.addListener(_routerListener!);
     syncFromRoute();
@@ -48,28 +48,28 @@ class ScreenProtectionController extends ChangeNotifier {
       _router.routerDelegate.removeListener(_routerListener!);
       _routerListener = null;
     }
-    _started = false;
+    _hasStartedListening = false;
   }
 
   Future<void> syncFromRoute() async {
     final shouldProtect = isSensitiveRoute;
-    if (shouldProtect == _enabled) return;
+    if (shouldProtect == _isProtectionEnabled) return;
     await setEnabled(shouldProtect);
   }
 
   Future<void> setEnabled(bool enabled) async {
     if (kIsWeb) {
-      _enabled = false;
+      _isProtectionEnabled = false;
       notifyListeners();
       return;
     }
     try {
-      await _channel.invokeMethod<void>('setEnabled', {'enabled': enabled});
-      _enabled = enabled;
+      await _methodChannel.invokeMethod<void>('setEnabled', {'enabled': enabled});
+      _isProtectionEnabled = enabled;
       notifyListeners();
     } catch (_) {
       // Best-effort; unsupported platforms stay unprotected.
-      _enabled = false;
+      _isProtectionEnabled = false;
       notifyListeners();
     }
   }

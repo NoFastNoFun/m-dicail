@@ -23,25 +23,25 @@ class SecureCollectionStore<T> {
     required T Function(Map<String, dynamic> json) fromJson,
     required Map<String, dynamic> Function(T item) toJson,
   })  : _storage = storage,
-        _key = key,
+        _storageKey = key,
         _fromJson = fromJson,
         _toJson = toJson;
 
   final FlutterSecureStorage _storage;
-  final String _key;
+  final String _storageKey;
   final T Function(Map<String, dynamic> json) _fromJson;
   final Map<String, dynamic> Function(T item) _toJson;
 
   // ---------------------------------------------------------------------------
   // Async lock (single-isolate safe)
   // ---------------------------------------------------------------------------
-  Future<void> _lock = Future<void>.value();
+  Future<void> _mutationLock = Future<void>.value();
 
   Future<R> _runExclusive<R>(Future<R> Function() action) async {
-    final previous = _lock;
+    final previousLock = _mutationLock;
     final completer = Completer<void>();
-    _lock = completer.future;
-    await previous;
+    _mutationLock = completer.future;
+    await previousLock;
     try {
       return await action();
     } finally {
@@ -60,24 +60,24 @@ class SecureCollectionStore<T> {
   /// * JSON syntax error or keystore failure → [StorageException] (data is
   ///   **never** deleted).
   Future<List<T>> readAll() async {
-    final String? raw;
+    final String? rawJson;
     try {
-      raw = await _storage.read(key: _key);
+      rawJson = await _storage.read(key: _storageKey);
     } on PlatformException catch (e) {
       throw StorageException(
-        'Impossible de lire "$_key" depuis le stockage sécurisé',
+        'Impossible de lire "$_storageKey" depuis le stockage sécurisé',
         cause: e,
       );
     }
 
-    if (raw == null || raw.isEmpty) return const [];
+    if (rawJson == null || rawJson.isEmpty) return const [];
 
     final dynamic decoded;
     try {
-      decoded = jsonDecode(raw);
+      decoded = jsonDecode(rawJson);
     } on FormatException catch (e) {
       throw StorageException(
-        'JSON invalide pour la clé "$_key"',
+        'JSON invalide pour la clé "$_storageKey"',
         cause: e,
       );
     }
@@ -85,7 +85,7 @@ class SecureCollectionStore<T> {
     if (decoded is! List) {
       if (kDebugMode) {
         debugPrint(
-          '[SecureCollectionStore] "$_key": attendu List, '
+          '[SecureCollectionStore] "$_storageKey": attendu List, '
           'reçu ${decoded.runtimeType}',
         );
       }
@@ -106,29 +106,29 @@ class SecureCollectionStore<T> {
   /// [mutate] calls will run one after the other, never in parallel.
   Future<List<T>> mutate(List<T> Function(List<T> current) transform) {
     return _runExclusive(() async {
-      final current = await readAll();
-      final next = transform(current);
-      await _write(next);
-      return next;
+      final currentItems = await readAll();
+      final nextItems = transform(currentItems);
+      await _writeItems(nextItems);
+      return nextItems;
     });
   }
 
   /// Replaces the entire collection atomically (used e.g. for cache refresh).
   Future<void> replaceAll(List<T> items) {
-    return _runExclusive(() => _write(items));
+    return _runExclusive(() => _writeItems(items));
   }
 
   /// Deletes the storage key.  Also serialised so it cannot race with a
   /// concurrent [mutate].
   Future<void> clear() {
-    return _runExclusive(() => _storage.delete(key: _key));
+    return _runExclusive(() => _storage.delete(key: _storageKey));
   }
 
   // ---------------------------------------------------------------------------
   // Internal
   // ---------------------------------------------------------------------------
-  Future<void> _write(List<T> items) {
+  Future<void> _writeItems(List<T> items) {
     final encoded = jsonEncode(items.map(_toJson).toList());
-    return _storage.write(key: _key, value: encoded);
+    return _storage.write(key: _storageKey, value: encoded);
   }
 }

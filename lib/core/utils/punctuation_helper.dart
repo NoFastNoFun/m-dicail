@@ -19,7 +19,7 @@ class PunctuationHelper {
 
     // 2. Mots-clés de transition (insérer un point juste avant)
     final transitions = (transitionWords != null && transitionWords.isNotEmpty)
-        ? transitionWords.map((t) => '\\b${RegExp.escape(t.trim())}\\b').toList()
+        ? transitionWords.map((word) => '\\b${RegExp.escape(word.trim())}\\b').toList()
         : [
             r"\ble patient\b",
             r"\bla patiente\b",
@@ -33,9 +33,9 @@ class PunctuationHelper {
             r"\benfin\b",
           ];
 
-    for (final t in transitions) {
+    for (final transitionPattern in transitions) {
       formatted = formatted.replaceAllMapped(
-        RegExp('([^.!?])\\s+($t)', caseSensitive: false),
+        RegExp('([^.!?])\\s+($transitionPattern)', caseSensitive: false),
         (match) {
           final before = match.group(1)!;
           final word = match.group(2)!;

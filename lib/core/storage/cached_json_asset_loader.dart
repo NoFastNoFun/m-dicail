@@ -34,8 +34,8 @@ class CachedJsonAssetLoader<T> {
 
   Future<T> _loadAndCache() async {
     try {
-      final raw = await rootBundle.loadString(_assetPath);
-      final parsed = _parse(jsonDecode(raw));
+      final rawJson = await rootBundle.loadString(_assetPath);
+      final parsed = _parse(jsonDecode(rawJson));
       _cache = parsed;
       return parsed;
     } on FlutterError catch (error) {

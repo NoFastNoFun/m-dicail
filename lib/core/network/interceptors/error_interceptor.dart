@@ -10,24 +10,24 @@ class ErrorInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    final mapped = _mapException(err);
-    _recordLastError(mapped, err);
+    final mappedException = _mapException(err);
+    _recordLastError(mappedException, err);
     handler.reject(
       DioException(
         requestOptions: err.requestOptions,
         response: err.response,
         type: err.type,
-        error: mapped,
+        error: mappedException,
         message: err.message,
       ),
     );
   }
 
-  void _recordLastError(Exception exception, DioException err) {
-    final options = err.requestOptions;
-    final method = options.method;
-    final path = options.path;
-    final statusCode = err.response?.statusCode;
+  void _recordLastError(Exception exception, DioException dioException) {
+    final requestOptions = dioException.requestOptions;
+    final method = requestOptions.method;
+    final path = requestOptions.path;
+    final statusCode = dioException.response?.statusCode;
     final message = switch (exception) {
       ServerException(:final message) => message,
       NetworkException(:final message) => message,
@@ -36,23 +36,23 @@ class ErrorInterceptor extends Interceptor {
 
     final lines = <String>[
       'message: $message',
-      'uri: ${options.uri}',
-      'baseUrl: ${options.baseUrl}',
+      'uri: ${requestOptions.uri}',
+      'baseUrl: ${requestOptions.baseUrl}',
       'method: $method',
       'path: $path',
-      'dioType: ${err.type.name}',
+      'dioType: ${dioException.type.name}',
     ];
 
     if (statusCode != null) {
       lines.add('status: $statusCode');
     }
 
-    final dioMessage = err.message?.trim();
+    final dioMessage = dioException.message?.trim();
     if (dioMessage != null && dioMessage.isNotEmpty) {
       lines.add('dioMessage: $dioMessage');
     }
 
-    final underlying = err.error;
+    final underlying = dioException.error;
     if (underlying != null && underlying != exception) {
       lines.add('underlying: $underlying');
     }
@@ -61,16 +61,16 @@ class ErrorInterceptor extends Interceptor {
       ..add('build: ${kReleaseMode ? 'release' : 'debug'}')
       ..add('platform: ${defaultTargetPlatform.name}');
 
-    final connectTimeout = options.connectTimeout;
+    final connectTimeout = requestOptions.connectTimeout;
     if (connectTimeout != null) {
       lines.add('connectTimeoutMs: ${connectTimeout.inMilliseconds}');
     }
-    final receiveTimeout = options.receiveTimeout;
+    final receiveTimeout = requestOptions.receiveTimeout;
     if (receiveTimeout != null) {
       lines.add('receiveTimeoutMs: ${receiveTimeout.inMilliseconds}');
     }
 
-    final responseBody = _truncateResponseBody(err.response?.data);
+    final responseBody = _truncateResponseBody(dioException.response?.data);
     if (responseBody != null) {
       lines.add('responseBody: $responseBody');
     }
@@ -98,11 +98,11 @@ class ErrorInterceptor extends Interceptor {
     return trimmed;
   }
 
-  Exception _mapException(DioException err) {
-    final method = err.requestOptions.method;
-    final path = err.requestOptions.path;
+  Exception _mapException(DioException dioException) {
+    final method = dioException.requestOptions.method;
+    final path = dioException.requestOptions.path;
 
-    switch (err.type) {
+    switch (dioException.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
@@ -120,25 +120,25 @@ class ErrorInterceptor extends Interceptor {
           path: path,
         );
       case DioExceptionType.badResponse:
-        return _mapResponseException(err, method: method, path: path);
+        return _mapResponseException(dioException, method: method, path: path);
       case DioExceptionType.badCertificate:
       case DioExceptionType.unknown:
         return NetworkException(
-          err.message ?? 'Erreur reseau inconnue',
+          dioException.message ?? 'Erreur reseau inconnue',
           method: method,
           path: path,
-          statusCode: err.response?.statusCode,
+          statusCode: dioException.response?.statusCode,
         );
     }
   }
 
   ServerException _mapResponseException(
-    DioException err, {
+    DioException dioException, {
     required String method,
     required String path,
   }) {
-    final statusCode = err.response?.statusCode;
-    final extracted = _extractMessage(err.response?.data);
+    final statusCode = dioException.response?.statusCode;
+    final extracted = _extractMessage(dioException.response?.data);
 
     if (statusCode != null && statusCode >= 500) {
       return ServerException(
@@ -149,7 +149,7 @@ class ErrorInterceptor extends Interceptor {
       );
     }
 
-    final message = extracted ?? err.message ?? 'Erreur serveur';
+    final message = extracted ?? dioException.message ?? 'Erreur serveur';
 
     if (statusCode == 401) {
       return ServerException(
