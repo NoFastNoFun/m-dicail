@@ -321,12 +321,12 @@ class PathologyRepositoryImpl implements PathologyRepository {
 
   Future<List<Pathology>> _readUserPathologies() async {
     try {
-      final raw = await _storage.read(key: _userPathologiesKey);
-      if (raw == null || raw.isEmpty) {
+      final rawJson = await _storage.read(key: _userPathologiesKey);
+      if (rawJson == null || rawJson.isEmpty) {
         return const [];
       }
 
-      final decoded = jsonDecode(raw);
+      final decoded = jsonDecode(rawJson);
       if (decoded is! List) {
         return const [];
       }

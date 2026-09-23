@@ -19,8 +19,8 @@ class AssetPathologyDataSource {
     }
 
     try {
-      final raw = await rootBundle.loadString(assetPath);
-      final decoded = jsonDecode(raw);
+      final rawJson = await rootBundle.loadString(assetPath);
+      final decoded = jsonDecode(rawJson);
       if (decoded is! List) {
         throw StateError('Format de pathologies invalide.');
       }

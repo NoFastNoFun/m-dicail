@@ -70,9 +70,9 @@ class _HomeViewState extends State<_HomeView> {
   Future<void> _loadRecentSessions() async {
     try {
       // Use local repository to always get recent sessions even if API doesn't support global listing
-      final repo = getIt<SecureStorageRecordingSessionRepository>();
-      final all = await repo.getAll();
-      final completed = all
+      final repository = getIt<SecureStorageRecordingSessionRepository>();
+      final allSessions = await repository.getAll();
+      final completed = allSessions
           .where((s) => s.status == RecordingSessionStatus.completed)
           .take(5)
           .toList();

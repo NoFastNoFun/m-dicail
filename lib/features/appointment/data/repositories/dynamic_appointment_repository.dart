@@ -31,31 +31,31 @@ class DynamicAppointmentRepository implements AppointmentRepository {
     required DateTime from,
     required DateTime to,
   }) async {
-    final repo = await _getRepository();
-    return repo.getByRange(from: from, to: to);
+    final repository = await _getRepository();
+    return repository.getByRange(from: from, to: to);
   }
 
   @override
   Future<Appointment?> getById(String id) async {
-    final repo = await _getRepository();
-    return repo.getById(id);
+    final repository = await _getRepository();
+    return repository.getById(id);
   }
 
   @override
   Future<Appointment> save(Appointment appointment) async {
-    final repo = await _getRepository();
-    return repo.save(appointment);
+    final repository = await _getRepository();
+    return repository.save(appointment);
   }
 
   @override
   Future<void> delete(String id) async {
-    final repo = await _getRepository();
-    await repo.delete(id);
+    final repository = await _getRepository();
+    await repository.delete(id);
   }
 
   @override
   Future<void> clear() async {
-    final repo = await _getRepository();
-    await repo.clear();
+    final repository = await _getRepository();
+    await repository.clear();
   }
 }

@@ -333,8 +333,8 @@ class _RecordViewState extends State<_RecordView> with WidgetsBindingObserver {
       return;
     }
 
-    final repo = getIt<RecordingSessionRepository>();
-    final session = await repo.getById(state.sessionId);
+    final repository = getIt<RecordingSessionRepository>();
+    final session = await repository.getById(state.sessionId);
     if (!mounted || session == null) {
       return;
     }

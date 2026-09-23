@@ -135,12 +135,12 @@ class NoteTemplateRepositoryImpl implements NoteTemplateRepository {
 
   Future<List<NoteTemplate>> _readUserVariants() async {
     try {
-      final raw = await _storage.read(key: _userVariantsKey);
-      if (raw == null || raw.isEmpty) {
+      final rawJson = await _storage.read(key: _userVariantsKey);
+      if (rawJson == null || rawJson.isEmpty) {
         return const [];
       }
 
-      final decoded = jsonDecode(raw);
+      final decoded = jsonDecode(rawJson);
       if (decoded is! List) {
         return const [];
       }

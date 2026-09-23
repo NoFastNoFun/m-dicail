@@ -12,11 +12,11 @@ class AppointmentListItem extends Equatable {
   final Patient? patient;
 
   String get patientDisplayName {
-    final p = patient;
-    if (p == null) {
+    final matchedPatient = patient;
+    if (matchedPatient == null) {
       return appointment.patientId;
     }
-    return p.displayName;
+    return matchedPatient.displayName;
   }
 
   @override

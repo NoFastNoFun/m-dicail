@@ -64,11 +64,11 @@ class AiTranscriptionJobCubit extends Cubit<AiTranscriptionJobState> {
 
   /// Honest ETA: clamp(20s, audioElapsed * 0.3, 3min).
   static Duration estimateDuration(Duration audioDuration) {
-    final rawMs = (audioDuration.inMilliseconds * _etaRatio).round();
-    final raw = Duration(milliseconds: rawMs);
-    if (raw < _minEta) return _minEta;
-    if (raw > _maxEta) return _maxEta;
-    return raw;
+    final estimatedMilliseconds = (audioDuration.inMilliseconds * _etaRatio).round();
+    final estimatedDuration = Duration(milliseconds: estimatedMilliseconds);
+    if (estimatedDuration < _minEta) return _minEta;
+    if (estimatedDuration > _maxEta) return _maxEta;
+    return estimatedDuration;
   }
 
   Future<void> start({
