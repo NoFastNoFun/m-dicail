@@ -7,12 +7,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 @LazySingleton(as: AudioCaptureService)
 class SpeechToTextServiceImpl implements AudioCaptureService {
-  SpeechToTextServiceImpl() : _speech = SpeechToText();
+  SpeechToTextServiceImpl() : _speechToText = SpeechToText();
 
-  static const _pauseFor = Duration(minutes: 2);
-  static const _listenFor = Duration(minutes: 30);
+  static const _pauseForDuration = Duration(minutes: 2);
+  static const _listenForDuration = Duration(minutes: 30);
 
-  final SpeechToText _speech;
+  final SpeechToText _speechToText;
   bool _isListening = false;
   bool _keepListening = false;
   void Function()? _onListeningEnded;
@@ -27,12 +27,12 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
       throw const AudioException('Permission microphone refusee');
     }
 
-    final available = await _speech.initialize(
+    final isSpeechAvailable = await _speechToText.initialize(
       onStatus: _onSpeechStatus,
       onError: _onSpeechError,
     );
 
-    if (!available) {
+    if (!isSpeechAvailable) {
       throw const AudioException('Reconnaissance vocale indisponible');
     }
 
@@ -63,7 +63,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     required void Function(String text, {bool isFinal}) onResult,
     void Function()? onListeningEnded,
   }) async {
-    if (!_speech.isAvailable) {
+    if (!_speechToText.isAvailable) {
       throw const AudioException('Service vocal non initialise');
     }
     if (_isListening) {
@@ -73,7 +73,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     _onListeningEnded = onListeningEnded;
     _keepListening = true;
 
-    await _speech.listen(
+    await _speechToText.listen(
       onResult: (result) {
         if (result.recognizedWords.isNotEmpty) {
           onResult(result.recognizedWords, isFinal: result.finalResult);
@@ -84,8 +84,8 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
         partialResults: true,
         listenMode: ListenMode.dictation,
         localeId: 'fr_FR',
-        pauseFor: _pauseFor,
-        listenFor: _listenFor,
+        pauseFor: _pauseForDuration,
+        listenFor: _listenForDuration,
       ),
     );
     _isListening = true;
@@ -96,7 +96,7 @@ class SpeechToTextServiceImpl implements AudioCaptureService {
     _keepListening = false;
     _onListeningEnded = null;
     if (_isListening) {
-      await _speech.stop();
+      await _speechToText.stop();
       _isListening = false;
     }
   }
