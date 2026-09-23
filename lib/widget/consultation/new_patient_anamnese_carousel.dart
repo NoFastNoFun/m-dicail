@@ -347,7 +347,7 @@ class _NewPatientAnamneseCarouselState
           onChanged: () => setState(() {}),
         );
       case _AnamnesePhase.hub:
-        return _Hub(
+        return _AnamneseChapterHub(
           l10n: l10n,
           colors: colors,
           data: _data,
@@ -359,8 +359,8 @@ class _NewPatientAnamneseCarouselState
   }
 }
 
-class _Hub extends StatelessWidget {
-  const _Hub({
+class _AnamneseChapterHub extends StatelessWidget {
+  const _AnamneseChapterHub({
     required this.l10n,
     required this.colors,
     required this.data,
@@ -387,7 +387,7 @@ class _Hub extends StatelessWidget {
         for (final chapter in AnamneseChapter.values) ...[
           _ChapterTile(
             title: chapter.title(l10n),
-            filled: chapter.isFilled(data.anamnese),
+            isFilled: chapter.isFilled(data.anamnese),
             filledLabel: l10n.anamneseChapterFilled,
             emptyLabel: l10n.anamneseChapterEmpty,
             onTap: () => onOpen(chapter),
@@ -402,14 +402,14 @@ class _Hub extends StatelessWidget {
 class _ChapterTile extends StatelessWidget {
   const _ChapterTile({
     required this.title,
-    required this.filled,
+    required this.isFilled,
     required this.filledLabel,
     required this.emptyLabel,
     required this.onTap,
   });
 
   final String title;
-  final bool filled;
+  final bool isFilled;
   final String filledLabel;
   final String emptyLabel;
   final VoidCallback onTap;
@@ -427,12 +427,12 @@ class _ChapterTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
         title: AppText(title, variant: AppTextVariant.body),
         subtitle: AppText(
-          filled ? filledLabel : emptyLabel,
+          isFilled ? filledLabel : emptyLabel,
           variant: AppTextVariant.caption,
         ),
         trailing: Icon(
-          filled ? Icons.check_circle : Icons.chevron_right,
-          color: filled ? colors.primary : colors.onSurfaceVariant,
+          isFilled ? Icons.check_circle : Icons.chevron_right,
+          color: isFilled ? colors.primary : colors.onSurfaceVariant,
         ),
         onTap: onTap,
       ),

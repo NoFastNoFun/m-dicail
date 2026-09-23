@@ -28,11 +28,11 @@ class SecureStoragePatientRepository implements PatientRepository {
     if (query == null || query.isEmpty) {
       return filtered.toList();
     }
-    final q = query.toLowerCase();
+    final normalizedQuery = query.toLowerCase();
     return filtered.where((p) {
-      return p.firstName.toLowerCase().contains(q) ||
-          p.lastName.toLowerCase().contains(q) ||
-          (p.mrn.toLowerCase().contains(q));
+      return p.firstName.toLowerCase().contains(normalizedQuery) ||
+          p.lastName.toLowerCase().contains(normalizedQuery) ||
+          (p.mrn.toLowerCase().contains(normalizedQuery));
     }).toList();
   }
 

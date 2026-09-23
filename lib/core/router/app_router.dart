@@ -329,13 +329,13 @@ extension AppRouterNavigation on BuildContext {
       push(AppRoutes.appointments);
       return;
     }
-    final y = date.year.toString().padLeft(4, '0');
-    final m = date.month.toString().padLeft(2, '0');
-    final d = date.day.toString().padLeft(2, '0');
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
     push(
       Uri(
         path: AppRoutes.appointments,
-        queryParameters: {'date': '$y-$m-$d'},
+        queryParameters: {'date': '$year-$month-$day'},
       ).toString(),
     );
   }

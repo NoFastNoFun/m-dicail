@@ -134,36 +134,40 @@ abstract final class TranscriptWordDiff {
 
   /// Classic LCS DP; returns which word indices participate in the LCS.
   static _MatchMask _lcsMatchMask(List<String> left, List<String> right) {
-    final m = left.length;
-    final n = right.length;
-    final leftMatched = List<bool>.filled(m, false);
-    final rightMatched = List<bool>.filled(n, false);
-    if (m == 0 || n == 0) {
+    final leftLength = left.length;
+    final rightLength = right.length;
+    final leftMatched = List<bool>.filled(leftLength, false);
+    final rightMatched = List<bool>.filled(rightLength, false);
+    if (leftLength == 0 || rightLength == 0) {
       return _MatchMask(leftMatched: leftMatched, rightMatched: rightMatched);
     }
 
-    final dp = List.generate(m + 1, (_) => List<int>.filled(n + 1, 0));
-    for (var i = 1; i <= m; i++) {
-      for (var j = 1; j <= n; j++) {
+    final longestCommonLengths = List.generate(
+      leftLength + 1,
+      (_) => List<int>.filled(rightLength + 1, 0),
+    );
+    for (var i = 1; i <= leftLength; i++) {
+      for (var j = 1; j <= rightLength; j++) {
         if (left[i - 1] == right[j - 1]) {
-          dp[i][j] = dp[i - 1][j - 1] + 1;
+          longestCommonLengths[i][j] = longestCommonLengths[i - 1][j - 1] + 1;
         } else {
-          final up = dp[i - 1][j];
-          final leftCell = dp[i][j - 1];
-          dp[i][j] = up >= leftCell ? up : leftCell;
+          final lengthAbove = longestCommonLengths[i - 1][j];
+          final lengthLeft = longestCommonLengths[i][j - 1];
+          longestCommonLengths[i][j] =
+              lengthAbove >= lengthLeft ? lengthAbove : lengthLeft;
         }
       }
     }
 
-    var i = m;
-    var j = n;
+    var i = leftLength;
+    var j = rightLength;
     while (i > 0 && j > 0) {
       if (left[i - 1] == right[j - 1]) {
         leftMatched[i - 1] = true;
         rightMatched[j - 1] = true;
         i--;
         j--;
-      } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      } else if (longestCommonLengths[i - 1][j] >= longestCommonLengths[i][j - 1]) {
         i--;
       } else {
         j--;

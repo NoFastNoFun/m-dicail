@@ -50,12 +50,12 @@ class SecureStorageMedicalWatchRepository implements MedicalWatchRepository {
     // La recherche PubMed n'est pas disponible hors-ligne.
     // On filtre les articles locaux par titre / abstract à la place.
     final articles = await _store.readAll();
-    final q = query.toLowerCase();
+    final normalizedQuery = query.toLowerCase();
 
     return articles
         .where((a) =>
-            a.title.toLowerCase().contains(q) ||
-            a.abstract_.toLowerCase().contains(q))
+            a.title.toLowerCase().contains(normalizedQuery) ||
+            a.abstract_.toLowerCase().contains(normalizedQuery))
         .take(maxResults)
         .toList();
   }

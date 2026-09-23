@@ -134,15 +134,19 @@ class MedicalTermCorrectionService {
       final match = matches[index];
       buffer.write(text.substring(lastEnd, match.start));
 
-      final maxN = min(lexicon.maxPhraseLength, matches.length - index);
+      final maxPhraseWordCount =
+          min(lexicon.maxPhraseLength, matches.length - index);
       var corrected = false;
 
-      for (var n = maxN; n >= 1; n--) {
-        if (n > 1 && !_isWhitespaceSeparated(text, matches, index, n)) {
+      for (var phraseWordCount = maxPhraseWordCount;
+          phraseWordCount >= 1;
+          phraseWordCount--) {
+        if (phraseWordCount > 1 &&
+            !_isWhitespaceSeparated(text, matches, index, phraseWordCount)) {
           continue;
         }
 
-        final spanMatches = matches.sublist(index, index + n);
+        final spanMatches = matches.sublist(index, index + phraseWordCount);
         final originalSpan = text.substring(
           spanMatches.first.start,
           spanMatches.last.end,
@@ -151,9 +155,9 @@ class MedicalTermCorrectionService {
             .map((m) => _normalize(m.group(0)!))
             .join(' ');
 
-        final candidateMap = n == 1
+        final candidateMap = phraseWordCount == 1
             ? lexicon.singleWords
-            : lexicon.phrasesByLength[n];
+            : lexicon.phrasesByLength[phraseWordCount];
         if (candidateMap == null || candidateMap.isEmpty) {
           continue;
         }
@@ -166,7 +170,7 @@ class MedicalTermCorrectionService {
         if (correctedSpan != null) {
           buffer.write(correctedSpan);
           lastEnd = spanMatches.last.end;
-          index += n;
+          index += phraseWordCount;
           corrected = true;
           break;
         }
@@ -187,9 +191,9 @@ class MedicalTermCorrectionService {
     String text,
     List<RegExpMatch> matches,
     int startIndex,
-    int n,
+    int phraseWordCount,
   ) {
-    for (var i = startIndex; i < startIndex + n - 1; i++) {
+    for (var i = startIndex; i < startIndex + phraseWordCount - 1; i++) {
       final between = text.substring(matches[i].end, matches[i + 1].start);
       if (!_whitespaceOnly.hasMatch(between)) {
         return false;

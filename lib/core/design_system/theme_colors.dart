@@ -16,22 +16,22 @@ extension MedicailThemeColors on BuildContext {
 extension MedicailHighContrastTheme on ThemeData {
   ThemeData get highContrastSurface {
     final isDark = brightness == Brightness.dark;
-    final bg =
+    final backgroundColor =
         isDark ? AppColors.highContrastBlack : AppColors.highContrastWhite;
-    final fg =
+    final foregroundColor =
         isDark ? AppColors.highContrastWhite : AppColors.highContrastBlack;
 
     return withOnboardingShapes.copyWith(
-      scaffoldBackgroundColor: bg,
+      scaffoldBackgroundColor: backgroundColor,
       colorScheme: colorScheme.copyWith(
-        onSurface: fg,
-        primary: fg,
-        onPrimary: bg,
+        onSurface: foregroundColor,
+        primary: foregroundColor,
+        onPrimary: backgroundColor,
         surface: isDark ? const Color(0xFF1A1A1A) : AppColors.surface,
       ),
       textTheme: textTheme.apply(
-        bodyColor: fg,
-        displayColor: fg,
+        bodyColor: foregroundColor,
+        displayColor: foregroundColor,
       ),
     );
   }

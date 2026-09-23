@@ -80,7 +80,7 @@ class _SideNavItem extends StatelessWidget {
     final theme = Theme.of(context);
     final active = theme.colorScheme.primary;
     final muted = theme.colorScheme.onSurface.withValues(alpha: 0.65);
-    final fg = selected ? active : muted;
+    final foregroundColor = selected ? active : muted;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -105,14 +105,14 @@ class _SideNavItem extends StatelessWidget {
                 children: [
                   Icon(
                     selected ? destination.selectedIcon : destination.icon,
-                    color: fg,
+                    color: foregroundColor,
                     size: 22,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   AppText(
                     destination.label,
                     variant: AppTextVariant.navigation,
-                    color: fg,
+                    color: foregroundColor,
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
