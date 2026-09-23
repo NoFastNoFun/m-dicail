@@ -90,17 +90,17 @@ class TokenRefreshInterceptor extends QueuedInterceptor {
     }
   }
 
-  bool _shouldAttemptRefresh(DioException err) {
-    if (err.response?.statusCode != 401) {
+  bool _shouldAttemptRefresh(DioException dioException) {
+    if (dioException.response?.statusCode != 401) {
       return false;
     }
 
-    final path = err.requestOptions.path;
+    final path = dioException.requestOptions.path;
     if (_skipRefreshPaths.contains(path)) {
       return false;
     }
 
-    final extra = err.requestOptions.extra;
+    final extra = dioException.requestOptions.extra;
     if (extra['skipTokenRefresh'] == true || extra['retriedAfterRefresh'] == true) {
       return false;
     }

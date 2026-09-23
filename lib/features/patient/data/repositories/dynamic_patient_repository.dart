@@ -30,8 +30,8 @@ class DynamicPatientRepository implements PatientRepository {
 
   @override
   Future<List<Patient>> getAll({String? query, bool archived = false}) async {
-    final repo = await _getRepository();
-    return repo.getAll(query: query, archived: archived);
+    final repository = await _getRepository();
+    return repository.getAll(query: query, archived: archived);
   }
 
   @override
@@ -39,8 +39,8 @@ class DynamicPatientRepository implements PatientRepository {
     if (id == TutorialFlow.demoPatientId) {
       return TutorialDemoPatient.patient;
     }
-    final repo = await _getRepository();
-    return repo.getById(id);
+    final repository = await _getRepository();
+    return repository.getById(id);
   }
 
   @override
@@ -48,8 +48,8 @@ class DynamicPatientRepository implements PatientRepository {
     if (patient.id == TutorialFlow.demoPatientId) {
       return TutorialDemoPatient.patient;
     }
-    final repo = await _getRepository();
-    return repo.save(patient);
+    final repository = await _getRepository();
+    return repository.save(patient);
   }
 
   @override
@@ -57,8 +57,8 @@ class DynamicPatientRepository implements PatientRepository {
     if (id == TutorialFlow.demoPatientId) {
       return TutorialDemoPatient.patient;
     }
-    final repo = await _getRepository();
-    return repo.archive(id);
+    final repository = await _getRepository();
+    return repository.archive(id);
   }
 
   @override
@@ -66,8 +66,8 @@ class DynamicPatientRepository implements PatientRepository {
     if (id == TutorialFlow.demoPatientId) {
       return TutorialDemoPatient.patient;
     }
-    final repo = await _getRepository();
-    return repo.unarchive(id);
+    final repository = await _getRepository();
+    return repository.unarchive(id);
   }
 
   @override
@@ -75,13 +75,13 @@ class DynamicPatientRepository implements PatientRepository {
     if (id == TutorialFlow.demoPatientId) {
       return;
     }
-    final repo = await _getRepository();
-    await repo.delete(id);
+    final repository = await _getRepository();
+    await repository.delete(id);
   }
 
   @override
   Future<void> clear() async {
-    final repo = await _getRepository();
-    await repo.clear();
+    final repository = await _getRepository();
+    await repository.clear();
   }
 }

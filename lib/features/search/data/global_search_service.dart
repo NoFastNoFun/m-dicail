@@ -18,7 +18,7 @@ class GlobalSearchService {
     if (query.isEmpty) {
       return const GlobalSearchResults();
     }
-    final q = query.toLowerCase();
+    final normalizedQuery = query.toLowerCase();
 
     final matchedPatients = await _patients.getAll(query: query);
     final patientById = <String, Patient>{
@@ -29,7 +29,7 @@ class GlobalSearchService {
 
     // Guest / offline: local getAll exposes transcripts & notes.
     for (final session in await _sessions.getAll()) {
-      if (_sessionMatches(session, q)) {
+      if (_sessionMatches(session, normalizedQuery)) {
         sessionById[session.id] = session;
       }
     }
@@ -38,7 +38,7 @@ class GlobalSearchService {
     for (final patient in matchedPatients.take(25)) {
       final list = await _sessions.getByPatientId(patient.id);
       for (final session in list) {
-        if (_sessionMatches(session, q)) {
+        if (_sessionMatches(session, normalizedQuery)) {
           sessionById[session.id] = session;
         }
       }
@@ -75,7 +75,7 @@ class GlobalSearchService {
           patientName: session.patientId == null
               ? null
               : patientById[session.patientId!]?.displayName,
-          snippet: _snippetFor(session, q),
+          snippet: _snippetFor(session, normalizedQuery),
         ),
     ]..sort((a, b) => b.session.startedAt.compareTo(a.session.startedAt));
 
@@ -85,24 +85,24 @@ class GlobalSearchService {
     );
   }
 
-  bool _sessionMatches(RecordingSession session, String q) {
-    if (session.transcript.toLowerCase().contains(q)) return true;
+  bool _sessionMatches(RecordingSession session, String normalizedQuery) {
+    if (session.transcript.toLowerCase().contains(normalizedQuery)) return true;
     for (final name in session.pathologyNames) {
-      if (name.toLowerCase().contains(q)) return true;
+      if (name.toLowerCase().contains(normalizedQuery)) return true;
     }
     final note = session.soapNote;
-    if (note != null && _soapMatches(note, q)) return true;
+    if (note != null && _soapMatches(note, normalizedQuery)) return true;
     return false;
   }
 
-  bool _soapMatches(SoapNote note, String q) {
-    return note.subjective.toLowerCase().contains(q) ||
-        note.objective.toLowerCase().contains(q) ||
-        note.assessment.toLowerCase().contains(q) ||
-        note.plan.toLowerCase().contains(q);
+  bool _soapMatches(SoapNote note, String normalizedQuery) {
+    return note.subjective.toLowerCase().contains(normalizedQuery) ||
+        note.objective.toLowerCase().contains(normalizedQuery) ||
+        note.assessment.toLowerCase().contains(normalizedQuery) ||
+        note.plan.toLowerCase().contains(normalizedQuery);
   }
 
-  String? _snippetFor(RecordingSession session, String q) {
+  String? _snippetFor(RecordingSession session, String normalizedQuery) {
     final candidates = <String>[
       session.transcript,
       if (session.soapNote != null) ...[
@@ -116,10 +116,10 @@ class GlobalSearchService {
       final trimmed = text.trim();
       if (trimmed.isEmpty) continue;
       final lower = trimmed.toLowerCase();
-      final index = lower.indexOf(q);
+      final index = lower.indexOf(normalizedQuery);
       if (index >= 0) {
         final start = (index - 24).clamp(0, trimmed.length);
-        final end = (index + q.length + 48).clamp(0, trimmed.length);
+        final end = (index + normalizedQuery.length + 48).clamp(0, trimmed.length);
         final slice = trimmed.substring(start, end).trim();
         final prefix = start > 0 ? '…' : '';
         final suffix = end < trimmed.length ? '…' : '';

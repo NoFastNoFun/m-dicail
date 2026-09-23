@@ -452,8 +452,8 @@ class _PatientCreationSheetState extends State<PatientCreationSheet> {
                                   child: Text(l10n.patientSexOther),
                                 ),
                               ],
-                              onChanged: (val) =>
-                                  setState(() => _selectedSex = val),
+                              onChanged: (selectedSex) =>
+                                  setState(() => _selectedSex = selectedSex),
                             ),
                           ),
                         ),

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 class ScreenshotDetector {
   ScreenshotDetector._();
 
-  static const EventChannel _channel =
+  static const EventChannel _eventChannel =
       EventChannel('dev.nf2.medicail/screenshot_detection');
 
   static bool get isSupported {
@@ -21,6 +21,6 @@ class ScreenshotDetector {
     if (!isSupported) {
       return const Stream<void>.empty();
     }
-    return _channel.receiveBroadcastStream().map((_) {});
+    return _eventChannel.receiveBroadcastStream().map((_) {});
   }
 }

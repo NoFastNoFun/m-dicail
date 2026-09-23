@@ -24,9 +24,9 @@ abstract class BackgroundAudioRecorder {
 
 @LazySingleton(as: BackgroundAudioRecorder)
 class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
-  BackgroundAudioRecorderImpl() : _recorder = AudioRecorder();
+  BackgroundAudioRecorderImpl() : _audioRecorder = AudioRecorder();
 
-  final AudioRecorder _recorder;
+  final AudioRecorder _audioRecorder;
   String? _activePath;
   bool _isPaused = false;
 
@@ -37,13 +37,13 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   Future<void> start({required String sessionId}) async {
     if (_activePath != null) {
       if (_isPaused) {
-        await _recorder.resume();
+        await _audioRecorder.resume();
         _isPaused = false;
       }
       return;
     }
 
-    final hasPermission = await _recorder.hasPermission();
+    final hasPermission = await _audioRecorder.hasPermission();
     if (!hasPermission) {
       throw const AudioException('Permission microphone refusee');
     }
@@ -54,7 +54,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
   @override
   Future<void> pause() async {
     if (_activePath != null && !_isPaused) {
-      await _recorder.pause();
+      await _audioRecorder.pause();
       _isPaused = true;
     }
   }
@@ -68,7 +68,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
       return null;
     }
 
-    final recordedPath = await _recorder.stop();
+    final recordedPath = await _audioRecorder.stop();
     final filePath = recordedPath ?? path;
     final file = File(filePath);
     if (!await file.exists() || await file.length() == 0) {
@@ -93,8 +93,8 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
     final path = _activePath;
     _activePath = null;
     _isPaused = false;
-    if (await _recorder.isRecording()) {
-      await _recorder.stop();
+    if (await _audioRecorder.isRecording()) {
+      await _audioRecorder.stop();
     }
     if (path != null) {
       await _deleteIfExists(path);
@@ -106,7 +106,7 @@ class BackgroundAudioRecorderImpl implements BackgroundAudioRecorder {
     final path =
         '${directory.path}/medicail_session_${sessionId}_${DateTime.now().microsecondsSinceEpoch}.wav';
 
-    await _recorder.start(
+    await _audioRecorder.start(
       const RecordConfig(
         encoder: AudioEncoder.wav,
         sampleRate: 16000,

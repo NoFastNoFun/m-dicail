@@ -72,8 +72,8 @@ class _AppRecordProcessingOverlayState extends State<AppRecordProcessingOverlay>
       return AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
-          final t = _controller.value;
-          final angle = t * 2 * math.pi;
+          final animationProgress = _controller.value;
+          final angle = animationProgress * 2 * math.pi;
           final begin = Alignment(
             math.cos(angle),
             math.sin(angle),
@@ -82,7 +82,7 @@ class _AppRecordProcessingOverlayState extends State<AppRecordProcessingOverlay>
             -math.cos(angle),
             -math.sin(angle),
           );
-          final pulse = (math.sin(t * 2 * math.pi) + 1) / 2;
+          final pulse = (math.sin(animationProgress * 2 * math.pi) + 1) / 2;
 
           return DecoratedBox(
             decoration: BoxDecoration(

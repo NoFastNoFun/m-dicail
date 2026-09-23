@@ -17,7 +17,7 @@ import 'package:medicail/features/recording/domain/session_tags/session_tag_cata
 class SessionTagLocalStore {
   SessionTagLocalStore(this._storage);
 
-  static const String _key = 'recording_session_tags_v1';
+  static const String _storageKey = 'recording_session_tags_v1';
 
   final FlutterSecureStorage _storage;
 
@@ -36,24 +36,24 @@ class SessionTagLocalStore {
   }
 
   Future<Map<String, String>> _readAll() async {
-    final String? raw;
+    final String? rawJson;
     try {
-      raw = await _storage.read(key: _key);
+      rawJson = await _storage.read(key: _storageKey);
     } on PlatformException catch (e) {
       throw StorageException(
-        'Impossible de lire "$_key" depuis le stockage sécurisé',
+        'Impossible de lire "$_storageKey" depuis le stockage sécurisé',
         cause: e,
       );
     }
 
-    if (raw == null || raw.isEmpty) return {};
+    if (rawJson == null || rawJson.isEmpty) return {};
 
     final dynamic decoded;
     try {
-      decoded = jsonDecode(raw);
+      decoded = jsonDecode(rawJson);
     } on FormatException catch (e) {
       throw StorageException(
-        'JSON invalide pour la clé "$_key"',
+        'JSON invalide pour la clé "$_storageKey"',
         cause: e,
       );
     }
@@ -61,7 +61,7 @@ class SessionTagLocalStore {
     if (decoded is! Map) {
       if (kDebugMode) {
         debugPrint(
-          '[SessionTagLocalStore] "$_key": attendu Map, '
+          '[SessionTagLocalStore] "$_storageKey": attendu Map, '
           'reçu ${decoded.runtimeType}',
         );
       }
@@ -80,24 +80,24 @@ class SessionTagLocalStore {
   }
 
   Future<void> _writeAll(Map<String, String> tags) {
-    return _storage.write(key: _key, value: jsonEncode(tags));
+    return _storage.write(key: _storageKey, value: jsonEncode(tags));
   }
 
   Future<String?> getTag(String sessionId) async {
-    final all = await _readAll();
-    return all[sessionId];
+    final allTags = await _readAll();
+    return allTags[sessionId];
   }
 
   Future<void> setTag(String sessionId, String? tag) {
     return _runExclusive(() async {
-      final all = await _readAll();
+      final allTags = await _readAll();
       final normalized = SessionTagCatalog.normalize(tag);
       if (normalized == null) {
-        all.remove(sessionId);
+        allTags.remove(sessionId);
       } else {
-        all[sessionId] = normalized;
+        allTags[sessionId] = normalized;
       }
-      await _writeAll(all);
+      await _writeAll(allTags);
     });
   }
 
@@ -115,14 +115,14 @@ class SessionTagLocalStore {
   }
 
   Future<List<RecordingSession>> mergeAll(List<RecordingSession> sessions) async {
-    final all = await _readAll();
-    if (all.isEmpty) return sessions;
+    final allTags = await _readAll();
+    if (allTags.isEmpty) return sessions;
     return [
       for (final session in sessions)
         if (session.tag != null && session.tag!.trim().isNotEmpty)
           session
-        else if (all.containsKey(session.id))
-          session.copyWith(tag: all[session.id])
+        else if (allTags.containsKey(session.id))
+          session.copyWith(tag: allTags[session.id])
         else
           session,
     ];

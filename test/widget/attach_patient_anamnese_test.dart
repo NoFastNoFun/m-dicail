@@ -43,11 +43,11 @@ void main() {
     when(() => patients.getAll(query: any(named: 'query'), archived: any(named: 'archived')))
         .thenAnswer((_) async => [patient]);
     when(() => patients.save(any())).thenAnswer((invocation) async {
-      final p = invocation.positionalArguments.first as Patient;
-      if (p.id.isEmpty) {
-        return p.copyWith(id: 'created-1');
+      final savedPatient = invocation.positionalArguments.first as Patient;
+      if (savedPatient.id.isEmpty) {
+        return savedPatient.copyWith(id: 'created-1');
       }
-      return p;
+      return savedPatient;
     });
     if (getIt.isRegistered<PatientRepository>()) {
       getIt.unregister<PatientRepository>();

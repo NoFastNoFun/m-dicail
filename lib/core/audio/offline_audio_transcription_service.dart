@@ -15,9 +15,9 @@ abstract class OfflineAudioTranscriptionService {
 class WhisperOfflineAudioTranscriptionService
     implements OfflineAudioTranscriptionService {
   WhisperOfflineAudioTranscriptionService()
-      : _whisper = const Whisper(model: WhisperModel.tiny);
+      : _whisperClient = const Whisper(model: WhisperModel.tiny);
 
-  final Whisper _whisper;
+  final Whisper _whisperClient;
 
   static bool get _isSupportedPlatform =>
       Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
@@ -40,7 +40,7 @@ class WhisperOfflineAudioTranscriptionService
     }
 
     try {
-      final result = await _whisper.transcribe(
+      final result = await _whisperClient.transcribe(
         transcribeRequest: TranscribeRequest(
           audio: path,
           language: language,

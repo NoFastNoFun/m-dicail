@@ -37,8 +37,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<List<RecordingSession>> getAll() async {
-    final repo = await _getRepository();
-    final sessions = await repo.getAll();
+    final repository = await _getRepository();
+    final sessions = await repository.getAll();
     final filtered = [
       for (final session in sessions)
         if (!_isTutorialSession(session)) session,
@@ -48,8 +48,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<RecordingSession?> getById(String id) async {
-    final repo = await _getRepository();
-    final session = await repo.getById(id);
+    final repository = await _getRepository();
+    final session = await repository.getById(id);
     if (session == null || _isTutorialSession(session)) {
       return null;
     }
@@ -61,8 +61,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
     if (patientId == TutorialFlow.demoPatientId) {
       return const [];
     }
-    final repo = await _getRepository();
-    final sessions = await repo.getByPatientId(patientId);
+    final repository = await _getRepository();
+    final sessions = await repository.getByPatientId(patientId);
     return _tagStore.mergeAll(sessions);
   }
 
@@ -78,8 +78,8 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
             tag: normalizedTag,
             clearTag: normalizedTag == null,
           );
-    final repo = await _getRepository();
-    final saved = await repo.save(toSave);
+    final repository = await _getRepository();
+    final saved = await repository.save(toSave);
     // Keep local tag store as cache/fallback even when API persists tag.
     await _tagStore.setTag(saved.id, normalizedTag);
     // Also keep local guest/offline copy tagged when saving via API id change.
@@ -94,15 +94,15 @@ class DynamicRecordingSessionRepository implements RecordingSessionRepository {
 
   @override
   Future<void> delete(String id) async {
-    final repo = await _getRepository();
-    await repo.delete(id);
+    final repository = await _getRepository();
+    await repository.delete(id);
     await _tagStore.setTag(id, null);
   }
 
   @override
   Future<void> clear() async {
-    final repo = await _getRepository();
-    await repo.clear();
+    final repository = await _getRepository();
+    await repository.clear();
   }
 
   @override

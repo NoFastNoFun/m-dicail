@@ -12,7 +12,7 @@ class ApiClient {
     String path, {
     Map<String, dynamic>? queryParameters,
   }) {
-    return _request(() => _dio.get<T>(path, queryParameters: queryParameters));
+    return _executeRequest(() => _dio.get<T>(path, queryParameters: queryParameters));
   }
 
   Future<Response<T>> post<T>(
@@ -21,7 +21,7 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) {
-    return _request(
+    return _executeRequest(
       () => _dio.post<T>(
         path,
         data: data,
@@ -36,7 +36,7 @@ class ApiClient {
     Object? data,
     Map<String, dynamic>? queryParameters,
   }) {
-    return _request(
+    return _executeRequest(
       () => _dio.put<T>(path, data: data, queryParameters: queryParameters),
     );
   }
@@ -46,7 +46,7 @@ class ApiClient {
     Object? data,
     Map<String, dynamic>? queryParameters,
   }) {
-    return _request(
+    return _executeRequest(
       () => _dio.patch<T>(path, data: data, queryParameters: queryParameters),
     );
   }
@@ -56,14 +56,14 @@ class ApiClient {
     Object? data,
     Map<String, dynamic>? queryParameters,
   }) {
-    return _request(
+    return _executeRequest(
       () => _dio.delete<T>(path, data: data, queryParameters: queryParameters),
     );
   }
 
-  Future<Response<T>> _request<T>(Future<Response<T>> Function() call) async {
+  Future<Response<T>> _executeRequest<T>(Future<Response<T>> Function() requestCall) async {
     try {
-      return await call();
+      return await requestCall();
     } on DioException catch (error) {
       if (error.error is Exception) {
         throw error.error as Exception;

@@ -32,9 +32,9 @@ class _MedicalWatchArticleCardState extends State<MedicalWatchArticleCard> {
   }
 
   Future<void> _openPubmed() async {
-    final url = widget.article.pubmedUrl;
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url, mode: LaunchMode.externalApplication);
+    final pubmedUrl = widget.article.pubmedUrl;
+    if (await canLaunchUrlString(pubmedUrl)) {
+      await launchUrlString(pubmedUrl, mode: LaunchMode.externalApplication);
     }
   }
 

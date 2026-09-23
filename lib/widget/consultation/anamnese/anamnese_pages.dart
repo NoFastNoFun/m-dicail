@@ -232,12 +232,12 @@ class _AnamneseNaissanceEnfancePageState
   @override
   void initState() {
     super.initState();
-    final n = widget.data.anamnese.naissanceEnfance;
-    _poids = TextEditingController(text: n.poidsNaissance ?? '');
-    _marcheAge = TextEditingController(text: n.marche.ageMonths ?? '');
-    _dentitionAge = TextEditingController(text: n.dentition.ageMonths ?? '');
-    _phonationAge = TextEditingController(text: n.phonation.ageMonths ?? '');
-    _notes = TextEditingController(text: n.notes ?? '');
+    final naissanceEnfance = widget.data.anamnese.naissanceEnfance;
+    _poids = TextEditingController(text: naissanceEnfance.poidsNaissance ?? '');
+    _marcheAge = TextEditingController(text: naissanceEnfance.marche.ageMonths ?? '');
+    _dentitionAge = TextEditingController(text: naissanceEnfance.dentition.ageMonths ?? '');
+    _phonationAge = TextEditingController(text: naissanceEnfance.phonation.ageMonths ?? '');
+    _notes = TextEditingController(text: naissanceEnfance.notes ?? '');
   }
 
   @override
@@ -250,9 +250,9 @@ class _AnamneseNaissanceEnfancePageState
     super.dispose();
   }
 
-  NaissanceEnfance get _n => widget.data.anamnese.naissanceEnfance;
+  NaissanceEnfance get _naissanceEnfance => widget.data.anamnese.naissanceEnfance;
 
-  void _set(NaissanceEnfance next) {
+  void _updateAnamneseSection(NaissanceEnfance next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(naissanceEnfance: next);
     setState(() {});
@@ -313,7 +313,7 @@ class _AnamneseNaissanceEnfancePageState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final n = _n;
+    final naissanceEnfance = _naissanceEnfance;
     return AnamnesePageScaffold(
       title: l10n.anamneseNaissanceEnfanceTitle,
       children: [
@@ -321,15 +321,15 @@ class _AnamneseNaissanceEnfancePageState
           variant: AppInputVariant.number,
           label: l10n.anamnesePoidsNaissance,
           controller: _poids,
-          onChanged: (v) => _set(n.copyWith(poidsNaissance: v)),
+          onChanged: (v) => _updateAnamneseSection(naissanceEnfance.copyWith(poidsNaissance: v)),
         ),
         AnamneseChipGroup(
           options: [
             AnamneseChipOption(value: 'g', label: l10n.anamnesePoidsUniteG),
             AnamneseChipOption(value: 'kg', label: l10n.anamnesePoidsUniteKg),
           ],
-          selected: n.poidsUnite,
-          onChanged: (v) => _set(n.copyWith(poidsUnite: (v as String?) ?? 'kg')),
+          selected: naissanceEnfance.poidsUnite,
+          onChanged: (v) => _updateAnamneseSection(naissanceEnfance.copyWith(poidsUnite: (v as String?) ?? 'kg')),
         ),
         AnamneseChipGroup(
           label: l10n.anamneseAllaitement,
@@ -347,9 +347,9 @@ class _AnamneseNaissanceEnfancePageState
               label: l10n.anamneseAllaitementMixte,
             ),
           ],
-          selected: n.allaitement,
-          onChanged: (v) => _set(
-            n.copyWith(
+          selected: naissanceEnfance.allaitement,
+          onChanged: (v) => _updateAnamneseSection(
+            naissanceEnfance.copyWith(
               allaitement: v as String?,
               clearAllaitement: v == null,
             ),
@@ -357,28 +357,28 @@ class _AnamneseNaissanceEnfancePageState
         ),
         _milestone(
           label: l10n.anamneseMarche,
-          value: n.marche,
+          value: naissanceEnfance.marche,
           ageController: _marcheAge,
-          onChanged: (m) => _set(n.copyWith(marche: m)),
+          onChanged: (m) => _updateAnamneseSection(naissanceEnfance.copyWith(marche: m)),
         ),
         _milestone(
           label: l10n.anamneseDentition,
-          value: n.dentition,
+          value: naissanceEnfance.dentition,
           ageController: _dentitionAge,
-          onChanged: (m) => _set(n.copyWith(dentition: m)),
+          onChanged: (m) => _updateAnamneseSection(naissanceEnfance.copyWith(dentition: m)),
         ),
         _milestone(
           label: l10n.anamnesePhonation,
-          value: n.phonation,
+          value: naissanceEnfance.phonation,
           ageController: _phonationAge,
-          onChanged: (m) => _set(n.copyWith(phonation: m)),
+          onChanged: (m) => _updateAnamneseSection(naissanceEnfance.copyWith(phonation: m)),
         ),
         AppInput(
           variant: AppInputVariant.textarea,
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (v) => _set(n.copyWith(notes: v)),
+          onChanged: (v) => _updateAnamneseSection(naissanceEnfance.copyWith(notes: v)),
         ),
       ],
     );
@@ -410,12 +410,12 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
   @override
   void initState() {
     super.initState();
-    final v = widget.data.anamnese.vieFamilialeSexuelle;
-    _coupleAnnee = TextEditingController(text: v.coupleAnnee ?? '');
-    _grossesses = TextEditingController(text: v.nombreGrossesses ?? '');
-    _troublesNotes = TextEditingController(text: v.troublesSexuels.notes ?? '');
-    _menoAnnee = TextEditingController(text: v.menopause.year ?? '');
-    _notes = TextEditingController(text: v.notes ?? '');
+    final vieFamilialeSexuelle = widget.data.anamnese.vieFamilialeSexuelle;
+    _coupleAnnee = TextEditingController(text: vieFamilialeSexuelle.coupleAnnee ?? '');
+    _grossesses = TextEditingController(text: vieFamilialeSexuelle.nombreGrossesses ?? '');
+    _troublesNotes = TextEditingController(text: vieFamilialeSexuelle.troublesSexuels.notes ?? '');
+    _menoAnnee = TextEditingController(text: vieFamilialeSexuelle.menopause.year ?? '');
+    _notes = TextEditingController(text: vieFamilialeSexuelle.notes ?? '');
   }
 
   @override
@@ -428,9 +428,9 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
     super.dispose();
   }
 
-  VieFamilialeSexuelle get _v => widget.data.anamnese.vieFamilialeSexuelle;
+  VieFamilialeSexuelle get _vieFamilialeSexuelle => widget.data.anamnese.vieFamilialeSexuelle;
 
-  void _set(VieFamilialeSexuelle next) {
+  void _updateAnamneseSection(VieFamilialeSexuelle next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(vieFamilialeSexuelle: next);
     setState(() {});
@@ -440,16 +440,16 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final v = _v;
+    final vieFamilialeSexuelle = _vieFamilialeSexuelle;
     return AnamnesePageScaffold(
       title: l10n.anamneseVieFamilialeTitle,
       children: [
         AnamneseToggleSection(
           label: l10n.anamneseEnCouple,
-          enabled: v.enCouple.isEnabled,
-          onChanged: (on) => _set(
-            v.copyWith(
-              enCouple: v.enCouple.clearedDetails(
+          enabled: vieFamilialeSexuelle.enCouple.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            vieFamilialeSexuelle.copyWith(
+              enCouple: vieFamilialeSexuelle.enCouple.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
               clearCoupleType: !on,
@@ -473,38 +473,38 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
                   label: l10n.anamneseCoupleConcubinage,
                 ),
               ],
-              selected: v.coupleType,
-              onChanged: (t) => _set(v.copyWith(coupleType: t as String?)),
+              selected: vieFamilialeSexuelle.coupleType,
+              onChanged: (t) => _updateAnamneseSection(vieFamilialeSexuelle.copyWith(coupleType: t as String?)),
             ),
             AppInput(
               variant: AppInputVariant.number,
               label: l10n.anamneseCoupleAnnee,
               controller: _coupleAnnee,
-              onChanged: (t) => _set(v.copyWith(coupleAnnee: t)),
+              onChanged: (t) => _updateAnamneseSection(vieFamilialeSexuelle.copyWith(coupleAnnee: t)),
             ),
             AppInput(
               variant: AppInputVariant.number,
               label: l10n.anamneseNombreGrossesses,
               controller: _grossesses,
-              onChanged: (t) => _set(v.copyWith(nombreGrossesses: t)),
+              onChanged: (t) => _updateAnamneseSection(vieFamilialeSexuelle.copyWith(nombreGrossesses: t)),
             ),
           ],
         ),
         AnamneseToggleSection(
           label: l10n.anamneseTroublesSexuels,
-          enabled: v.troublesSexuels.isEnabled,
-          onChanged: (on) => _set(
-            v.copyWith(
-              troublesSexuels: v.troublesSexuels.clearedDetails(
+          enabled: vieFamilialeSexuelle.troublesSexuels.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            vieFamilialeSexuelle.copyWith(
+              troublesSexuels: vieFamilialeSexuelle.troublesSexuels.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
-              troublesSexuelsTypes: on ? v.troublesSexuelsTypes : const [],
+              troublesSexuelsTypes: on ? vieFamilialeSexuelle.troublesSexuelsTypes : const [],
             ),
           ),
           children: [
             AnamneseChipGroup(
               multi: true,
-              selectedValues: v.troublesSexuelsTypes.toSet(),
+              selectedValues: vieFamilialeSexuelle.troublesSexuelsTypes.toSet(),
               options: [
                 AnamneseChipOption(
                   value: 'dysfonction_erectile',
@@ -523,8 +523,8 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
                   label: l10n.anamneseRisqueMst,
                 ),
               ],
-              onChanged: (set) => _set(
-                v.copyWith(
+              onChanged: (set) => _updateAnamneseSection(
+                vieFamilialeSexuelle.copyWith(
                   troublesSexuelsTypes: (set as Set<String>).toList(),
                 ),
               ),
@@ -534,9 +534,9 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
               label: l10n.anamneseDetails,
               controller: _troublesNotes,
               maxLines: 2,
-              onChanged: (t) => _set(
-                v.copyWith(
-                  troublesSexuels: v.troublesSexuels.copyWith(notes: t),
+              onChanged: (t) => _updateAnamneseSection(
+                vieFamilialeSexuelle.copyWith(
+                  troublesSexuels: vieFamilialeSexuelle.troublesSexuels.copyWith(notes: t),
                 ),
               ),
             ),
@@ -544,10 +544,10 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
         ),
         AnamneseToggleSection(
           label: l10n.anamneseMenopause,
-          enabled: v.menopause.isEnabled,
-          onChanged: (on) => _set(
-            v.copyWith(
-              menopause: v.menopause.clearedDetails(
+          enabled: vieFamilialeSexuelle.menopause.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            vieFamilialeSexuelle.copyWith(
+              menopause: vieFamilialeSexuelle.menopause.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
               clearTraitementHormonal: !on,
@@ -558,8 +558,8 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
               variant: AppInputVariant.number,
               label: l10n.anamneseAnnee,
               controller: _menoAnnee,
-              onChanged: (t) => _set(
-                v.copyWith(menopause: v.menopause.copyWith(year: t)),
+              onChanged: (t) => _updateAnamneseSection(
+                vieFamilialeSexuelle.copyWith(menopause: vieFamilialeSexuelle.menopause.copyWith(year: t)),
               ),
             ),
             AnamneseChipGroup(
@@ -568,11 +568,11 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
                 AnamneseChipOption(value: 'oui', label: l10n.anamneseOui),
                 AnamneseChipOption(value: 'non', label: l10n.anamneseNon),
               ],
-              selected: v.traitementHormonal == null
+              selected: vieFamilialeSexuelle.traitementHormonal == null
                   ? null
-                  : (v.traitementHormonal! ? 'oui' : 'non'),
-              onChanged: (t) => _set(
-                v.copyWith(
+                  : (vieFamilialeSexuelle.traitementHormonal! ? 'oui' : 'non'),
+              onChanged: (t) => _updateAnamneseSection(
+                vieFamilialeSexuelle.copyWith(
                   traitementHormonal: t == null ? null : t == 'oui',
                   clearTraitementHormonal: t == null,
                 ),
@@ -585,7 +585,7 @@ class _AnamneseVieFamilialePageState extends State<AnamneseVieFamilialePage> {
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (t) => _set(v.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(vieFamilialeSexuelle.copyWith(notes: t)),
         ),
       ],
     );
@@ -621,16 +621,16 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
   @override
   void initState() {
     super.initState();
-    final s = widget.data.anamnese.stylesDeVie;
-    _alimNotes = TextEditingController(text: s.alimentation.notes ?? '');
-    _alcoolQty = TextEditingController(text: s.alcool.quantity ?? '');
-    _alcoolNotes = TextEditingController(text: s.alcool.notes ?? '');
-    _tabacQty = TextEditingController(text: s.tabac.quantity ?? '');
-    _tabacYears = TextEditingController(text: s.tabac.years ?? '');
-    _droguesNotes = TextEditingController(text: s.drogues.notes ?? '');
-    _activite = TextEditingController(text: s.activiteParSemaine ?? '');
-    _allergiesNotes = TextEditingController(text: s.allergies.notes ?? '');
-    _notes = TextEditingController(text: s.notes ?? '');
+    final stylesDeVie = widget.data.anamnese.stylesDeVie;
+    _alimNotes = TextEditingController(text: stylesDeVie.alimentation.notes ?? '');
+    _alcoolQty = TextEditingController(text: stylesDeVie.alcool.quantity ?? '');
+    _alcoolNotes = TextEditingController(text: stylesDeVie.alcool.notes ?? '');
+    _tabacQty = TextEditingController(text: stylesDeVie.tabac.quantity ?? '');
+    _tabacYears = TextEditingController(text: stylesDeVie.tabac.years ?? '');
+    _droguesNotes = TextEditingController(text: stylesDeVie.drogues.notes ?? '');
+    _activite = TextEditingController(text: stylesDeVie.activiteParSemaine ?? '');
+    _allergiesNotes = TextEditingController(text: stylesDeVie.allergies.notes ?? '');
+    _notes = TextEditingController(text: stylesDeVie.notes ?? '');
   }
 
   @override
@@ -647,9 +647,9 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
     super.dispose();
   }
 
-  StylesDeVie get _s => widget.data.anamnese.stylesDeVie;
+  StylesDeVie get _stylesDeVie => widget.data.anamnese.stylesDeVie;
 
-  void _set(StylesDeVie next) {
+  void _updateAnamneseSection(StylesDeVie next) {
     widget.data.anamnese = widget.data.anamnese.copyWith(stylesDeVie: next);
     setState(() {});
     widget.onChanged();
@@ -674,7 +674,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final s = _s;
+    final stylesDeVie = _stylesDeVie;
     return AnamnesePageScaffold(
       title: l10n.anamneseStylesDeVieTitle,
       children: [
@@ -694,10 +694,10 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseAlimRestrictive,
             ),
           ],
-          selected: s.alimentation.qualite,
-          onChanged: (v) => _set(
-            s.copyWith(
-              alimentation: s.alimentation.copyWith(
+          selected: stylesDeVie.alimentation.qualite,
+          onChanged: (v) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              alimentation: stylesDeVie.alimentation.copyWith(
                 qualite: v as String?,
                 clearQualite: v == null,
               ),
@@ -720,10 +720,10 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseAlimExcessive,
             ),
           ],
-          selected: s.alimentation.quantite,
-          onChanged: (v) => _set(
-            s.copyWith(
-              alimentation: s.alimentation.copyWith(
+          selected: stylesDeVie.alimentation.quantite,
+          onChanged: (v) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              alimentation: stylesDeVie.alimentation.copyWith(
                 quantite: v as String?,
                 clearQuantite: v == null,
               ),
@@ -735,16 +735,16 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
           label: l10n.anamneseAlimentation,
           controller: _alimNotes,
           maxLines: 2,
-          onChanged: (t) => _set(
-            s.copyWith(alimentation: s.alimentation.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(
+            stylesDeVie.copyWith(alimentation: stylesDeVie.alimentation.copyWith(notes: t)),
           ),
         ),
         AnamneseToggleSection(
           label: l10n.anamneseAlcool,
-          enabled: s.alcool.isEnabled,
-          onChanged: (on) => _set(
-            s.copyWith(
-              alcool: s.alcool.clearedDetails(
+          enabled: stylesDeVie.alcool.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              alcool: stylesDeVie.alcool.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
             ),
@@ -753,10 +753,10 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
             AnamneseChipGroup(
               label: l10n.anamneseFrequence,
               options: _freqOptions,
-              selected: s.alcool.frequency,
-              onChanged: (v) => _set(
-                s.copyWith(
-                  alcool: s.alcool.copyWith(
+              selected: stylesDeVie.alcool.frequency,
+              onChanged: (v) => _updateAnamneseSection(
+                stylesDeVie.copyWith(
+                  alcool: stylesDeVie.alcool.copyWith(
                     frequency: v as String?,
                     clearFrequency: v == null,
                   ),
@@ -768,12 +768,12 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseVerresSemaine,
               controller: _alcoolQty,
               onChanged: (t) =>
-                  _set(s.copyWith(alcool: s.alcool.copyWith(quantity: t))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(alcool: stylesDeVie.alcool.copyWith(quantity: t))),
             ),
             AnamneseChipGroup(
               label: l10n.anamneseTypeBoisson,
               multi: true,
-              selectedValues: s.alcool.types.toSet(),
+              selectedValues: stylesDeVie.alcool.types.toSet(),
               options: [
                 AnamneseChipOption(value: 'biere', label: l10n.anamneseBiere),
                 AnamneseChipOption(value: 'vin', label: l10n.anamneseVin),
@@ -782,9 +782,9 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
                   label: l10n.anamneseSpiritueux,
                 ),
               ],
-              onChanged: (set) => _set(
-                s.copyWith(
-                  alcool: s.alcool.copyWith(types: (set as Set<String>).toList()),
+              onChanged: (set) => _updateAnamneseSection(
+                stylesDeVie.copyWith(
+                  alcool: stylesDeVie.alcool.copyWith(types: (set as Set<String>).toList()),
                 ),
               ),
             ),
@@ -793,16 +793,16 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseDetails,
               controller: _alcoolNotes,
               onChanged: (t) =>
-                  _set(s.copyWith(alcool: s.alcool.copyWith(notes: t))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(alcool: stylesDeVie.alcool.copyWith(notes: t))),
             ),
           ],
         ),
         AnamneseToggleSection(
           label: l10n.anamneseTabac,
-          enabled: s.tabac.isEnabled,
-          onChanged: (on) => _set(
-            s.copyWith(
-              tabac: s.tabac.clearedDetails(
+          enabled: stylesDeVie.tabac.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              tabac: stylesDeVie.tabac.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
             ),
@@ -813,7 +813,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseCigarettesJour,
               controller: _tabacQty,
               onChanged: (t) =>
-                  _set(s.copyWith(tabac: s.tabac.copyWith(quantity: t))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(tabac: stylesDeVie.tabac.copyWith(quantity: t))),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -821,25 +821,25 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
                 l10n.anamneseAncienFumeur,
                 variant: AppTextVariant.body,
               ),
-              value: s.tabac.former,
+              value: stylesDeVie.tabac.former,
               onChanged: (v) =>
-                  _set(s.copyWith(tabac: s.tabac.copyWith(former: v))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(tabac: stylesDeVie.tabac.copyWith(former: v))),
             ),
             AppInput(
               variant: AppInputVariant.number,
               label: l10n.anamneseAnnees,
               controller: _tabacYears,
               onChanged: (t) =>
-                  _set(s.copyWith(tabac: s.tabac.copyWith(years: t))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(tabac: stylesDeVie.tabac.copyWith(years: t))),
             ),
           ],
         ),
         AnamneseToggleSection(
           label: l10n.anamneseDrogues,
-          enabled: s.drogues.isEnabled,
-          onChanged: (on) => _set(
-            s.copyWith(
-              drogues: s.drogues.clearedDetails(
+          enabled: stylesDeVie.drogues.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              drogues: stylesDeVie.drogues.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
             ),
@@ -847,7 +847,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
           children: [
             AnamneseChipGroup(
               multi: true,
-              selectedValues: s.drogues.types.toSet(),
+              selectedValues: stylesDeVie.drogues.types.toSet(),
               options: [
                 AnamneseChipOption(
                   value: 'cannabis',
@@ -863,20 +863,20 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
                 ),
                 AnamneseChipOption(value: 'autre', label: l10n.anamneseAutre),
               ],
-              onChanged: (set) => _set(
-                s.copyWith(
+              onChanged: (set) => _updateAnamneseSection(
+                stylesDeVie.copyWith(
                   drogues:
-                      s.drogues.copyWith(types: (set as Set<String>).toList()),
+                      stylesDeVie.drogues.copyWith(types: (set as Set<String>).toList()),
                 ),
               ),
             ),
             AnamneseChipGroup(
               label: l10n.anamneseFrequence,
               options: _freqOptions,
-              selected: s.drogues.frequency,
-              onChanged: (v) => _set(
-                s.copyWith(
-                  drogues: s.drogues.copyWith(
+              selected: stylesDeVie.drogues.frequency,
+              onChanged: (v) => _updateAnamneseSection(
+                stylesDeVie.copyWith(
+                  drogues: stylesDeVie.drogues.copyWith(
                     frequency: v as String?,
                     clearFrequency: v == null,
                   ),
@@ -888,7 +888,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseDetails,
               controller: _droguesNotes,
               onChanged: (t) =>
-                  _set(s.copyWith(drogues: s.drogues.copyWith(notes: t))),
+                  _updateAnamneseSection(stylesDeVie.copyWith(drogues: stylesDeVie.drogues.copyWith(notes: t))),
             ),
           ],
         ),
@@ -902,21 +902,21 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseSedentaire,
             ),
           ],
-          selected: s.sedentarite,
-          onChanged: (v) => _set(
-            s.copyWith(
+          selected: stylesDeVie.sedentarite,
+          onChanged: (v) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
               sedentarite: v as String?,
               clearSedentarite: v == null,
               clearActivite: v != 'actif' && v != 'modere',
             ),
           ),
         ),
-        if (s.sedentarite == 'actif' || s.sedentarite == 'modere')
+        if (stylesDeVie.sedentarite == 'actif' || stylesDeVie.sedentarite == 'modere')
           AppInput(
             variant: AppInputVariant.text,
             label: l10n.anamneseActiviteSemaine,
             controller: _activite,
-            onChanged: (t) => _set(s.copyWith(activiteParSemaine: t)),
+            onChanged: (t) => _updateAnamneseSection(stylesDeVie.copyWith(activiteParSemaine: t)),
           ),
         AnamneseChipGroup(
           label: l10n.anamneseRelationsSociales,
@@ -925,9 +925,9 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
             AnamneseChipOption(value: 'limite', label: l10n.anamneseLimite),
             AnamneseChipOption(value: 'soutenu', label: l10n.anamneseSoutenu),
           ],
-          selected: s.relationsSociales,
-          onChanged: (v) => _set(
-            s.copyWith(
+          selected: stylesDeVie.relationsSociales,
+          onChanged: (v) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
               relationsSociales: v as String?,
               clearRelations: v == null,
             ),
@@ -935,10 +935,10 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
         ),
         AnamneseToggleSection(
           label: l10n.anamneseAllergies,
-          enabled: s.allergies.isEnabled,
-          onChanged: (on) => _set(
-            s.copyWith(
-              allergies: s.allergies.clearedDetails(
+          enabled: stylesDeVie.allergies.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            stylesDeVie.copyWith(
+              allergies: stylesDeVie.allergies.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
             ),
@@ -946,7 +946,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
           children: [
             AnamneseChipGroup(
               multi: true,
-              selectedValues: s.allergies.types.toSet(),
+              selectedValues: stylesDeVie.allergies.types.toSet(),
               options: [
                 AnamneseChipOption(
                   value: 'medicamenteuses',
@@ -961,9 +961,9 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
                   label: l10n.anamneseAllergieEnvironnementales,
                 ),
               ],
-              onChanged: (set) => _set(
-                s.copyWith(
-                  allergies: s.allergies
+              onChanged: (set) => _updateAnamneseSection(
+                stylesDeVie.copyWith(
+                  allergies: stylesDeVie.allergies
                       .copyWith(types: (set as Set<String>).toList()),
                 ),
               ),
@@ -973,8 +973,8 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
               label: l10n.anamneseDetailAllergies,
               controller: _allergiesNotes,
               maxLines: 2,
-              onChanged: (t) => _set(
-                s.copyWith(allergies: s.allergies.copyWith(notes: t)),
+              onChanged: (t) => _updateAnamneseSection(
+                stylesDeVie.copyWith(allergies: stylesDeVie.allergies.copyWith(notes: t)),
               ),
             ),
           ],
@@ -984,7 +984,7 @@ class _AnamneseStylesDeViePageState extends State<AnamneseStylesDeViePage> {
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (t) => _set(s.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(stylesDeVie.copyWith(notes: t)),
         ),
       ],
     );
@@ -1015,10 +1015,10 @@ class _AnamneseActivitesPhysioPageState
   @override
   void initState() {
     super.initState();
-    final a = widget.data.anamnese.activitesPhysiologiques;
-    _sellesFreq = TextEditingController(text: a.selles.frequence ?? '');
-    _mictionsFreq = TextEditingController(text: a.mictions.frequence ?? '');
-    _notes = TextEditingController(text: a.notes ?? '');
+    final activitesPhysiologiques = widget.data.anamnese.activitesPhysiologiques;
+    _sellesFreq = TextEditingController(text: activitesPhysiologiques.selles.frequence ?? '');
+    _mictionsFreq = TextEditingController(text: activitesPhysiologiques.mictions.frequence ?? '');
+    _notes = TextEditingController(text: activitesPhysiologiques.notes ?? '');
   }
 
   @override
@@ -1029,10 +1029,10 @@ class _AnamneseActivitesPhysioPageState
     super.dispose();
   }
 
-  ActivitesPhysiologiques get _a =>
+  ActivitesPhysiologiques get _activitesPhysiologiques =>
       widget.data.anamnese.activitesPhysiologiques;
 
-  void _set(ActivitesPhysiologiques next) {
+  void _updateAnamneseSection(ActivitesPhysiologiques next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(activitesPhysiologiques: next);
     setState(() {});
@@ -1042,7 +1042,7 @@ class _AnamneseActivitesPhysioPageState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final a = _a;
+    final activitesPhysiologiques = _activitesPhysiologiques;
     return AnamnesePageScaffold(
       title: l10n.anamneseActivitesPhysioTitle,
       children: [
@@ -1066,10 +1066,10 @@ class _AnamneseActivitesPhysioPageState
               label: l10n.anamneseSellesDiarrhee,
             ),
           ],
-          selected: a.selles.rythme,
-          onChanged: (v) => _set(
-            a.copyWith(
-              selles: a.selles.copyWith(
+          selected: activitesPhysiologiques.selles.rythme,
+          onChanged: (v) => _updateAnamneseSection(
+            activitesPhysiologiques.copyWith(
+              selles: activitesPhysiologiques.selles.copyWith(
                 rythme: v as String?,
                 clearRythme: v == null,
               ),
@@ -1081,12 +1081,12 @@ class _AnamneseActivitesPhysioPageState
           label: l10n.anamneseFrequenceJour,
           controller: _sellesFreq,
           onChanged: (t) =>
-              _set(a.copyWith(selles: a.selles.copyWith(frequence: t))),
+              _updateAnamneseSection(activitesPhysiologiques.copyWith(selles: activitesPhysiologiques.selles.copyWith(frequence: t))),
         ),
         AnamneseChipGroup(
           label: l10n.anamneseMictions,
           multi: true,
-          selectedValues: a.mictions.symptomes.toSet(),
+          selectedValues: activitesPhysiologiques.mictions.symptomes.toSet(),
           options: [
             AnamneseChipOption(
               value: 'normale',
@@ -1103,10 +1103,10 @@ class _AnamneseActivitesPhysioPageState
               label: l10n.anamneseHematurie,
             ),
           ],
-          onChanged: (set) => _set(
-            a.copyWith(
+          onChanged: (set) => _updateAnamneseSection(
+            activitesPhysiologiques.copyWith(
               mictions:
-                  a.mictions.copyWith(symptomes: (set as Set<String>).toList()),
+                  activitesPhysiologiques.mictions.copyWith(symptomes: (set as Set<String>).toList()),
             ),
           ),
         ),
@@ -1115,7 +1115,7 @@ class _AnamneseActivitesPhysioPageState
           label: l10n.anamneseFrequence,
           controller: _mictionsFreq,
           onChanged: (t) =>
-              _set(a.copyWith(mictions: a.mictions.copyWith(frequence: t))),
+              _updateAnamneseSection(activitesPhysiologiques.copyWith(mictions: activitesPhysiologiques.mictions.copyWith(frequence: t))),
         ),
         AnamneseChipGroup(
           label: l10n.anamneseCouleur,
@@ -1133,10 +1133,10 @@ class _AnamneseActivitesPhysioPageState
               label: l10n.anamneseCouleurSanglante,
             ),
           ],
-          selected: a.mictions.couleur,
-          onChanged: (v) => _set(
-            a.copyWith(
-              mictions: a.mictions.copyWith(
+          selected: activitesPhysiologiques.mictions.couleur,
+          onChanged: (v) => _updateAnamneseSection(
+            activitesPhysiologiques.copyWith(
+              mictions: activitesPhysiologiques.mictions.copyWith(
                 couleur: v as String?,
                 clearCouleur: v == null,
               ),
@@ -1148,7 +1148,7 @@ class _AnamneseActivitesPhysioPageState
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (t) => _set(a.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(activitesPhysiologiques.copyWith(notes: t)),
         ),
       ],
     );
@@ -1178,10 +1178,10 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
   @override
   void initState() {
     super.initState();
-    final a = widget.data.anamnese.activiteProfessionnelle;
-    _metier = TextEditingController(text: a.metier ?? '');
-    _expoNotes = TextEditingController(text: a.expositions.notes ?? '');
-    _notes = TextEditingController(text: a.notes ?? '');
+    final activiteProfessionnelle = widget.data.anamnese.activiteProfessionnelle;
+    _metier = TextEditingController(text: activiteProfessionnelle.metier ?? '');
+    _expoNotes = TextEditingController(text: activiteProfessionnelle.expositions.notes ?? '');
+    _notes = TextEditingController(text: activiteProfessionnelle.notes ?? '');
   }
 
   @override
@@ -1192,10 +1192,10 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
     super.dispose();
   }
 
-  ActiviteProfessionnelle get _a =>
+  ActiviteProfessionnelle get _activiteProfessionnelle =>
       widget.data.anamnese.activiteProfessionnelle;
 
-  void _set(ActiviteProfessionnelle next) {
+  void _updateAnamneseSection(ActiviteProfessionnelle next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(activiteProfessionnelle: next);
     setState(() {});
@@ -1205,7 +1205,7 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final a = _a;
+    final activiteProfessionnelle = _activiteProfessionnelle;
     return AnamnesePageScaffold(
       title: l10n.anamneseActiviteProTitle,
       children: [
@@ -1227,32 +1227,32 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
               label: l10n.anamneseProSansEmploi,
             ),
           ],
-          selected: a.categorie,
-          onChanged: (v) => _set(
-            a.copyWith(categorie: v as String?, clearCategorie: v == null),
+          selected: activiteProfessionnelle.categorie,
+          onChanged: (v) => _updateAnamneseSection(
+            activiteProfessionnelle.copyWith(categorie: v as String?, clearCategorie: v == null),
           ),
         ),
         AppInput(
           variant: AppInputVariant.text,
           label: l10n.anamneseMetier,
           controller: _metier,
-          onChanged: (t) => _set(a.copyWith(metier: t)),
+          onChanged: (t) => _updateAnamneseSection(activiteProfessionnelle.copyWith(metier: t)),
         ),
         AnamneseToggleSection(
           label: l10n.anamneseExpositions,
-          enabled: a.expositions.isEnabled,
-          onChanged: (on) => _set(
-            a.copyWith(
-              expositions: a.expositions.clearedDetails(
+          enabled: activiteProfessionnelle.expositions.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            activiteProfessionnelle.copyWith(
+              expositions: activiteProfessionnelle.expositions.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
-              expositionTypes: on ? a.expositionTypes : const [],
+              expositionTypes: on ? activiteProfessionnelle.expositionTypes : const [],
             ),
           ),
           children: [
             AnamneseChipGroup(
               multi: true,
-              selectedValues: a.expositionTypes.toSet(),
+              selectedValues: activiteProfessionnelle.expositionTypes.toSet(),
               options: [
                 AnamneseChipOption(
                   value: 'physique',
@@ -1268,8 +1268,8 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
                 ),
                 AnamneseChipOption(value: 'autre', label: l10n.anamneseAutre),
               ],
-              onChanged: (set) => _set(
-                a.copyWith(expositionTypes: (set as Set<String>).toList()),
+              onChanged: (set) => _updateAnamneseSection(
+                activiteProfessionnelle.copyWith(expositionTypes: (set as Set<String>).toList()),
               ),
             ),
             AppInput(
@@ -1277,8 +1277,8 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
               label: l10n.anamneseDetails,
               controller: _expoNotes,
               maxLines: 2,
-              onChanged: (t) => _set(
-                a.copyWith(expositions: a.expositions.copyWith(notes: t)),
+              onChanged: (t) => _updateAnamneseSection(
+                activiteProfessionnelle.copyWith(expositions: activiteProfessionnelle.expositions.copyWith(notes: t)),
               ),
             ),
           ],
@@ -1288,7 +1288,7 @@ class _AnamneseActiviteProPageState extends State<AnamneseActiviteProPage> {
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (t) => _set(a.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(activiteProfessionnelle.copyWith(notes: t)),
         ),
       ],
     );
@@ -1317,9 +1317,9 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
   @override
   void initState() {
     super.initState();
-    final p = widget.data.anamnese.personnalite;
-    _etudes = TextEditingController(text: p.etudesTravail ?? '');
-    _notes = TextEditingController(text: p.notes ?? '');
+    final personnalite = widget.data.anamnese.personnalite;
+    _etudes = TextEditingController(text: personnalite.etudesTravail ?? '');
+    _notes = TextEditingController(text: personnalite.notes ?? '');
   }
 
   @override
@@ -1329,9 +1329,9 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
     super.dispose();
   }
 
-  Personnalite get _p => widget.data.anamnese.personnalite;
+  Personnalite get _personnalite => widget.data.anamnese.personnalite;
 
-  void _set(Personnalite next) {
+  void _updateAnamneseSection(Personnalite next) {
     widget.data.anamnese = widget.data.anamnese.copyWith(personnalite: next);
     setState(() {});
     widget.onChanged();
@@ -1340,7 +1340,7 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final p = _p;
+    final personnalite = _personnalite;
     return AnamnesePageScaffold(
       title: l10n.anamnesePersonnaliteTitle,
       children: [
@@ -1349,7 +1349,7 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
           label: l10n.anamneseEtudesTravail,
           controller: _etudes,
           maxLines: 2,
-          onChanged: (t) => _set(p.copyWith(etudesTravail: t)),
+          onChanged: (t) => _updateAnamneseSection(personnalite.copyWith(etudesTravail: t)),
         ),
         AnamneseChipGroup(
           label: l10n.anamnesePerceptionSante,
@@ -1367,9 +1367,9 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
               label: l10n.anamneseSurEstime,
             ),
           ],
-          selected: p.perceptionSante,
-          onChanged: (v) => _set(
-            p.copyWith(
+          selected: personnalite.perceptionSante,
+          onChanged: (v) => _updateAnamneseSection(
+            personnalite.copyWith(
               perceptionSante: v as String?,
               clearPerception: v == null,
             ),
@@ -1378,7 +1378,7 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
         AnamneseChipGroup(
           label: l10n.anamneseAttitudeMaladie,
           multi: true,
-          selectedValues: p.attitudeMaladie.toSet(),
+          selectedValues: personnalite.attitudeMaladie.toSet(),
           options: [
             AnamneseChipOption(
               value: 'acceptation',
@@ -1396,14 +1396,14 @@ class _AnamnesePersonnalitePageState extends State<AnamnesePersonnalitePage> {
             ),
           ],
           onChanged: (set) =>
-              _set(p.copyWith(attitudeMaladie: (set as Set<String>).toList())),
+              _updateAnamneseSection(personnalite.copyWith(attitudeMaladie: (set as Set<String>).toList())),
         ),
         AppInput(
           variant: AppInputVariant.textarea,
           label: l10n.anamneseNotesComplementaires,
           controller: _notes,
           maxLines: 2,
-          onChanged: (t) => _set(p.copyWith(notes: t)),
+          onChanged: (t) => _updateAnamneseSection(personnalite.copyWith(notes: t)),
         ),
       ],
     );
@@ -1435,14 +1435,14 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
   @override
   void initState() {
     super.initState();
-    final a = widget.data.anamnese.antecedentsChroniques;
-    _htaAnnee = TextEditingController(text: a.hypertension.annee ?? '');
-    _diabeteAnnee = TextEditingController(text: a.diabete.annee ?? '');
-    _dysAnnee = TextEditingController(text: a.dyslipidemie.annee ?? '');
-    _notes = TextEditingController(text: a.notes ?? '');
-    _maladies = a.maladies.isEmpty
+    final antecedentsChroniques = widget.data.anamnese.antecedentsChroniques;
+    _htaAnnee = TextEditingController(text: antecedentsChroniques.hypertension.annee ?? '');
+    _diabeteAnnee = TextEditingController(text: antecedentsChroniques.diabete.annee ?? '');
+    _dysAnnee = TextEditingController(text: antecedentsChroniques.dyslipidemie.annee ?? '');
+    _notes = TextEditingController(text: antecedentsChroniques.notes ?? '');
+    _maladies = antecedentsChroniques.maladies.isEmpty
         ? [_MaladieControllers.empty()]
-        : a.maladies.map(_MaladieControllers.fromEntry).toList();
+        : antecedentsChroniques.maladies.map(_MaladieControllers.fromEntry).toList();
   }
 
   @override
@@ -1457,9 +1457,9 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
     super.dispose();
   }
 
-  AntecedentsChroniques get _a => widget.data.anamnese.antecedentsChroniques;
+  AntecedentsChroniques get _antecedentsChroniques => widget.data.anamnese.antecedentsChroniques;
 
-  void _set(AntecedentsChroniques next) {
+  void _updateAnamneseSection(AntecedentsChroniques next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(antecedentsChroniques: next);
     setState(() {});
@@ -1471,26 +1471,26 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
         .map((m) => m.toEntry())
         .where((e) => !e.isEmpty)
         .toList();
-    _set(_a.copyWith(maladies: entries, notes: _notes.text));
+    _updateAnamneseSection(_antecedentsChroniques.copyWith(maladies: entries, notes: _notes.text));
   }
 
-  Widget _flagSection({
+  Widget _chronicConditionSection({
     required String label,
-    required ChroniqueFlag flag,
+    required ChroniqueFlag chronicCondition,
     required TextEditingController anneeController,
     required ValueChanged<ChroniqueFlag> onChanged,
   }) {
     final l10n = AppLocalizations.of(context);
     return AnamneseToggleSection(
       label: label,
-      enabled: flag.enabled,
-      onChanged: (on) => onChanged(flag.clearedDetails(enabled: on)),
+      enabled: chronicCondition.enabled,
+      onChanged: (isEnabled) => onChanged(chronicCondition.clearedDetails(enabled: isEnabled)),
       children: [
         AppInput(
           variant: AppInputVariant.number,
           label: l10n.anamneseMaladieAnnee,
           controller: anneeController,
-          onChanged: (t) => onChanged(flag.copyWith(annee: t)),
+          onChanged: (yearText) => onChanged(chronicCondition.copyWith(annee: yearText)),
         ),
         AnamneseChipGroup(
           label: l10n.anamneseSuivi,
@@ -1502,9 +1502,12 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
               label: l10n.anamneseSuiviHopital,
             ),
           ],
-          selected: flag.suivi,
-          onChanged: (v) => onChanged(
-            flag.copyWith(suivi: v as String?, clearSuivi: v == null),
+          selected: chronicCondition.suivi,
+          onChanged: (selectedFollowUp) => onChanged(
+            chronicCondition.copyWith(
+              suivi: selectedFollowUp as String?,
+              clearSuivi: selectedFollowUp == null,
+            ),
           ),
         ),
       ],
@@ -1514,27 +1517,27 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final a = _a;
+    final antecedentsChroniques = _antecedentsChroniques;
     return AnamnesePageScaffold(
       title: l10n.anamneseAntecedentsTitle,
       children: [
-        _flagSection(
+        _chronicConditionSection(
           label: l10n.anamneseHypertension,
-          flag: a.hypertension,
+          chronicCondition: antecedentsChroniques.hypertension,
           anneeController: _htaAnnee,
-          onChanged: (f) => _set(a.copyWith(hypertension: f)),
+          onChanged: (updated) => _updateAnamneseSection(antecedentsChroniques.copyWith(hypertension: updated)),
         ),
-        _flagSection(
+        _chronicConditionSection(
           label: l10n.anamneseDiabete,
-          flag: a.diabete,
+          chronicCondition: antecedentsChroniques.diabete,
           anneeController: _diabeteAnnee,
-          onChanged: (f) => _set(a.copyWith(diabete: f)),
+          onChanged: (updated) => _updateAnamneseSection(antecedentsChroniques.copyWith(diabete: updated)),
         ),
-        _flagSection(
+        _chronicConditionSection(
           label: l10n.anamneseDyslipidemie,
-          flag: a.dyslipidemie,
+          chronicCondition: antecedentsChroniques.dyslipidemie,
           anneeController: _dysAnnee,
-          onChanged: (f) => _set(a.copyWith(dyslipidemie: f)),
+          onChanged: (updated) => _updateAnamneseSection(antecedentsChroniques.copyWith(dyslipidemie: updated)),
         ),
         AnamneseChipGroup(
           label: l10n.anamneseAddMaladie,
@@ -1559,9 +1562,9 @@ class _AnamneseAntecedentsPageState extends State<AnamneseAntecedentsPage> {
               if (empty.isNotEmpty) {
                 empty.first.name.text = v;
               } else {
-                final c = _MaladieControllers.empty();
-                c.name.text = v;
-                _maladies.add(c);
+                final maladieControllers = _MaladieControllers.empty();
+                maladieControllers.name.text = v;
+                _maladies.add(maladieControllers);
               }
             });
             _syncMaladies();
@@ -1650,21 +1653,21 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
   @override
   void initState() {
     super.initState();
-    final t = widget.data.anamnese.traumatismesChirurgieInfections;
+    final traumatismes = widget.data.anamnese.traumatismesChirurgieInfections;
     _traumaNotes =
-        TextEditingController(text: t.traumatismesSequelles.notes ?? '');
+        TextEditingController(text: traumatismes.traumatismesSequelles.notes ?? '');
     _infectionsYear =
-        TextEditingController(text: t.infectionsEnfance.year ?? '');
-    _tbYear = TextEditingController(text: t.tuberculose.year ?? '');
-    _tumeursYear = TextEditingController(text: t.tumeurs.year ?? '');
-    _hepatiteYear = TextEditingController(text: t.hepatite.year ?? '');
-    _syphilisYear = TextEditingController(text: t.syphilis.year ?? '');
+        TextEditingController(text: traumatismes.infectionsEnfance.year ?? '');
+    _tbYear = TextEditingController(text: traumatismes.tuberculose.year ?? '');
+    _tumeursYear = TextEditingController(text: traumatismes.tumeurs.year ?? '');
+    _hepatiteYear = TextEditingController(text: traumatismes.hepatite.year ?? '');
+    _syphilisYear = TextEditingController(text: traumatismes.syphilis.year ?? '');
     _fracturesYear =
-        TextEditingController(text: t.fracturesSansTraumatisme.year ?? '');
-    _notes = TextEditingController(text: t.notes ?? '');
-    _interventions = t.interventions.isEmpty
+        TextEditingController(text: traumatismes.fracturesSansTraumatisme.year ?? '');
+    _notes = TextEditingController(text: traumatismes.notes ?? '');
+    _interventions = traumatismes.interventions.isEmpty
         ? [_InterventionControllers.empty()]
-        : t.interventions.map(_InterventionControllers.fromEntry).toList();
+        : traumatismes.interventions.map(_InterventionControllers.fromEntry).toList();
   }
 
   @override
@@ -1683,10 +1686,10 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
     super.dispose();
   }
 
-  TraumatismesChirurgieInfections get _t =>
+  TraumatismesChirurgieInfections get _traumatismes =>
       widget.data.anamnese.traumatismesChirurgieInfections;
 
-  void _set(TraumatismesChirurgieInfections next) {
+  void _updateAnamneseSection(TraumatismesChirurgieInfections next) {
     widget.data.anamnese =
         widget.data.anamnese.copyWith(traumatismesChirurgieInfections: next);
     setState(() {});
@@ -1698,7 +1701,7 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
         .map((i) => i.toEntry())
         .where((e) => !e.isEmpty)
         .toList();
-    _set(_t.copyWith(interventions: interventions, notes: _notes.text));
+    _updateAnamneseSection(_traumatismes.copyWith(interventions: interventions, notes: _notes.text));
   }
 
   Widget _conditionToggle({
@@ -1721,7 +1724,7 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
           variant: AppInputVariant.number,
           label: l10n.anamneseAnnee,
           controller: yearController,
-          onChanged: (t) => onChanged(entry.copyWith(year: t)),
+          onChanged: (yearText) => onChanged(entry.copyWith(year: yearText)),
         ),
       ],
     );
@@ -1730,16 +1733,16 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = _t;
+    final traumatismes = _traumatismes;
     return AnamnesePageScaffold(
       title: l10n.anamneseTraumatismesTitle,
       children: [
         AnamneseToggleSection(
           label: l10n.anamneseTraumatismesSequelles,
-          enabled: t.traumatismesSequelles.isEnabled,
-          onChanged: (on) => _set(
-            t.copyWith(
-              traumatismesSequelles: t.traumatismesSequelles.clearedDetails(
+          enabled: traumatismes.traumatismesSequelles.isEnabled,
+          onChanged: (on) => _updateAnamneseSection(
+            traumatismes.copyWith(
+              traumatismesSequelles: traumatismes.traumatismesSequelles.clearedDetails(
                 status: on ? PresenceStatus.present : PresenceStatus.absent,
               ),
             ),
@@ -1750,10 +1753,10 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
               label: l10n.anamneseDetails,
               controller: _traumaNotes,
               maxLines: 2,
-              onChanged: (v) => _set(
-                t.copyWith(
+              onChanged: (v) => _updateAnamneseSection(
+                traumatismes.copyWith(
                   traumatismesSequelles:
-                      t.traumatismesSequelles.copyWith(notes: v),
+                      traumatismes.traumatismesSequelles.copyWith(notes: v),
                 ),
               ),
             ),
@@ -1761,11 +1764,11 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
         ),
         AnamneseToggleSection(
           label: l10n.anamneseChirurgieAnterieure,
-          enabled: t.chirurgieAnterieure,
-          onChanged: (on) => _set(
-            t.copyWith(
+          enabled: traumatismes.chirurgieAnterieure,
+          onChanged: (on) => _updateAnamneseSection(
+            traumatismes.copyWith(
               chirurgieAnterieure: on,
-              interventions: on ? t.interventions : const [],
+              interventions: on ? traumatismes.interventions : const [],
             ),
           ),
           children: [
@@ -1803,39 +1806,39 @@ class _AnamneseTraumatismesPageState extends State<AnamneseTraumatismesPage> {
         ),
         _conditionToggle(
           label: l10n.anamneseInfectionsEnfance,
-          entry: t.infectionsEnfance,
+          entry: traumatismes.infectionsEnfance,
           yearController: _infectionsYear,
-          onChanged: (e) => _set(t.copyWith(infectionsEnfance: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(infectionsEnfance: e)),
         ),
         _conditionToggle(
           label: l10n.anamneseTuberculose,
-          entry: t.tuberculose,
+          entry: traumatismes.tuberculose,
           yearController: _tbYear,
-          onChanged: (e) => _set(t.copyWith(tuberculose: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(tuberculose: e)),
         ),
         _conditionToggle(
           label: l10n.anamneseTumeurs,
-          entry: t.tumeurs,
+          entry: traumatismes.tumeurs,
           yearController: _tumeursYear,
-          onChanged: (e) => _set(t.copyWith(tumeurs: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(tumeurs: e)),
         ),
         _conditionToggle(
           label: l10n.anamneseHepatite,
-          entry: t.hepatite,
+          entry: traumatismes.hepatite,
           yearController: _hepatiteYear,
-          onChanged: (e) => _set(t.copyWith(hepatite: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(hepatite: e)),
         ),
         _conditionToggle(
           label: l10n.anamneseSyphilis,
-          entry: t.syphilis,
+          entry: traumatismes.syphilis,
           yearController: _syphilisYear,
-          onChanged: (e) => _set(t.copyWith(syphilis: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(syphilis: e)),
         ),
         _conditionToggle(
           label: l10n.anamneseFracturesSansTraumatisme,
-          entry: t.fracturesSansTraumatisme,
+          entry: traumatismes.fracturesSansTraumatisme,
           yearController: _fracturesYear,
-          onChanged: (e) => _set(t.copyWith(fracturesSansTraumatisme: e)),
+          onChanged: (e) => _updateAnamneseSection(traumatismes.copyWith(fracturesSansTraumatisme: e)),
         ),
         AppInput(
           variant: AppInputVariant.textarea,

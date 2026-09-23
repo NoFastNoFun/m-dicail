@@ -108,8 +108,8 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
   }
 
   Future<void> _discardTutorialSessionAndClose() async {
-    final repo = getIt<RecordingSessionRepository>();
-    await repo.delete(widget.sessionId);
+    final repository = getIt<RecordingSessionRepository>();
+    await repository.delete(widget.sessionId);
     if (!mounted) return;
     Navigator.of(context).pop();
     if (context.canPop()) {
@@ -130,15 +130,15 @@ class _AssignPatientSheetState extends State<AssignPatientSheet> {
 
     final l10n = AppLocalizations.of(context);
     try {
-      final repo = getIt<RecordingSessionRepository>();
-      final session = await repo.getById(widget.sessionId);
+      final repository = getIt<RecordingSessionRepository>();
+      final session = await repository.getById(widget.sessionId);
       if (session == null) {
         if (context.mounted) {
           AppToast.showError(context, l10n.assignPatientError);
         }
         return;
       }
-      await repo.save(session.copyWith(patientId: patientId));
+      await repository.save(session.copyWith(patientId: patientId));
       if (context.mounted) {
         Navigator.of(context).pop(patientId);
       }
