@@ -59,9 +59,9 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   }
 
   String? get _totpSecret {
-    final url = _otpauthUrl;
-    if (url == null) return null;
-    return Uri.tryParse(url)?.queryParameters['secret'];
+    final otpauthUrl = _otpauthUrl;
+    if (otpauthUrl == null) return null;
+    return Uri.tryParse(otpauthUrl)?.queryParameters['secret'];
   }
 
   Future<void> _copyText(String text, String successMessage) async {
@@ -98,14 +98,14 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
   Future<void> _toggleBiometricLock(bool enabled) async {
     final l10n = AppLocalizations.of(context);
-    final ok = await _appLock.setEnabled(
+    final didAuthenticate = await _appLock.setEnabled(
       enabled,
       reason: enabled
           ? l10n.authBiometricEnableReason
           : l10n.authBiometricDisableReason,
     );
     if (!mounted) return;
-    if (!ok) {
+    if (!didAuthenticate) {
       AppToast.showError(context, l10n.authBiometricAuthFailed);
       return;
     }
@@ -114,8 +114,8 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
   Future<void> _startMfaEnroll() async {
     try {
-      final url = await _authRepository.enrollMfa();
-      setState(() => _otpauthUrl = url);
+      final otpauthUrl = await _authRepository.enrollMfa();
+      setState(() => _otpauthUrl = otpauthUrl);
     } catch (e) {
       if (mounted) AppToast.showError(context, e.toString());
     }

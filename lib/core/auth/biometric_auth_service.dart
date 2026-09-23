@@ -6,9 +6,9 @@ import 'package:local_auth/local_auth.dart';
 
 @lazySingleton
 class BiometricAuthService {
-  BiometricAuthService() : _auth = LocalAuthentication();
+  BiometricAuthService() : _localAuthentication = LocalAuthentication();
 
-  final LocalAuthentication _auth;
+  final LocalAuthentication _localAuthentication;
 
   Future<bool> isAvailable() async {
     if (kIsWeb) return false;
@@ -19,9 +19,9 @@ class BiometricAuthService {
           Platform.isMacOS)) {
         return false;
       }
-      final canCheck = await _auth.canCheckBiometrics;
-      final supported = await _auth.isDeviceSupported();
-      return canCheck || supported;
+      final canCheckBiometrics = await _localAuthentication.canCheckBiometrics;
+      final isDeviceSupported = await _localAuthentication.isDeviceSupported();
+      return canCheckBiometrics || isDeviceSupported;
     } catch (_) {
       return false;
     }
@@ -30,7 +30,7 @@ class BiometricAuthService {
   Future<bool> authenticate({required String reason}) async {
     if (!await isAvailable()) return false;
     try {
-      return await _auth.authenticate(
+      return await _localAuthentication.authenticate(
         localizedReason: reason,
         options: const AuthenticationOptions(
           biometricOnly: false,
