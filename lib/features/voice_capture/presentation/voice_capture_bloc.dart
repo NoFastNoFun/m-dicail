@@ -91,7 +91,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
   Timer? _aiChunkTimer;
   int _nextChunkIndex = 0;
   final Map<int, Future<String?>> _inflightChunkFutures = {};
+  final Map<int, Future<String?>> _inflightLocalChunkFutures = {};
   final Map<int, String> _completedChunkTexts = {};
+  final Map<int, String> _completedLocalChunkTexts = {};
   static const _aiChunkInterval = Duration(seconds: 25);
 
   List<String> _transitions = const [];
@@ -404,9 +406,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
           emit: emit,
           sessionId: sessionId,
           language: event.language,
-          roughTranscript: roughTranscript,
           uxStopwatch: uxStopwatch,
-          pendingAudioPaths: pendingAudioPaths,
         );
         return;
       }
@@ -1166,7 +1166,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     _stopAiChunkTimer();
     _nextChunkIndex = 0;
     _inflightChunkFutures.clear();
+    _inflightLocalChunkFutures.clear();
     _completedChunkTexts.clear();
+    _completedLocalChunkTexts.clear();
     _userScratchNotes = '';
     _recordingDuration = Duration.zero;
   }
@@ -1178,7 +1180,9 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     required bool isFinal,
     required String language,
   }) {
-    final future = () async {
+    // Cloud stays on the critical path for chunk latency; local Whisper runs in
+    // parallel and must not delay upload/stitch of AI segments.
+    final cloudFuture = () async {
       try {
         final text = await _enhancedTranscriptionRepository.transcribeFile(
           filePath: filePath,
@@ -1194,21 +1198,51 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
         return anonymized;
       } catch (_) {
         return null;
+      }
+    }();
+    _inflightChunkFutures[chunkIndex] = cloudFuture;
+
+    final localFuture = () async {
+      try {
+        final text = await _offlineAudioTranscriptionService.transcribeFile(
+          filePath,
+          language: language,
+        );
+        final anonymized = AnonymizationHelper.anonymize(text).trim();
+        if (anonymized.isNotEmpty) {
+          _completedLocalChunkTexts[chunkIndex] = anonymized;
+        }
+        return anonymized.isEmpty ? null : anonymized;
+      } catch (_) {
+        return null;
       } finally {
+        // Keep the WAV until both cloud and local have read it.
+        await cloudFuture;
         await _deleteAudioFile(filePath);
       }
     }();
-    _inflightChunkFutures[chunkIndex] = future;
+    _inflightLocalChunkFutures[chunkIndex] = localFuture;
   }
 
   Future<String> _awaitStitchedAiTranscript() async {
     if (_inflightChunkFutures.isNotEmpty) {
       await Future.wait(_inflightChunkFutures.values);
     }
-    final indices = _completedChunkTexts.keys.toList()..sort();
+    return _stitchChunkMap(_completedChunkTexts);
+  }
+
+  Future<String> _awaitStitchedLocalTranscript() async {
+    if (_inflightLocalChunkFutures.isNotEmpty) {
+      await Future.wait(_inflightLocalChunkFutures.values);
+    }
+    return _stitchChunkMap(_completedLocalChunkTexts);
+  }
+
+  String _stitchChunkMap(Map<int, String> chunks) {
+    final indices = chunks.keys.toList()..sort();
     final parts = <String>[];
     for (final index in indices) {
-      final text = _completedChunkTexts[index]?.trim() ?? '';
+      final text = chunks[index]?.trim() ?? '';
       if (text.isNotEmpty) {
         parts.add(text);
       }
@@ -1231,9 +1265,7 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
     required Emitter<VoiceCaptureState> emit,
     required String sessionId,
     required String language,
-    required String roughTranscript,
     required Stopwatch uxStopwatch,
-    required List<String> pendingAudioPaths,
   }) async {
     void emitPhase(TranscriptionWaitPhase phase) {
       emit(
@@ -1249,63 +1281,62 @@ class VoiceCaptureBloc extends Bloc<VoiceCaptureEvent, VoiceCaptureState> {
 
     emitPhase(TranscriptionWaitPhase.upload);
 
-    // Flush the last in-progress WAV as a final chunk.
+    // Flush the last in-progress WAV as a final chunk (cloud + local parallel).
     final lastPath = await _stopSessionAudio();
     if (lastPath != null) {
-      pendingAudioPaths.add(lastPath);
+      // Enqueue owns deletion after cloud+local both finish reading the WAV.
       final index = _nextChunkIndex++;
-      try {
-        final text = await _enhancedTranscriptionRepository.transcribeFile(
-          filePath: lastPath,
-          sessionId: sessionId,
-          language: language,
-          chunkIndex: index,
-          isFinal: true,
-        );
-        final anonymized = AnonymizationHelper.anonymize(text).trim();
-        if (anonymized.isNotEmpty) {
-          _completedChunkTexts[index] = anonymized;
-        }
-      } catch (_) {
-        // Offline Whisper fallback below if cloud produced nothing overall.
-      }
-    } else if (_completedChunkTexts.isEmpty && _inflightChunkFutures.isEmpty) {
+      _enqueueChunkTranscription(
+        filePath: lastPath,
+        sessionId: sessionId,
+        chunkIndex: index,
+        isFinal: true,
+        language: language,
+      );
+    } else if (_completedChunkTexts.isEmpty &&
+        _inflightChunkFutures.isEmpty &&
+        _completedLocalChunkTexts.isEmpty &&
+        _inflightLocalChunkFutures.isEmpty) {
       throw const AudioException(
         'Aucun fichier audio disponible pour la transcription.',
       );
     }
 
     emitPhase(TranscriptionWaitPhase.transcription);
-    var stitched = await _awaitStitchedAiTranscript();
+    final stitchedAi = await _awaitStitchedAiTranscript();
+    // Local stitch can finish after cloud; does not block chunk uploads.
+    final stitchedLocal = await _awaitStitchedLocalTranscript();
 
-    // Fallback: offline Whisper on last file only if cloud produced nothing.
-    // Keep it hidden from the UI (no compare panel in AI capture mode).
-    if (stitched.isEmpty && lastPath != null) {
-      try {
-        final offlineText = await _offlineAudioTranscriptionService
-            .transcribeFile(lastPath, language: language);
-        if (offlineText.isNotEmpty) {
-          stitched = AnonymizationHelper.anonymize(offlineText);
-        }
-      } catch (_) {}
+    if (stitchedAi.trim().isNotEmpty) {
+      final mergedAi = _mergeAiWithScratchNotes(stitchedAi);
+      _resetAiChunkState();
+      // Restore AI vs local compare (lost when chunk pipeline auto-finalized).
+      emit(
+        VoiceCaptureTranscriptCompare(
+          localTranscript: stitchedLocal,
+          aiTranscript: mergedAi,
+          selectedTemplate: _selectedTemplate,
+        ),
+      );
+      return;
     }
 
-    if (stitched.trim().isEmpty) {
+    if (stitchedLocal.trim().isEmpty) {
       throw const AudioException(
         'La transcription a échoué ou ne contient aucune parole. Veuillez réessayer.',
       );
     }
 
     emitPhase(TranscriptionWaitPhase.polish);
-    final merged = _mergeAiWithScratchNotes(stitched);
+    final mergedLocal = _mergeAiWithScratchNotes(stitchedLocal);
     _resetAiChunkState();
 
     await _finalizeConsultation(
       emit: emit,
       sessionId: sessionId,
-      transcriptForProcess: merged,
+      transcriptForProcess: mergedLocal,
       language: language,
-      transcriptIsAi: true,
+      transcriptIsAi: false,
       uxStopwatch: uxStopwatch,
     );
   }

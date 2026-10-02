@@ -388,7 +388,13 @@ void main() {
             );
           }
           bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
-          // AI capture auto-selects the cloud transcript (no compare panel).
+          if (chooseTranscript) {
+            // AI capture opens compare; pick cloud to exercise SOAP failure path.
+            await bloc.stream.firstWhere(
+              (state) => state is VoiceCaptureTranscriptCompare,
+            );
+            bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
+          }
           final failure =
               await bloc.stream.firstWhere(
                     (state) => state is VoiceCaptureFailure,
@@ -520,6 +526,10 @@ void main() {
           }
           bloc.add(const VoiceCaptureFinishConsultation());
           await bloc.stream.firstWhere(
+            (s) => s is VoiceCaptureTranscriptCompare,
+          );
+          bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
+          await bloc.stream.firstWhere(
             (s) => s is VoiceCaptureConsultationFinished,
           );
           verify(
@@ -552,6 +562,10 @@ void main() {
           () => backgroundRecorder.start(sessionId: any(named: 'sessionId')),
         ).called(1);
         bloc.add(const VoiceCaptureFinishConsultation());
+        await bloc.stream.firstWhere(
+          (s) => s is VoiceCaptureTranscriptCompare,
+        );
+        bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
         await bloc.stream.firstWhere(
           (s) => s is VoiceCaptureConsultationFinished,
         );
@@ -779,7 +793,7 @@ void main() {
     );
 
     blocTest<VoiceCaptureBloc, VoiceCaptureState>(
-      'AI capture stitches cloud transcript and skips compare panel',
+      'AI capture stitches cloud+local chunks and opens compare panel',
       build: buildBloc,
       setUp: () {
         when(
@@ -789,10 +803,20 @@ void main() {
           when(() => backgroundRecorder.isRecording).thenReturn(false);
           return '/tmp/session.wav';
         });
+        when(
+          () => offlineTranscription.transcribeFile(
+            any(),
+            language: any(named: 'language'),
+          ),
+        ).thenAnswer((_) async => 'texte local');
       },
       act: (bloc) async {
         await seedListening(bloc);
         bloc.add(const VoiceCaptureFinishConsultation(language: 'fr'));
+        await bloc.stream.firstWhere(
+          (state) => state is VoiceCaptureTranscriptCompare,
+        );
+        bloc.add(const VoiceCaptureTranscriptChoiceSelected(useAi: true));
         await bloc.stream.firstWhere(
           (state) => state is VoiceCaptureConsultationFinished,
         );
@@ -802,7 +826,9 @@ void main() {
         isA<RecordingInProgress>(),
         isA<VoiceCaptureEnhancing>(),
         isA<VoiceCaptureEnhancing>(),
-        isA<VoiceCaptureEnhancing>(),
+        isA<VoiceCaptureTranscriptCompare>()
+            .having((s) => s.localTranscript, 'local', 'texte local')
+            .having((s) => s.aiTranscript, 'ai', 'texte ameliore'),
         isA<VoiceCaptureProcessing>(),
         isA<VoiceCaptureConsultationFinished>().having(
           (s) => s.transcript,
@@ -821,18 +847,18 @@ void main() {
           ),
         ).called(1);
         verify(
+          () => offlineTranscription.transcribeFile(
+            '/tmp/session.wav',
+            language: any(named: 'language'),
+          ),
+        ).called(1);
+        verify(
           () => noteProcessing.process(
             sessionId: any(named: 'sessionId'),
             rawText: 'texte ameliore',
             language: 'fr',
           ),
         ).called(1);
-        verifyNever(
-          () => offlineTranscription.transcribeFile(
-            any(),
-            language: any(named: 'language'),
-          ),
-        );
       },
     );
 
