@@ -255,3 +255,11 @@ dart run build_runner build --delete-conflicting-outputs
 ## Licence
 
 A definir.
+
+## Contributeurs
+
+| Utilisateur GitHub | Prénom Nom |
+| --- | --- |
+| [`Setsudan`](https://github.com/Setsudan) | Ethan Launay |
+| [`ShikiSulli`](https://github.com/ShikiSulli) | Benjamin Bandasavanh |
+| [`TCaen`](https://github.com/TCaen) | Thomas Caen |
